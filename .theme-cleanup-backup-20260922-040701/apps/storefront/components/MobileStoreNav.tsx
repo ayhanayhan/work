@@ -1,8 +1,0 @@
-'use client';
-import Link from 'next/link';
-import {useEffect,useState} from 'react';
-import {api,getCartToken} from '../lib/api';
-
-function DockIcon({kind}:{kind:'home'|'search'|'heart'|'user'|'cart'}){const p:any={home:<><path d="m3 11 9-8 9 8"/><path d="M5.5 9.5V21h13V9.5M9.5 21v-7h5v7"/></>,search:<><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></>,heart:<path d="M12 20.5 4.8 13.7C.7 9.8 2.8 4 7.5 4c2 0 3.4 1 4.5 2.4C13.1 5 14.5 4 16.5 4c4.7 0 6.8 5.8 2.7 9.7L12 20.5Z"/>,user:<><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.7-4.1 3.3-6.2 7.5-6.2s6.8 2.1 7.5 6.2"/></>,cart:<><path d="M3 4h2l2.2 10.2h9.7L20 7H6.2"/><circle cx="9" cy="19" r="1.2"/><circle cx="17" cy="19" r="1.2"/></>};return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{p[kind]}</svg>}
-
-export default function MobileStoreNav(){const[count,setCount]=useState(0);useEffect(()=>{const sync=()=>{const token=getCartToken();if(!token){setCount(0);return}api('/storefront/carts/'+token).then(c=>setCount(c.items?.reduce((a:number,x:any)=>a+x.quantity,0)||0)).catch(()=>setCount(0))};sync();window.addEventListener('cart-change',sync);return()=>window.removeEventListener('cart-change',sync)},[]);return <nav className="mobile-store-nav" aria-label="Hızlı menü"><Link href="/"><DockIcon kind="home"/><span>Anasayfa</span></Link><Link href="/products"><DockIcon kind="search"/><span>Keşfet</span></Link><Link href="/account?tab=wishlist"><DockIcon kind="heart"/><span>Favoriler</span></Link><Link href="/account"><DockIcon kind="user"/><span>Hesabım</span></Link><Link href="/cart" className="mobile-store-cart"><DockIcon kind="cart"/>{count>0&&<b>{count}</b>}<span>Sepet</span></Link></nav>}

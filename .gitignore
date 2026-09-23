@@ -7,3 +7,13 @@ coverage
 *.log
 .deploy/
 *.local
+
+# Local patch / rollback backups
+.patch-backups/
+.*-backup-*/
+*.before-*
+*.backup
+*.bak
+
+# Local generated artifacts
+*.zip
