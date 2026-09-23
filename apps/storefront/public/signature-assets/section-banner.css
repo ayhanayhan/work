@@ -1,0 +1,130 @@
+.banner__block-item{
+  display:flex;
+  flex-direction:column;
+  position: relative;
+  text-decoration:none;
+  color: var(--color-text-block, var(--color-base-section, var(--color-text-main)));
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: var(--custom-banner-radius, var(--radius));
+  overflow:hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+}
+.banner__block-item .section__richtext__editor>*{
+  color: var(--color-text-block, var(--color-base-section, var(--color-text-main)));
+}
+.banner__block-item__content{
+  display:flex;
+  position: absolute;
+  width:100%;
+  height:100%;
+  padding:10px;
+  z-index:2;
+}
+.banner__block-item__content .banner__block-item__content__items{
+  position:relative;
+  width:var(--description-width, 40%);
+  padding:var(--banner-box-padding, 15px);
+}
+.banner__block-item__content .banner__block-item__content__items.banner__background-box:before{
+  content:"";
+  display:flex;
+  background:rgb(from var(--color-box-background-block, var(--color-body-background)) r g b / var(--description-box-opacity, 0.9)) ;
+  border-radius:max(calc(var(--custom-image-radius,var(--radius, 10px)) - 10px), 0px);
+  position:absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index:-1;
+  transition: all var(--duration-large) var(--animation-bezier);
+}
+@media (min-width:577px) and (max-width:1024px){
+  .banner__block-item__content .banner__block-item__content__items{
+    width:var(--description-width-tablet, var(--description-width, 40%));
+  }
+}
+@media (max-width:576px){
+  .banner__block-item__content .banner__block-item__content__items{
+    width:var(--description-width-mobile, 40%);
+  }
+  .align-items-start-m{align-items: flex-start !important; justify-content: left !important;}
+  .align-items-center-m{align-items: center !important; justify-content: left !important;}
+  .align-items-end-m{align-items: flex-end !important; justify-content: left !important;}
+  .justify-content-center-m{justify-content: center !important;}
+  .justify-content-end-m{justify-content: flex-end !important;}
+}
+
+.page-fullwidth .banner__block-item{
+  border-radius:0;
+}
+.page-fullwidth .banner__block-item .image-hover-box{
+  --radius:0;
+}
+@media (min-width:577px){
+  .banner__block-item>.image-hover-box tag-image+tag-image{
+    display:none;
+  }
+}
+@media (max-width:576px){
+  .banner__block-item>.image-hover-box tag-image:has(+tag-image){
+    display:none;
+  }
+}
+@media (min-width:1025px){
+  .banner__block-item .image-hover-box+.image-hover-box{
+    position: absolute;
+    top:0;
+    left: 0;
+    width:100%;
+    height:100%;
+    z-index: 1;
+    background: var(--color-body-background);
+    opacity: 0;
+    transition: opacity var(--duration-large) var(--animation-bezier);
+  }
+  .banner__block-item:hover .image-hover-box+.image-hover-box{
+    opacity: 1;
+  }
+  .banner__block-item .section__richtext__editor>*{
+    transition: color var(--duration-large) var(--animation-bezier);
+  }
+  .banner__block-item:hover .section__richtext__editor>*{
+    color:var(--color-text-hover-block, var(--color-base-section, var(--color-text-main)));
+  }
+  .banner__block-item:hover .banner__block-item__content .banner__block-item__content__items.banner__background-box:before{
+    background:rgb(from var(--color-box-background-hover-block, var(--color-body-background)) r g b / var(--description-box-opacity, 0.9)) ;
+  }
+}
+@media (max-width:1024px){
+  .banner__block-item .image-hover-box+.image-hover-box{
+    display:none;
+  }
+}
+.banner__block-buttons{
+  display: flex;
+  flex-wrap: wrap;
+  gap:10px;
+  width:100%;
+}
+.banner__block-item__link{
+  position: absolute;
+  display: block!important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+.banner__block-item__link~.banner__block-item__content{
+  pointer-events: none;
+}
+.banner__block-item__link~.banner__block-item__content .section-slider__heading,
+.banner__block-item__link~.banner__block-item__content .banner__block-item__heading,
+.banner__block-item__link~.banner__block-item__content .btn{
+  pointer-events: var(--pointer-status, all);
+}

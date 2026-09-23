@@ -1,0 +1,5 @@
+Ticarti direct theme source mode
+
+Presentation sources are stored under theme-sources/ticarti-signature.
+Runtime assets are mirrored under apps/storefront/public/theme-assets/signature.
+Commerce data is supplied by Ticarti.

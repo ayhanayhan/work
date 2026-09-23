@@ -1,0 +1,616 @@
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
+import { COUNTRY_CODES, LOCALES, SUBDIVISIONS } from '../common/reference-data';
+import { PERMISSIONS } from '../common/permissions';
+import { CacheService } from '../cache/cache.service';
+
+@Injectable()
+export class MerchantService {
+  constructor(private prisma: PrismaService, private cache: CacheService) {}
+
+  private slugify(value: unknown) {
+    return String(value || '')
+      .trim()
+      .toLocaleLowerCase('tr-TR')
+      .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+  }
+
+  async assertStore(tenantId: string, storeId: string) {
+    if (storeId !== tenantId) throw new ForbiddenException('Site does not belong to tenant');
+    const site = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+    if (!site) throw new ForbiddenException('Tenant not found');
+    return site;
+  }
+
+  private async requireFeature(tenantId: string, feature: string) {
+    const sub = await this.prisma.subscription.findFirst({ where: { tenantId, status: { in: ['TRIAL','ACTIVE'] } }, include: { plan: true }, orderBy: { createdAt: 'desc' } });
+    const features:any = sub?.plan?.features || {};
+    if (sub && features[feature] === false) throw new ForbiddenException(`Current plan does not include ${feature}`);
+  }
+
+  async dashboard(tenantId: string, storeId: string) {
+    const site = await this.assertStore(tenantId, storeId);
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [orders, products, customers, lowStock, revenue] = await Promise.all([
+      this.prisma.order.count({ where: { storeId, createdAt: { gte: start } } }),
+      this.prisma.product.count({ where: { storeId, status: 'ACTIVE' } }),
+      this.prisma.customer.count({ where: { storeId } }),
+      this.prisma.inventoryItem.count({ where: { variant: { product: { storeId } }, trackStock: true, onHand: { lte: 5 } } }),
+      this.prisma.order.aggregate({ where: { storeId, paymentStatus: 'PAID', createdAt: { gte: start } }, _sum: { grandTotal: true } }),
+    ]);
+    const recentOrders = await this.prisma.order.findMany({ where: { storeId }, include: { customer: true }, orderBy: { createdAt: 'desc' }, take: 8 });
+    return { period: 'month', currency: site.currency, metrics: { orders, products, customers, lowStock, revenue: Number(revenue._sum.grandTotal || 0) }, recentOrders };
+  }
+
+  async updateStore(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const allowed = ['name','domain','currency','locale','timezone','defaultCountry','weightUnit','dimensionUnit','activeTheme','logoUrl','faviconUrl','email','phone','companyName','taxNumber','taxOffice','addressText','seoTitle','seoDescription','maintenanceMode','settings'];
+    const data = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
+    const updated=await this.prisma.tenant.update({ where: { id: storeId }, data });
+    await this.cache.delPattern('public:site:*'); await this.cache.purgeTenant(tenantId);
+    return updated;
+  }
+
+
+  async team(tenantId: string) {
+    return this.prisma.membership.findMany({ where: { tenantId }, include: { customRole: true, user: { select: { id: true, email: true, name: true, createdAt: true } } }, orderBy: { user: { createdAt: 'asc' } } });
+  }
+  async addTeamMember(tenantId: string, body: any) {
+    const sub = await this.prisma.subscription.findFirst({ where: { tenantId, status: { in: ['TRIAL','ACTIVE'] } }, include: { plan: true }, orderBy: { createdAt: 'desc' } });
+    if (sub) { const count = await this.prisma.membership.count({ where: { tenantId } }); if (count >= sub.plan.maxStaff) throw new BadRequestException(`Plan allows ${sub.plan.maxStaff} staff members`); }
+    const email = String(body.email || '').toLowerCase();
+    let user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      const pw = String(body.password || '');
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/.test(pw)) throw new BadRequestException('New user password must be 12+ chars with upper/lower/number/symbol');
+      user = await this.prisma.user.create({ data: { email, name: body.name, passwordHash: await bcrypt.hash(pw, 12) } });
+    }
+    if (body.customRoleId) {
+      const role = await this.prisma.customRole.findFirst({ where: { id: body.customRoleId, tenantId } });
+      if (!role) throw new BadRequestException('Role does not belong to tenant');
+    }
+    const membership = await this.prisma.membership.upsert({ where: { userId_tenantId: { userId: user.id, tenantId } }, create: { userId: user.id, tenantId, role: body.role || 'STAFF', customRoleId: body.customRoleId || null }, update: { role: body.role || 'STAFF', customRoleId: body.customRoleId || null } });
+    return this.prisma.membership.findUnique({ where: { id: membership.id }, include: { customRole: true, user: { select: { id: true, email: true, name: true } } } });
+  }
+  async updateTeamMember(tenantId: string, membershipId: string, body: any) {
+    const membership = await this.prisma.membership.findFirst({ where: { id: membershipId, tenantId }, include: { user: true } });
+    if (!membership) throw new NotFoundException('Membership not found');
+    if (membership.role === 'OWNER' && body.role && body.role !== 'OWNER') {
+      const owners = await this.prisma.membership.count({ where: { tenantId, role: 'OWNER' } });
+      if (owners <= 1) throw new BadRequestException('The last owner cannot be downgraded');
+    }
+    if (body.customRoleId) {
+      const role = await this.prisma.customRole.findFirst({ where: { id: body.customRoleId, tenantId } });
+      if (!role) throw new BadRequestException('Role does not belong to tenant');
+    }
+    await this.prisma.membership.update({ where: { id: membershipId }, data: { ...(body.role ? { role: body.role } : {}), ...(body.customRoleId !== undefined ? { customRoleId: body.customRoleId || null } : {}) } });
+    if (body.name !== undefined) await this.prisma.user.update({ where: { id: membership.userId }, data: { name: body.name } });
+    return this.prisma.membership.findUnique({ where: { id: membershipId }, include: { customRole: true, user: { select: { id: true, email: true, name: true } } } });
+  }
+
+  async removeTeamMember(tenantId: string, membershipId: string) {
+    const membership = await this.prisma.membership.findFirst({ where: { id: membershipId, tenantId } });
+    if (!membership) throw new NotFoundException('Membership not found');
+    if (membership.role === 'OWNER') {
+      const owners = await this.prisma.membership.count({ where: { tenantId, role: 'OWNER' } });
+      if (owners <= 1) throw new BadRequestException('The last owner cannot be removed');
+    }
+    await this.prisma.membership.delete({ where: { id: membershipId } });
+    return { removed: true };
+  }
+
+  async subscription(tenantId: string) {
+    return this.prisma.subscription.findFirst({ where: { tenantId, status: { in: ['TRIAL','ACTIVE','PAST_DUE'] } }, include: { plan: true }, orderBy: { createdAt: 'desc' } });
+  }
+
+  async products(tenantId: string, storeId: string, q?: string) {
+    await this.assertStore(tenantId, storeId);
+    return this.prisma.product.findMany({
+      where: { storeId, ...(q ? { OR: [{ title: { contains: q, mode: 'insensitive' } }, { variants: { some: { sku: { contains: q, mode: 'insensitive' } } } }] } : {}) },
+      include: { brand: true, images: { orderBy: { sortOrder: 'asc' } }, categories: { include: { category: true } }, variants: { include: { inventory: true } } },
+      orderBy: { createdAt: 'desc' },
+    }).then(async rows=>{const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'product',entityId:{in:rows.map(x=>x.id)}}}):[];return rows.map(x=>({...x,translations:trs.filter(t=>t.entityId===x.id).map(t=>({locale:t.locale,fields:t.fields}))}));});
+  }
+
+  private normalizeTranslations(body:any, entityType:string){
+    const rows=Array.isArray(body.translations)?body.translations:[];
+    return rows.filter((x:any)=>x&&x.locale&&x.fields).map((x:any)=>({locale:String(x.locale),fields:x.fields||{},entityType}));
+  }
+  private async saveEntityTranslations(tx:any,storeId:string,entityType:string,entityId:string,body:any){
+    if(body.translations===undefined)return;
+    const rows=this.normalizeTranslations(body,entityType);await tx.contentTranslation.deleteMany({where:{storeId,entityType,entityId}});if(rows.length)await tx.contentTranslation.createMany({data:rows.map((x:any)=>({storeId,entityType,entityId,locale:x.locale,fields:x.fields}))});
+  }
+
+  async createProduct(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    if (body.brandId) {
+      const brand = await this.prisma.brand.findFirst({ where: { id: body.brandId, storeId } });
+      if (!brand) throw new BadRequestException('Brand does not belong to store');
+    }
+    if (Array.isArray(body.categoryIds) && body.categoryIds.length) {
+      const count = await this.prisma.category.count({ where: { id: { in: body.categoryIds }, storeId } });
+      if (count !== new Set(body.categoryIds).size) throw new BadRequestException('One or more categories do not belong to store');
+    }
+    const sub = await this.prisma.subscription.findFirst({ where: { tenantId, status: { in: ['TRIAL','ACTIVE'] } }, include: { plan: true }, orderBy: { createdAt: 'desc' } });
+    if (sub) {
+      const count = await this.prisma.product.count({ where: { storeId: tenantId } });
+      if (count >= sub.plan.maxProducts) throw new BadRequestException(`Plan allows ${sub.plan.maxProducts} products`);
+    }
+    const variants = Array.isArray(body.variants) && body.variants.length
+      ? body.variants
+      : [{ title: 'Standart', sku: body.sku || `SKU-${Date.now()}`, price: body.price || 0, stock: body.stock || 0 }];
+
+    return this.prisma.$transaction(async tx => {
+      const product = await tx.product.create({
+        data: {
+          storeId,
+          brandId: body.brandId || null,
+          title: body.title,
+          slug: this.slugify(body.slug || body.title),
+          description: body.description,
+          shortDescription: body.shortDescription,
+          status: body.status || 'DRAFT',
+          productType: body.productType,
+          tags: body.tags || [],
+          seoTitle: body.seoTitle,
+          seoDescription: body.seoDescription,
+          metadata: body.metadata,
+          images: {
+            create: (body.images || []).map((x:any, i:number) => ({
+              url: typeof x === 'string' ? x : x.url,
+              mediaAssetId: typeof x === 'string' ? null : (x.mediaAssetId || null),
+              aiGenerated: typeof x === 'string' ? false : !!x.aiGenerated,
+              alt: typeof x === 'string' ? body.title : x.alt,
+              sortOrder: i,
+            })),
+          },
+          categories: { create: (body.categoryIds || []).map((categoryId:string) => ({ categoryId })) },
+          variants: {
+            create: variants.map((v:any) => ({
+              title: v.title || 'Standart',
+              sku: v.sku,
+              barcode: v.barcode,
+              price: v.price,
+              comparePrice: v.comparePrice,
+              cost: v.cost,
+              weight: v.weight,
+              attributes: v.attributes,
+              inventory: {
+                create: {
+                  onHand: v.stock || 0,
+                  lowStockAt: v.lowStockAt ?? 5,
+                  trackStock: v.trackStock ?? true,
+                  allowBackorder: v.allowBackorder ?? false,
+                },
+              },
+            })),
+          },
+        },
+      });
+      await this.saveEntityTranslations(tx, storeId, 'product', product.id, body);
+      return tx.product.findUnique({ where: { id: product.id }, include: { images: true, categories: true, variants: { include: { inventory: true } } } });
+    });
+  }
+
+  async updateProduct(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId);const product=await this.prisma.product.findFirst({where:{id,storeId}});if(!product)throw new NotFoundException('Product not found');
+    if(body.brandId){const brand=await this.prisma.brand.findFirst({where:{id:body.brandId,storeId}});if(!brand)throw new BadRequestException('Brand does not belong to store');}
+    if(Array.isArray(body.categoryIds)&&body.categoryIds.length){const count=await this.prisma.category.count({where:{id:{in:body.categoryIds},storeId}});if(count!==new Set(body.categoryIds).size)throw new BadRequestException('One or more categories do not belong to store');}
+    const allowed=['brandId','title','slug','description','shortDescription','status','productType','tags','seoTitle','seoDescription','metadata'];const data:any=Object.fromEntries(Object.entries(body).filter(([k])=>allowed.includes(k)));if(body.slug!==undefined||body.title!==undefined)data.slug=this.slugify(body.slug||body.title||product.slug);
+    return this.prisma.$transaction(async tx=>{if(Array.isArray(body.categoryIds)){await tx.productCategory.deleteMany({where:{productId:id}});data.categories={create:body.categoryIds.map((categoryId:string)=>({categoryId}))};}if(Array.isArray(body.images)){await tx.productImage.deleteMany({where:{productId:id}});data.images={create:body.images.map((x:any,i:number)=>({url:typeof x==='string'?x:x.url,mediaAssetId:typeof x==='string'?null:(x.mediaAssetId||null),aiGenerated:typeof x==='string'?false:!!x.aiGenerated,alt:typeof x==='string'?body.title||product.title:x.alt,sortOrder:i}))};}await tx.product.update({where:{id},data});await this.saveEntityTranslations(tx,storeId,'product',id,body);return tx.product.findUnique({where:{id},include:{brand:true,images:true,categories:{include:{category:true}},variants:{include:{inventory:true}}}});});
+  }
+
+  async addVariant(tenantId: string, storeId: string, productId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const product = await this.prisma.product.findFirst({ where: { id: productId, storeId } });
+    if (!product) throw new NotFoundException('Product not found');
+    return this.prisma.variant.create({ data: { productId, title: body.title, sku: body.sku, barcode: body.barcode, price: body.price, comparePrice: body.comparePrice, cost: body.cost, weight: body.weight, attributes: body.attributes, inventory: { create: { onHand: body.stock || 0, lowStockAt: body.lowStockAt ?? 5, trackStock: body.trackStock ?? true, allowBackorder: body.allowBackorder ?? false } } }, include: { inventory: true } });
+  }
+
+  async updateVariant(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const variant = await this.prisma.variant.findFirst({ where: { id, product: { storeId } } });
+    if (!variant) throw new NotFoundException('Variant not found');
+    const allowed = ['title','sku','barcode','price','comparePrice','cost','weight','attributes','isActive'];
+    const data = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
+    if (body.stock !== undefined || body.lowStockAt !== undefined || body.trackStock !== undefined || body.allowBackorder !== undefined) {
+      await this.prisma.inventoryItem.update({ where: { variantId: id }, data: { ...(body.stock !== undefined ? { onHand: Number(body.stock) } : {}), ...(body.lowStockAt !== undefined ? { lowStockAt: Number(body.lowStockAt) } : {}), ...(body.trackStock !== undefined ? { trackStock: !!body.trackStock } : {}), ...(body.allowBackorder !== undefined ? { allowBackorder: !!body.allowBackorder } : {}) } });
+    }
+    return this.prisma.variant.update({ where: { id }, data, include: { inventory: true } });
+  }
+
+  async archiveProduct(tenantId: string, storeId: string, id: string) {
+    await this.assertStore(tenantId, storeId);
+    const p = await this.prisma.product.findFirst({ where: { id, storeId } });
+    if (!p) throw new NotFoundException('Product not found');
+    return this.prisma.product.update({ where: { id }, data: { status: 'ARCHIVED' } });
+  }
+
+  async categories(tenantId:string,storeId:string){await this.assertStore(tenantId,storeId);const rows=await this.prisma.category.findMany({where:{storeId},orderBy:[{sortOrder:'asc'},{name:'asc'}]});const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'category',entityId:{in:rows.map(x=>x.id)}}}):[];return rows.map(x=>({...x,translations:trs.filter(t=>t.entityId===x.id).map(t=>({locale:t.locale,fields:t.fields}))}));}
+  async createCategory(tenantId:string,storeId:string,body:any){await this.assertStore(tenantId,storeId);if(body.parentId){const parent=await this.prisma.category.findFirst({where:{id:body.parentId,storeId}});if(!parent)throw new BadRequestException('Parent category does not belong to store');}return this.prisma.$transaction(async tx=>{const row=await tx.category.create({data:{storeId,parentId:body.parentId||null,name:body.name,slug:this.slugify(body.slug||body.name),description:body.description,imageUrl:body.imageUrl,seoTitle:body.seoTitle,seoDescription:body.seoDescription,sortOrder:body.sortOrder||0,isActive:body.isActive??true}});await this.saveEntityTranslations(tx,storeId,'category',row.id,body);return row;});}
+  async updateCategory(tenantId:string,storeId:string,id:string,body:any){await this.assertStore(tenantId,storeId);const x=await this.prisma.category.findFirst({where:{id,storeId}});if(!x)throw new NotFoundException();if(body.parentId){const parent=await this.prisma.category.findFirst({where:{id:body.parentId,storeId}});if(!parent)throw new BadRequestException('Parent category does not belong to store');}const allowed=['parentId','name','slug','description','imageUrl','seoTitle','seoDescription','sortOrder','isActive'];const data:any=Object.fromEntries(Object.entries(body).filter(([k])=>allowed.includes(k)));if(body.slug!==undefined||body.name!==undefined)data.slug=this.slugify(body.slug||body.name||x.slug);return this.prisma.$transaction(async tx=>{const row=await tx.category.update({where:{id},data});await this.saveEntityTranslations(tx,storeId,'category',id,body);return row;});}
+
+  async brands(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.brand.findMany({ where: { storeId }, orderBy: { name: 'asc' } }); }
+  async createBrand(tenantId: string, storeId: string, body: any) { await this.assertStore(tenantId, storeId); return this.prisma.brand.create({ data: { storeId, name: body.name, slug: this.slugify(body.slug || body.name), logoUrl: body.logoUrl, description: body.description, seoTitle: body.seoTitle, seoDescription: body.seoDescription } }); }
+
+  async customers(tenantId: string, storeId: string, q?: string) { await this.assertStore(tenantId, storeId); return this.prisma.customer.findMany({ where: { storeId, ...(q ? { OR: [{ email: { contains: q, mode: 'insensitive' } }, { firstName: { contains: q, mode: 'insensitive' } }, { lastName: { contains: q, mode: 'insensitive' } }] } : {}) }, include: { _count: { select: { orders: true } } }, orderBy: { createdAt: 'desc' } }); }
+  async customer(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const c = await this.prisma.customer.findFirst({ where: { id, storeId }, include: { addresses: true, orders: { orderBy: { createdAt: 'desc' } } } }); if (!c) throw new NotFoundException(); return c; }
+
+  async orders(tenantId: string, storeId: string, status?: any) { await this.assertStore(tenantId, storeId); return this.prisma.order.findMany({ where: { storeId, ...(status ? { status } : {}) }, include: { customer: true, items: true }, orderBy: { createdAt: 'desc' }, take: 200 }); }
+  async order(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const o = await this.prisma.order.findFirst({ where: { id, storeId }, include: { customer: true, items: true, statusHistory: { orderBy: { createdAt: 'desc' } }, returns: { include: { items: true } } } }); if (!o) throw new NotFoundException(); return o; }
+  async updateOrderStatus(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const order = await this.order(tenantId, storeId, id);
+    if (body.status === 'CANCELLED' && !['CANCELLED','FULFILLED','REFUNDED'].includes(order.status)) {
+      for (const item of order.items) if (item.variantId) {
+        const inv = await this.prisma.inventoryItem.findUnique({ where: { variantId: item.variantId } });
+        if (!inv?.trackStock) continue;
+        if (order.paymentStatus === 'PAID') {
+          await this.prisma.inventoryItem.update({ where: { variantId: item.variantId }, data: { onHand: { increment: item.quantity } } });
+        } else if (inv.reserved > 0) {
+          await this.prisma.inventoryItem.update({ where: { variantId: item.variantId }, data: { reserved: { decrement: Math.min(inv.reserved, item.quantity) } } });
+        }
+      }
+    }
+    if (body.paymentStatus === 'PAID' && order.paymentStatus !== 'PAID') {
+      for (const item of order.items) if (item.variantId) {
+        const inv = await this.prisma.inventoryItem.findUnique({ where: { variantId: item.variantId } });
+        if (inv?.trackStock) await this.prisma.inventoryItem.update({ where: { variantId: item.variantId }, data: { onHand: { decrement: item.quantity }, reserved: { decrement: item.quantity } } });
+      }
+    }
+    if (body.paymentStatus === 'PAID' && order.paymentStatus !== 'PAID' && order.customerId) {
+      const program = await this.prisma.loyaltyProgram.findUnique({ where: { storeId } });
+      if (program?.enabled) {
+        const existingEarn = await this.prisma.loyaltyTransaction.findFirst({ where: { orderId: order.id, type: 'EARN' } });
+        if (!existingEarn) {
+          const rate = Number((order.metadata as any)?.exchangeRate || 1);
+          const baseAmount = Number(order.grandTotal) / Math.max(rate, 0.00000001);
+          const points = Math.max(0, Math.floor(baseAmount * Number(program.pointsPerCurrencyUnit)));
+          if (points > 0) {
+            const account = await this.prisma.loyaltyAccount.upsert({ where: { customerId: order.customerId }, create: { storeId, customerId: order.customerId, points, lifetimePoints: points }, update: { points: { increment: points }, lifetimePoints: { increment: points } } });
+            await this.prisma.loyaltyTransaction.create({ data: { accountId: account.id, orderId: order.id, type: 'EARN', points, balanceAfter: account.points, note: `Order #${order.number}` } });
+          }
+        }
+      }
+    }
+    const data: any = {};
+    for (const k of ['status','paymentStatus','fulfillmentStatus','adminNote']) if (body[k] !== undefined) data[k] = body[k];
+    const updated = await this.prisma.order.update({ where: { id }, data });
+    await this.prisma.orderStatusHistory.create({ data: { orderId: id, status: body.status || body.paymentStatus || body.fulfillmentStatus || 'UPDATED', note: body.note } });
+    return updated;
+  }
+
+  async discounts(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.discount.findMany({ where: { storeId }, orderBy: { createdAt: 'desc' } }); }
+  async createDiscount(tenantId: string, storeId: string, body: any) { await this.assertStore(tenantId, storeId); if (Array.isArray(body.productIds) && body.productIds.length) { const count = await this.prisma.product.count({ where: { id: { in: body.productIds }, storeId } }); if (count !== new Set(body.productIds).size) throw new BadRequestException('One or more products do not belong to store'); } if (Array.isArray(body.categoryIds) && body.categoryIds.length) { const count = await this.prisma.category.count({ where: { id: { in: body.categoryIds }, storeId } }); if (count !== new Set(body.categoryIds).size) throw new BadRequestException('One or more categories do not belong to store'); } return this.prisma.discount.create({ data: { storeId, name: body.name, code: body.code?.toUpperCase() || null, type: body.type, scope: body.scope || 'ORDER', value: body.value || 0, minimumAmount: body.minimumAmount, maximumDiscount: body.maximumDiscount, usageLimit: body.usageLimit, perCustomerLimit: body.perCustomerLimit, startsAt: body.startsAt ? new Date(body.startsAt) : null, endsAt: body.endsAt ? new Date(body.endsAt) : null, isActive: body.isActive ?? true, products: { create: (body.productIds || []).map((productId: string) => ({ productId })) }, categories: { create: (body.categoryIds || []).map((categoryId: string) => ({ categoryId })) } } }); }
+  async updateDiscount(tenantId: string, storeId: string, id: string, body: any) { await this.assertStore(tenantId, storeId); const d = await this.prisma.discount.findFirst({ where: { id, storeId } }); if (!d) throw new NotFoundException(); const allowed = ['name','code','type','scope','value','minimumAmount','maximumDiscount','usageLimit','perCustomerLimit','isActive']; return this.prisma.discount.update({ where: { id }, data: Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k))) }); }
+
+  async shippingMethods(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.shippingMethod.findMany({ where: { storeId }, orderBy: { sortOrder: 'asc' } }); }
+  async createShippingMethod(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); return this.prisma.shippingMethod.create({ data: { storeId, name: b.name, code: b.code, type: b.type || 'shipping', description: b.description, requiresAddress: b.requiresAddress ?? true, supportsPickup: b.supportsPickup ?? false, price: b.price || 0, freeAbove: b.freeAbove, estimatedMinDays: b.estimatedMinDays, estimatedMaxDays: b.estimatedMaxDays, isActive: b.isActive ?? true, sortOrder: b.sortOrder || 0 } }); }
+  async updateShippingMethod(tenantId: string, storeId: string, id: string, b: any) { await this.assertStore(tenantId, storeId); const row = await this.prisma.shippingMethod.findFirst({ where: { id, storeId } }); if (!row) throw new NotFoundException(); const allowed = ['name','code','type','description','requiresAddress','supportsPickup','price','freeAbove','estimatedMinDays','estimatedMaxDays','isActive','sortOrder']; return this.prisma.shippingMethod.update({ where: { id }, data: Object.fromEntries(Object.entries(b).filter(([k]) => allowed.includes(k))) }); }
+
+  async paymentMethods(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.paymentMethod.findMany({ where: { storeId }, orderBy: { sortOrder: 'asc' } }); }
+  async createPaymentMethod(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); return this.prisma.paymentMethod.create({ data: { storeId, name: b.name, code: b.code, type: b.type || 'manual', instructions: b.instructions, requiresOnlinePayment: !!b.requiresOnlinePayment, supportsInstallment: !!b.supportsInstallment, fee: b.fee || 0, isActive: b.isActive ?? true, sortOrder: b.sortOrder || 0, config: b.config } }); }
+  async updatePaymentMethod(tenantId: string, storeId: string, id: string, b: any) { await this.assertStore(tenantId, storeId); const row = await this.prisma.paymentMethod.findFirst({ where: { id, storeId } }); if (!row) throw new NotFoundException(); const allowed = ['name','code','type','instructions','requiresOnlinePayment','supportsInstallment','fee','isActive','sortOrder','config']; return this.prisma.paymentMethod.update({ where: { id }, data: Object.fromEntries(Object.entries(b).filter(([k]) => allowed.includes(k))) }); }
+
+  private pageTranslations(body:any, defaultLocale:string) {
+    const incoming=Array.isArray(body.translations)?body.translations:[];
+    if(!incoming.length) return [{locale:body.defaultLocale||defaultLocale,fields:{title:body.title||'',slug:this.slugify(body.slug||body.title),body:body.body||'',seoTitle:body.seoTitle||'',seoDescription:body.seoDescription||''}}];
+    return incoming.map((x:any)=>({locale:String(x.locale||'').trim(),fields:{title:String(x.fields?.title||'').trim(),slug:this.slugify(x.fields?.slug||x.fields?.title),body:String(x.fields?.body||''),seoTitle:String(x.fields?.seoTitle||''),seoDescription:String(x.fields?.seoDescription||'')}})).filter((x:any)=>x.locale);
+  }
+  private async assertTranslatedPageSlugs(storeId:string, translations:any[], excludeId?:string) {
+    const rows=await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'page',...(excludeId?{NOT:{entityId:excludeId}}:{})}});
+    for(const tr of translations){if(!tr.fields.slug)continue;const clash=rows.find((r:any)=>r.locale===tr.locale&&String((r.fields as any)?.slug||'')===tr.fields.slug);if(clash)throw new BadRequestException(`Slug already exists for ${tr.locale}: ${tr.fields.slug}`);}
+  }
+  async pages(tenantId: string, storeId: string) {
+    await this.assertStore(tenantId, storeId);
+    const pages=await this.prisma.page.findMany({where:{storeId},orderBy:{updatedAt:'desc'}});
+    const translations=pages.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'page',entityId:{in:pages.map(x=>x.id)}}}):[];
+    const grouped=new Map<string,any[]>();for(const tr of translations){const list=grouped.get(tr.entityId)||[];list.push({locale:tr.locale,fields:tr.fields});grouped.set(tr.entityId,list);}
+    return pages.map(x=>({...x,translations:grouped.get(x.id)||[]}));
+  }
+  async createPage(tenantId: string, storeId: string, b: any) {
+    const store=await this.assertStore(tenantId, storeId);
+    const defaultLocale=String(b.defaultLocale||store.locale||'tr-TR');
+    const translations=this.pageTranslations(b,defaultLocale);
+    const base=translations.find((x:any)=>x.locale===defaultLocale)||translations[0];
+    if(!base?.fields.title||!base?.fields.slug)throw new BadRequestException('Default language title and slug are required');
+    await this.assertTranslatedPageSlugs(storeId,translations.filter((x:any)=>x.locale!==defaultLocale));
+    return this.prisma.$transaction(async tx=>{
+      const page=await tx.page.create({data:{storeId,title:base.fields.title,slug:base.fields.slug,body:base.fields.body||'',imageUrl:b.imageUrl||null,status:b.status||'DRAFT',seoTitle:base.fields.seoTitle||null,seoDescription:base.fields.seoDescription||null}});
+      const other=translations.filter((x:any)=>x.locale!==defaultLocale);if(other.length)await tx.contentTranslation.createMany({data:other.map((x:any)=>({storeId,entityType:'page',entityId:page.id,locale:x.locale,fields:x.fields}))});
+      return page;
+    });
+  }
+  async updatePage(tenantId: string, storeId: string, id: string, b: any) {
+    const store=await this.assertStore(tenantId, storeId);const row=await this.prisma.page.findFirst({where:{id,storeId}});if(!row)throw new NotFoundException();
+    const defaultLocale=String(b.defaultLocale||store.locale||'tr-TR');const translations=this.pageTranslations(b,defaultLocale);const base=translations.find((x:any)=>x.locale===defaultLocale)||translations[0];
+    if(!base?.fields.title||!base?.fields.slug)throw new BadRequestException('Default language title and slug are required');
+    await this.assertTranslatedPageSlugs(storeId,translations.filter((x:any)=>x.locale!==defaultLocale),id);
+    return this.prisma.$transaction(async tx=>{
+      await tx.page.update({where:{id},data:{title:base.fields.title,slug:base.fields.slug,body:base.fields.body||'',imageUrl:b.imageUrl===undefined?row.imageUrl:(b.imageUrl||null),status:b.status||row.status,seoTitle:base.fields.seoTitle||null,seoDescription:base.fields.seoDescription||null}});
+      await tx.contentTranslation.deleteMany({where:{storeId,entityType:'page',entityId:id}});
+      const other=translations.filter((x:any)=>x.locale!==defaultLocale);if(other.length)await tx.contentTranslation.createMany({data:other.map((x:any)=>({storeId,entityType:'page',entityId:id,locale:x.locale,fields:x.fields}))});
+      return tx.page.findUnique({where:{id}});
+    });
+  }
+  async deletePage(tenantId:string,storeId:string,id:string){
+    const store=await this.assertStore(tenantId,storeId);const row=await this.prisma.page.findFirst({where:{id,storeId}});if(!row)throw new NotFoundException();
+    const settings:any=store.settings||{};const contractPages:any=settings.contractPages||{};const cleaned:any={};for(const [key,value] of Object.entries(contractPages)){if(String(value)!==id)cleaned[key]=value;}
+    await this.prisma.$transaction([this.prisma.contentTranslation.deleteMany({where:{storeId,entityType:'page',entityId:id}}),this.prisma.page.delete({where:{id}}),this.prisma.tenant.update({where:{id:storeId},data:{settings:{...settings,contractPages:cleaned}}})]);
+    await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return{deleted:true};
+  }
+
+  async menus(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.menu.findMany({ where: { storeId } }); }
+  async upsertMenu(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); return this.prisma.menu.upsert({ where: { storeId_handle: { storeId, handle: b.handle } }, create: { storeId, name: b.name, handle: b.handle, items: b.items || [] }, update: { name: b.name, items: b.items || [] } }); }
+
+  async banners(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.banner.findMany({ where: { storeId }, orderBy: [{ position: 'asc' }, { sortOrder: 'asc' }] }); }
+  async createBanner(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); return this.prisma.banner.create({ data: { storeId, title: b.title, subtitle: b.subtitle, imageUrl: b.imageUrl, mobileImageUrl: b.mobileImageUrl, buttonText: b.buttonText, buttonUrl: b.buttonUrl, position: b.position || 'home_hero', sortOrder: b.sortOrder || 0, isActive: b.isActive ?? true } }); }
+
+  async blogCategories(tenantId: string, storeId: string) {
+    await this.assertStore(tenantId, storeId);
+    return this.prisma.blogCategory.findMany({ where: { storeId }, include: { parent: { select: { id: true, title: true } }, _count: { select: { posts: true, children: true } } }, orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }] });
+  }
+  async createBlogCategory(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    if (body.parentId) { const parent = await this.prisma.blogCategory.findFirst({ where: { id: body.parentId, storeId } }); if (!parent) throw new BadRequestException('Parent blog category does not belong to store'); }
+    return this.prisma.blogCategory.create({ data: { storeId, parentId: body.parentId || null, title: String(body.title || '').trim(), slug: this.slugify(body.slug || body.title), description: body.description || null, imageUrl: body.imageUrl || null, seoTitle: body.seoTitle || null, seoDescription: body.seoDescription || null, sortOrder: Number(body.sortOrder || 0), isActive: body.isActive !== false } });
+  }
+  async updateBlogCategory(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const row = await this.prisma.blogCategory.findFirst({ where: { id, storeId } }); if (!row) throw new NotFoundException('Blog category not found');
+    if (body.parentId === id) throw new BadRequestException('Category cannot be its own parent');
+    if (body.parentId) { const parent = await this.prisma.blogCategory.findFirst({ where: { id: body.parentId, storeId } }); if (!parent) throw new BadRequestException('Parent blog category does not belong to store'); }
+    const data:any={}; for (const k of ['parentId','title','description','imageUrl','seoTitle','seoDescription','sortOrder','isActive']) if (body[k] !== undefined) data[k]=body[k];
+    if (body.slug !== undefined || body.title !== undefined) data.slug=this.slugify(body.slug || body.title || row.slug);
+    return this.prisma.blogCategory.update({ where: { id }, data });
+  }
+  async deleteBlogCategory(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const row=await this.prisma.blogCategory.findFirst({where:{id,storeId}}); if(!row)throw new NotFoundException('Blog category not found'); await this.prisma.blogCategory.delete({where:{id}}); return {deleted:true}; }
+
+  async blogPosts(tenantId: string, storeId: string) {
+    await this.assertStore(tenantId, storeId);
+    return this.prisma.blogPost.findMany({ where: { storeId }, include: { category: { select: { id: true, title: true } }, products: { include: { product: { select: { id: true, title: true, slug: true, images: { take: 1, orderBy: { sortOrder: 'asc' } } } } }, orderBy: { sortOrder: 'asc' } }, _count: { select: { comments: true } } }, orderBy: { updatedAt: 'desc' } });
+  }
+  async createBlogPost(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    if (body.categoryId) { const category=await this.prisma.blogCategory.findFirst({where:{id:body.categoryId,storeId}}); if(!category)throw new BadRequestException('Blog category does not belong to store'); }
+    const productIds:string[]=Array.isArray(body.productIds)?Array.from(new Set<string>(body.productIds.map((x:any)=>String(x)))):[];
+    if(productIds.length){const count=await this.prisma.product.count({where:{storeId,id:{in:productIds}}});if(count!==productIds.length)throw new BadRequestException('One or more products do not belong to store');}
+    const status=body.status || 'DRAFT';
+    return this.prisma.blogPost.create({ data: { storeId, categoryId: body.categoryId || null, title: String(body.title || '').trim(), slug: this.slugify(body.slug || body.title), excerpt: body.excerpt || null, body: body.body || '', featuredImageUrl: body.featuredImageUrl || null, status, seoTitle: body.seoTitle || null, seoDescription: body.seoDescription || null, tags: Array.isArray(body.tags) ? body.tags.map(String).filter(Boolean) : [], publishedAt: status === 'PUBLISHED' ? (body.publishedAt ? new Date(body.publishedAt) : new Date()) : (body.publishedAt ? new Date(body.publishedAt) : null), products: { create: productIds.map((productId:string,index:number)=>({productId,sortOrder:index})) } }, include: { category: true, products: { include: { product: true } } } });
+  }
+  async updateBlogPost(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const row=await this.prisma.blogPost.findFirst({where:{id,storeId}}); if(!row)throw new NotFoundException('Blog post not found');
+    if (body.categoryId) { const category=await this.prisma.blogCategory.findFirst({where:{id:body.categoryId,storeId}}); if(!category)throw new BadRequestException('Blog category does not belong to store'); }
+    const productIds:string[]|null=body.productIds===undefined?null:(Array.isArray(body.productIds)?Array.from(new Set<string>(body.productIds.map((x:any)=>String(x)))):[]);
+    if(productIds?.length){const count=await this.prisma.product.count({where:{storeId,id:{in:productIds}}});if(count!==productIds.length)throw new BadRequestException('One or more products do not belong to store');}
+    const data:any={}; for(const k of ['categoryId','title','excerpt','body','featuredImageUrl','status','seoTitle','seoDescription','tags']) if(body[k]!==undefined)data[k]=body[k];
+    if(body.slug!==undefined||body.title!==undefined)data.slug=this.slugify(body.slug||body.title||row.slug);
+    if(body.status==='PUBLISHED'&&!row.publishedAt)data.publishedAt=body.publishedAt?new Date(body.publishedAt):new Date(); else if(body.publishedAt!==undefined)data.publishedAt=body.publishedAt?new Date(body.publishedAt):null;
+    return this.prisma.$transaction(async tx=>{if(productIds!==null){await tx.blogPostProduct.deleteMany({where:{postId:id}});if(productIds.length)await tx.blogPostProduct.createMany({data:productIds.map((productId:string,index:number)=>({postId:id,productId,sortOrder:index}))});}await tx.blogPost.update({where:{id},data});return tx.blogPost.findUnique({where:{id},include:{category:true,products:{include:{product:true}}}});});
+  }
+  async deleteBlogPost(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const row=await this.prisma.blogPost.findFirst({where:{id,storeId}}); if(!row)throw new NotFoundException('Blog post not found'); await this.prisma.blogPost.delete({where:{id}}); return {deleted:true}; }
+
+  async blogComments(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.blogComment.findMany({ where: { storeId }, include: { post: { select: { id: true, title: true, slug: true } }, customer: { select: { id: true, email: true, firstName: true, lastName: true } } }, orderBy: { createdAt: 'desc' }, take: 500 }); }
+  async updateBlogComment(tenantId: string, storeId: string, id: string, body: any) { await this.assertStore(tenantId, storeId); const row=await this.prisma.blogComment.findFirst({where:{id,storeId}}); if(!row)throw new NotFoundException('Blog comment not found'); const data:any={}; for(const k of ['status','authorName','authorEmail','body'])if(body[k]!==undefined)data[k]=body[k]; return this.prisma.blogComment.update({where:{id},data}); }
+  async deleteBlogComment(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const row=await this.prisma.blogComment.findFirst({where:{id,storeId}}); if(!row)throw new NotFoundException('Blog comment not found'); await this.prisma.blogComment.delete({where:{id}}); return {deleted:true}; }
+
+  async reviews(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.review.findMany({ where: { storeId }, include: { product: { select: { title: true } }, customer: { select: { email: true } } }, orderBy: { createdAt: 'desc' } }); }
+  async moderateReview(tenantId: string, storeId: string, id: string, status: any) { await this.assertStore(tenantId, storeId); const r = await this.prisma.review.findFirst({ where: { id, storeId } }); if (!r) throw new NotFoundException(); return this.prisma.review.update({ where: { id }, data: { status } }); }
+
+  async returns(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.returnRequest.findMany({ where: { storeId }, include: { order: true, customer: true, items: { include: { orderItem: true } } }, orderBy: { createdAt: 'desc' } }); }
+  async updateReturn(tenantId: string, storeId: string, id: string, b: any) { await this.assertStore(tenantId, storeId); const r = await this.prisma.returnRequest.findFirst({ where: { id, storeId } }); if (!r) throw new NotFoundException(); return this.prisma.returnRequest.update({ where: { id }, data: { status: b.status, note: b.note, refundAmount: b.refundAmount } }); }
+
+  referenceData(country?: string) {
+    const currencies = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('currency') : ['TRY','USD','EUR','GBP'];
+    const timezones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : ['Europe/Istanbul','UTC'];
+    return { countries: COUNTRY_CODES, currencies, timezones, locales: LOCALES, subdivisions: country ? (SUBDIVISIONS[country.toUpperCase()] || []) : [] };
+  }
+
+  async storeSettings(tenantId: string, storeId: string) {
+    await this.assertStore(tenantId, storeId);
+    return this.prisma.tenant.findUnique({ where: { id: storeId }, include: { addresses: { orderBy: [{ isDefault: 'desc' }, { label: 'asc' }] }, currencies: { orderBy: [{ isDefault: 'desc' }, { code: 'asc' }] }, locales: { orderBy: [{ isDefault: 'desc' }, { sortOrder: 'asc' }] }, checkoutConfig: true, legalDocuments: { orderBy: { updatedAt: 'desc' } } } });
+  }
+  async contractSettings(tenantId:string,storeId:string){
+    const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};return{mappings:settings.contractPages||{}};
+  }
+  async updateContractSettings(tenantId:string,storeId:string,body:any){
+    const store=await this.assertStore(tenantId,storeId);const requested:any=body?.mappings||{};const values=Object.values(requested).filter(Boolean).map(String);
+    if(values.length){const count=await this.prisma.page.count({where:{storeId,id:{in:Array.from(new Set(values))}}});if(count!==new Set(values).size)throw new BadRequestException('One or more contract pages do not belong to store');}
+    const settings:any=store.settings||{};const clean:any={};for(const [k,v] of Object.entries(requested)){if(v)clean[String(k)]=String(v);}
+    const updated=await this.prisma.tenant.update({where:{id:storeId},data:{settings:{...settings,contractPages:clean}}});await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return{mappings:(updated.settings as any)?.contractPages||{}};
+  }
+
+  async updateCommentSettings(tenantId: string, storeId: string, body: any) {
+    const store=await this.assertStore(tenantId, storeId);
+    const current:any=store.settings || {};
+    const normalize=(value:any,defaults:any)=>({enabled:value?.enabled ?? defaults.enabled,autoApprove:value?.autoApprove ?? defaults.autoApprove,allowGuest:value?.allowGuest ?? defaults.allowGuest});
+    const commentSettings={
+      productReviews:normalize(body.productReviews,{enabled:true,autoApprove:false,allowGuest:true}),
+      blogComments:normalize(body.blogComments,{enabled:true,autoApprove:false,allowGuest:true}),
+    };
+    const updated=await this.prisma.tenant.update({where:{id:storeId},data:{settings:{...current,commentSettings}}});
+    await this.cache.delPattern('public:site:*'); await this.cache.purgeTenant(tenantId);
+    return {commentSettings:(updated.settings as any)?.commentSettings};
+  }
+
+  async upsertStoreAddress(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const key = String(body.key || 'registered').toLowerCase().replace(/[^a-z0-9_-]/g,'');
+    if (!key) throw new BadRequestException('Address key required');
+    if (body.isDefault) await this.prisma.storeAddress.updateMany({ where: { storeId }, data: { isDefault: false } });
+    return this.prisma.storeAddress.upsert({ where: { storeId_key: { storeId, key } }, create: { storeId, key, label: body.label || key, firstName: body.firstName, lastName: body.lastName, company: body.company, phone: body.phone, address1: body.address1, address2: body.address2, district: body.district, city: body.city, state: body.state, postalCode: body.postalCode, country: body.country || 'TR', admin1Id:body.admin1Id||null, admin2Id:body.admin2Id||null, localityId:body.localityId||null, neighborhoodId:body.neighborhoodId||null, isDefault: !!body.isDefault }, update: { label: body.label || key, firstName: body.firstName, lastName: body.lastName, company: body.company, phone: body.phone, address1: body.address1, address2: body.address2, district: body.district, city: body.city, state: body.state, postalCode: body.postalCode, country: body.country || 'TR', admin1Id:body.admin1Id||null, admin2Id:body.admin2Id||null, localityId:body.localityId||null, neighborhoodId:body.neighborhoodId||null, isDefault: !!body.isDefault } });
+  }
+  async currencies(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.storeCurrency.findMany({ where: { storeId }, orderBy: [{ isDefault: 'desc' }, { code: 'asc' }] }); }
+  async upsertCurrency(tenantId: string, storeId: string, body: any) {
+    const store = await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'multiCurrency');
+    const code = String(body.code || '').toUpperCase();
+    if (!code || !(typeof Intl.supportedValuesOf !== 'function' || Intl.supportedValuesOf('currency').includes(code))) throw new BadRequestException('Unsupported currency');
+    if (body.isDefault) {
+      await this.prisma.storeCurrency.updateMany({ where: { storeId }, data: { isDefault: false } });
+      await this.prisma.tenant.update({ where: { id: storeId }, data: { currency: code } });
+    }
+    const rate = body.isDefault ? 1 : Number(body.exchangeRate || 0);
+    if (!(rate > 0)) throw new BadRequestException('Exchange rate must be greater than 0');
+    return this.prisma.storeCurrency.upsert({ where: { storeId_code: { storeId, code } }, create: { storeId, code, isEnabled: body.isEnabled ?? true, isDefault: !!body.isDefault, exchangeRate: rate, rounding: Number(body.rounding ?? 2) }, update: { isEnabled: body.isEnabled ?? true, isDefault: !!body.isDefault, exchangeRate: rate, rounding: Number(body.rounding ?? 2) } });
+  }
+
+
+  async upsertLocale(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const locale = String(body.locale || '').trim();
+    if (!locale) throw new BadRequestException('Locale required');
+    if (body.isDefault) {
+      await this.prisma.storeLocale.updateMany({ where: { storeId }, data: { isDefault: false } });
+      await this.prisma.tenant.update({ where: { id: storeId }, data: { locale } });
+    }
+    return this.prisma.storeLocale.upsert({ where: { storeId_locale: { storeId, locale } }, create: { storeId, locale, label: body.label || locale, isEnabled: body.isEnabled ?? true, isDefault: !!body.isDefault, sortOrder: Number(body.sortOrder || 0) }, update: { label: body.label || locale, isEnabled: body.isEnabled ?? true, isDefault: !!body.isDefault, sortOrder: Number(body.sortOrder || 0) } });
+  }
+  async updateCheckoutConfig(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId);
+    const data = { singlePage: true, allowGuestCheckout: body.allowGuestCheckout ?? true, requirePhone: body.requirePhone ?? true, requireBillingAddress: !!body.requireBillingAddress, showCouponField: body.showCouponField ?? true, stickyOrderSummary: body.stickyOrderSummary ?? true, requireTerms: body.requireTerms ?? true, requirePrivacyNotice: body.requirePrivacyNotice ?? true, requireKvkkNotice: body.requireKvkkNotice ?? false, settings: body.settings };
+    return this.prisma.checkoutConfig.upsert({ where: { storeId }, create: { storeId, ...data }, update: data });
+  }
+
+  roles(tenantId: string) { return this.prisma.customRole.findMany({ where: { tenantId }, orderBy: { name: 'asc' } }); }
+  permissionCatalog() { return PERMISSIONS; }
+  async createRole(tenantId: string, body: any) {
+    const permissions: string[] = Array.isArray(body.permissions) ? Array.from(new Set<string>(body.permissions.map((value: unknown) => String(value)))) : [];
+    if (permissions.some(x => !PERMISSIONS.includes(x as any))) throw new BadRequestException('Unknown permission');
+    return this.prisma.customRole.create({ data: { tenantId, name: body.name, description: body.description, permissions } });
+  }
+  async updateRole(tenantId: string, id: string, body: any) {
+    const role = await this.prisma.customRole.findFirst({ where: { id, tenantId } }); if (!role) throw new NotFoundException();
+    const data: any = {};
+    if (body.name !== undefined) data.name = body.name;
+    if (body.description !== undefined) data.description = body.description;
+    if (body.permissions !== undefined) { const permissions: string[] = Array.isArray(body.permissions) ? Array.from(new Set<string>(body.permissions.map((value: unknown) => String(value)))) : []; if (permissions.some(x => !PERMISSIONS.includes(x as any))) throw new BadRequestException('Unknown permission'); data.permissions = permissions; }
+    return this.prisma.customRole.update({ where: { id }, data });
+  }
+
+  async promotions(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'promotions'); return this.prisma.promotion.findMany({ where: { storeId }, include: { codes: true }, orderBy: [{ priority: 'asc' }, { createdAt: 'desc' }] }); }
+  async createPromotion(tenantId: string, storeId: string, body: any) {
+    await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'promotions');
+    const codes: string[] = Array.isArray(body.codes) ? Array.from(new Set<string>(body.codes.map((value: unknown) => String(value).trim().toUpperCase()).filter((value: string) => Boolean(value)))) : [];
+    return this.prisma.$transaction(async (tx) => {
+      const promotion = await tx.promotion.create({ data: { storeId, name: body.name, description: body.description, status: body.status || 'DRAFT', activation: body.activation || (codes.length ? 'COUPON' : 'AUTOMATIC'), priority: Number(body.priority ?? 100), stackable: body.stackable ?? true, stopProcessing: body.stopProcessing ?? false, exclusiveGroup: body.exclusiveGroup || null, startsAt: body.startsAt ? new Date(body.startsAt) : null, endsAt: body.endsAt ? new Date(body.endsAt) : null, daysOfWeek: Array.isArray(body.daysOfWeek) ? body.daysOfWeek.map(Number) : [], usageLimit: body.usageLimit ? Number(body.usageLimit) : null, perCustomerLimit: body.perCustomerLimit ? Number(body.perCustomerLimit) : null, conditions: body.conditions || [], actions: body.actions || [], customerEligibility: body.customerEligibility || null } });
+      if (codes.length) await tx.promotionCode.createMany({ data: codes.map((code) => ({ storeId, promotionId: promotion.id, code })) });
+      return tx.promotion.findUniqueOrThrow({ where: { id: promotion.id }, include: { codes: true } });
+    });
+  }
+  async updatePromotion(tenantId: string, storeId: string, id: string, body: any) {
+    await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'promotions'); const promo = await this.prisma.promotion.findFirst({ where: { id, storeId } }); if (!promo) throw new NotFoundException();
+    const allowed = ['name','description','status','activation','priority','stackable','stopProcessing','exclusiveGroup','usageLimit','perCustomerLimit','conditions','actions','customerEligibility'];
+    const data:any = Object.fromEntries(Object.entries(body).filter(([k])=>allowed.includes(k)));
+    if (body.startsAt !== undefined) data.startsAt = body.startsAt ? new Date(body.startsAt) : null;
+    if (body.endsAt !== undefined) data.endsAt = body.endsAt ? new Date(body.endsAt) : null;
+    if (body.daysOfWeek !== undefined) data.daysOfWeek = (body.daysOfWeek || []).map(Number);
+    if (body.codes !== undefined) {
+      const codes: string[] = Array.isArray(body.codes) ? Array.from(new Set<string>(body.codes.map((value: unknown) => String(value).trim().toUpperCase()).filter((value: string) => Boolean(value)))) : [];
+      return this.prisma.$transaction(async (tx) => {
+        await tx.promotionCode.deleteMany({ where: { promotionId: id } });
+        await tx.promotion.update({ where: { id }, data });
+        if (codes.length) await tx.promotionCode.createMany({ data: codes.map((code) => ({ storeId, promotionId: id, code })) });
+        return tx.promotion.findUniqueOrThrow({ where: { id }, include: { codes: true } });
+      });
+    }
+    return this.prisma.promotion.update({ where: { id }, data, include: { codes: true } });
+  }
+
+  async loyalty(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'loyalty'); return this.prisma.loyaltyProgram.findUnique({ where: { storeId } }); }
+  async updateLoyalty(tenantId: string, storeId: string, body: any) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'loyalty'); return this.prisma.loyaltyProgram.upsert({ where: { storeId }, create: { storeId, enabled: !!body.enabled, programName: body.programName || 'Rewards', pointsPerCurrencyUnit: Number(body.pointsPerCurrencyUnit ?? 1), redemptionRate: Number(body.redemptionRate ?? 0.01), minimumRedeemPoints: Number(body.minimumRedeemPoints ?? 0), pointsExpireDays: body.pointsExpireDays ? Number(body.pointsExpireDays) : null, settings: body.settings || {} }, update: { enabled: !!body.enabled, programName: body.programName || 'Rewards', pointsPerCurrencyUnit: Number(body.pointsPerCurrencyUnit ?? 1), redemptionRate: Number(body.redemptionRate ?? 0.01), minimumRedeemPoints: Number(body.minimumRedeemPoints ?? 0), pointsExpireDays: body.pointsExpireDays ? Number(body.pointsExpireDays) : null, settings: body.settings || {} } }); }
+
+  async marketingCampaigns(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'marketing'); return this.prisma.marketingCampaign.findMany({ where: { storeId }, orderBy: { createdAt: 'desc' } }); }
+  async createMarketingCampaign(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'marketing'); return this.prisma.marketingCampaign.create({ data: { storeId, name: b.name, channel: b.channel, status: b.status || 'DRAFT', subject: b.subject, content: b.content || {}, audience: b.audience || {}, scheduleAt: b.scheduleAt ? new Date(b.scheduleAt) : null, settings: b.settings || {} } }); }
+  async marketingAutomations(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'marketing'); return this.prisma.marketingAutomation.findMany({ where: { storeId }, orderBy: { createdAt: 'desc' } }); }
+  async createMarketingAutomation(tenantId: string, storeId: string, b: any) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'marketing'); return this.prisma.marketingAutomation.create({ data: { storeId, name: b.name, trigger: b.trigger, enabled: !!b.enabled, delayMinutes: Number(b.delayMinutes || 0), conditions: b.conditions || {}, steps: b.steps || [] } }); }
+
+  async legalDocuments(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'privacy'); return this.prisma.legalDocument.findMany({ where: { storeId }, orderBy: [{ type:'asc' }, { updatedAt:'desc' }] }); }
+  async upsertLegalDocument(tenantId: string, storeId: string, b: any) {
+    await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'privacy');
+    if (b.isActive) await this.prisma.legalDocument.updateMany({ where: { storeId, type: b.type, locale: b.locale || 'tr-TR' }, data: { isActive: false } });
+    return this.prisma.legalDocument.upsert({ where: { storeId_type_locale_version: { storeId, type: b.type, locale: b.locale || 'tr-TR', version: String(b.version || '1.0') } }, create: { storeId, type: b.type, locale: b.locale || 'tr-TR', version: String(b.version || '1.0'), title: b.title, body: b.body, isActive: !!b.isActive, publishedAt: b.isActive ? new Date() : null }, update: { title: b.title, body: b.body, isActive: !!b.isActive, publishedAt: b.isActive ? new Date() : null } });
+  }
+  async privacyRequests(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'privacy'); return this.prisma.privacyRequest.findMany({ where: { storeId }, orderBy: { createdAt: 'desc' } }); }
+  async updatePrivacyRequest(tenantId: string, storeId: string, id: string, b: any) { await this.assertStore(tenantId, storeId); const row = await this.prisma.privacyRequest.findFirst({ where: { id, storeId } }); if (!row) throw new NotFoundException(); return this.prisma.privacyRequest.update({ where: { id }, data: { status: b.status, responseNote: b.responseNote, completedAt: b.status === 'COMPLETED' ? new Date() : row.completedAt } }); }
+  async consentRecords(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); await this.requireFeature(tenantId, 'privacy'); return this.prisma.consentRecord.findMany({ where: { storeId }, orderBy: { createdAt: 'desc' }, take: 500 }); }
+
+  async auditLogs(tenantId: string, storeId?: string) { if (storeId) await this.assertStore(tenantId, storeId); return this.prisma.auditLog.findMany({ where: { tenantId }, include: { user: { select: { email: true, name: true } } }, orderBy: { createdAt: 'desc' }, take: 300 }); }
+
+
+  async questions(tenantId:string, storeId:string, query:any={}) {
+    await this.assertStore(tenantId, storeId);
+    return this.prisma.question.findMany({
+      where:{ storeId, ...(query.type?{type:query.type}:{}), ...(query.status?{status:query.status}:{}) },
+      orderBy:{createdAt:'desc'}, take:500,
+    });
+  }
+  async updateQuestion(tenantId:string, storeId:string, id:string, body:any) {
+    await this.assertStore(tenantId, storeId);
+    const row=await this.prisma.question.findFirst({where:{id,storeId}}); if(!row) throw new NotFoundException();
+    return this.prisma.question.update({where:{id},data:{status:body.status,answer:body.answer,internalNote:body.internalNote,assignedUserId:body.assignedUserId,priority:body.priority,publishOnProduct:body.publishOnProduct,answeredAt:body.answer?new Date():row.answeredAt,closedAt:body.status==='CLOSED'?new Date():row.closedAt}});
+  }
+
+  async geoChildren(tenantId:string, parentId?:string, countryCode?:string, level?:any) {
+    const where:any={ isActive:true, ...(parentId?{parentId}:{parentId:null}), ...(countryCode?{countryCode}:{}) , ...(level?{level}:{}) };
+    const [base, overrides, custom]=await Promise.all([
+      this.prisma.geoNode.findMany({where,orderBy:[{sortOrder:'asc'},{name:'asc'}]}),
+      this.prisma.geoOverride.findMany({where:{tenantId}}),
+      this.prisma.geoCustomNode.findMany({where:{tenantId,isActive:true,...(parentId?{parentId}:{parentId:null}),...(countryCode?{countryCode}:{}),...(level?{level}:{})},orderBy:[{sortOrder:'asc'},{name:'asc'}]})
+    ]);
+    const om=new Map(overrides.map(x=>[x.geoNodeId,x]));
+    return [...base.filter(x=>om.get(x.id)?.isEnabled!==false).map(x=>({...x,name:om.get(x.id)?.customName||x.name,source:'SYSTEM'})),...custom.map(x=>({...x,source:'CUSTOM'}))];
+  }
+  async geoOverrideSave(tenantId:string, geoNodeId:string, body:any){
+    const node=await this.prisma.geoNode.findUnique({where:{id:geoNodeId}}); if(!node) throw new NotFoundException();
+    return this.prisma.geoOverride.upsert({where:{tenantId_geoNodeId:{tenantId,geoNodeId}},create:{tenantId,geoNodeId,customName:body.customName||null,isEnabled:body.isEnabled!==false},update:{customName:body.customName||null,isEnabled:body.isEnabled!==false}});
+  }
+  async geoCustomCreate(tenantId:string, body:any){
+    return this.prisma.geoCustomNode.create({data:{tenantId,parentId:body.parentId||null,level:body.level,countryCode:String(body.countryCode||'TR').toUpperCase(),code:body.code||null,name:String(body.name||'').trim(),slug:String(body.slug||body.name||'').trim().toLowerCase().replace(/[^a-z0-9çğıöşü]+/gi,'-').replace(/^-|-$/g,''),sortOrder:Number(body.sortOrder||0),isActive:body.isActive!==false}});
+  }
+  async geoCustomUpdate(tenantId:string,id:string,body:any){
+    const row=await this.prisma.geoCustomNode.findFirst({where:{id,tenantId}}); if(!row) throw new NotFoundException();
+    const data:any={}; for(const k of ['name','code','sortOrder','isActive']) if(body[k]!==undefined)data[k]=body[k];
+    if(body.name!==undefined)data.slug=String(body.slug||body.name).trim().toLowerCase().replace(/[^a-z0-9çğıöşü]+/gi,'-').replace(/^-|-$/g,'');
+    return this.prisma.geoCustomNode.update({where:{id},data});
+  }
+
+  async seoOverview(tenantId:string,storeId:string){
+    await this.assertStore(tenantId,storeId);
+    const [products,categories,pages,blogPosts,blogCategories,rules,redirects]=await Promise.all([
+      this.prisma.product.count({where:{storeId}}),this.prisma.category.count({where:{storeId}}),this.prisma.page.count({where:{storeId}}),this.prisma.blogPost.count({where:{storeId}}),this.prisma.blogCategory.count({where:{storeId}}),this.prisma.seoRule.findMany({where:{storeId},orderBy:{priority:'asc'}}),this.prisma.seoRedirect.findMany({where:{storeId},orderBy:{createdAt:'desc'}})
+    ]);
+    return {products,categories,pages,blogPosts,blogCategories,rules,redirects};
+  }
+  async saveSeoRule(tenantId:string,storeId:string,body:any){ await this.assertStore(tenantId,storeId); return this.prisma.seoRule.create({data:{storeId,targetType:body.targetType,locale:body.locale||null,titleTemplate:body.titleTemplate||null,descriptionTemplate:body.descriptionTemplate||null,slugTemplate:body.slugTemplate||null,canonicalTemplate:body.canonicalTemplate||null,conditions:body.conditions||{},priority:Number(body.priority||100),enabled:body.enabled!==false}}); }
+  async saveRedirect(tenantId:string,storeId:string,body:any){ await this.assertStore(tenantId,storeId); return this.prisma.seoRedirect.upsert({where:{storeId_fromPath:{storeId,fromPath:body.fromPath}},create:{storeId,fromPath:body.fromPath,toPath:body.toPath,statusCode:Number(body.statusCode||301),enabled:body.enabled!==false},update:{toPath:body.toPath,statusCode:Number(body.statusCode||301),enabled:body.enabled!==false}}); }
+
+  async designSections(tenantId:string,storeId:string,pageKey='home'){ await this.assertStore(tenantId,storeId); return this.prisma.siteSection.findMany({where:{storeId,pageKey},orderBy:{sortOrder:'asc'}}); }
+  async saveDesignSection(tenantId:string,storeId:string,body:any){ await this.assertStore(tenantId,storeId); return this.prisma.siteSection.create({data:{storeId,pageKey:body.pageKey||'home',sectionType:body.sectionType,sortOrder:Number(body.sortOrder||0),enabled:body.enabled!==false,settings:body.settings||{}}}); }
+
+  async regionalSettings(tenantId:string,storeId:string){
+    const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};
+    const [locales,currencies]=await Promise.all([this.prisma.storeLocale.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{sortOrder:'asc'}]}),this.prisma.storeCurrency.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{code:'asc'}]})]);
+    return {defaultLocale:store.locale,defaultCurrency:store.currency,weightUnit:store.weightUnit,dimensionUnit:store.dimensionUnit,tax:settings.regional?.tax||{pricesIncludeTax:true,defaultRate:20,enabledRates:[20]},locales,currencies};
+  }
+  async updateRegionalSettings(tenantId:string,storeId:string,body:any){
+    const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};const localeCodes=Array.from(new Set((Array.isArray(body.locales)?body.locales:[]).map((x:any)=>String(x))));const currencyCodes=Array.from(new Set((Array.isArray(body.currencies)?body.currencies:[]).map((x:any)=>String(x).toUpperCase())));const defaultLocale=String(body.defaultLocale||store.locale);const defaultCurrency=String(body.defaultCurrency||store.currency).toUpperCase();if(localeCodes.length&&!localeCodes.includes(defaultLocale))localeCodes.unshift(defaultLocale);if(currencyCodes.length&&!currencyCodes.includes(defaultCurrency))currencyCodes.unshift(defaultCurrency);
+    await this.prisma.$transaction(async tx=>{
+      if(localeCodes.length){await tx.storeLocale.updateMany({where:{storeId},data:{isEnabled:false,isDefault:false}});for(const [i,locale] of localeCodes.entries())await tx.storeLocale.upsert({where:{storeId_locale:{storeId,locale}},create:{storeId,locale,label:locale,isEnabled:true,isDefault:locale===defaultLocale,sortOrder:i},update:{isEnabled:true,isDefault:locale===defaultLocale,sortOrder:i}});}
+      if(currencyCodes.length){await tx.storeCurrency.updateMany({where:{storeId},data:{isEnabled:false,isDefault:false}});for(const code of currencyCodes)await tx.storeCurrency.upsert({where:{storeId_code:{storeId,code}},create:{storeId,code,isEnabled:true,isDefault:code===defaultCurrency,exchangeRate:1},update:{isEnabled:true,isDefault:code===defaultCurrency}});}
+      await tx.tenant.update({where:{id:storeId},data:{locale:defaultLocale,currency:defaultCurrency,weightUnit:String(body.weightUnit||store.weightUnit||'kg'),dimensionUnit:String(body.dimensionUnit||store.dimensionUnit||'cm'),settings:{...settings,regional:{...(settings.regional||{}),tax:body.tax||settings.regional?.tax||{pricesIncludeTax:true,defaultRate:20,enabledRates:[20]}}}}});
+    });await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return this.regionalSettings(tenantId,storeId);
+  }
+
+  async cacheSettings(tenantId:string,storeId:string){ await this.assertStore(tenantId,storeId); return this.prisma.cacheConfig.upsert({where:{storeId},create:{storeId},update:{}}); }
+  async updateCacheSettings(tenantId:string,storeId:string,body:any){ await this.assertStore(tenantId,storeId); const allowed=['enabled','appTtlSeconds','storefrontTtlSeconds','seoTtlSeconds','menuTtlSeconds','warmHome','warmCategories','settings']; const data:any={}; for(const k of allowed) if(body[k]!==undefined)data[k]=body[k]; return this.prisma.cacheConfig.upsert({where:{storeId},create:{storeId,...data},update:data}); }
+
+  async purgeCache(tenantId:string){ await this.cache.purgeTenant(tenantId); await this.cache.delPattern('public:site:*'); return {ok:true}; }
+  async cacheStats(tenantId:string){ const stats=await this.cache.stats(); return {tenantId,...stats}; }
+
+}

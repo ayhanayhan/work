@@ -1,0 +1,156 @@
+{%- layout none -%}
+{%- liquid
+    assign options_string = collection.sort_by | split: '||' | last
+    assign options = options_string | split: "___"
+    assign handles = collection.sort_by | replace: options_string, "" | remove_last: '||' | split: '||'
+    assign image_hover = options[0]
+    assign image_ratio = options[1]
+    assign text_align = options[2]
+    assign image_action = options[3]
+    assign hover_underline = options[4]
+    assign show_badge_on_sale = options[5]
+    assign show_badge_sold_out = options[6]
+    assign show_badge_feature = options[7]
+    assign show_countdown = options[8]
+    assign show_vendor = options[9]
+    assign show_type = options[10]
+    assign show_price = options[11]
+    assign show_description = options[12]
+    assign truncate_product_name = options[13]
+    assign show_quantity = options[14]
+    assign button_type_product = options[15]
+    assign show_compare = options[16]
+    assign show_quick_view = options[17]
+    assign show_compare_mobile = options[18]
+    assign show_quick_view_mobile = options[19]
+    assign customize = options[20]
+    assign enable_rating_product_card = options[21]
+
+    if hover_underline == "true"
+    assign hover_underline = true
+    else
+    assign hover_underline = false
+    endif
+    
+    if show_badge_on_sale == "true"
+    assign show_badge_on_sale = true
+    else
+    assign show_badge_on_sale = false
+    endif
+    
+    if show_badge_sold_out == "true"
+    assign show_badge_sold_out = true
+    else
+    assign show_badge_sold_out = false
+    endif
+    
+    if show_badge_feature == "true"
+    assign show_badge_feature = true
+    else
+    assign show_badge_feature = false
+    endif
+    
+    if show_countdown == "true"
+    assign show_countdown = true
+    else
+    assign show_countdown = false
+    endif
+    
+    if show_vendor == "true"
+    assign show_vendor = true
+    else
+    assign show_vendor = false
+    endif
+    
+    if show_type == "true"
+    assign show_type = true
+    else
+    assign show_type = false
+    endif
+    
+    if show_price == "true"
+    assign show_price = true
+    else
+    assign show_price = false
+    endif
+    
+    if show_description == "true"
+    assign show_description = true
+    else
+    assign show_description = false
+    endif
+    
+    if truncate_product_name == "true"
+    assign truncate_product_name = true
+    else
+    assign truncate_product_name = false
+    endif
+    
+    if show_quantity == "true"
+    assign show_quantity = true
+    else
+    assign show_quantity = false
+    endif
+    
+    if show_compare == "true"
+    assign show_compare = true
+    else
+    assign show_compare = false
+    endif
+    
+    if show_quick_view == "true"
+    assign show_quick_view = true
+    else
+    assign show_quick_view = false
+    endif
+    
+    if show_compare_mobile == "true"
+    assign show_compare_mobile = true
+    else
+    assign show_compare_mobile = false
+    endif
+    
+    if show_quick_view_mobile == "true"
+    assign show_quick_view_mobile = true
+    else
+    assign show_quick_view_mobile = false
+    endif
+
+    if enable_rating_product_card == "true"
+    assign enable_rating_product_card = true
+    else
+    assign enable_rating_product_card = false
+    endif    
+-%}
+{%- for handle in handles -%}
+{%- assign product = all_products[handle] -%}
+{%- render 'product-card',
+    customize:customize,
+    product_card_product:product,
+    product_collection:'',
+    image_ratio_value:image_ratio,
+    image_hover_type:image_hover,
+    show_secondary_image:image_action,
+    show_price:show_price,
+    show_vendor:show_vendor,
+    show_type:show_type,
+    hover_underline:hover_underline,
+    button_type_product: button_type_product,
+    show_quantity: show_quantity,
+    show_badge_sold_out:show_badge_sold_out,
+    show_badge_on_sale:show_badge_on_sale,
+    show_badge_feature:show_badge_feature,
+    show_countdown:show_countdown,
+    truncate_product_name:truncate_product_name,
+    show_wishlist: true,
+    show_compare: show_compare,
+    show_quick_view: show_quick_view,
+    show_wishlist_mobile: true,
+    show_compare_mobile: show_compare_mobile,
+    show_quick_view_mobile: show_quick_view_mobile,
+    text_aligment: text_align,
+    show_description: show_description,
+    remove_from_wishlist:true,
+    enable_rating_product_card:enable_rating_product_card
+  -%}
+{%- endfor -%}

@@ -1,0 +1,221 @@
+{%- comment -%}
+    Renders a product card
+
+    Accepts:
+-    - product_collection: {Object}
+    - image_ratio_value: {String} Size of the product image card. Values are "auto", "portrait", "landscape", "square" and "round". Default is "auto" (optional)
+    - show_button_quickview: {Boolean} Show the product button "Quick view". Default: false
+    - show_badge_sold_out: {Boolean} Show the product badge "Sold Out". Default: true
+    - show_badge_on_sale: {Boolean} Show the product badge "On Sale". Default: true
+	- show_badge_feature: {Boolean} Show the product badge "Feature". Default: true
+    - show_countdown: {Boolean} Show the product countdown. Default: true
+    - show_secondary_image: {Boolean} Show the secondary image on hover. Default: false (optional)
+    - show_vendor: {Boolean} Show the product vendor. Default: false
+    - show_type: {Boolean} Show the product type. Default: false
+    - hover_underline: {Boolean} The product name hover underline. Default: false (optional)
+    - truncate_product_name: {Boolean} Truncate the product name. Value is 48. Default: false (optional)
+    - show_price: {Boolean} Show the product price. Default: true
+    - button_type_product: {String} Size of the product image card. Values are "hide", "show", "show only text" and "show only icon". Default is "show"
+	- page_is_wide: {Boolean} Page width for image size. Default: false
+	- section_id: {String} The ID of the section that contains this card.
+    - hide_product_card_swatches: {Boolean} Show product card swatches. Default: false
+    - image_hover_type: {String}
+    - show_quantity: {Boolean} Add to cart count number
+    - small_radius: {Boolean} Default false
+    - show_wishlist: {Boolean} Default false
+    - show_compare: {Boolean} Default false
+    - show_quick_view: {Boolean} Default false
+    - show_wishlist_mobile: {Boolean} Default false
+    - show_compare_mobile: {Boolean} Default false
+    - show_quick_view_mobile: {Boolean} Default false
+    - text_aligment: {String}
+    - show_description: {Boolean} Default false
+
+    Usage:
+    {%- render 'product-card-placeholder',
+       image_hover_type: section.settings.image_hover,
+       show_price:section.settings.show_price,
+       show_vendor:section.settings.show_vendor,
+       show_type:section.settings.show_type
+    -%}
+{%- endcomment -%}
+{%- liquid
+    unless customize
+    assign text_aligment = settings.text_align_product_card
+    assign hover_underline = settings.hover_underline_product_card
+    assign show_badge_on_sale = settings.show_badge_on_sale_product_card
+    assign show_badge_sold_out = settings.show_badge_sold_out_product_card
+    assign show_badge_feature = settings.show_badge_feature_product_card
+    assign show_countdown = settings.show_countdown_product_card
+    assign show_vendor = settings.show_vendor_product_card
+    assign show_type = settings.show_type_product_card
+    assign show_price = settings.show_price_product_card
+    assign show_description = settings.show_description_product_card
+    assign truncate_product_name = settings.truncate_product_name_product_card
+    assign show_quantity = settings.show_quantity_product_card
+    assign button_type_product = settings.button_type_product_product_card
+    assign button_type_product_mobile = settings.button_type_product_mobile_product_card
+    assign show_wishlist = settings.show_wishlist_product_card
+    assign show_compare = settings.show_compare_product_card
+    assign show_quick_view = settings.show_quick_view_product_card
+    assign show_wishlist_mobile = settings.show_wishlist_mobile_product_card
+    assign show_compare_mobile = settings.show_compare_mobile_product_card
+    assign show_quick_view_mobile = settings.show_quick_view_mobile_product_card
+    endunless
+-%}
+{%- assign pr_name_size = pr_name_size | default: 'product-card-name-size' -%}
+
+<div class="product-card {{ text_aligment }} {%- if show_secondary_image != "gallery" -%}{% if image_hover_type == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover_type }}{% endif %}-personal{% endif %}{% if button_type_product != "hide" %} {{ settings.product_card_button_type }}{% endif %}{% if settings.product_card_image_resize == "contain" %} product-card-image--contain{% endif %}{% if settings.product_card_button_type == "product_card__button_hover" and show_quantity %} product-card__quantity-form{% endif %}">
+  
+  <div class="product-card__image__container image-hover-personal-element">
+    <div class="product-card__image">
+      <div class="product-card__image__url{% if show_secondary_image == "gallery" %} product-card__image__url__slider-mask{% endif %}">
+        {%- if show_secondary_image != "gallery" -%}
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+          {%- render "component-image-product-card",
+              image_ratio_value: image_ratio_value,
+              load_priority_low: 'true',
+              section_index: section.index,
+              small_radius: small_radius,
+              placeholder_icon: placeholder_icon
+          -%}
+        </div>
+        {%- else -%}
+        <swiper-slider class="swiper swiper__no-padding-bottom swiper-nested swiper__animated-arrows swiper-no-pad swiper-no-marg swiper-slide__with-bg{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}"
+                       data-swiper-desktop-grid="1"
+                       data-swiper-desktop-lg-grid="1"
+                       data-swiper-desktop-md-grid="1"
+                       data-swiper-tablet-grid="1"
+                       data-swiper-mobile-grid="1"
+                       data-gutter="0"
+                       data-gutter-mobile="0"
+                       data-grid="1,1,1,1,1"
+                       data-autoplay="false"
+                       data-autoheight="true"
+                       data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+          >
+          <div class="swiper-wrapper">
+            {%- for i in (1..4) -%}
+            <div class="swiper-slide" lazy="true">
+              <div class="image-hover-box__container">
+                {%- render "component-image-product-card",
+                    image_ratio_value: image_ratio_value,
+                    load_priority_low: 'true',
+                    section_index: section.index,
+                    small_radius: small_radius,
+                    placeholder_icon: placeholder_icon
+                -%}
+              </div>
+            </div>
+            {%- endfor -%}
+          </div>
+        </swiper-slider>
+        <div class="swiper-control-container swiper-control-container__absolute">
+          <div class="internal-swiper-button-prev">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+          <div class="swiper-pagination hide-desktop"></div>
+          <div class="internal-swiper-button-next">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <product-form class="product-card__content">
+    <div class="form">
+    <div class="product-card__content__main">
+      {%- if show_vendor -%}
+      <div class="body3">
+        <div class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">VENDOR</div>
+      </div>
+      {%- endif -%}
+      {%- if show_type -%}
+      <div class="body3 mt3">
+        <div class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">TYPE</div>
+      </div>
+      {%- endif -%}
+
+      <div class="body2 mt3 product-card__heading">
+        <div class="{{ pr_name_size }} product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+          <{{ settings.product_name_tag }}>Product name</{{ settings.product_name_tag }}>
+        </div>
+      </div>
+
+      {%- if show_price and settings.cart_type != "catalog_mode" -%}
+      <div id="price-card-7230940479554template--16066808086594__featured_collection_wc3MPd">
+        <div class="price__container">
+          <div class="price">
+            <div class="price__regular body3">
+              €19,95 USD
+            </div>
+            <div class="price__sale {{ settings.product_card_price_size }} mt3">€15,95 EUR</div>
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- if show_description -%}
+      <div class="mt8 body3 product-card__description">Small description from metafields</div>
+      {%- endif -%}
+
+    </div>
+
+    {%- if button_type_product != "hide" and settings.cart_type != "catalog_mode" -%}
+    <div class="product-card__interface{% if show_quantity %} product-card__interface--small{% endif %}{% if show_quantity and button_type_product == 'only_icon' %} product-card__interface--quantity{% endif %}">
+      <div id="form-testdata"
+           class="product-card__form"
+        >
+        {%- if show_quantity -%}
+        <quantity-input class="field quantity product-card__quantity">
+          <button class="quantity__button no-js-hidden" name="minus" type="button">
+			{{- 'icon-minus' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </button>
+          <input class="field__input quantity__input"
+                type="number"
+                name="quantity"
+                id="form-testdata"
+                min="1"
+                value="1"
+                >
+          <button class="quantity__button no-js-hidden" name="plus" type="button">
+			    {{- 'icon-plus' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </button>
+        </quantity-input>
+        {%- endif -%}
+        <button type="submit"
+                name="add"
+                class="quick-add__submit btn btn__transition-text btn-card-width {% if button_type_product == 'only_icon' %} only-child{% endif %}"
+                data-type="{% if show_quantity and button_type_product == 'only_icon' %}type0{% elsif button_type_product == 'only_icon' %}type1{% elsif button_type_product == 'only_text' %}type2{% elsif button_type_product == 'show' %}type3{% endif %}"
+                >
+          <div class="btn__texts">
+            {%- if show_quantity and button_type_product == 'only_icon' -%}
+            <span class="btn__top-text is-visible">
+            {%- render "icon-cart" -%}
+            </span>
+            <span class="btn__bottom-text is-hidden">
+            {%- render "icon-cart" -%}
+            </span>
+            {%- else -%}
+            <span class="btn__top-text is-visible">
+            {%- if button_type_product != "only_text" -%}{%- render "icon-cart" -%}{%- endif -%}
+            {%- if button_type_product != "only_icon" -%}
+            {{ 'products.product.add_to_cart' | t }}
+            {%- endif -%}
+            </span>
+            <span class="btn__bottom-text is-hidden">
+            {%- if button_type_product != "only_text" -%}{%- render "icon-cart" -%}{%- endif -%}
+            {%- if button_type_product != "only_icon" -%}
+            {{ 'products.product.add_to_cart' | t }}
+            {%- endif -%}
+            </span>
+            {%- endif -%}
+          </div>
+        </button>
+      </div>
+    </div>
+    {%- else -%}
+    <div class="product-card__interface product-card__interface__icons">
+    </div>
+    {%- endif -%}
+    </div>
+  </product-form>
+</div>

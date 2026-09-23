@@ -1,0 +1,106 @@
+{%- assign obj_collection = block.settings.collection -%}
+{%- capture content -%}
+  {%- if obj_collection != blank -%}
+  {%- for product in obj_collection.products limit: block.settings.product_limit -%}
+  <div class="swiper-slide" lazy="true">
+
+  {%- render 'product-card',
+      customize: block.settings.customize,
+      product_card_product: product,
+      product_collection:obj_collection,
+      image_ratio_value: block.settings.image_ratio,
+      image_hover_type: section.settings.image_hover,
+      show_secondary_image: 'normal',
+      show_price:block.settings.show_price,
+      show_vendor:block.settings.show_vendor,
+      show_type:false,
+      hover_underline:block.settings.hover_underline,
+      button_type_product: "hide",
+      show_quantity: false,
+      show_badge_sold_out:block.settings.show_badge_sold_out,
+      show_badge_on_sale:block.settings.show_badge_on_sale,
+      show_badge_feature:block.settings.show_badge_feature,
+      show_countdown:block.settings.show_countdown,
+      truncate_product_name:block.settings.truncate_product_name,
+      show_wishlist: false,
+      show_compare: false,
+      show_quick_view: false,
+      show_wishlist_mobile: false,
+      show_compare_mobile: false,
+      show_quick_view_mobile: false,
+      text_aligment: block.settings.text_align,
+      show_description: false,
+      enable_rating_product_card: block.settings.enable_rating_product_card
+    -%}
+    
+  </div>
+  {%- endfor -%}
+  {%- else -%}
+
+  {%- for i in (1..block.settings.product_limit) -%}
+  <div class="swiper-slide" lazy="true">
+  {%- capture placeholder_icon -%}
+  {%- cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4' -%}
+  {%- endcapture -%}
+  {%- render 'product-card-placeholder',
+      image_ratio_value: block.settings.image_ratio,
+      image_hover_type: section.settings.image_hover,
+      show_secondary_image: 'normal',
+      show_price:block.settings.show_price,
+      show_vendor:block.settings.show_vendor,
+      show_type:false,
+      hover_underline:block.settings.hover_underline,
+      button_type_product: "hide",
+      show_quantity: false,
+      show_badge_sold_out:block.settings.show_badge_sold_out,
+      show_badge_on_sale:block.settings.show_badge_on_sale,
+      show_badge_feature:block.settings.show_badge_feature,
+      show_countdown:block.settings.show_countdown,
+      truncate_product_name:block.settings.truncate_product_name,
+      show_wishlist: false,
+      show_compare: false,
+      show_quick_view: false,
+      show_wishlist_mobile: false,
+      show_compare_mobile: false,
+      show_quick_view_mobile: false,
+      text_aligment: block.settings.text_align,
+      placeholder_icon:placeholder_icon,
+      show_description: false
+    -%}
+  </div>
+  {%- endfor -%}
+
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="swiper-no-mask-mobile">
+  {%- assign data_grid = "1," | append: block.settings.grid_tablet | append:"," | append: block.settings.grid | append:"," | append: block.settings.grid | append:"," | append: block.settings.grid -%}
+  <swiper-slider class="swiper swiper__no-padding-bottom"
+                 data-swiper-desktop-grid="{{ block.settings.grid }}"
+                 data-swiper-desktop-lg-grid="{{ block.settings.grid }}"
+                 data-swiper-desktop-md-grid="{{ block.settings.grid }}"
+                 data-swiper-tablet-grid="{{ block.settings.grid_tablet }}"
+                 data-swiper-mobile-grid="1"
+                 data-gutter="15"
+                 data-gutter-mobile="15"
+                 data-grid="{{ data_grid }}"
+                 data-autoplay="false"
+                 data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+    >
+    <div class="swiper-wrapper swiper-wrapper--max-height">
+      {{ content }}
+    </div>
+  </swiper-slider>
+  {%- liquid
+      if block.settings.customize == true and block.settings.text_align == "text-center"
+      assign text_aligment = "justify-content-center"
+      elsif block.settings.customize == false and settings.text_align_product_card == "text-center"
+      assign text_aligment = "justify-content-center"
+      endif
+  -%}
+  <div class="swiper-control-container swiper-control-container--small-offset {{ text_aligment }}">
+    <div class="custom-swiper-button-prev{% unless block.settings.desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    <div class="swiper-pagination{% unless block.settings.desktop_navigation contains "dots" %} hide-desktop{% endunless %}"></div>
+    <div class="custom-swiper-button-next{% unless block.settings.desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+  </div>
+</div>

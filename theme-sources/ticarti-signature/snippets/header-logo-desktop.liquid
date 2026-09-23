@@ -1,0 +1,72 @@
+{% comment %}
+  Header icons: search, account, wishlist, compare, cart
+
+  Accepts:
+  - section: {Object} Section paramatres object
+
+  Usage:
+  {%- render "header-logo-desktop",
+      section:section
+  -%}
+{% endcomment %}
+
+{%- if request.page_type == 'index' -%}
+<h1 class="visually-hidden">{{ shop.name }}</h1>
+{%- endif -%}
+<div class="header__heading">
+  <a href="{{ routes.root_url }}" class="header__heading-link{% if section.settings.logo_zoom_out %} logo-zoom-in{% endif %} clear-underline" aria-label="{{ shop.name }}">
+    {%- assign logo_svg = section.settings.logo_svg -%}
+    {%- assign image_src = section.settings.logo -%}
+    {%- assign logo_max_width = section.settings.logo_max_width -%}
+    {%- if logo_svg != blank -%}
+    {%- assign width = logo_svg | split: 'width="' | last | split: '"' | first | times: 1.0 -%}
+    {%- assign height = logo_svg | split: 'height="' | last | split: '"' | first | plus: 0 -%}
+    {%- assign aspect_ratio = height | divided_by: width -%}
+    <div class="header__heading-logo--svg" style="--max-width: {{ logo_max_width }}px; --max-height: {{ logo_max_width | times: aspect_ratio }}px;">
+      {{ logo_svg }}
+    </div>
+    {%- elsif image_src -%}
+    {%- assign image_size_2x = logo_max_width | times: 2 | at_most: 5760 -%}
+    <img srcset="{{ image_src | image_url: width: logo_max_width }} 1x, {{ image_src | image_url: width: image_size_2x }} 2x"
+         src="{{ image_src | image_url: width: logo_max_width }}"
+         class="header__heading-logo"
+         alt="{{ image_src.alt | default: shop.name | escape }}"
+         style="max-width: {{ logo_max_width }}px"
+         width="{{ logo_max_width }}"
+         height="{{ logo_max_width | divided_by: image_src.aspect_ratio }}"
+         loading="lazy"
+         >
+    {%- else -%}
+    <span class="h5">{{ shop.name }}</span>
+    {%- endif -%}
+  </a>
+  
+  {%- if template.name == "index" and settings.fixed_header_on_index -%}
+  <a href="{{ routes.root_url }}" class="header__heading-link__transparent header__heading-link logo-zoom-in clear-underline" aria-label="{{ shop.name }}">
+    {%- assign logo_svg = settings.logo_svg_transparent -%}
+    {%- assign image_src = settings.logo_transparent -%}
+    {%- assign logo_max_width = settings.logo_max_width_transparent -%}
+    {%- if logo_svg != blank -%}
+    {%- assign width = logo_svg | split: 'width="' | last | split: '"' | first | times: 1.0 -%}
+    {%- assign height = logo_svg | split: 'height="' | last | split: '"' | first | plus: 0 -%}
+    {%- assign aspect_ratio = height | divided_by: width -%}
+    <div class="header__heading-logo--svg" style="--max-width: {{ logo_max_width }}px; --max-height: {{ logo_max_width | times: aspect_ratio }}px;">
+      {{ logo_svg }}
+    </div>
+    {%- elsif image_src -%}
+    {%- assign image_size_2x = logo_max_width | times: 2 | at_most: 5760 -%}
+    <img srcset="{{ image_src | image_url: width: logo_max_width }} 1x, {{ image_src | image_url: width: image_size_2x }} 2x"
+         src="{{ image_src | image_url: width: logo_max_width }}"
+         class="header__heading-logo"
+         alt="{{ image_src.alt | default: shop.name | escape }}"
+         style="max-width: {{ logo_max_width }}px"
+         width="{{ logo_max_width }}"
+         height="{{ logo_max_width | divided_by: image_src.aspect_ratio }}"
+         loading="lazy"
+         >
+    {%- else -%}
+    <span class="h5">{{ shop.name }}</span>
+    {%- endif -%}
+  </a>
+  {%- endif -%}
+</div>

@@ -1,0 +1,173 @@
+{%- liquid
+    assign secondary_menu = ""
+    assign secondary_menu_links = ""
+    assign social_media = ""
+    assign country_selector = ""
+    assign language_selector = ""
+    assign mega_menu_index = '|'
+    assign svg_icons = ''
+    for block in section.blocks
+    case block.type
+    when 'main_menu_icons'
+    assign svg_icons = block
+    when 'mega_menu'
+    assign mega_menu_index = mega_menu_index | append: block.settings.mega_menu_item_name | append: '%%' | append: forloop.index0 | append: '|'
+    endcase
+    endfor
+    assign block_topbar = section.blocks | where: "type", "topbar"
+    assign block_topbar_object = section.blocks | where: "type", "topbar"
+    for block in block_topbar
+    assign block_topbar_object = block
+    assign secondary_menu_links = block.settings.secondary_menu.links
+    capture secondary_menu
+    render 'header-menu-secondary' linklist: block.settings.secondary_menu.links animation: 'menu--animation-underline'
+    endcapture
+    capture social_media
+    render "header-social-media", block:block
+    endcapture
+    capture country_selector
+    render "header-country-selector", block:block
+    endcapture
+    capture language_selector
+    render "header-language-selector", block:block
+    endcapture
+    endfor
+
+    render "section-css-background-header", section:section, block_topbar_object:block_topbar_object
+    render "section-component-top-line", section:section
+    capture page_width
+    if section.settings.width != "default"
+    echo section.settings.width
+    else
+    echo settings.page_width_main
+    endif
+    endcapture
+    assign topbar_settings_background = false
+-%}
+
+
+<header id="theme-section-{{ section.id }}"
+        data-role="{{ theme.role }}"
+        data-section-name="header-layout-vertical"
+  >
+    <div class="header__mobile{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background{% endif %}">
+      {%- render "header-mobile",
+          section: section,
+          page_width:page_width,
+          secondary_menu_links:secondary_menu_links,
+          social_media: social_media,
+          country_selector: country_selector,
+          language_selector:language_selector,
+          svg_icons:svg_icons
+      -%}
+    </div>
+    <header-desktop class="header__desktop{% unless section.settings.icons_text contains 'show' %} header__hide-icon-text{% endunless %}">
+      <div class="{{ page_width }} header-boxed-shadow">
+        <div class="header-boxed-shadow__item"></div>
+      </div>
+
+      {%- render "header-topbar",
+          block_topbar:block_topbar,
+          block_topbar_object:block_topbar_object,
+          topbar_settings_background:topbar_settings_background,
+          page_width:page_width,
+          secondary_menu:secondary_menu,
+          social_media:social_media,
+          country_selector:country_selector,
+          language_selector:language_selector          
+      -%}
+  
+      <div class="header__main header-layout-classic{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background{% endif %}">
+        {%- if section.settings.show_top_line -%}
+        <div{% if section.settings.width_line == "content" %} class="{{ page_width }}"{% endif %}>
+          <div class="header__line"></div>
+        </div>
+        {%- endif -%}
+        <div class="{{ page_width }}">
+          <div class="header {{ section.settings.logo_position }}">
+            {%- capture logo -%}{%- render "header-logo-desktop",section:section -%}{%- endcapture -%}
+
+            {% if section.settings.logo_position == 'logo-to-left' %}{{ logo }}<div></div>{% endif %}
+
+            {%- assign disable_phones_block = "" -%}
+            {%- if section.settings.logo_position == 'logo-to-center' -%}
+              {% assign phone = section.blocks | where: "type", "phone" %}
+              {%- if phone.size > 0 -%}
+              <div class="header-phone-number__desktop__left">
+              {%- for block in phone -%}
+            
+              {%- capture phone_content_button -%}
+              <div class="header-phone-number__desktop">
+                {%- if block.settings.phone__0 != blank or block.settings.phone_icon__0 != blank -%}
+                  {%- if block.settings.phone_as_link__0 -%}
+                  <a href="tel:{{ block.settings.phone__0 | replace:" ", "" }}" class="mt0 h5 clear-underline header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</a>
+                  {%- else -%}
+                  <p class="mt0 h5 header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</p>
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if block.settings.text__0 != blank -%}<p class="mt0 body3 phone-slogan">{{ block.settings.text__0 }}</p>{%- endif -%}
+              </div>
+              {%- endcapture -%}
+              {%- capture phone_content -%}{%- render "header-contacts", block:block -%}{%- endcapture -%}
+            
+              {%- if phone_content != blank -%}
+              <div class="header-phone-number__desktop__container enable-scrollbar-js">
+                <div class="header-phone-number__desktop__main{% if block.settings.open_on == "click" %} header-phone-number__desktop__on-click{% endif %}">
+                  {{ phone_content_button }}
+				           {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </div>
+                <div class="header-phone-number__desktop_submenu">
+                  <div class="header-phone-number__desktop_submenu__container scrollbar-height-js custom__scrollbar">
+                    {{ phone_content }}
+                  </div>
+                </div>
+              </div>
+              {%- else -%}
+              {{ phone_content_button }}
+              {%- endif -%}
+            
+              {%- endfor -%}
+              </div>
+            {%- else -%}
+            <div></div>
+            {%- endif -%}
+            {{ logo }}
+            {%- assign disable_phones_block = "disable" -%}
+            {%- endif -%}
+
+            {%- render "header-user-icons", section:section, hide_search_opened:true, disable_phones_block:disable_phones_block -%}
+
+          </div>
+          <div class="page-grid-1 no-row-gap page-grid__header-sidebar predictive-search__3-columns">
+            {%- if section.settings.menu != blank -%}
+            {%- if page_width == "page-wide" -%}<megamenu-size class="header-menu-vertical-container">
+            {%- else -%}<div class="header-menu-vertical-container">
+            {%- endif -%}
+              {%- render "header-menu-vertical",
+              	  linklist:section.settings.menu.links,
+              	  mega_menu_index:mega_menu_index,
+                  icons:svg_icons,
+              	  visible_items_count:visible_items_count,
+                  menu_font_weight:section.settings.menu_font_weight,
+                  icons_size:section.settings.icons_size
+              -%}
+            {%- if page_width != "page-wide" -%}</div>
+            {%- else -%}</megamenu-size>
+            {%- endif -%}
+            <div class="header-search-vertical-container">
+              {%- render "header-search-opened", show_search:"opened", fullwidth:true -%}
+            </div>
+            {%- else -%}
+            <div class="col-12">
+              {%- render "header-search-opened", show_search:"opened", fullwidth:true -%}
+            </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+
+      
+  </header-desktop>
+</header>
+

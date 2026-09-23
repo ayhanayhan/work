@@ -1,0 +1,135 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_heading": true,
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false
+      }
+    },
+    "accordion_mxCyqx": {
+      "type": "accordion",
+      "blocks": {
+        "text_aHg6td": {
+          "type": "text",
+          "settings": {
+            "heading_text": "How to submit a product for warranty repair?",
+            "description": "<p>To submit a product for warranty repair, please contact our customer support team first. You will need to provide your purchase receipt or order number along with a detailed description of the issue. Our team will guide you through the return process and direct you to the nearest authorized service center. Make sure to pack the product securely to avoid any damage during shipping.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "text_ekNx4j": {
+          "type": "text",
+          "settings": {
+            "heading_text": "Which products are eligible for warranty repair?",
+            "description": "<p>Products that are covered by the manufacturer’s warranty and show defects in materials or workmanship during the warranty period are eligible for repair. The warranty typically does not cover damage caused by misuse, accidents, unauthorized repairs, or normal wear and tear. Please refer to the warranty terms included with your product for specific details.<br/><br/></p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "text_4kcLQ4": {
+          "type": "text",
+          "settings": {
+            "heading_text": "Where to go for warranty service?",
+            "description": "<p>Warranty service can be obtained at any of our authorized service centers. You can find the nearest service center by visiting our website or contacting customer support. Using authorized centers ensures that repairs are performed by qualified technicians with genuine parts.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "text_iQCDCg": {
+          "type": "text",
+          "settings": {
+            "heading_text": "What if the service center cannot repair the product within the warranty period?",
+            "description": "<p>If the authorized service center cannot repair the product within the warranty period, you may be eligible for a replacement or refund, depending on the warranty policy. Please contact our customer support team immediately to discuss your options and initiate the necessary procedures.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "text_fg77DT": {
+          "type": "text",
+          "settings": {
+            "heading_text": "In which cases is the warranty not provided?",
+            "description": "<p>Warranty service is not provided in cases of:  </p><ul><li>Damage caused by misuse, negligence, or accidents</li><li>Unauthorized modifications or repairs</li><li>Normal wear and tear (such as scratches, fading, or battery depletion)</li><li>Use of the product in conditions not specified by the manufacturer</li><li>Loss or damage due to shipping after purchase, unless shipped by us<br/></li></ul><p>Please review the warranty terms carefully to understand your coverage.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_aHg6td",
+        "text_ekNx4j",
+        "text_4kcLQ4",
+        "text_iQCDCg",
+        "text_fg77DT"
+      ],
+      "name": "t:names.accordion",
+      "settings": {
+        "show_all_text_in_admin": true,
+        "main_subheading": "",
+        "main_heading": "",
+        "main_desc": "",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "show_image": "hide",
+        "image_hover": "default",
+        "image_ratio": "auto",
+        "align_content": "center",
+        "row_reverse": false,
+        "text_content_width": 70,
+        "disable_accordion": false,
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "accordion_mxCyqx"
+  ]
+}

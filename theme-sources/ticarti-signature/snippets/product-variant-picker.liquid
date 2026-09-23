@@ -1,0 +1,418 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - section: {Object} passing the section information.
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  - page_width: {String}
+  Usage:
+  {% render 'product-variant-picker', section:section, product: product, block: block, product_form_id: product_form_id, page_width:page_width %}
+{% endcomment %}
+{%- assign updateurl = updateurl | default: true, allow_false: true -%}
+{%- unless product.has_only_default_variant -%}
+  {%- assign v_headings = "||" -%}
+  {%- for i in (1..6) -%}
+  {%- assign variant_name = "variant_name_" | append: i -%}
+  {%- assign variant_name = block.settings[variant_name] -%}
+  {%- if variant_name != blank -%}
+  {%- assign v_headings = v_headings | append: variant_name | append: "||" -%}
+  {%- endif -%}
+  {%- endfor -%}
+
+  <variant-selects
+    {% if block.settings.hide_soldout_variants %}
+    class="hide_soldout_variants"
+    {% if product.available == false %}data-hide-variants="true"{% endif %}
+    {% endif %}
+    id="variant-selects-{{ section.id }}"
+    data-url="{{ product.url | split: '?' | first }}"
+    data-section="{{ section.id }}"
+    {% if updateurl == false %}data-update-url="false"{% endif %}
+    {{ block.shopify_attributes }}
+  >
+
+    {%- liquid
+        assign swatches_design = settings.swatches_design
+        assign variants_names = settings.variants_names
+		    assign css_colors = settings.css_colors
+       
+        if swatches_design != 'none'
+        assign variants_names = '||' | append:variants_names | strip_newlines | downcase | strip | replace: ', ', ',' | replace: ',', '||' | append: '||'
+        assign css_colors = ',' | append:css_colors | strip_newlines | downcase | strip | replace: ': ', ':'
+        
+        if swatches_design == 'image'
+        for option in product.options_with_values
+        assign option_name = '||' | append: option.name | append: '||' | downcase
+        if variants_names contains option_name
+        assign option_name = 'option' | append: forloop.index
+        break
+        endif
+        endfor
+        capture get_product_images_from_variants_options
+        render 'get_product_images_from_variants_options', product:product, option_name:option_name, image_width:'240x'
+        endcapture
+        capture get_product_images_from_variants_options_ratio
+        render 'get_product_images_from_variants_options', product:product, option_name:option_name, type:'image_ratio'
+        endcapture
+        endif            
+        else
+        assign variants_names = ''
+        assign css_colors = ''
+        endif
+
+        assign text_grid_desktop = block.settings.buttons_count
+        assign color_grid_desktop = block.settings.color_count
+        assign image_grid_desktop = block.settings.images_count
+
+        if page_width == 'page-wide'
+
+        if text_grid_desktop == "auto"
+        if section.settings.page_width <= 29
+        assign text_grid_desktop = 2
+        elsif section.settings.page_width <= 39
+        assign text_grid_desktop = 4
+        elsif section.settings.page_width <= 49
+        assign text_grid_desktop = 5
+        elsif section.settings.page_width <= 59
+        assign text_grid_desktop = 6
+        elsif section.settings.page_width <= 69
+        assign text_grid_desktop = 7
+        elsif section.settings.page_width <= 79
+        assign text_grid_desktop = 8
+        else
+        assign text_grid_desktop = 8
+        endif
+        endif
+
+        if color_grid_desktop == "auto"
+        if section.settings.page_width <= 29
+        assign color_grid_desktop = 12
+        elsif section.settings.page_width <= 39
+        assign color_grid_desktop = 14
+        elsif section.settings.page_width <= 49
+        assign color_grid_desktop = 16
+        elsif section.settings.page_width <= 59
+        assign color_grid_desktop = 18
+        elsif section.settings.page_width <= 69
+        assign color_grid_desktop = 20
+        elsif section.settings.page_width <= 79
+        assign color_grid_desktop = 22
+        else
+        assign color_grid_desktop = 24
+        endif
+        endif
+
+        if image_grid_desktop == "auto"
+        if section.settings.page_width <= 39
+        assign image_grid_desktop = 6
+        elsif section.settings.page_width <= 59
+        assign image_grid_desktop = 8
+        elsif section.settings.page_width <= 79
+        assign image_grid_desktop = 10
+        else
+        assign image_grid_desktop = 12
+        endif
+        endif
+
+        else
+
+        if text_grid_desktop == "auto"
+        if section.settings.page_width <= 29
+        assign text_grid_desktop = 2
+        elsif section.settings.page_width <= 39
+        assign text_grid_desktop = 3
+        elsif section.settings.page_width <= 49
+        assign text_grid_desktop = 4
+        elsif section.settings.page_width <= 59
+        assign text_grid_desktop = 5
+        elsif section.settings.page_width <= 69
+        assign text_grid_desktop = 5
+        elsif section.settings.page_width <= 79
+        assign text_grid_desktop = 6
+        else
+        assign text_grid_desktop = 6
+        endif
+        endif
+
+        if color_grid_desktop == "auto"
+        if section.settings.page_width <= 29
+        assign color_grid_desktop = 8
+        elsif section.settings.page_width <= 39
+        assign color_grid_desktop = 10
+        elsif section.settings.page_width <= 49
+        assign color_grid_desktop = 12
+        elsif section.settings.page_width <= 59
+        assign color_grid_desktop = 14
+        elsif section.settings.page_width <= 69
+        assign color_grid_desktop = 16
+        elsif section.settings.page_width <= 79
+        assign color_grid_desktop = 18
+        else
+        assign color_grid_desktop = 20
+        endif
+        endif
+
+        if image_grid_desktop == "auto"
+        if section.settings.page_width <= 39
+        assign image_grid_desktop = 4
+        elsif section.settings.page_width <= 59
+        assign image_grid_desktop = 6
+        elsif section.settings.page_width <= 79
+        assign image_grid_desktop = 8
+        else
+        assign image_grid_desktop = 10
+        endif
+        endif
+        endif
+
+    -%}
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = block.settings.picker_type
+
+        if block.settings.picker_type == 'dropdown'
+          assign picker_type = 'swatch_dropdown'
+        else
+          assign picker_type = 'swatch'
+        endif      
+      -%}
+     
+      {%- if picker_type == 'swatch' -%}
+
+      <fieldset class="product-form__input">
+        <legend class="variants-label {{ block.settings.heading_size }}">
+          <span>{{ option.name }}: <span class="variants-label__value">{{ option.selected_value }}</span></span>
+          {%- assign option_name = '||' | append: option.name | append: '||' -%}
+          {%- if v_headings contains option_name -%}
+          <modal-opener class="variants-modal__button" data-modal="#PopupModal-{{ block.id }}{{ forloop.index }}">
+            <button id="ProductPopup-{{ block.id }}{{ forloop.index }}"
+                    class="variants-modal__button__item link link-hover-span button-transition-up"                      
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-label="{{ 'general.label.button' | t }}"
+                    >
+			  {{- 'icon-question' | append: settings.system_icon_thickness | inline_asset_content -}}
+            </button>
+          </modal-opener>
+          {%- endif -%}
+        </legend>
+        
+        {%- liquid
+            assign custom_class = ""
+            assign form_container_mobile = ""
+            assign grop_options_type = 'button'
+            assign option_name = option_name | downcase
+
+            assign swatch_value = null
+            for value in option.values
+            if swatch_count > 0
+              if value.swatch.image
+                assign image_url = value.swatch.image | image_url: width: 200
+                assign swatch_value = 'url(' | append: image_url | append: ')'
+              elsif value.swatch.color
+                assign swatch_value = value.swatch.color
+              endif
+            endif
+            endfor
+
+            assign _color = false
+            if variants_names contains option_name and swatches_design == 'color'
+            assign _color = true
+            endif
+
+            if variants_names contains option_name and swatches_design == 'image'
+            capture grid_style
+            echo 'style="--grid-desktop:grid_desktop_liquid;--grid-mobile:5;"' | replace: 'grid_desktop_liquid', image_grid_desktop
+            endcapture
+            assign form_container_mobile = "product-form__container__color"
+            assign grop_options_type = 'image'
+            elsif _color or swatch_value
+            capture grid_style
+            echo 'style="--grid-desktop:grid_desktop_liquid;--grid-mobile:7;"' | replace: 'grid_desktop_liquid', color_grid_desktop
+            endcapture
+            assign form_container_mobile = "product-form__container__color"
+            assign grop_options_type = 'color'
+            else
+            if text_grid_desktop == "adapt"
+            assign custom_class = "product-form__container--flex-desktop"
+            else
+            assign grid_style_d = '--grid-desktop:' | append: text_grid_desktop | append: ';'
+            endif
+            if block.settings.buttons_count_mobile == "adapt"
+            assign custom_class = custom_class | append:" product-form__container--flex-mobile"
+            else
+            assign grid_style_m = '--grid-desktop-mob:' | append: block.settings.buttons_count_mobile | append: ';'
+            endif
+            assign grid_style = 'style="' | append: grid_style_m | append: grid_style_d | append: '"'
+            endif
+        -%}
+
+        <div class="mt10 product-form__container {{ form_container_mobile }} {{ custom_class }}" {{ grid_style }}>
+          {%- for value in option.values -%}
+          {%- liquid
+            assign swatch_value = null
+            if swatch_count > 0
+              if value.swatch.image
+                assign image_url = value.swatch.image | image_url: width: 200
+                assign swatch_value = 'url(' | append: image_url | append: ')'
+              elsif value.swatch.color
+                assign swatch_value = value.swatch.color
+              endif
+            endif
+          -%}
+          {%- assign color_swatch = ',' | append: value | append: ':' | downcase -%}
+          <div class="product-form__item">
+            <input type="radio" id="{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                   class="product-form__item__input{% if value.available == false  %} disabled{% endif %}"
+                   name="{{ option.name }}"
+                   value="{{ value | escape }}"
+                   form="{{ product_form_id }}"
+                   {% if value.variant.id %}
+                   data-variant-id="{{ value.variant.id }}"
+                   {% endif %}
+                   {% if option.selected_value == value %}checked{% endif %}
+                   >
+            {%- liquid
+              if get_product_images_from_variants_options contains color_swatch and grop_options_type == 'image'
+              assign image_src = get_product_images_from_variants_options | split: color_swatch | last | split: '_%%_' | first
+              assign image_src_ratio = get_product_images_from_variants_options_ratio | split: color_swatch | last | split: '_%%_' | first
+              endif
+              assign type_colors = false
+              if css_colors contains color_swatch and grop_options_type == 'color'
+              assign type_colors = true
+              endif
+            -%}
+
+            {%- if get_product_images_from_variants_options contains color_swatch and grop_options_type == 'image' and image_src != blank -%}
+            <div class="visual-display">
+            {%- liquid
+                if settings.variants_image_ratio == 'auto'
+                assign image_ratio = image_src_ratio
+                else
+                assign image_ratio = settings.variants_image_ratio
+                endif
+                -%}
+              <label for="{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                     class="color__swatch color__swatch--image visual-display__image global__tooltip--hover {{ settings.image_hover_picker }}">
+                <div class="visual-display-swatch__image{% if image_ratio == '1.00' %} visual-display-swatch__image__circle{% endif %}">
+                  <div class="image-hover-box{% if image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+                    <div style="--aspect-ratio:{{ image_ratio }}">
+                      <img src="{{ image_src }}" class="visual-display-swatch__image-child" loading="lazy" alt="">
+                    </div>
+                  </div>
+                  {%- assign image_ratio = image_ratio | plus:0 -%}
+                </div>
+                <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ value }}</div></global-tooltip>
+              </label>
+            </div>
+
+            {%- elsif type_colors or swatch_value -%}
+            {%- liquid
+                if type_colors
+                assign color = css_colors | split: color_swatch | last | split: ',' | first
+                else
+                assign color = swatch_value
+                endif
+                capture main_bg_color
+                echo settings.color_background
+                endcapture
+                assign main_bg_color = main_bg_color | downcase
+                assign var_bg_color = color | downcase
+            -%}
+            <div class="visual-display">
+              <label for="{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                     class="color__swatch visual-display__color global__tooltip--hover{% if main_bg_color == var_bg_color %} visual-display__color-background{% endif %}"
+                     {% unless color contains 'url(' %}style="--color-swatch-background:{{ color }};"{% endunless %}>
+                <span class="hidden">{{ value }}</span>
+                <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ value }}</div></global-tooltip>
+                {%- liquid
+                  assign accent_brightness = color | color_extract: 'lightness'
+                  if accent_brightness < 50
+                  assign color_style = '#ffffff'
+                  else
+                  assign accent_brightness = settings.color_base | color_extract: 'lightness'
+                  if accent_brightness < 50
+                  assign color_style = settings.color_base
+                  else
+                  assign color_style = '#000000'
+                  endif
+                  endif
+                -%}
+                {% if color contains 'url(' %}
+                <div class="product-form__item__color-image" style="--color-swatch-background:{{ color }};"></div>
+                {% endif %}
+                <div class="product-form__item__disabled-line--vertical" style="--color-base:{{ color_style }};"></div>
+                <div class="product-form__item__disabled-line--vertical product-form__item__disabled-line--flip" style="--color-base:{{ color_style }};"></div>
+              </label>
+            </div>
+            {%- else -%}
+            <label for="{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}" class="btn btn--variant visual-display--button btn__transition-text w-full">
+              <span class="variant__btn__text">{{ value }}</span>
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ value }}</span>
+                <span class="btn__bottom-text is-hidden">{{ value }}</span>
+              </div>
+            </label>
+            {%- endif -%}
+          </div>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+        
+      {%- else -%}
+      <div class="product-form__input product-form__input__small-top">
+        <label class="variants-label half {{ block.settings.heading_size }}" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+          <span>{{ option.name }}: <span class="variants-label__value">{{ option.selected_value }}</span></span>
+          {%- assign option_name = '||' | append: option.name | append: '||' -%}
+          {%- if v_headings contains option_name -%}
+          <modal-opener class="variants-modal__button" data-modal="#PopupModal-{{ block.id }}{{ forloop.index }}">
+            <button id="ProductPopup-{{ block.id }}{{ forloop.index }}"
+                    class="variants-modal__button__item link link-hover-span button-transition-up"                      
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-label="{{ 'general.label.button' | t }}"
+                    >
+              {{- 'icon-question' | append: settings.system_icon_thickness | inline_asset_content -}}
+            </button>
+          </modal-opener>
+          {%- endif -%}
+        </label>
+        
+        <div class="mt10 product-form__input__select field w-full">
+
+          <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                  class="field__input field__input--no-label"
+                  name="options[{{ option.name | escape }}]"
+                  form="{{ product_form_id }}"
+                  >
+            {%- if section.settings.default_variant == "select_variant" and product.variants.size > 1 -%}
+            <option class="option-empty" selected="selected">{{- 'products.product.select_option' | t -}}</option>
+            {%- endif -%}
+            {%- for value in option.values -%}
+            <option value="{{ value | escape }}"
+                    data-variant-id="{{ value.variant.id }}"
+                    {% if value.available == false %}class="disabled"{% endif %}
+                    {% if option.selected_value == value and section.settings.default_variant == "default" %}selected="selected"
+                    {% elsif option.selected_value == value %}selected-default
+                    {% endif %}
+                    data-option-text="- {{ 'products.product.unavailable' | t }}"
+            >
+              {{- value -}}{% if value.available == false %} - {{ 'products.product.unavailable' | t }}{% endif %}
+            </option>
+            {%- endfor -%}
+          </select>
+          <div class="field__icon field__icon--select">
+            {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+    {%- endfor -%}
+  <script type="application/json">
+  {{ product.selected_or_first_available_variant | json }}
+  </script>
+  </variant-selects>
+{%- endunless -%}

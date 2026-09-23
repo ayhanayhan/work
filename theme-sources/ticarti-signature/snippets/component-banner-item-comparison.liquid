@@ -1,0 +1,50 @@
+{%- liquid
+    if block.settings.url != blank
+    assign html_tag_open = '<a' | append: ' href="' | append: block.settings.url | append:'" ' | append: 'aria-label="' | append:block.settings.heading_text | append:'"'
+    assign html_tag_close = '</a>'
+    else
+    assign html_tag_open = '<div'
+    assign html_tag_close = '</div>'
+    endif
+-%}
+{%- if image_hover -%}
+{%- assign item_image_hover = image_hover -%}
+{%- else -%}
+{%- assign item_image_hover = section.settings.image_hover -%}
+{%- endif -%}
+<div class="banner__block-item a--no-hover-color hover-area banner__block-item-with-text {% if item_image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ item_image_hover }}{% endif %}{% if image_ratio_value == '1.00' %} image-aspratio-round--desktop{% endif %}{% if image_ratio_mobile_value == '1.00' %} image-aspratio-round--mobile{% endif %}">
+  {%- render "component-image",
+      image_ratio_value: image_ratio_value,
+      image_ratio_mobile_value: image_ratio_mobile_value,
+      image_source: block.settings.image,
+      image_mobile_source: block.settings.image_mobile,
+      load_priority_low: load_priority_low,
+      section_index: section.index,
+      video_html:"",
+      placeholder_icon: placeholder_icon
+  -%}
+
+  {%- capture content -%}
+  {%- if block.settings.heading_text != blank -%}
+  {{ html_tag_open }} class="mt0 mb0 {{ block.settings.heading_size }} heading-color-block-hover{% if block.settings.hover_underline %} animation-underline{% endif %}">{{ block.settings.heading_text }}{{ html_tag_close }}
+  {%- endif -%}
+    
+  {%- if block.settings.desc != blank -%}<p class="mt10 body2">{{ block.settings.desc }}</p>{%- endif -%}
+  {%- if block.settings.button_name != blank -%}
+  {{ html_tag_open }} class="btn btn__transition-text native-hover mt16"
+    {% if block.settings.url == blank %} aria-disabled="true"{% endif %}>
+    <div class="btn__texts">
+      <span class="btn__top-text is-visible">{{ block.settings.button_name }}</span>
+      <span class="btn__bottom-text is-hidden">{{ block.settings.button_name }}</span>
+    </div>
+  {{ html_tag_close }}
+  {%- endif -%}
+  {%- endcapture -%}
+  {%- if content != blank -%}
+  <div class="banner__block-item__content {{ block.settings.position }}">
+    <div class="banner__block-item__content__items mt-first-0 {{ block.settings.text_align }}{% if block.settings.show_background %} banner__background-box{% endif %}">
+      {{ content }}
+    </div>
+  </div>
+  {%- endif -%}
+</div>

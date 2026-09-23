@@ -1,0 +1,39 @@
+<style>
+  @media (min-width: 577px){
+    .main404{
+      margin-top: 80px;
+      margin-bottom: 80px;
+    }
+  }
+  @media (max-width: 576px){
+    .main404{
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+  }
+</style>
+<div class="{{ settings.page_width_main }} main404">
+  <div class="page-width-eight">
+    <div class="page-grid-1 no-row-gap text-center">
+      <div class="big-svg-icon big-svg-icon__opacity-20">
+        <svg class="theme-icon" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M43.5 7.5H16.5C13.1863 7.5 10.5 10.1863 10.5 13.5V37.5H4.5V13.5C4.5 6.87258 9.87258 1.5 16.5 1.5H43.5C50.1274 1.5 55.5 6.87258 55.5 13.5V37.5H49.5V13.5C49.5 10.1863 46.8137 7.5 43.5 7.5Z" fill="black"/>
+        <path d="M43.591 13.409C44.4697 14.2877 44.4697 15.7123 43.591 16.591L42.182 18L43.591 19.409C44.4697 20.2877 44.4697 21.7123 43.591 22.591C42.7123 23.4697 41.2877 23.4697 40.409 22.591L39 21.182L37.591 22.591C36.7123 23.4697 35.2877 23.4697 34.409 22.591C33.5303 21.7123 33.5303 20.2877 34.409 19.409L35.818 18L34.409 16.591C33.5303 15.7123 33.5303 14.2877 34.409 13.409C35.2877 12.5303 36.7123 12.5303 37.591 13.409L39 14.818L40.409 13.409C41.2877 12.5303 42.7123 12.5303 43.591 13.409Z" fill="black"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.25 42C3.69365 42 0 45.6937 0 50.25C0 54.8064 3.69365 58.5 8.25 58.5H51.75C56.3064 58.5 60 54.8064 60 50.25C60 45.6937 56.3064 42 51.75 42H8.25ZM51.75 48H8.25C7.00736 48 6 49.0074 6 50.25C6 51.4926 7.00736 52.5 8.25 52.5H51.75C52.9926 52.5 54 51.4926 54 50.25C54 49.0074 52.9926 48 51.75 48Z" fill="black"/>
+        <path d="M25.591 16.591C26.4697 15.7123 26.4697 14.2877 25.591 13.409C24.7123 12.5303 23.2877 12.5303 22.409 13.409L21 14.818L19.591 13.409C18.7123 12.5303 17.2877 12.5303 16.409 13.409C15.5303 14.2877 15.5303 15.7123 16.409 16.591L17.818 18L16.409 19.409C15.5303 20.2877 15.5303 21.7123 16.409 22.591C17.2877 23.4697 18.7123 23.4697 19.591 22.591L21 21.182L22.409 22.591C23.2877 23.4697 24.7123 23.4697 25.591 22.591C26.4697 21.7123 26.4697 20.2877 25.591 19.409L24.182 18L25.591 16.591Z" fill="black"/>
+        <path d="M30.0003 30.75C26.102 30.75 22.6654 32.731 20.6434 35.7516C19.9522 36.7842 18.5547 37.061 17.5221 36.3698C16.4894 35.6785 16.2127 34.2811 16.9039 33.2484C19.7255 29.0331 24.5375 26.25 30.0003 26.25C35.4632 26.25 40.2752 29.0331 43.0968 33.2484C43.788 34.2811 43.5113 35.6785 42.4786 36.3698C41.446 37.061 40.0485 36.7842 39.3573 35.7516C37.3353 32.731 33.8987 30.75 30.0003 30.75Z" fill="black"/>
+        </svg>
+      </div>
+      <h1 class="h2 mt30 mb0">{{ 'templates.404.title' | t }}</h1>
+      <p class="mt16 body2">{{ 'templates.404.subtext' | t }}</p>
+      <div class="mt40">
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn__transition-text btn-wide">
+          <div class="btn__texts">
+            <span class="btn__top-text is-visible">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+            <span class="btn__bottom-text is-hidden">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

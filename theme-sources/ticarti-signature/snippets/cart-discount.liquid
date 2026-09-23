@@ -1,0 +1,123 @@
+{%- doc -%}
+  Renders a cart discount form.
+  @param {string} section_id - The section ID
+{%- enddoc -%}
+
+{% liquid
+  assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
+  for item in cart.items
+    for allocation in item.line_level_discount_allocations
+      if allocation.discount_application.type == 'discount_code'
+        assign discount_codes = item.line_level_discount_allocations | slice: forloop.index0 | map: 'discount_application' | map: 'title' | concat: discount_codes
+      endif
+    endfor
+  endfor
+
+  assign discount_codes = discount_codes | uniq
+
+  # Evaluate the boolean expression for the disclosure state
+  if discount_codes.size == 0
+    assign disclosure_expanded = false
+  else
+    assign disclosure_expanded = true
+  endif
+%}
+<cart-discount-component data-section-id="{{ section_id }}">
+    <div class="cart-discount__content">
+        <form on:submit="/applyDiscount" onsubmit="return false;" class="cart-discount__form field__form-with-button">
+            <label for="cart-discount" class="visually-hidden" >{{- 'general.cart.discount' | t -}}</label>
+            <div class="field">
+                <input id="cart-discount"
+                    class="field__input"
+                    type="text"
+                    name="discount"
+                    placeholder="{{ 'general.cart.discount_code' | t }}"
+                    required
+                >
+                <label class="field__label" for="cart-discount">{{ 'general.cart.discount_code' | t }}</label>
+            </div>
+            <button type="submit" class="btn btn__transition-text" aria-label="{{- 'general.cart.discount' | t -}}">
+                <div class="btn__texts">
+                    <span class="btn__top-text is-visible">{{ 'general.cart.apply' | t }}</span>
+                    <span class="btn__bottom-text is-hidden">{{ 'general.cart.apply' | t }}</span>
+                </div>
+            </button>
+        </form>
+    </div>
+    <div class="mt16 cart-discount__error body3 hidden"
+         role="alert"
+         ref="cartDiscountError"
+        >
+        <span class="svg-wrapper">{{- 'icon-attention' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+        <p class="mt0 cart-discount__error-text cart-primary-typography hidden" ref="cartDiscountErrorDiscountCode">
+        {{ 'general.cart.discount_code_error' | t: code: 'test' }}
+        </p>
+        <p class="mt0 cart-discount__error-text cart-primary-typography hidden" ref="cartDiscountErrorShipping">
+        {{ 'general.cart.shipping_discount_error' | t }}
+        </p>
+    </div>
+    <div class="cart-discount__codes">{% for discount_code in discount_codes %}
+        <div class="cart-discount__pill"
+            data-discount-code="{{ discount_code }}"
+            aria-label="{{ 'general.cart.discount_applied' | t: code: discount_code }}"
+            >
+            <button type="button"
+                    class="cart-discount__pill-remove btn btn--discount-pill btn__transition-text"
+                    aria-label="{{ 'general.cart.remove_discount' | t: code: discount_code }}"
+                >
+                <div class="btn__texts">
+                    <span class="btn__top-text is-visible">{{ discount_code }}{{- 'icon-close-small' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                    <span class="btn__bottom-text is-hidden">{{ discount_code }}{{- 'icon-close-small' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                </div>
+            </button>
+        </div>
+        {% endfor %}</div>
+</cart-discount-component>
+{% stylesheet %}
+.cart-discount__error{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    gap:8px;
+    color:var(--color-error);
+}
+.cart-discount__error svg path,
+.cart-discount__error svg.theme-icon path{
+    fill:var(--color-error);
+}
+.cart-discount__codes{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px; 
+}
+.cart-discount__codes:not(:empty){
+    margin-top:16px;
+}
+.btn.btn--discount-pill{
+  --background: var(--color-button_filter_reset);
+  --color:var(--color-button-text_filter_reset, var(--color-base));
+  --border:var(--color-button-border_filter_reset);
+  --background-hover: var(--color-button-hover_filter_reset);
+  --color-hover:var(--color-button-text-hover_filter_reset, var(--color-base));
+  --border-hover:var(--color-button-border-hover_filter_reset);
+  --border-width:var(--border-button-width_filter_reset);
+  --border-width-hover:var(--border-button-width-hover_filter_reset);
+  --icon:var(--color);
+  --icon-hover:var(--color-hover);
+  --button-opacity-hover:1;
+  --shadow-button-current:unset;
+  --shadow-button-current-hover:unset;
+  --self-border-width:var(--border-button-width_filter_reset);
+  --radius-button:var(--radius-button-swatches);
+}
+.btn--discount-pill svg{
+  opacity:.3;
+  transition: opacity var(--duration-medium) var(--animation-bezier);
+}
+@media (min-width: 1025px){
+  .btn--discount-pill:hover svg{
+    opacity:1;
+  }
+}
+{% endstylesheet %}
+

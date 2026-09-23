@@ -1,0 +1,58 @@
+<header-drawer>
+{%- assign sections_count = section.settings.sections_count | plus: 0 -%}
+<details class="vertical-menu"
+         {% if sections_count > 0 and template == 'index' %} data-menu-opened="{{ sections_count }}" open{% endif %}
+         >
+  <summary>
+    <div class="h6 vertical-menu__button">
+      <span>{{ 'sections.header.vertical_menu.main_button' | t }}</span>
+      {%- render "icon-hamburger-menu" -%}
+    </div>
+  </summary>
+  <vertical-menu class="vertical-menu__container" hide-before-load="true" data-extra-height="{{ section.settings.extra_height }}">
+    <nav>
+      <ul class="vertical-menu__items{% if section.settings.show_menu_dividers %} vertical-menu__items--border{% endif %} unstyle-ul">
+        {%- for link in linklist -%}
+        {%- if link.links != blank -%}
+
+        {%- assign megamenu_item = '|' | append: link.title | append: '%%' -%}
+        {%- if mega_menu_index contains megamenu_item -%}
+        {%- assign megamenu_item = mega_menu_index | split: megamenu_item | last | split: '|' | first | plus: 0 -%}
+        {%- else -%}
+        {%- assign megamenu_item = '' -%}
+        {%- endif -%}
+
+        <li class="submenu-container{% if megamenu_item != '' %} submenu--megamenu{% endif %} vertical-menu--hover{% if megamenu_item != '' %}{% if request.design_mode and section.blocks[megamenu_item].settings.admin_open_megamenu %} admin-select-menu-item{% endif %}{% endif %}">
+          <a href="{{ link.url }}" class="{{ menu_font_weight }} body2 vertical-menu-item">
+            {%- render 'get-menu-icon-code', icons:icons, forloop_index:forloop.index, icons_size:"imageheight" -%}
+            <span class="vertical-menu-item__text__item w-full"><span>{{ link.title | escape }}</span>{%- render "menu-badge" item_name:link.title, show_inline:true -%}</span>
+            {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </a>
+          {%- liquid
+              if megamenu_item == ''
+              render "menu-submenu", link:link
+              else
+              render "menu-megamenu", link:link, megamenu_item:megamenu_item, vertical_menu:true
+              endif
+          -%}
+        </li>
+        {%- else -%}
+        <li class="vertical-menu--hover">
+          <a href="{{ link.url }}" class="{{ menu_font_weight }} body2 vertical-menu-item">
+            {%- render 'get-menu-icon-code', icons:icons, forloop_index:forloop.index, icons_size:"imageheight" -%}
+            <span class="vertical-menu-item__text__item w-full"><span>{{ link.title | escape }}</span>{%- render "menu-badge" item_name:link.title, show_inline:true -%}</span>
+          </a>
+        </li>
+        {%- endif -%}
+        {%- endfor -%}
+      </ul>
+      <div class="vertical-menu__show-more hide">
+        <div class="link link-hover-span {{ menu_font_weight }}">
+          <span data-main-text="{{ 'sections.header.vertical_menu.show_all' | t }}" data-active-text="{{ 'sections.header.vertical_menu.hide' | t }}">{{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+        </div>
+      </div>
+
+    </nav>
+  </vertical-menu>
+</details>
+</header-drawer>

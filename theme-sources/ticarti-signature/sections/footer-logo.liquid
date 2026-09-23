@@ -1,0 +1,436 @@
+{%- capture section_styles -%}
+{%- capture __css -%}
+{%- if section.settings.color_lines  != "rgba(0,0,0,0)" -%}--color-lines:{{ section.settings.color_lines }};{%- endif -%}
+{%- endcapture -%}
+{%- if __css != blank -%}
+ #theme-section-{{ section.id }}{
+  {{ __css }}
+}
+{%- endif -%}
+{%- endcapture -%}
+<style>{{ section_styles }}
+.footer-logo{
+    display:flex;
+}
+.footer-logo__link{
+    width:{{ section.settings.desktop_width }}%;
+}
+.footer-logo svg{
+    display:flex;
+    width:100%;
+    height:auto;
+}
+.footer-logo img{
+    width:100%;
+    height:auto;
+}
+@media (max-width:1024px){
+    .footer-logo__link{
+        width:{{ section.settings.tablet_width }}%;
+    }
+}
+@media (max-width:576px){
+    .footer-logo__link{
+        width:{{ section.settings.mobile_width }}%;
+    }
+}
+</style>
+{%- render "section-css-background", section:section -%}
+{%- liquid
+    if template == "index" and section.settings.top_spacing_none_index == true
+    echo '<div class="index-top-spacing-none"></div>'
+    endif
+-%}
+{%- render "section-component-top-line", section:section -%}
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+{%- assign section_settings_background = false -%}{%- if section.settings.background != 'hide' and section.settings.background_width == "content_width" -%}{%- assign section_settings_background = true -%}{%- endif -%}
+<div id="theme-section-{{ section.id }}"
+     class="{% if section.settings.show_lines == false or section.settings.background == 'hide' %}top-spacing-{{ section.settings.top_spacing }}{% endif %}{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background section-background--{{ section.settings.background_spacing }}{% endif %}"
+     data-section-name="footer-logo">
+  <div class="{{ page_width }}{% if section_settings_background %} section-background--mobile-width{% endif %}">
+  {%- if section_settings_background -%}<div class="section-background section-background--{{ section.settings.background_spacing }} border__radius">{%- endif -%}
+    {%- if section.settings.background != 'show' and section.settings.show_parallax -%}<div class="section-background__elements"><div class="section-background__elements__item"></div></div>{%- endif -%}
+    <div class="page-grid-1 no-row-gap">
+        <div class="footer-logo justify-content-{{ section.settings.align_content }} w-full">
+            <a href="{{ routes.root_url }}" class="footer-logo__link clear-underline">
+                {%- assign logo_svg = section.settings.logo_svg -%}
+                {%- assign image_src = section.settings.logo -%}
+                {%- if logo_svg != blank -%}
+                <div class="footer-logo__svg">
+                    {{ logo_svg }}
+                </div>
+                {%- elsif image_src -%}
+                <img src="{{ image_src | image_url: width: image_src.width }}"
+                     class="footer-logo__image"
+                    alt="{{ image_src.alt | default: shop.name | escape }}"
+                    width="{{ image_src.width }}"
+                    height="{{ image_src.height }}"
+                    loading="lazy"
+                    >
+                {%- else -%}
+                <span class="h2">{{ shop.name }}</span>
+                {%- endif -%}
+            </a>
+        </div>
+    </div>
+    {% if section_settings_background %}</div>{%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "t:names.footer_logo",
+  	"tag": "section",
+    "disabled_on": {
+      "groups": ["header","custom.popups"]
+    },
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "select",
+        "id": "top_spacing",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "normal",
+            "label": "Normal"
+          }
+        ],
+        "default": "normal",
+        "label": "Top spacing"
+      },
+      {
+        "type": "checkbox",
+        "id": "top_spacing_none_index",
+        "default": false,
+        "label": "Home page top spacing none",
+        "info": "Works only on home page"
+      },
+      {
+        "type": "select",
+        "id": "width",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "page-width",
+            "label": "Boxed"
+          },
+          {
+            "value": "page-wide",
+            "label": "Wide"
+          }
+        ],
+        "default": "default",
+        "label": "Width",
+        "info": "The Wide option works for screens with 1440px width and more."
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Image"
+      },
+      {
+        "type": "html",
+        "id": "logo_svg",
+        "label": "Svg code",
+        "info": "Use instead of an image. SVG should have width and height attributes."
+      },
+      {
+        "type": "select",
+        "id": "align_content",
+        "options": [
+            {
+                "value": "start",
+                "label": "left"
+            },
+            {
+                "value": "center text-center",
+                "label": "Center"
+            },
+            {
+                "value": "end text-right",
+                "label": "Right"
+            }
+        ],
+        "default": "center text-center",
+        "label": "Align text relative to icon"
+      },
+      {
+        "type": "range",
+        "id": "desktop_width",
+        "min": 40,
+        "max": 100,
+        "step": 1,
+        "default": 50,
+        "unit": "%",
+        "label": "Desktop width"
+      },
+      {
+        "type": "range",
+        "id": "tablet_width",
+        "min": 40,
+        "max": 100,
+        "step": 1,
+        "default": 50,
+        "unit": "%",
+        "label": "Tablet width"
+      },
+      {
+        "type": "range",
+        "id": "mobile_width",
+        "min": 40,
+        "max": 100,
+        "step": 1,
+        "default": 100,
+        "unit": "%",
+        "label": "Mobile width"
+      },
+      {
+        "type": "header",
+        "content": "Dividing line"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_lines",
+        "default": false,
+        "label": "Show"
+      },
+      {
+        "visible_if": "{{ section.settings.show_lines == true }}",
+        "type": "select",
+        "id": "lines_width",
+        "options": [
+          {
+            "value": "fullwidth",
+            "label": "Fullwidth"
+          },
+          {
+            "value": "content_width",
+            "label": "Content width"
+          }
+        ],
+        "default": "fullwidth",
+        "label": "Width",
+        "info": "Doesn't work on mobile phone"
+      },
+      {
+        "type": "header",
+        "content": "Background"
+      },
+      {
+        "type": "select",
+        "id": "background",
+        "options": [
+          {
+            "value": "hide",
+            "label": "Hide"
+          },
+          {
+            "value": "color",
+            "label": "Color"
+          },
+          {
+            "value": "gradient",
+            "label": "Gradient"
+          },
+          {
+            "value": "image",
+            "label": "Image"
+          }
+        ],
+        "default": "hide",
+        "label": "Background"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'color' }}",
+        "type": "color",
+        "id": "color_background",
+        "default": "rgba(0,0,0,0)",
+        "label": "Color"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'gradient' }}",
+        "type": "color_background",
+        "id": "gradient",
+        "label": "Gradient"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' }}",
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Image"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image != blank }}",
+        "type": "range",
+        "id": "image_overlay_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "unit": "%",
+        "label": "Image overlay opacity",
+        "default": 0
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image != blank and section.settings.image_overlay_opacity > 0 }}",
+        "type": "color",
+        "id": "image_overlay_color",
+        "default":"rgba(0,0,0,0)",
+        "label": "Image overlay color"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' }}",
+        "type": "image_picker",
+        "id": "background_image_mobile",
+        "label": "Image mobile"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image_mobile != blank }}",
+        "type": "range",
+        "id": "image_overlay_opacity_mobile",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "unit": "%",
+        "label": "Image overlay opacity. Mobile",
+        "default": 0
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image_mobile != blank and section.settings.image_overlay_opacity_mobile > 0 }}",
+        "type": "color",
+        "id": "image_overlay_color_mobile",
+        "default":"rgba(0,0,0,0)",
+        "label": "Image overlay color. Mobile"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' }}",
+        "type": "checkbox",
+        "id": "show_parallax",
+        "default": false,
+        "label": "Enable parallax effect"
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' }}",
+        "type": "select",
+        "id": "imagealign",
+        "label": "Image position",
+        "info": "Works for all screens",
+        "default": "center",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          }
+        ]
+      },
+      {
+        "visible_if": "{{ section.settings.background == 'image' }}",
+        "type": "select",
+        "id": "imagesize",
+        "label": "Image size",
+        "info": "Works for all screens",
+        "default": "cover",
+        "options": [
+          {
+            "value": "cover",
+            "label": "Full background size"
+          },
+          {
+            "value": "contain",
+            "label": "Contain"
+          }
+        ]
+      },
+      {
+        "visible_if": "{{ section.settings.background != 'hide' }}",
+        "type": "select",
+        "id": "background_width",
+        "options": [
+          {
+            "value": "fullwidth",
+            "label": "Fullwidth"
+          },
+          {
+            "value": "content_width",
+            "label": "Content width"
+          }
+        ],
+        "default": "fullwidth",
+        "label": "Width"
+      },
+      {
+        "visible_if": "{{ section.settings.background != 'hide' }}",
+        "type": "select",
+        "id": "background_spacing",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "normal",
+            "label": "Normal"
+          }
+        ],
+        "default": "normal",
+        "label": "Top, bottom spacing"
+      },
+      {
+        "visible_if": "{{ section.settings.background != 'hide' }}",
+        "type": "checkbox",
+        "id": "remove_bottom_spacing",
+        "default": false,
+        "label": "Remove bottom spacing"
+      },
+      {
+        "type": "color",
+        "id": "color_lines",
+        "default":"rgba(0,0,0,0)",
+        "label": "Lines"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "t:names.footer_logo",
+        "category": "t:categories.storytelling"
+      }
+    ]
+  }
+{% endschema %}

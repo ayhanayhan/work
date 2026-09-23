@@ -1,0 +1,17 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: API_ORIGIN
+    value: "https://commerce-api-ynhobkprgq-ew.a.run.app"
+  - variable: NEXT_PUBLIC_API_URL
+    value: "/api/v1"
+
+  - variable: ADMIN_ORIGIN
+    value: "https://commerce-admin--wedidit-64fae.europe-west4.hosted.app"
+  - variable: SUPERADMIN_ORIGIN
+    value: "https://commerce-superadmin--wedidit-64fae.europe-west4.hosted.app"

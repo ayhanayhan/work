@@ -1,0 +1,284 @@
+{%- render "section-css-background", section:section -%}
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+{%- assign section_settings_background = false -%}{%- if section.settings.background != 'hide' and section.settings.background_width == "content_width" -%}{%- assign section_settings_background = true -%}{%- endif -%}
+<div id="theme-section-{{ section.id }}"
+     class="top-spacing-{{ section.settings.top_spacing }}{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background section-background--{{ section.settings.background_spacing }}{% endif %}"
+     data-section-name="main-page">
+  <div class="{{ page_width }}{% if section_settings_background %} section-background--mobile-width{% endif %}">
+    {%- if section_settings_background -%}<div class="section-background section-background--{{ section.settings.background_spacing }} border__radius">{%- endif -%}
+    {%- if section.settings.background != 'show' and section.settings.show_parallax -%}<div class="section-background__elements"><div class="section-background__elements__item"></div></div>{%- endif -%}
+    <div class="page-width-eight">
+      <div class="page-grid-1">
+        <div class="page-content__mockup">
+          {%- if section.settings.show_heading -%}<h1 class="mt0 {% if page.content == blank %}mb0{% endif %} section-heading-container {{ section.settings.heading_aligment }}">{{ page.title | escape }}</h1>{%- endif -%}
+          {{ page.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "default": true,
+      "label": "Show page heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_aligment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "top_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "color",
+          "label": "Color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        }
+      ],
+      "default": "hide",
+      "label": "Background"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'color' }}",
+      "type": "color",
+      "id": "color_background",
+      "default": "rgba(0,0,0,0)",
+      "label": "Color"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'gradient' }}",
+      "type": "color_background",
+      "id": "gradient",
+      "label": "Gradient"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Image"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image != blank }}",
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 0
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image != blank and section.settings.image_overlay_opacity > 0 }}",
+      "type": "color",
+      "id": "image_overlay_color",
+      "default":"rgba(0,0,0,0)",
+      "label": "Image overlay color"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Image mobile"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image_mobile != blank }}",
+      "type": "range",
+      "id": "image_overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Image overlay opacity. Mobile",
+      "default": 0
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' and section.settings.background_image_mobile != blank and section.settings.image_overlay_opacity_mobile > 0 }}",
+      "type": "color",
+      "id": "image_overlay_color_mobile",
+      "default":"rgba(0,0,0,0)",
+      "label": "Image overlay color. Mobile"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "type": "checkbox",
+      "id": "show_parallax",
+      "default": false,
+      "label": "Enable parallax effect"
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "type": "select",
+      "id": "imagealign",
+      "label": "Image position",
+      "info": "Works for all screens",
+      "default": "center",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "type": "select",
+      "id": "imagesize",
+      "label": "Image size",
+      "info": "Works for all screens",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Full background size"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "visible_if": "{{ section.settings.background != 'hide' }}",
+      "type": "select",
+      "id": "background_width",
+      "options": [
+        {
+          "value": "fullwidth",
+          "label": "Fullwidth"
+        },
+        {
+          "value": "content_width",
+          "label": "Content width"
+        }
+      ],
+      "default": "fullwidth",
+      "label": "Width"
+    },
+    {
+      "visible_if": "{{ section.settings.background != 'hide' }}",
+      "type": "select",
+      "id": "background_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top, bottom spacing"
+    },
+    {
+      "visible_if": "{{ section.settings.background != 'hide' }}",
+      "type": "checkbox",
+      "id": "remove_bottom_spacing",
+      "default": false,
+      "label": "Remove bottom spacing"
+    }
+  ]
+}
+{% endschema %}

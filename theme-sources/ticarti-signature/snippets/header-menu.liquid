@@ -1,0 +1,53 @@
+{% comment %}
+    Classic main menu
+
+    linklist: {{ Object }} menu links
+    animation: {{ String }} main menu text animation
+    mega_menu_index: {{ String }} attach menu item to megamenu by index
+    menu_font_weight: {{ String }} menu item style
+    page_width: {{ String }} style with page width
+    custom_class: {{ String }} custom class
+    start_count: {{ Number }} optional. Counter for building a menu in parts
+    end_count: {{ Number }} optional. Counter for building a menu in parts
+    Usage:
+    {% render 'header-menu', linklist:section.settings.menu.links, animation:'menu--animation-underline', mega_menu_index:mega_menu_index, menu_font_weight:section.settings.menu_font_weight, page_width:page_width %}
+{% endcomment %}
+{%- assign start_count = start_count | default: 0 -%}
+{%- assign end_count = end_count | default: linklist.size -%}
+<nav class="list-menu {{ animation }} list-menu--classic {{ custom_class }}">
+  <ul class="unstyle-ul list-menu--inline">
+    {%- for link in linklist offset: start_count, limit: end_count -%}
+    {%- liquid 
+        assign megamenu_item = '|' | append: link.title | append: '%%'
+        if mega_menu_index contains megamenu_item
+        assign megamenu_item = mega_menu_index | split: megamenu_item | last | split: '|' | first | plus: 0
+        assign megamenu_block = section.blocks[megamenu_item]
+        else
+        assign megamenu_item = ''
+        endif
+    -%}
+    {%- if link.links != blank or megamenu_item != "" -%}
+    <li class="list-menu--hover{% if megamenu_item != '' %} submenu--megamenu{% endif %} submenu-container submenu--to-left{% if megamenu_item != '' %} enable-scrollbar-megamenu-js{% endif %}{% if request.design_mode and megamenu_block.settings.admin_open_megamenu %} admin-select-menu-item{% endif %}">
+      <a href="{{ link.url }}" class="body2 list-menu__item{% if link.current %} list-menu__item--active{% endif %} {{ menu_font_weight }}">
+        <span>{{ link.title | escape }}{%- render "menu-badge" item_name:link.title, show_inline:true -%}{{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+      </a>
+
+      {%- liquid
+          if megamenu_item == ''
+          render "menu-submenu", link:link
+          endif
+       -%}
+    </li>
+    {%- if megamenu_item != '' -%}
+    {%- render "menu-megamenu", link:link, megamenu_item:megamenu_item, fullwidth_menu:true, page_width:page_width -%}
+    {%- endif -%}
+    {%- else -%}
+    <li class="list-menu--hover">
+      <a href="{{ link.url }}" class="body2 list-menu__item{% if link.current %} list-menu__item--active{% endif %} {{ menu_font_weight }}">
+        <span>{{ link.title | escape }}{%- render "menu-badge" item_name:link.title, show_inline:true -%}</span>
+      </a>
+    </li>
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</nav>

@@ -1,0 +1,327 @@
+{%- if template.name != 'product' -%}
+<footersticky-nav id="theme-section-{{ section.id }}"
+     data-section-name="footer-sticky-nav">
+    <style>
+        footersticky-nav{
+            display:none;
+        }
+        footersticky-nav .cart-count-bubble:empty{
+            display:none;
+        }
+        @media (max-width:1024px){
+            .activated{
+                transform: translateY(0);
+                opacity:1;
+            }
+            footersticky-nav{
+                display:block;
+                position:fixed;
+                bottom:0;
+                left:0;
+                right:0;
+                z-index:10;
+                opacity:0;
+                transform: translateY(100%);
+                transition: transform var(--duration-medium) var(--animation-bezier);
+            }
+            .footer-sticky-nav{
+                display:flex;
+                flex-direction:row;
+                justify-content: space-between;
+                align-items:center;
+                padding-left:calc(var(--padding-wide-horizontal-tablet) - 10px);
+                padding-right:calc(var(--padding-wide-horizontal-tablet) - 10px);
+                {%- assign str_color = settings.color_background_header_mobile | replace:',',',' -%}
+                {%- if str_color != "rgba(0,0,0,0)" -%}
+                --color-body-background:{{ str_color }};
+                {%- endif -%}
+                background:var(--color-body-background);
+                box-shadow: var(--shadow-header-mobile-invert);
+            }
+            .footer-sticky-nav__item{
+                position:relative;
+                display:flex;
+                flex-direction:column;
+                gap:2px;
+                justify-content:center;
+                align-items:center;
+                padding:15px 0;
+                background:transparent;
+                min-width:40px;
+            }
+            .footer-sticky-nav__item__icon{
+                position:relative;
+                display: flex;
+            }
+            .footer-sticky-nav__item svg path{
+                {%- assign str_color = settings.color_base_header_mobile | replace:',',',' -%}
+                fill:{%- if str_color != "rgba(0,0,0,0)" -%}{{ str_color }}{%- else -%}var(--color-base){%- endif -%};
+            }
+            .footer-sticky-nav__item__text{
+                font-size:12px;
+                {%- assign str_color = settings.color_base_header_mobile | replace:',',',' -%}
+                color:{%- if str_color != "rgba(0,0,0,0)" -%}{{ str_color }}{%- else -%}var(--color-base){%- endif -%};
+            }
+            .footer-sticky-nav__item .header__button__bubble{
+                {%- assign str_color = settings.color_counter_sub | replace:',',',' -%}{%- if str_color != "rgba(0,0,0,0)" -%}--color-bubble-bg:{{ str_color }};{%- endif -%}
+                {%- assign str_color = settings.color_counter_text_sub | replace:',',',' -%}{%- if str_color != "rgba(0,0,0,0)" -%}--color-bubble-text:{{ str_color }};{%- endif -%}
+                top:-11px;
+                right:-11px;
+            }
+            .footer-sticky-nav--hide-texts .footer-sticky-nav__item__text{
+                display:none;
+            }
+        }
+        {%- if section.settings.spacing_tablet == "custom" -%}
+        @media (min-width:577px) and (max-width:1024px){
+            .footer-sticky-nav{
+                padding-bottom: 20px;
+                justify-content:center;
+                gap:{{ section.settings.spacing_tablet_number }}px;
+            }
+        }
+        {%- endif -%}
+        @media (max-width:576px){
+            .footer-sticky-nav{
+                padding-left:calc(var(--page-padding-phone) - 10px);
+                padding-right:calc(var(--page-padding-phone) - 10px);
+                padding-bottom: 13px;
+                {%- if section.settings.spacing_mobile == "custom" -%}
+                justify-content:center;
+                gap:{{ section.settings.spacing_mobile_number }}px;
+                {%- endif -%}
+            }
+        }
+    </style>
+
+    <div class="footer-sticky-nav w-full{% if section.settings.enable_text == 'hide' %} footer-sticky-nav--hide-texts{% endif %}{% if section.settings.enable_text == 'show_only_text' %} footer-sticky-nav--text{% endif %}">
+        {%- if section.settings.enable_home -%}
+        <a href="{{ routes.root_url }}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text != 'show_only_text' -%}
+			{{- 'icon-home' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.home' | t }}</span>
+        </a>
+        {%- endif -%}
+
+        {%- if section.settings.enable_shop -%}
+        <a href="{{ section.settings.shop_url }}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text != 'show_only_text' -%}
+            {{- 'icon-catalog' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.shop' | t }}</span>
+        </a>
+        {%- endif -%}
+
+        {%- if section.settings.enable_search -%}
+        <a href="{{ routes.search_url }}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text != 'show_only_text' -%}
+            {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.search' | t }}</span>
+        </a>
+        {%- endif -%}
+
+        {%- if section.settings.enable_account and shop.customer_accounts_enabled -%}
+        <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text != 'show_only_text' -%}
+            {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.account' | t }}</span>
+        </a>
+        {%- endif -%}
+
+        {%- if settings.enable_compare and section.settings.enable_compare -%}
+        <a href="{{ settings.page_compare.url }}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text == 'show_only_text' -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.compare' | t }}: <compare-bubble><span class="header__button__bubble__count">0</span></compare-bubble></span>
+            {%- else -%}
+            <div class="footer-sticky-nav__item__icon">
+				{{- 'icon-compare' | append: settings.system_icon_thickness | inline_asset_content -}}
+                <compare-bubble class="header__button__bubble">
+                    <span class="body3-no-scale header__button__bubble__count"></span>
+                </compare-bubble>
+            </div>
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.compare' | t }}</span>
+            {%- endif -%}
+        </a>
+        {%- endif -%}
+
+        {%- if settings.enable_wishlist and section.settings.enable_wishlist -%}
+        <a href="{{ settings.page_wishlist.url }}" class="footer-sticky-nav__item clear-underline">
+            {%- if section.settings.enable_text == 'show_only_text' -%}
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.wishlist' | t }}: <wishlist-bubble><span class="header__button__bubble__count">0</span></wishlist-bubble></span>
+            {%- else -%}
+            <div class="footer-sticky-nav__item__icon">
+                {%- render 'icon-wishlist', icon_type:"normal" -%}
+                <wishlist-bubble class="header__button__bubble">
+                    <span class="body3-no-scale header__button__bubble__count"></span>
+                </wishlist-bubble>
+            </div>
+            <span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.wishlist' | t }}</span>
+            {%- endif -%}
+        </a>
+        {%- endif -%}
+
+        {%- if settings.cart_type != "catalog_mode" and section.settings.enable_cart -%}
+        <a href="{{ routes.cart_url }}" class="footer-sticky-nav__item clear-underline" id="cart-icon-bubble--footer">
+            {%- render "cart-icon-bubble--footer" -%}
+        </a>
+        {%- endif -%}
+    </div>
+</footersticky-nav>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "t:names.footer_sticky_nav",
+    "limit": 1,
+  	"tag": "section",
+    "enabled_on": {
+      "groups": ["footer"]
+    },
+    "settings": [
+        {
+            "type": "paragraph",
+            "content": "Section for quick navigation through the store. Always pinned at the bottom. Works on tablets and mobile devices."
+        },
+        {
+            "type": "paragraph",
+            "content": "Appears on the screen after the first user activity!"
+        },
+        {
+            "type": "select",
+            "id": "spacing_tablet",
+            "options": [
+            {
+                "value": "auto",
+                "label": "Auto"
+            },
+            {
+                "value": "custom",
+                "label": "Custom"
+            }
+            ],
+            "default": "auto",
+            "label": "Tablet spacing type"
+        },
+        {
+            "visible_if": "{{ section.settings.spacing_tablet == 'custom' }}",
+            "type": "range",
+            "id": "spacing_tablet_number",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Tablet spacing",
+            "default": 10
+        },
+        {
+            "type": "select",
+            "id": "spacing_mobile",
+            "options": [
+            {
+                "value": "auto",
+                "label": "Auto"
+            },
+            {
+                "value": "custom",
+                "label": "Custom"
+            }
+            ],
+            "default": "auto",
+            "label": "Mobile spacing type"
+        },
+        {
+            "visible_if": "{{ section.settings.spacing_mobile == 'custom' }}",
+            "type": "range",
+            "id": "spacing_mobile_number",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Mobile spacing",
+            "default": 10
+        },
+
+        {
+            "type": "select",
+            "id": "enable_text",
+            "options": [
+                {
+                    "value": "hide",
+                    "label": "Hide"
+                },
+                {
+                    "value": "show",
+                    "label": "Show"
+                },
+                {
+                    "value": "show_only_text",
+                    "label": "Only text"
+                }
+            ],
+            "default": "show",
+            "label": "Text for icons"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_home",
+            "default": true,
+            "label": "Home"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_shop",
+            "default": true,
+            "label": "Shop"
+        },
+        {
+            "visible_if": "{{ section.settings.enable_shop == true }}", 
+            "type": "url",
+            "id": "shop_url",
+            "default": "\/collections\/all",
+            "label": "Shop link"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_search",
+            "default": true,
+            "label": "Search"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_account",
+            "default": true,
+            "label": "Account",
+            "info": "Works if shop customer accounts enabled"
+        },
+        {
+            "visible_if": "{{ settings.enable_compare == true }}",
+            "type": "checkbox",
+            "id": "enable_compare",
+            "default": true,
+            "label": "Compare"
+        },
+        {
+            "visible_if": "{{ settings.enable_wishlist == true }}",
+            "type": "checkbox",
+            "id": "enable_wishlist",
+            "default": true,
+            "label": "Whishlist"
+        },
+        {
+            "visible_if": "{{ settings.cart_type != 'catalog_mode' }}",
+            "type": "checkbox",
+            "id": "enable_cart",
+            "default": true,
+            "label": "Cart"
+        }
+    ],
+    "presets": [
+      {
+      	"name": "t:names.footer_sticky_nav"
+      }
+    ]
+  }
+{% endschema %}

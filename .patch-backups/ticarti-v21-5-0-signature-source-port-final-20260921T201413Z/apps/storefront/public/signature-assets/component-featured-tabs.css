@@ -1,0 +1,96 @@
+.featured-tabs{
+    display: block;
+    margin-bottom: 40px;
+}
+.featured-tabs-mb0{
+    margin-bottom: 0px;
+}
+.featured-tabs.featured-tabs--tablet-inline{
+    margin-bottom: 20px;
+}
+.featured-tabs__container__content{
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 5px;
+    column-gap: 5px;
+}
+.featured-tab-products{
+  transition: opacity var(--duration-medium) var(--animation-bezier);
+}
+.tab__smooth_show{
+  opacity:1;
+}
+.featured-tab-products:not(.active){
+  display:none;
+}
+.featured-tabs--center .featured-tabs__container__content {
+  margin-left: auto;
+  margin-right: auto;
+}
+.featured-tabs__item.link.active{
+  pointer-events: none;
+}
+.featured-tabs--horizontal-line{
+  gap:0;
+}
+.featured-tabs--horizontal-line:after{
+  content:"";
+  display: block;
+  width:100%;
+  padding-top:16px;
+  border-bottom: 1px solid var(--color-lines);
+}
+.featured-tabs__container__content>*{
+  flex:0 0 auto;
+}
+@media (max-width:1024px){
+  .featured-tabs--tablet-inline .featured-tabs__container{
+    display:flex;
+    overflow:auto hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-tabs--tablet-inline .featured-tabs__container__content {
+    flex-wrap: nowrap;
+  }
+}
+@media (min-width:577px){
+  .featured-tabs--center .featured-tabs__container__content{
+    justify-content: center;
+  }
+}
+@media (max-width:576px){
+  .featured-tabs{
+    --item-padding-value:15px;
+    margin-left: calc(var(--item-padding-value) * -1);
+    width: calc(100% + var(--item-padding-value) * 2);
+  }
+  .featured-tabs__container{
+    display:flex;
+    overflow:auto hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-tabs__container__content{
+    flex-wrap: nowrap;
+  }
+  .featured-tabs__item:first-child {
+    margin-left: var(--item-padding-value);
+  }
+  .featured-tabs__item:last-child {
+    margin-right: 15px;
+  }
+  .featured-tabs__item:last-child:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: calc(100% + 15px);
+    height: 1px;
+    background: transparent;
+    pointer-events: none;
+  }
+  .featured-tabs--horizontal-line:after{
+    margin-left:15px;
+    width: calc(100% - 30px);
+  }
+}

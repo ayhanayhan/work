@@ -1,0 +1,202 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "show_heading": true,
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false
+      }
+    },
+    "gallery_JVc3bi": {
+      "type": "gallery",
+      "blocks": {
+        "item_7HPL3H": {
+          "type": "item",
+          "settings": {
+            "image": ""
+          }
+        },
+        "item_zAqidK": {
+          "type": "item",
+          "settings": {
+            "image": ""
+          }
+        },
+        "item_aLq3KD": {
+          "type": "item",
+          "settings": {
+            "image": ""
+          }
+        },
+        "item_68WRzp": {
+          "type": "item",
+          "settings": {
+            "image": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_7HPL3H",
+        "item_zAqidK",
+        "item_aLq3KD",
+        "item_68WRzp"
+      ],
+      "name": "t:names.gallery",
+      "settings": {
+        "main_subheading": "",
+        "main_heading": "",
+        "main_desc": "",
+        "heading_aligment": "text-center",
+        "icon_name": "",
+        "link_name": "",
+        "url": "",
+        "icon_name_2": "",
+        "link_name_2": "",
+        "url_2": "",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-grid-4",
+        "grid_tablet": "page-grid-st-4",
+        "mobile_grid": "2",
+        "image_hover": "default",
+        "image_ratio": "auto",
+        "image_zoom": true,
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_lines_hover": "rgba(0,0,0,0)",
+        "color_icon_bg": "rgba(0,0,0,0)",
+        "color_icon_icon": "rgba(0,0,0,0)",
+        "show_button_bg2": true,
+        "color_button2": "rgba(0,0,0,0)",
+        "color_button_gradient2": "",
+        "color_button_border2": "rgba(0,0,0,0)",
+        "color_button_text2": "rgba(0,0,0,0)",
+        "color_button_icon2": "rgba(0,0,0,0)",
+        "show_button_bg_hover2": true,
+        "color_button_hover2": "rgba(0,0,0,0)",
+        "color_button_gradient_hover2": "",
+        "color_button_border_hover2": "rgba(0,0,0,0)",
+        "color_button_text_hover2": "rgba(0,0,0,0)",
+        "color_button_icon_hover2": "rgba(0,0,0,0)",
+        "show_shadow_button2": true,
+        "color_shadow_button2": "rgba(0,0,0,0)",
+        "color_shadow_hover_button2": "rgba(0,0,0,0)"
+      }
+    },
+    "text_dYrLGf": {
+      "type": "text",
+      "blocks": {
+        "heading_bV73Gq": {
+          "type": "heading",
+          "settings": {
+            "main_subheading": "A Versatile and Multifunctional Shopify Theme",
+            "main_heading": "Build Your Perfect Store with Ticarti!"
+          }
+        },
+        "richtext_BhbRXe": {
+          "type": "richtext",
+          "settings": {
+            "text": "<p>Ticarti is one of the most powerful and flexible themes for creating a modern online store on the Shopify platform. It’s perfect for any type of business, no matter what you sell: fashion clothing, accessories, cosmetics, electronics, or even auto parts. This theme is designed to make your online store look stylish and professional while offering your customers an exceptional user experience.</p><p>With a modern design and responsive interface, Ticarti ensures full optimization for mobile devices, allowing your customers to shop comfortably from any device. The theme supports a wide range of products, variants, and categories, giving you the flexibility to organize your store exactly the way you want.</p>"
+          }
+        },
+        "button_XQUEXc": {
+          "type": "button",
+          "settings": {
+            "button_name": "Buy Theme"
+          }
+        }
+      },
+      "block_order": [
+        "heading_bV73Gq",
+        "richtext_BhbRXe",
+        "button_XQUEXc"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-width-nine",
+        "height": "auto",
+        "height_value": 600,
+        "height_mobile": "auto",
+        "height_mobile_value": 600,
+        "text_align": "text-center",
+        "hover_underline": false,
+        "url": "https://themeforest.net/item/ticarti-multipurpose-shopify-theme/22559417?s_rank=3",
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "gallery_JVc3bi",
+    "text_dYrLGf"
+  ]
+}

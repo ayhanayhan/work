@@ -1,0 +1,281 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - section: {Object} passing the section information.
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  - id_code: {String}
+  - picker_type_custom: {String} swatch_dropdown, swatch
+  Usage:
+  {% render 'product-card-variant-picker', section:section, product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  {%- assign picker_type_custom = picker_type_custom | default: false, allow_false: true -%}
+  <card-variant-selects
+    {% if settings.hide_soldout_variants %}
+    class="hide_soldout_variants"
+    {% if product.available == false %}data-hide-variants="true"{% endif %}
+    {% endif %}
+    id="variant-selects-{{ product.id }}"
+    data-url="{{ product.url | split: '?' | first }}"
+    data-section="{{ section.id }}"
+    data-product="{{ id_code }}"
+  >
+
+    {%- liquid
+        assign swatches_design = settings.swatches_design
+        assign variants_names = settings.variants_names
+		    assign css_colors = settings.css_colors
+       
+        if swatches_design != 'none'
+        assign variants_names = '||' | append:variants_names | strip_newlines | downcase | strip | replace: ', ', ',' | replace: ',', '||' | append: '||'
+        assign css_colors = ',' | append:css_colors | strip_newlines | downcase | strip | replace: ': ', ':'
+        
+        if swatches_design == 'image'
+        for option in product.options_with_values
+        assign option_name = '||' | append: option.name | append: '||' | downcase
+        if variants_names contains option_name
+        assign option_name = 'option' | append: forloop.index
+        break
+        endif
+        endfor
+        capture get_product_images_from_variants_options
+        render 'get_product_images_from_variants_options', product:product, option_name:option_name, image_width:'50x'
+        endcapture
+        capture get_product_images_from_variants_options_ratio
+        render 'get_product_images_from_variants_options', product:product, option_name:option_name, type:'image_ratio'
+        endcapture
+        endif
+        else
+        assign variants_names = ''
+        assign css_colors = ''
+        endif
+
+    -%}
+    
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        if settings.picker_type == 'dropdown'
+        assign picker_type = 'swatch_dropdown'
+        else
+        assign picker_type = 'swatch'
+        endif
+        if picker_type_custom
+        assign picker_type = picker_type_custom
+        endif
+      -%}
+
+      {%- if picker_type == 'swatch' -%}
+      {%- assign option_name = '||' | append: option.name | append: '||' -%}
+      <fieldset class="product-form__input">
+        {%- liquid
+            assign grop_options_type = 'button'
+            assign option_name = option_name | downcase
+
+            assign swatch_value = null
+            for value in option.values
+            if swatch_count > 0
+              if value.swatch.image
+                assign image_url = value.swatch.image | image_url: width: 200
+                assign swatch_value = 'url(' | append: image_url | append: ')'
+              elsif value.swatch.color
+                assign swatch_value = value.swatch.color
+              endif
+            endif
+            endfor
+
+            assign _color = false
+            if variants_names contains option_name and swatches_design == 'color'
+            assign _color = true
+            endif
+            if variants_names contains option_name and swatches_design == 'image'
+            assign form_container_mobile = "product-form__container__color"
+            assign grop_options_type = 'image'
+            elsif _color or swatch_value
+            assign form_container_mobile = "product-form__container__color"
+            assign grop_options_type = 'color'
+            else
+            assign form_container_mobile = ""
+            endif
+        -%}
+        
+        <div class="mt16 product-form__container__card {{ form_container_mobile }}{% if grop_options_type == 'image' %} product-form__container__card--image{% endif %}">
+          {%- for value in option.values -%}
+          {%- liquid
+            assign swatch_value = null
+            if swatch_count > 0
+              if value.swatch.image
+                assign image_url = value.swatch.image | image_url: width: 200
+                assign swatch_value = 'url(' | append: image_url | append: ')'
+              elsif value.swatch.color
+                assign swatch_value = value.swatch.color
+              endif
+            endif
+             
+            assign variants_available_arr = product.variants | map: 'available'
+            assign variants_option1_arr = product.variants | map: 'option1'
+            assign variants_option2_arr = product.variants | map: 'option2'
+            assign variants_option3_arr = product.variants | map: 'option3'
+            assign option_disabled = true
+        
+            for option1_name in variants_option1_arr
+              case option.position
+                when 1
+                  if variants_option1_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                  assign option_disabled = false
+                  endif
+                when 2
+                  if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                  assign option_disabled = false
+                  endif
+                when 3
+                  if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option3_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                  assign option_disabled = false
+                  endif
+              endcase
+            endfor
+          -%}
+          {%- assign color_swatch = ',' | append: value | append: ':' | downcase -%}
+          <div class="product-form__item">
+            <input type="radio" id="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                   class="product-form__item__input{% if option_disabled %} disabled{% endif %}"
+                   name="{{ option.name }}"
+                   value="{{ value | escape }}"
+                   form="{{ product_form_id }}"
+                   {% if option.selected_value == value %}checked{% endif %}
+                   >
+            {%- liquid
+              if get_product_images_from_variants_options contains color_swatch and grop_options_type == 'image'
+              assign image_src = get_product_images_from_variants_options | split: color_swatch | last | split: '_%%_' | first
+              assign image_src_ratio = get_product_images_from_variants_options_ratio | split: color_swatch | last | split: '_%%_' | first
+              endif
+              assign type_colors = false
+              if css_colors contains color_swatch and grop_options_type == 'color'
+              assign type_colors = true
+              endif
+            -%}
+
+            {%- if get_product_images_from_variants_options contains color_swatch and grop_options_type == 'image' and image_src != blank -%}
+            <div class="visual-display">
+            {%- liquid
+                if settings.variants_image_ratio_product_card == 'auto'
+                assign image_ratio = image_src_ratio
+                else
+                assign image_ratio = settings.variants_image_ratio_product_card
+                endif
+                -%}
+              <label for="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                     class="color__swatch color__swatch--image {{ settings.image_hover_picker_product_card }} visual-display__image__card global__tooltip--hover {{ settings.image_hover_picker }}">
+                <div class="visual-display-swatch__image{% if image_ratio == '1.00' %} visual-display-swatch__image__circle{% endif %}">
+                  <div class="image-hover-box{% if image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+                    <div style="--aspect-ratio:{{ image_ratio }}">
+                      <tag-image class="product-card__image-main">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                             data-main="{{ image_src }}"
+                             alt=""
+                             {% if settings.animate_image_show %}class="image-show--fadein"{% endif %}
+                             class="visual-display-swatch__image-child"
+                        >
+                      </tag-image>
+                    </div>
+                  </div>
+                  {%- assign image_ratio = image_ratio | plus:0 -%}
+                </div>
+                <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ value }}</div></global-tooltip>
+              </label>
+            </div>
+
+            {%- elsif type_colors or swatch_value -%}
+            {%- liquid
+                if type_colors
+                assign color = css_colors | split: color_swatch | last | split: ',' | first
+                else
+                assign color = swatch_value
+                endif
+                capture main_bg_color
+                echo settings.color_background
+                endcapture
+                assign main_bg_color = main_bg_color | downcase
+                assign var_bg_color = color | downcase
+            -%}
+            <div class="visual-display">
+              <label for="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                     class="color__swatch visual-display__color visual-display__color__card global__tooltip--hover{% if main_bg_color == var_bg_color %} visual-display__color-background{% endif %}"
+                     {% unless color contains 'url(' %}style="--color-swatch-background:{{ color }};"{% endunless %}>
+                <span class="hidden">{{ value }}</span>
+                <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ value }}</div></global-tooltip>
+                {%- liquid
+                  assign accent_brightness = color | color_extract: 'lightness'
+                  if accent_brightness < 50
+                  assign color_style = '#ffffff'
+                  else
+                  assign accent_brightness = settings.color_base | color_extract: 'lightness'
+                  if accent_brightness < 50
+                  assign color_style = settings.color_base
+                  else
+                  assign color_style = '#000000'
+                  endif
+                  endif
+                -%}
+                {% if color contains 'url(' %}
+                <div class="product-form__item__color-image" style="--color-swatch-background:{{ color }};"></div>
+                {% endif %}
+                <div class="product-form__item__disabled-line--vertical" style="--color-base:{{ color_style }};"></div>
+                <div class="product-form__item__disabled-line--vertical product-form__item__disabled-line--flip" style="--color-base:{{ color_style }};"></div>
+              </label>
+            </div>
+            {%- else -%}
+            <label for="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}" class="btn btn--variant-smallcard visual-display--button btn__transition-text w-full">
+              <span class="variant__btn__text">{{ value }}</span>
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ value }}</span>
+                <span class="btn__bottom-text is-hidden">{{ value }}</span>
+              </div>
+            </label>
+            {%- endif -%}
+          </div>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+      {%- else -%}
+      <div class="product-form__input product-form__input__small-top">
+        <div class="mt16 product-form__input__select field w-full">
+          <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                  class="field__input"
+                  name="options[{{ option.name | escape }}]"
+                  form="{{ product_form_id }}"
+                  >
+            {%- for value in option.values -%}
+            {%- liquid
+              assign option_disabled = true
+              if value.available
+                assign option_disabled = false
+              endif
+            -%}
+            <option value="{{ value | escape }}"
+                    data-hz="{{ value.variant.price }}"
+                    {% if option_disabled %}class="disabled"{% endif %}
+                    {% if option.selected_value == value %}selected="selected"{% endif %}
+                    data-option-text="- {{ 'products.product.unavailable' | t }}"
+            >
+              {{- value -}}{% if option_disabled %} - {{ 'products.product.unavailable' | t }}{% endif %}
+            </option>
+            {%- endfor -%}
+          </select>
+          <label class="field__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
+          <div class="field__icon field__icon--select">
+            {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+  <script type="application/json">
+  {{ product.variants | json }}
+  </script>
+  </card-variant-selects>
+{%- endunless -%}

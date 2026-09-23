@@ -1,0 +1,483 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-card.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.button_type_product != 'hide' or settings.button_type_product_product_card != 'hide' -%}
+{{ 'component-inputs.css' | asset_url | stylesheet_tag }}
+{{ 'component-visual-display.css' | asset_url | stylesheet_tag }}
+{{ 'component-visual-display-card.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- assign ss = section.settings -%}
+{%- assign data_settings = "" -%}
+{%- for i in (1..22) -%}
+{%- capture value -%}{%- cycle ss.image_hover,ss.image_ratio,ss.text_align,ss.image_action,ss.hover_underline,ss.show_badge_on_sale,ss.show_badge_sold_out,ss.show_badge_feature,ss.show_countdown,ss.show_vendor,ss.show_type,ss.show_price,ss.show_description,ss.truncate_product_name,ss.show_quantity,ss.button_type_product,ss.show_compare,ss.show_quick_view,ss.show_compare_mobile,ss.show_quick_view_mobile,ss.customize,ss.enable_rating_product_card -%}{%- endcapture -%}
+{%- if forloop.last -%}
+{%- assign data_settings = data_settings | append:value -%}
+{%- else -%}
+{%- assign data_settings = data_settings | append:value | append:'___' -%}
+{%- endif -%}
+{%- endfor -%}
+
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+<wishlist-page id="theme-section-{{ section.id }}"
+               class="display-block top-spacing-{{ section.settings.top_spacing }} {{ page_width }}"
+               data-settings="{{ data_settings }}">
+
+  <div class="page-width-eight wishlist-is-empty hide">
+    <div class="page-grid-1 no-row-gap text-center">
+      <div class="big-svg-icon big-svg-icon__opacity-20">
+        {%- render "icon-wishlist" icon_type:"normal" -%}
+      </div>
+      <h2 class="mt30 mb0">{{ 'wishlist.heading_empty' | t }}</h2>
+      <p class="mt16 body2">{{ 'wishlist.subtext' | t }}</p>
+      <div class="mt40">
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn__transition-text btn-wide">
+          <div class="btn__texts">
+            <span class="btn__top-text is-visible">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+            <span class="btn__bottom-text is-hidden">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wishlist-content hide">
+    <div class="page-grid-1 section-heading-container {{ section.settings.heading_aligment }}">
+      <h1 class="h2 mt0 mb0 section-heading-text">{{ 'wishlist.heading' | t }}</h1>
+    </div>
+    <div class="page-grid-sp-{{ section.settings.mobile_grid }} {{ section.settings.grid_tablet }} {{ section.settings.grid }} page-vertical-gap-40{% if section.settings.heading_aligment == "text-center" %} justify-content-center{% endif %} wishlist-ajax-content">
+    </div>
+  </div>
+</wishlist-page>
+
+
+{% schema %}
+  {
+    "name": "Wishlist",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Heading"
+      },
+      {
+        "type": "select",
+        "id": "heading_aligment",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "Left"
+          },
+          {
+            "value": "text-center",
+            "label": "Center"
+          }
+        ],
+        "default": "text-center",
+        "label": "Heading alignment"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "select",
+        "id": "top_spacing",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "normal",
+            "label": "Normal"
+          }
+        ],
+        "default": "normal",
+        "label": "Top spacing"
+      },
+      {
+        "type": "select",
+        "id": "width",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "page-width",
+            "label": "Boxed"
+          },
+          {
+            "value": "page-wide",
+            "label": "Wide"
+          }
+        ],
+        "default": "default",
+        "label": "Width",
+        "info": "The Wide option works for screens with 1440px width and more."
+      },
+      {
+        "type": "select",
+        "id": "grid",
+        "options": [
+          {
+            "value": "page-grid-md-2 page-grid-lg-2 page-grid-2",
+            "label": "2"
+          },
+          {
+            "value": "page-grid-md-3 page-grid-lg-3 page-grid-3",
+            "label": "3"
+          },
+          {
+            "value": "page-grid-md-4 page-grid-lg-4 page-grid-4",
+            "label": "4"
+          },
+          {
+            "value": "page-grid-md-5 page-grid-lg-5 page-grid-5",
+            "label": "5"
+          },
+          {
+            "value": "page-grid-md-6 page-grid-lg-6 page-grid-6",
+            "label": "6"
+          },
+          {
+            "value": "page-grid-md-6 page-grid-lg-7 page-grid-7",
+            "label": "7"
+          },
+          {
+            "value": "page-grid-md-6 page-grid-lg-8 page-grid-8",
+            "label": "8"
+          }
+        ],
+        "default": "page-grid-md-6 page-grid-lg-6 page-grid-6",
+        "label": "Number of columns"
+      },
+      {
+        "type": "select",
+        "id": "grid_tablet",
+        "options": [
+          {
+            "value": "page-grid-st-2",
+            "label": "2"
+          },
+          {
+            "value": "page-grid-st-3",
+            "label": "3"
+          },
+          {
+            "value": "page-grid-st-4",
+            "label": "4"
+          }
+        ],
+        "default": "page-grid-st-4",
+        "label": "Number of columns on tablet"
+      },
+      {
+        "type": "select",
+        "id": "mobile_grid",
+        "options": [
+          {
+            "value": "1",
+            "label": "One item per row"
+          },
+          {
+            "value": "2",
+            "label": "Two items per row"
+          }
+        ],
+        "default": "2",
+        "label": "Mobile grid"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "select",
+        "id": "image_hover",
+        "options": [
+          {
+            "value": "default",
+            "label": "Basic theme settings"
+          },
+          {
+            "value": "image-hover-none",
+            "label": "Disable"
+          },
+          {
+            "value": "image-hover01",
+            "label": "Zoom in #1"
+          },
+          {
+            "value": "image-hover01 image-hover01-rotate",
+            "label": "Zoom in and rotate"
+          },
+          {
+            "value": "image-hover02",
+            "label": "Zoom in #2"
+          },
+          {
+            "value": "image-hover03",
+            "label": "Zoom out #1"
+          },
+          {
+            "value": "image-hover04",
+            "label": "Zoom out #2"
+          },
+          {
+            "value": "image-hover05",
+            "label": "Slide"
+          },
+          {
+            "value": "image-hover06",
+            "label": "Shine"
+          }
+        ],
+        "default": "default",
+        "label": "Image hover effect"
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Auto"
+          },
+          {
+            "value": "0.75",
+            "label": "Portrait (3:4)"
+          },
+          {
+            "value": "1.333333",
+            "label": "Landscape (4:3)"
+          },
+          {
+            "value": "1",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "1.00",
+            "label": "Round (1:1)"
+          },
+          {
+            "value": "0.5625",
+            "label": "Social story (9:16)"
+          },
+          {
+            "value": "1.777777",
+            "label": "Widescreen (16:9)"
+          }
+        ],
+        "default": "auto",
+        "label": "Image ratio"
+      },
+      {
+        "type": "select",
+        "id": "image_action",
+        "options": [
+          {
+            "value": "normal",
+            "label": "Only image"
+          },
+          {
+            "value": "show_secondary_image",
+            "label": "Show second image on hover"
+          },
+          {
+            "value": "gallery",
+            "label": "Gallery"
+          }
+        ],
+        "default": "show_secondary_image",
+        "label": "Image action"
+      },
+      {
+        "type": "checkbox",
+        "id": "customize",
+        "default": false,
+        "label": "Customize"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "select",
+        "id": "text_align",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "Left"
+          },
+          {
+            "value": "text-center",
+            "label": "Center"
+          }
+        ],
+        "default": "text-center",
+        "label": "Text align"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "hover_underline",
+        "default": true,
+        "label": "Underline on hover"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_badge_on_sale",
+        "default": true,
+        "label": "Show badge \"Sale\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_badge_sold_out",
+        "default": true,
+        "label": "Show badge \"Sold Out\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_badge_feature",
+        "default": true,
+        "label": "Show badge \"Feature\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_countdown",
+        "default": true,
+        "label": "Show \"Countdown\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_vendor",
+        "default": true,
+        "label": "Show vendor"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_type",
+        "default": true,
+        "label": "Show type"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_price",
+        "default": true,
+        "label": "Show price"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_description",
+        "default": true,
+        "label": "Show small description",
+        "info": "Description you can create using metafields"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "truncate_product_name",
+        "default": false,
+        "label": "Truncate product name"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_quantity",
+        "default": false,
+        "label": "Enable quantity",
+        "info": "Button type always \"Show only icon\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "select",
+        "id": "button_type_product",
+        "options": [
+          {
+            "value": "hide",
+            "label": "Hide"
+          },
+          {
+            "value": "show",
+            "label": "Show"
+          },
+          {
+            "value": "only_text",
+            "label": "Show only text"
+          },
+          {
+            "value": "only_icon",
+            "label": "Show only icon"
+          }
+        ],
+        "default": "hide",
+        "label": "Button \"Add to cart\""
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true and section.settings.button_type_product != 'hide' }}",
+        "type": "checkbox",
+        "id": "button_type_product_mobile",
+        "default": true,
+        "label": "Button \"Add to cart\" on mobile"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true and settings.enable_rating == true }}",
+        "type": "checkbox",
+        "id": "enable_rating_product_card",
+        "default": true,
+        "label": "Enable review stars"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "header",
+        "content": "Media buttons desktop"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_compare",
+        "default": true,
+        "label": "Show compare"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_quick_view",
+        "default": true,
+        "label": "Show quick view"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "header",
+        "content": "Media buttons mobile"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_compare_mobile",
+        "default": true,
+        "label": "Show compare"
+      },
+      {
+        "visible_if": "{{ section.settings.customize == true }}",
+        "type": "checkbox",
+        "id": "show_quick_view_mobile",
+        "default": true,
+        "label": "Show quick view"
+      }
+    ]
+  }
+{% endschema %}

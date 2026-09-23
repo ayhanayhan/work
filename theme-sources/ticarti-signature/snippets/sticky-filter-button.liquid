@@ -1,0 +1,193 @@
+{% comment %}
+    Sticky add to cart modal
+
+    Accepts:
+    - section: {Object} Section object
+    - enable_filtering: {Boolean} Enabled filtering for the button name
+    - enable_sorting: {Boolean} Enabled sorting for the button name
+
+    Usage:
+	{%- render "sticky-filter-button",
+    			section: section,
+				enable_filtering: enable_filtering,
+				enable_sorting: enable_sorting
+				-%}
+{% endcomment %}
+
+{%- if section.settings.enable_sticky_filter_button -%}
+{%- if enable_filtering or enable_sorting -%}
+<sticky-filter-modal>
+  <div class="sticky-filter-modal__item">
+    <button class="link link--medium strong">
+	  {{- 'icon-filter' | append: settings.system_icon_thickness | inline_asset_content -}}
+      <span>
+        {%- if enable_filtering and enable_sorting -%}
+        {{ 'products.facets.filter_and_sort' | t }}
+        {%- elsif enable_filtering -%}
+        {{ 'products.facets.filter_button' | t }}
+        {%- elsif enable_sorting -%}
+        {{ 'products.facets.sort_button' | t }}
+        {%- endif -%}
+      </span>
+    </button>
+  </div>
+</sticky-filter-modal>
+<style>
+  sticky-filter-modal{
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    width: 100%;
+    z-index: 8;
+    visibility: hidden;
+    transition: transform var(--duration-large) var(--animation-bezier),
+      			visibility var(--duration-large) var(--animation-bezier);
+  }
+  sticky-filter-modal .sticky-filter-modal__item{
+    margin-left:auto;
+    margin-right:auto;
+    width:max-content;
+  }
+  sticky-filter-modal button.link{
+    border-radius:var(--radius-button);
+    min-height: 40px;
+    height: 100%;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 10px 0px rgba(var(--color-base-rgb), 0.09);
+    color: var(--color-accent);
+    background: var(--color-body-background);
+  }
+  sticky-filter-modal button.link svg path{
+    fill:var(--color-accent);
+  }
+  @media (min-width: 1025px){
+    display: none;
+  }
+  @media (max-width: 1024px){
+    sticky-filter-modal{
+      top: 30px;
+      transform: translateY(calc(-100% - 50px));
+    }
+    sticky-filter-modal.show-modal{
+      transform: translateY(0);
+      visibility: visible;
+    }
+  }
+  @media (max-width: 576px){
+    sticky-filter-modal{
+      top: 15px;
+    }
+  }
+</style>
+
+<script>
+class StickyFilterModal extends HTMLElement {
+  constructor() {
+    super();
+    this.mainButton = document.getElementById('mobile-facets');
+    this._rafId = null;
+    this._intersectionObserver = null;
+    this._resizeObserver = null;
+    this._listenersAdded = false;
+    this._scrollHandler = this._throttledUpdate.bind(this);
+    this._checkViewportMode = this._checkViewportMode.bind(this);
+  }
+  connectedCallback() {
+    if (!this.mainButton) return;
+    this.querySelector('button')?.addEventListener('click', this.click.bind(this), false);
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        this._addEventListeners();
+      }, { timeout: 1000 });
+    } else {
+      setTimeout(() => {
+        this._addEventListeners();
+      }, 1000);
+    }
+    this._resizeObserver = new ResizeObserver(this._checkViewportMode);
+    this._resizeObserver.observe(document.body);
+    this._checkViewportMode();
+  }
+  _addEventListeners() {
+    if (this._listenersAdded || !this.mainButton) return;
+    this._listenersAdded = true;
+    
+    window.addEventListener('scroll', this._scrollHandler, { passive: true });
+  }
+  _throttledUpdate() {
+    if (this._rafId || window.innerWidth > 1024) return;
+    
+    this._rafId = requestAnimationFrame(() => {
+      this.update();
+      this._rafId = null;
+    });
+  }
+  update() {
+    if (window.innerWidth > 1024 || !this.mainButton) return;
+    const rect = this.mainButton.getBoundingClientRect();
+    const rangeToShowModal = rect.bottom + window.scrollY;
+    if (window.scrollY >= rangeToShowModal && !this.classList.contains('show-modal')) {
+      this.classList.add('show-modal');
+    } else if (window.scrollY < rangeToShowModal && this.classList.contains('show-modal')) {
+      if (document.body.classList.contains('fixed-position')) return;
+      this.classList.remove('show-modal');
+    }
+  }
+  _checkViewportMode() {
+    if (window.innerWidth <= 1024 && this.mainButton) {
+      this._initForMobile();
+      if (this._listenersAdded) {
+        window.addEventListener('scroll', this._scrollHandler, { passive: true });
+      }
+    } else {
+      this._cleanupMobile();
+      window.removeEventListener('scroll', this._scrollHandler);
+      this.classList.remove('show-modal');
+    }
+  }
+  _initForMobile() {
+    if (this._intersectionObserver || !this.mainButton) return;
+    this._intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.bottom) {
+          this.classList.add('show-modal');
+        } else {
+          if (document.body.classList.contains('fixed-position')) return;
+          this.classList.remove('show-modal');
+        }
+      });
+    }, { 
+      rootMargin: '-100px 0px 0px 0px',
+      threshold: 0
+    });
+
+    this._intersectionObserver.observe(this.mainButton);
+  }
+  _cleanupMobile() {
+    if (this._intersectionObserver) {
+      this._intersectionObserver.disconnect();
+      this._intersectionObserver = null;
+    }
+  }
+  click(e) {
+    e.preventDefault();
+    if (!this.mainButton) return;
+    const scrollY = window.pageYOffset;
+    document.body.setAttribute('data-top', scrollY);
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('overflow-hidden');
+    const tabindexElement = this.mainButton.querySelector('[tabindex]');
+    if (tabindexElement) {
+      tabindexElement.setAttribute('tabindex', '');
+    }
+    this.mainButton.setAttribute('open', 'true');
+    requestAnimationFrame(() => {
+      this.mainButton.classList.add('menu-opening');
+    });
+  }
+}
+customElements.define('sticky-filter-modal', StickyFilterModal);
+</script>
+{%- endif -%}
+{%- endif -%}

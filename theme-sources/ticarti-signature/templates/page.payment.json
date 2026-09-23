@@ -1,0 +1,369 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_heading": true,
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false
+      }
+    },
+    "text_7xDznJ": {
+      "type": "text",
+      "blocks": {
+        "richtext_8LBdaN": {
+          "type": "richtext",
+          "settings": {
+            "text": "<h4>Accepted Payment Methods:<br/></h4><p>All payments are processed through secure, encrypted gateways to protect your personal and financial information.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_8LBdaN"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-grid-1",
+        "text_align": "text-left",
+        "hover_underline": true,
+        "url": "",
+        "show_lines": false,
+        "lines_width": "content_width",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    },
+    "text_columns_with_icons_type_2_gWQfNc": {
+      "type": "text-columns-with-icons-type-2",
+      "blocks": {
+        "item_KJUKQx": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Credit_card",
+            "block_heading": "Credit & Debit Cards",
+            "block_text": "<p>(Visa, MasterCard, American Express, Maestro)</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_gjBAmz": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Paypal",
+            "block_heading": "PayPal",
+            "block_text": "<p>Fast and secure checkout using your PayPal account</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_8FgGcy": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Mobile_store",
+            "block_heading": "Apple Pay / Google Pay",
+            "block_text": "<p>For quick mobile payments</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_Lm6V9n": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Calendar",
+            "block_heading": "Buy Now, Pay Later",
+            "block_text": "<p>Split your purchase into interest-free installments</p>",
+            "button_name": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_KJUKQx",
+        "item_gjBAmz",
+        "item_8FgGcy",
+        "item_Lm6V9n"
+      ],
+      "name": "t:names.text_with_icons_type_2",
+      "settings": {
+        "main_subheading": "",
+        "main_heading": "",
+        "main_desc": "",
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "grid": "page-grid-4",
+        "grid_tablet": "page-grid-st-2",
+        "content_align": "align-items-start",
+        "heading_size": "h5",
+        "icon_width": 30,
+        "show_icon_box": true,
+        "icon_box_roundness": 10,
+        "hover_underline": true,
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "color_text_icons": "rgba(0,0,0,0)",
+        "color_text_icons_bg": "rgba(0,0,0,0)",
+        "color_link": "rgba(0,0,0,0)",
+        "color_link_icon": "rgba(0,0,0,0)",
+        "color_link_hover": "rgba(0,0,0,0)",
+        "color_link_icon_hover": "rgba(0,0,0,0)"
+      }
+    },
+    "text_rpdpTw": {
+      "type": "text",
+      "blocks": {
+        "richtext_7pKH7y": {
+          "type": "richtext",
+          "settings": {
+            "text": "<h4>Payment Security</h4><p>Your security is our priority. We use SSL encryption and trusted payment processors to ensure that your data is always safe. We do not store any payment details on our servers.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_7pKH7y"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "grid": "page-grid-1",
+        "text_align": "text-left",
+        "hover_underline": true,
+        "url": "",
+        "show_lines": true,
+        "lines_width": "content_width",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    },
+    "text_KW3VYJ": {
+      "type": "text",
+      "blocks": {
+        "richtext_nVJFXg": {
+          "type": "richtext",
+          "settings": {
+            "text": "<h4>Currency</h4><p>All prices are shown in [USD/EUR/your currency], and your payment will be charged in this currency. If you're paying in a different currency, your bank may apply conversion fees.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_nVJFXg"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "grid": "page-grid-1",
+        "text_align": "text-left",
+        "hover_underline": true,
+        "url": "",
+        "show_lines": true,
+        "lines_width": "content_width",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    },
+    "text_fmEkty": {
+      "type": "text",
+      "blocks": {
+        "richtext_pc9ahW": {
+          "type": "richtext",
+          "settings": {
+            "text": "<h4>Trouble with Payment?</h4><p>If your payment doesn’t go through or you experience any issues during checkout, please contact our support team at [your support email/contact link]. We’re here to help!</p>"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_pc9ahW"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "grid": "page-grid-1",
+        "text_align": "text-left",
+        "hover_underline": true,
+        "url": "",
+        "show_lines": true,
+        "lines_width": "content_width",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "text_7xDznJ",
+    "text_columns_with_icons_type_2_gWQfNc",
+    "text_rpdpTw",
+    "text_KW3VYJ",
+    "text_fmEkty"
+  ]
+}

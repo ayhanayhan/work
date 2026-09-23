@@ -1,0 +1,20 @@
+.product__xr-button--center {
+  margin-left: auto;
+  margin-right: auto;
+}
+.product__xr-button[data-shopify-xr-hidden] {
+  display: none;
+}
+.shopify-design-mode .product__xr-button[data-shopify-xr-hidden] {
+  display: none;
+}
+@media screen and (max-width: 576px) {
+  .active .product__xr-button:not([data-shopify-xr-hidden]) {
+    display: flex;
+  }
+}
+@media screen and (min-width: 577px) {
+  .product__xr-button[data-shopify-xr-hidden] {
+    display: none;
+  }
+}

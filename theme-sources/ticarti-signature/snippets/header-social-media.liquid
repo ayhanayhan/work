@@ -1,0 +1,26 @@
+{%- if block.settings.show_social or enable__social != blank -%}
+{%- for i in (1..10) -%}
+{%- assign value = 'social_media_' | append: i -%}
+{%- assign value = settings[value] -%}
+{%- if value != blank -%}
+{%- assign icon_name = value | split: '//' | last | replace: 'www.', '' | split: '.' -%}
+{%- for value in icon_name -%}
+{%- if settings.social_media_roundness -%}
+{%- assign new_name = value | append:'_r' -%}
+{%- else -%}
+{%- assign new_name = value -%}
+{%- endif -%}
+{%- capture icon -%}{%- render "icons-list-social" icon_name:new_name -%}{%- endcapture -%}
+{%- if icon != blank -%}
+{%- assign icon_name_value = value | capitalize | strip -%}
+{%- break -%}
+{%- endif -%}
+{%- endfor -%}
+<li><a href="{{ value }}">
+  {{ icon }}
+  <span class="body2 visually-hidden social-icons__text">{{ icon_name_value }}</span>
+  </a>
+</li>
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}

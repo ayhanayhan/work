@@ -1,0 +1,289 @@
+<div id="theme-block-{{ block.id }}" class="mt-first-0" {{ block.shopify_attributes }}
+     {% if block.settings.enable_dynamic_grid == true %}style="--width-desktop:{{ block.settings.grid_width_desktop }}%;"{% endif %}
+  > 
+  {%- if block.settings.heading_text != blank -%}
+  <h5 class="mt0 mb0">{{ block.settings.heading_text }}</h5>
+  {%- endif -%}
+  <div class="article-card__container article-card__container--{{ block.settings.grid }} mt16">
+    {%- for article in block.settings.blog.articles limit: block.settings.post_limit -%}
+    {%- render "article-card-sidebar",
+        section:section,
+        block:block,
+        article:article,
+        desktop_grid:1,
+        image_ratio_value: block.settings.image_ratio,
+        page_width: "page-wide"
+    -%}
+    {%- endfor -%}
+  </div>
+  <style>
+    {%- capture __css -%}
+    {%- if block.settings.color_heading         != "rgba(0,0,0,0)" -%}--color-heading-block:{{ block.settings.color_heading }};{%- endif -%}
+    {%- if block.settings.color_text_link       != "rgba(0,0,0,0)" -%}--color-text-link-block:{{ block.settings.color_text_link }};{%- endif -%}
+    {%- if block.settings.roundness_type == "custom" -%}--radius-image:{{ block.settings.roundness }}px;{%- endif -%}
+    {%- if block.settings.color_text_link_hover != "rgba(0,0,0,0)" -%}
+      --color-heading-hover-block:{{ block.settings.color_text_link_hover }};
+      --color-text-link-hover-block:{{ block.settings.color_text_link_hover }};
+    {%- endif -%}
+    {%- if block.settings.color_desc            != "rgba(0,0,0,0)" -%}--color-text:{{ block.settings.color_desc }};color:{{ block.settings.color_desc }};{%- endif -%}
+    {%- endcapture -%}
+    {%- if __css != blank -%}
+    #theme-block-{{ block.id }}{
+      {{ __css }}
+    }
+    {%- endif -%}
+    {%- if block.settings.color_text_link       != "rgba(0,0,0,0)" -%}  
+    #theme-block-{{ block.id }} h6.blog-posts__heading a{
+      --color-heading-block:{{ block.settings.color_text_link }};
+    }
+    {%- endif -%}
+    {%- capture __css2 -%}
+    {%- if block.settings.color_desc            != "rgba(0,0,0,0)" -%}--color-link-button-block-inverse:{{ block.settings.color_desc }};{%- endif -%}
+    {%- if block.settings.color_text_link_hover != "rgba(0,0,0,0)" -%}--color-link-button-block-inverse-hover:{{ block.settings.color_text_link_hover }};{%- endif -%}
+    {%- endcapture -%}
+    {%- if __css2 != blank -%}
+    #theme-block-{{ block.id }} .author-toolbar__item__tags{
+      {{ __css2 }}
+    }
+    {%- endif -%}
+  </style>
+</div>
+
+{% schema %}
+  {
+    "name": "Recent post",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_dynamic_grid",
+        "default": false,
+        "label": "t:options.header.dynamic_width_desktop"
+      },
+      {
+        "visible_if": "{{ block.settings.enable_dynamic_grid == true }}",
+        "type": "range",
+        "id": "grid_width_desktop",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 25,
+        "unit": "%",
+        "label": "t:options.header.width_desktop"
+      },
+      {
+        "type": "text",
+        "id": "heading_text",
+        "default": "Recent post",
+        "label": "Heading"
+      },
+      {
+        "type": "select",
+        "id": "grid",
+        "options": [
+          {
+            "value": "1",
+            "label": "1"
+          },
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          }
+        ],
+        "default": "1",
+        "label": "Number of columns"
+      },
+      {
+        "type": "blog",
+        "id": "blog",
+        "label": "Blog"
+      },
+      {
+        "type": "range",
+        "id": "post_limit",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "label": "Blog posts"
+      },
+      {
+        "type": "select",
+        "id": "align_content",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ],
+        "default": "top",
+        "label": "Align text relative to image"
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Auto"
+          },
+          {
+            "value": "0.75",
+            "label": "Portrait (3:4)"
+          },
+          {
+            "value": "1.333333",
+            "label": "Landscape (4:3)"
+          },
+          {
+            "value": "1",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "1.00",
+            "label": "Round (1:1)"
+          },
+          {
+            "value": "0.5625",
+            "label": "Social story (9:16)"
+          },
+          {
+            "value": "1.777777",
+            "label": "Widescreen (16:9)"
+          }
+        ],
+        "default": "auto",
+        "label": "Image ratio"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_image",
+        "default": true,
+        "label": "Show featured image"
+      },
+      {
+        "type": "select",
+        "id": "roundness_type",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "custom",
+            "label": "Custom"
+          }
+        ],
+        "default": "default",
+        "label": "Roundness of the image"
+      },
+      {
+        "visible_if": "{{ block.settings.roundness_type == 'custom' }}",
+        "type": "range",
+        "id": "roundness",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Custom roundness",
+        "default": 20
+      },
+      {
+        "type": "checkbox",
+        "id": "truncate_post_heading",
+        "default": true,
+        "label": "Truncate post heading"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_underline",
+        "default": true,
+        "label": "Underline on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "showtags",
+        "default": true,
+        "label": "Show tags"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_date",
+        "default": true,
+        "label": "Show date"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_author",
+        "default": true,
+        "label": "Show author"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_comment_count",
+        "default": true,
+        "label": "Show comment count"
+      },
+      {
+        "type": "select",
+        "id": "excerpt",
+        "options": [
+          {
+            "value": "hide",
+            "label": "Hide"
+          },
+          {
+            "value": "show",
+            "label": "Show"
+          },
+          {
+            "value": "show_truncated",
+            "label": "Show truncated content"
+          }
+        ],
+        "default": "hide",
+        "label": "Excerpt"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_heading",
+        "default":"rgba(0,0,0,0)",
+        "label": "Heading"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link",
+        "default":"rgba(0,0,0,0)",
+        "label": "Link"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Link hover"
+      },
+      {
+        "type": "color",
+        "id": "color_desc",
+        "default":"rgba(0,0,0,0)",
+        "label": "Description"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Recent post"
+      }
+    ]
+  }
+{% endschema %}

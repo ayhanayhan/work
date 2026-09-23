@@ -1,0 +1,154 @@
+{% comment %}
+  Mobile menu
+  
+  Accepts:
+  - block: {Object}
+  - hide_social: {String} hide if string equal "true"
+  Usage:
+  {%- render "header-contacts",
+      block: block,
+      hide_social:"true"
+  -%}
+{% endcomment %}
+
+{%- capture block_item -%}
+{%- if block.settings.heading__1 != blank -%}<h6 class="mt0 mb0 header-phone-number__item__heading">{{ block.settings.heading__1 }}</h6>{%- endif -%}
+{%- for i in (1..4) -%}
+{%- assign phone_x__x = "phone_" | append:i | append: "__1" -%}
+{%- assign phone_x__x = block.settings[phone_x__x] -%}
+{%- if phone_x__x != blank -%}
+{%- if block.settings.show_icon__1 -%}
+{%- assign icon_name = 'icon-phone' | append: settings.system_icon_thickness | inline_asset_content %}
+{%- else -%}
+{%- assign icon_name = "" %}
+{%- endif -%}
+{%- if block.settings.phone_as_link__1 -%}
+<a href="tel:{{ phone_x__x | replace:" ", "" }}" class="mt5 h4 clear-underline header-phone-number__icon">{{ icon_name }}{{phone_x__x }}</a>
+{%- else -%}
+<p class="mt5 h4 header-phone-number__icon">{{ icon_name }}{{ phone_x__x }}</p>
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- if block.settings.info__1 != blank -%}<p class="mt10 body3 phone-slogan">{{ block.settings.info__1 }}</p>{%- endif -%}
+{%- endcapture -%}
+{%- if block_item != blank -%}
+<div class="mt-first-0 header-phone-number__item">{{ block_item }}</div>
+{%- endif -%}
+
+{%- capture block_item -%}
+{%- if block.settings.heading__2 != blank -%}<h6 class="mt0 mb0 header-phone-number__item__heading">{{ block.settings.heading__2 }}</h6>{%- endif -%}
+{%- for i in (1..4) -%}
+{%- assign phone_x__x = "phone_" | append:i | append: "__2" -%}
+{%- assign phone_x__x = block.settings[phone_x__x] -%}
+{%- if phone_x__x != blank -%}
+{%- if block.settings.show_icon__2 -%}
+{%- assign icon_name = 'icon-phone' | append: settings.system_icon_thickness | inline_asset_content %}
+{%- else -%}
+{%- assign icon_name = "" %}
+{%- endif -%}
+{%- if block.settings.phone_as_link__2 -%}
+<a href="tel:{{ phone_x__x | replace:" ", "" }}" class="mt5 h4 clear-underline header-phone-number__icon">{{ icon_name }}{{phone_x__x }}</a>
+{%- else -%}
+<p class="mt5 h4 header-phone-number__icon">{{ icon_name }}{{ phone_x__x }}</p>
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- if block.settings.info__2 != blank -%}<p class="mt10 body3 phone-slogan">{{ block.settings.info__2 }}</p>{%- endif -%}
+{%- endcapture -%}
+{%- if block_item != blank -%}
+<div class="mt-first-0 header-phone-number__item">{{ block_item }}</div>
+{%- endif -%}
+
+{%- capture block_item -%}
+{%- capture icon_content -%}
+{%- render "component-image-icon",
+    show_icon: block.settings.show_icon__3,
+    image: block.settings.image__3,
+    icon: block.settings.icon_name__3,
+    image_custom_width: 30,
+-%}
+{%- endcapture -%}
+{%- capture text_content -%}
+{%- if block.settings.block_heading__3 != blank or block.settings.block_text__3 != blank -%}
+<div class="header-phone-number__banner__texts">
+{%- if block.settings.block_heading__3 != blank -%}<h6 class="mt0 mb0 header-phone-number__banner__heading{% if block.settings.url__3 != blank and settings.header_links_underline %} animation-underline default-state{% endif %}">{{ block.settings.block_heading__3 }}</h6>{%- endif -%}
+{%- if block.settings.block_text__3 != blank -%}<p class="mt5 body3">{{ block.settings.block_text__3 }}</p>{%- endif -%}
+</div>
+{%- endif -%}
+{%- endcapture -%}
+{%- if icon_content != blank or text_content != blank -%}
+{%- if block.settings.url__3 != blank -%}
+<a href="{{ block.settings.url__3 }}" class="header-phone-number__banner hover-area">
+  {{ icon_content }}
+  {{ text_content }}
+</a>
+{%- else -%}
+<div class="header-phone-number__banner">
+  {{ icon_content }}
+  {{ text_content }}
+</div>
+{%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- if block_item != blank -%}
+<div class="header-phone-number__item">{{ block_item }}</div>
+{%- endif -%}
+
+{%- capture block_item -%}
+{%- capture social_media -%}
+{%- if block.settings.show_social__4 -%}
+{%- for i in (1..10) -%}
+{%- assign value = 'social_media_' | append: i -%}
+{%- assign value = settings[value] -%}
+{%- if value != blank -%}
+{%- assign icon_name = value | split: '//' | last | replace: 'www.', '' | split: '.' -%}
+{%- for value in icon_name -%}
+{%- if settings.social_media_roundness -%}
+{%- assign new_name = value | append:'_r' -%}
+{%- else -%}
+{%- assign new_name = value -%}
+{%- endif -%}
+{%- capture icon -%}{%- render "icons-list-social" icon_name:new_name -%}{%- endcapture -%}
+{%- if icon != blank -%}
+{%- assign icon_name_value = value | capitalize | strip -%}
+{%- break -%}
+{%- endif -%}
+{%- endfor -%}
+<li><a href="{{ value }}">
+  {{ icon }}
+  <span class="body2 visually-hidden social-icons__text">{{ icon_name_value }}</span>
+  </a>
+</li>
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- if social_media != blank and hide_social != "true" -%}
+<ul class="unstyle-ul social-ticarti-social__icons header-social-icons">
+  {{ social_media }}
+</ul>
+{%- endif -%}
+{%- if block.settings.block_heading_1__4 != blank or block.settings.block_text_1__4 != blank %}
+<div class="mt-first-0 mt15 header-phone-number__text">
+  {%- if block.settings.block_heading_1__4 != blank %}
+  <div class="body3">{{ block.settings.block_heading_1__4 }}</div>
+  {%- endif -%}
+  {%- if block.settings.block_text_1__4 != blank %}
+  <div class="body2 mt5 section__richtext__editor">{{ block.settings.block_text_1__4 }}</div>
+  {%- endif -%}
+</div>
+{%- endif -%}
+{%- if block.settings.block_heading_2__4 != blank or block.settings.block_text_2__4 != blank %}
+<div class="mt-first-0 mt15 header-phone-number__text">
+  {%- if block.settings.block_heading_2__4 != blank %}
+  <div class="body3">{{ block.settings.block_heading_2__4 }}</div>
+  {%- endif -%}
+  {%- if block.settings.block_text_2__4 != blank %}
+  <div class="body2 mt5 section__richtext__editor">{{ block.settings.block_text_2__4 }}</div>
+  {%- endif -%}
+</div>
+{%- endif -%}
+{%- endcapture -%}
+{%- if block_item != blank -%}
+<div class="mt-first-0 header-phone-number__item">{{ block_item }}</div>
+{%- endif -%}

@@ -1,0 +1,255 @@
+{%- layout none -%}
+{%- assign options = collection.sort_by -%}
+{%- assign grid						= options | split:"___grid||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign grid_tablet				= options | split:"___grid_tablet||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign mobile_grid				= options | split:"___mobile_grid||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign desktop_navigation		= options | split:"___desktop_navigation||" | last | split: "___" | first -%}
+{%- assign mobile_navigation		= options | split:"___mobile_navigation||" | last | split: "___" | first -%}
+{%- assign autoplay_enabled			= options | split:"___autoplay_enabled||" | last | split: "___" | first -%}
+{%- assign autoplay_time			= options | split:"___autoplay_time||" | last | split: "___" | first -%}
+{%- assign link_name				= options | split:"___link_name||" | last | split: "___" | first -%}
+{%- assign image_hover				= options | split:"___image_hover||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign image_ratio				= options | split:"___image_ratio||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign product_limit			= options | split:"___product_limit||" | last | split: "___" | first | plus:0 -%}
+{%- assign hover_underline			= options | split:"___hover_underline||" | last | split: "___" | first -%}
+{%- assign show_badge_on_sale		= options | split:"___show_badge_on_sale||" | last | split: "___" | first -%}
+{%- assign show_badge_sold_out		= options | split:"___show_badge_sold_out||" | last | split: "___" | first -%}
+{%- assign show_badge_feature		= options | split:"___show_badge_feature||" | last | split: "___" | first -%}
+{%- assign show_secondary_image		= options | split:"___show_secondary_image||" | last | split: "___" | first -%}
+{%- assign show_vendor				= options | split:"___show_vendor||" | last | split: "___" | first -%}
+{%- assign show_price				= options | split:"___show_price||" | last | split: "___" | first -%}
+{%- assign truncate_product_name	= options | split:"___truncate_product_name||" | last | split: "___" | first -%}
+{%- assign placeholder				= options | split:"___placeholder||" | last | split: "___" | first -%}
+{%- assign swipe					= options | split:"___swipe||" | last | split: "___" | first -%}
+{%- assign custom_link				= options | split:"___custom_link||" | last | split: "___" | first -%}
+{%- assign heading_aligment			= options | split:"___heading_aligment||" | last | split: "___" | first -%}
+{%- assign align_content			= options | split:"___align_content||" | last | split: "___" | first -%}
+{%- assign customize			    = options | split:"___customize||" | last | split: "___" | first -%}
+{%- assign enable_rating_product_card= options| split:"___enable_rating_product_card||" | last | split: "___" | first -%}
+{%- if swipe					== "true" -%}{%- assign swipe = true -%}{%- else -%}{%- assign swipe = false -%}{%- endif -%}
+{%- if autoplay_enabled			== "true" -%}{%- assign autoplay_enabled = true -%}{%- else -%}{%- assign autoplay_enabled = false -%}{%- endif -%}
+{%- if show_secondary_image		== "true" -%}{%- assign show_secondary_image = "show_secondary_image" -%}{%- else -%}{%- assign show_secondary_image = false -%}{%- endif -%}
+{%- if hover_underline 			== "true" -%}{%- assign hover_underline = true -%}{%- else -%}{%- assign hover_underline = false -%}{%- endif -%}
+{%- if show_badge_on_sale		== "true" -%}{%- assign show_badge_on_sale = true -%}{%- else -%}{%- assign show_badge_on_sale = false -%}{%- endif -%}
+{%- if show_badge_sold_out		== "true" -%}{%- assign show_badge_sold_out = true -%}{%- else -%}{%- assign show_badge_sold_out = false -%}{%- endif -%}
+{%- if show_badge_feature		== "true" -%}{%- assign show_badge_feature = true -%}{%- else -%}{%- assign show_badge_feature = false -%}{%- endif -%}
+{%- if show_vendor				== "true" -%}{%- assign show_vendor = true -%}{%- else -%}{%- assign show_vendor = false -%}{%- endif -%}
+{%- if show_price				== "true" -%}{%- assign show_price = true -%}{%- else -%}{%- assign show_price = false -%}{%- endif -%}
+{%- if truncate_product_name	== "true" -%}{%- assign truncate_product_name = true -%}{%- else -%}{%- assign truncate_product_name = false -%}{%- endif -%}
+{%- if placeholder				== "true" -%}{%- assign placeholder = true -%}{%- else -%}{%- assign placeholder = false -%}{%- endif -%}
+{%- if customize				== "true" -%}{%- assign customize = true -%}{%- else -%}{%- assign customize = false -%}{%- endif -%}
+{%- if enable_rating_product_card == "true" -%}{%- assign enable_rating_product_card = true -%}{%- else -%}{%- assign enable_rating_product_card = false -%}{%- endif -%}
+{%- assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t -%}
+{%- liquid
+    if customize == false
+    assign show_vendor = settings.show_vendor_product_card
+    assign show_price = settings.show_price_product_card
+    assign truncate_product_name = settings.truncate_product_name_product_card
+    assign hover_underline = settings.hover_underline_product_card
+    assign show_badge_on_sale = settings.show_badge_on_sale_product_card
+    assign show_badge_sold_out = settings.show_badge_sold_out_product_card
+    assign show_badge_feature = settings.show_badge_feature_product_card
+    assign enable_rating_product_card = settings.enable_rating_product_card
+    endif
+-%}
+{%- assign __collection = collection -%}
+{%- capture content -%}
+    {%- if swipe == true -%}
+    {%- assign data_grid_limit = 3 -%}
+    {%- else -%}
+    {%- assign data_grid_xl = grid | split: "page-grid-" | last | times: 1.00 -%}
+    {%- assign max_value = data_grid_xl | times: 3 | round -%}
+    {%- assign max = __collection.products.size | at_most: max_value -%}
+    {%- assign data_grid_limit = max | divided_by: data_grid_xl -%}
+    {%- assign product_limit = max -%}
+    {%- endif -%}
+    {%- assign counter = 0 -%}
+    {%- if placeholder == false -%}
+    {%- for product in __collection.products limit: product_limit -%}
+    {%- if swipe and counter == 0 -%}<div class="swiper-slide" lazy="true">{%- endif -%}
+    {%- if counter == 0 -%}<div class="vertical-container">{%- endif -%}
+        <div class="product-card-small hover-area {% if image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover }}{% endif %}{% if align_content == "center" %} align-items-center{% endif %}">
+            {%- if product.featured_media != blank -%}
+            <a href="{{ product.url }}" class="product-card-small__image-container product-card__image-container">
+            {%- liquid
+                assign image_ratio_value = image_ratio
+                if forloop.index > 4
+                assign load_priority_low = 'true'
+                endif
+            -%}
+            <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+                {%- render "component-image-product-card",
+                    image_ratio_value: image_ratio_value,
+                    image_source: product.featured_media,
+                    image_source2: product.media[1],
+                    show_image_source2: show_secondary_image,
+                    load_priority_low: load_priority_low,
+                    section_index: section.index
+                -%}
+            </div>
+            </a>
+            {%- endif -%}
+            <div class="product-card-small__content mt--first-child-0">
+            {%- capture badges -%}
+            {%- if product.available == false and show_badge_sold_out -%}
+            <span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+            {%- elsif product.compare_at_price > product.price and product.available and show_badge_on_sale -%}
+            <span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+            {%- endif -%}
+            {%- if product.metafields.softali.featured_badge != blank and show_badge_feature -%}
+            <span class="badges-item__medium badges-item__main">{{ product.metafields.softali.featured_badge }}</span>
+            {%- endif -%}
+            {%- endcapture -%}
+            
+            {%- if badges != blank -%}
+            <div class="badges__container">{{- badges -}}</div>
+            {%- endif -%}
+            
+            {%- if show_vendor and product.vendor != blank -%}
+            <div class="body3 mt10">
+                <a class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}"
+                    href="{{ routes.collections_url }}/{% if __collection == blank %}all{% else %}{{ __collection.handle }}{% endif %}?filter.p.vendor={{ product.vendor | escape }}">{{ product.vendor }}</a>
+            </div>
+            {%- endif -%}
+            <div class="body2 mt3">
+                <a href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+                {%- if truncate_product_name -%}
+                {{ product.title | escape | truncate: 48,last_characters }}
+                {%- else -%}
+                {{ product.title | escape }}
+                {%- endif -%}
+                </a>
+            </div>
+            {%- if show_price and settings.cart_type != "catalog_mode" -%}
+            {%- render 'price', product: product, size:settings.product_card_price_size -%}
+            {%- endif -%}
+            {%- if settings.enable_rating and settings.cart_type != "catalog_mode" -%}{%- if enable_rating_product_card -%}
+            {%- render 'review-stars' _product: product -%}
+            {%- endif -%}{%- endif -%}
+            </div>
+        </div>
+    {%- assign counter = counter | plus: 1 -%}
+    {%- if counter >= data_grid_limit or forloop.last -%}</div>{%- endif -%}
+    {%- if swipe and counter >= data_grid_limit or forloop.last -%}</div>{%- endif -%}
+    {%- if counter >= data_grid_limit -%}
+    {%- assign counter = 0 -%}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- else -%}
+
+    {%- for i in (1..product_limit) -%}
+    {%- if swipe and counter == 0 -%}<div class="swiper-slide" lazy="true">{%- endif -%}
+    {%- if counter == 0 -%}<div class="vertical-container">{%- endif -%}
+    <div class="product-card-small hover-area {% if image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover }}{% endif %}{% if align_content == "center" %} align-items-center{% endif %}">
+        <div class="product-card-small__image-container product-card__image-container">
+        {%- liquid
+            assign image_ratio_value = image_ratio
+            capture placeholder_icon
+            cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4'
+            endcapture
+        -%}
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+            {%- render "component-image-product-card",
+                image_ratio_value: image_ratio_value,
+                image_source: "",
+                image_source2: "",
+                show_image_source2: show_secondary_image,
+                load_priority_low: load_priority_low,
+                section_index: section.index,
+                placeholder_icon:placeholder_icon
+            -%}
+        </div>
+        </div>
+        <div class="product-card-small__content mt--first-child-0">
+        {%- if show_vendor -%}
+        <div class="body3 mt3">
+            <div class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">
+            VENDOR
+            </div>
+        </div>
+        {%- endif -%}
+        <div class="body2 mt3">
+            <div href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+            {{ "Product name" | escape }}
+            </div>
+        </div>
+        {%- if show_price and settings.cart_type != "catalog_mode" -%}
+        <div class="price mt3">
+            <div class="price__regular body3">$12.18{% if settings.currency_code_enabled %} USD{% endif %}</div>
+            <div class="price__sale {{ settings.product_card_price_size }} mt3">From $8.66{% if settings.currency_code_enabled %} USD{% endif %}</div>
+        </div>
+        {%- endif -%}
+        </div>
+    </div>
+    {%- assign counter = counter | plus: 1 -%}
+    {%- if counter >= data_grid_limit or forloop.last -%}</div>{%- endif -%}
+    {%- if swipe and counter >= data_grid_limit or forloop.last -%}</div>{%- endif -%}
+    {%- if counter >= data_grid_limit -%}
+    {%- assign counter = 0 -%}
+    {%- endif -%}
+    {%- endfor -%}
+
+    {%- endif -%}
+{%- endcapture -%}
+
+{%- if swipe -%}
+{%- assign data_grid_xl = grid | split: "page-grid-" | last -%}
+{%- assign data_grid_lg = grid | split: "page-grid-lg-" | last | split: " " | first -%}
+{%- assign data_grid_md = grid | split: "page-grid-md-" | last | split: " " | first -%}
+<div class="page-grid-1 no-row-gap swiper-no-mask-mobile{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    {%- assign data_tablet_grid_lg = grid_tablet | split: "page-grid-st-" | last -%}
+    {%- assign data_grid = mobile_grid | append: "," | append: data_tablet_grid_lg | append: "," | append:data_grid_md | append: "," | append:data_grid_lg | append: "," | append:data_grid_xl -%}
+    <swiper-slider class="swiper swiper__custom-mask"
+                    data-swiper-desktop-grid="{{ data_grid_xl }}"
+                    data-swiper-desktop-lg-grid="{{ data_grid_lg }}"
+                    data-swiper-desktop-md-grid="{{ data_grid_md }}"
+                    data-swiper-tablet-grid="{{ data_tablet_grid_lg }}"
+                    data-swiper-mobile-grid="{{ mobile_grid }}"
+                    data-gutter="{{ settings.spacing_grid_horizontal }}"
+                    data-gutter-mobile="15"
+                    data-grid="{{ data_grid }}"
+                    {% if autoplay_enabled and request.design_mode == false %} data-autoplay-delay="{{ autoplay_time | times: 1000 }}"{% endif %}
+                    data-autoplay="{%- if autoplay_enabled and request.design_mode == false -%}true{%- else -%}false{%- endif -%}"
+                    data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+    >
+    <div class="swiper-wrapper swiper-wrapper--max-height">
+        {{ content }}
+    </div>
+    </swiper-slider>
+    <div class="swiper-control-container{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    <div class="custom-swiper-button-prev{% unless desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    <div class="swiper-pagination{% unless desktop_navigation contains "dots" %} hide-desktop{% endunless %}{% unless mobile_navigation contains "dots" %} hide-mobile-xl-st{% endunless %}"></div>
+    <div class="custom-swiper-button-next{% unless desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    </div>
+</div>
+{%- else -%}
+<div class="page-grid-sp-{{ mobile_grid }} {{ grid_tablet }} {{ grid }} page-vertical-gap-15{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    {{ content }}
+</div>
+{%- endif -%} 
+
+{%- if link_name != blank and placeholder == true -%}
+<div class="mt40 page-grid-1 {{ heading_aligment }}">
+    <div>
+    <div class="btn btn--border btn__transition-text btn-wide">
+        <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ link_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ link_name }}</span>
+        </div>
+    </div>
+    </div>
+</div>
+{%- elsif link_name != blank -%}
+{%- if __collection.products.size > product_limit or custom_link != blank -%}
+<div class="mt40 page-grid-1 {{ heading_aligment }}">
+    <div>
+    <a href="{% if custom_link != blank %}{{ custom_link }}{% else %}{{ __collection.url }}{% endif %}" class="btn btn--border btn__transition-text btn-wide">
+        <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ link_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ link_name }}</span>
+        </div>
+    </a>
+    </div>
+</div>
+{%- endif -%}
+{%- endif -%}

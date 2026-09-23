@@ -1,0 +1,8 @@
+{%- liquid
+    if icon_name contains "_r"
+    assign newname = icon_name | replace: "_r", ""
+    render "icons-list-social-round", icon_name:newname
+    else
+    render "icons-list-social-normal", icon_name:icon_name
+    endif
+-%}

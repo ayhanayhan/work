@@ -1,0 +1,127 @@
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+  {%- when 'link_list' -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    {%- if block.settings.menu != blank -%}
+    <div class="link-list__block-item">
+      <ul class="unstyle-ul{% if block.settings.block_size == "big" %} link--big-container{% endif %}">
+        {%- for link in block.settings.menu.links -%}
+        <li>
+          <a href="{{ link.url }}" class="link link-hover-span link__base-to_accent-color {% if block.settings.block_size == "big" %}link--big{% else %}link--medium{% endif %}"><span>{{ link.title }}</span></a>
+        </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+  </div>
+  {%- when 'media_with_text' -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'media_with_text',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+  </div>
+  {%- when 'banner' -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item" {{ block.shopify_attributes }}>
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'banner',
+        desktop_grid: 4
+    -%}
+  </div>
+  {%- when "banner-text-outside" -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item" {{ block.shopify_attributes }}>
+    {%- render "component-dynamic-blocks"
+        section:section,
+        block:block,
+        component_name:'banner-text-outside',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+  </div>
+  {%- when "recent-post" -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'recent-post',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+  </div>
+  {%- when "tags" -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'tags',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+  </div>
+  {%- when 'gallery' -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'gallery',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+  </div>
+  {%- when "grid-of-products" -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    <div>
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'grid-of-products',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+    </div>
+  </div>
+  {%- when "featured-collection" -%}
+  <div id="theme-block-{{ block.id }}" class="dynamic-sidebar__item dynamic-sidebar__item__heading" {{ block.shopify_attributes }}>
+    {%- if block.settings.heading_text != blank -%}
+    <h5 class="mt0 mb0">{{- block.settings.heading_text | escape -}}</h5>
+    {%- endif -%}
+    <div>
+    {%- render "component-dynamic-blocks",
+        section:section,
+        block:block,
+        component_name:'featured-collection',
+        desktop_grid: 4,
+        page_width:page_width
+    -%}
+    </div>
+  </div>
+  {%- when 'social' -%}
+  <div id="theme-block-{{ block.id }}" class="social__block-container dynamic-sidebar__item" {{ block.shopify_attributes }}>
+    {%- render "component-dynamic-blocks" section:section, block:block, component_name:'social' -%}
+  </div>
+  {%- endcase -%}
+
+{%- endfor -%}

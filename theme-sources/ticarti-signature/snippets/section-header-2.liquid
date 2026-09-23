@@ -1,0 +1,147 @@
+{%- liquid
+    assign secondary_menu = ""
+    assign secondary_menu_links = ""
+    assign social_media = ""
+    assign country_selector = ""
+    assign language_selector = ""
+    assign mega_menu_index = '|'
+    assign svg_icons = ''
+    for block in section.blocks
+    case block.type
+    when 'main_menu_icons'
+    assign svg_icons = block
+    when 'mega_menu'
+    assign mega_menu_index = mega_menu_index | append: block.settings.mega_menu_item_name | append: '%%' | append: forloop.index0 | append: '|'
+    endcase
+    endfor
+    assign block_topbar = section.blocks | where: "type", "topbar"
+    assign block_topbar_object = section.blocks | where: "type", "topbar"
+    for block in block_topbar
+    assign block_topbar_object = block
+    assign secondary_menu_links = block.settings.secondary_menu.links
+    capture secondary_menu
+    render 'header-menu-secondary' linklist: block.settings.secondary_menu.links animation: 'menu--animation-underline'
+    endcapture
+    capture social_media
+    render "header-social-media", block:block
+    endcapture
+    capture country_selector
+    render "header-country-selector", block:block
+    endcapture
+    capture language_selector
+    render "header-language-selector", block:block
+    endcapture
+    endfor
+
+    render "section-css-background-header", section:section, block_topbar_object:block_topbar_object
+    render "section-component-top-line", section:section
+    capture page_width
+    if section.settings.width != "default"
+    echo section.settings.width
+    else
+    echo settings.page_width_main
+    endif
+    endcapture
+    assign topbar_settings_background = false
+    if block_topbar_object.settings.background != 'hide' and section.settings.background_width == "content_width"
+    assign topbar_settings_background = true
+    endif
+    assign section_settings_background = false
+    if section.settings.background != 'hide' and section.settings.background_width == "content_width"
+    assign section_settings_background = true
+    endif
+-%}
+
+
+<header id="theme-section-{{ section.id }}"
+        data-role="{{ theme.role }}"
+        data-section-name="header-layout-tiles"
+  >
+    <div class="header__mobile{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background{% endif %}">
+      {%- render "header-mobile",
+          section: section,
+          page_width:page_width,
+          secondary_menu_links:secondary_menu_links,
+          social_media: social_media,
+          country_selector: country_selector,
+          language_selector:language_selector,
+          svg_icons:svg_icons
+      -%}
+    </div>
+    <header-desktop class="header__desktop{% unless section.settings.icons_text contains 'show' %} header__hide-icon-text{% endunless %}">
+      <div class="{{ page_width }} header-boxed-shadow">
+        <div class="header-boxed-shadow__item"></div>
+      </div>
+
+      {%- render "header-topbar",
+          block_topbar:block_topbar,
+          block_topbar_object:block_topbar_object,
+          topbar_settings_background:topbar_settings_background,
+          page_width:page_width,
+          secondary_menu:secondary_menu,
+          social_media:social_media,
+          country_selector:country_selector,
+          language_selector:language_selector          
+      -%}
+  
+      <div class="header__main header-layout-classic{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background{% endif %}">
+        {%- if section.settings.show_top_line -%}
+        <div{% if section.settings.width_line == "content" %} class="{{ page_width }}"{% endif %}>
+          <div class="header__line"></div>
+        </div>
+        {%- endif -%}
+        <div class="{{ page_width }}">
+          {%- if section_settings_background -%}<div class="section-background header__section-background__boxed border__radius">{%- endif -%}
+          <div class="header {{ section.settings.logo_position }}">
+            {%- capture logo -%}{%- render "header-logo-desktop",section:section -%}{%- endcapture -%}
+
+            {% if section.settings.logo_position == 'logo-to-left' %}{{ logo }}<div></div>{% endif %}
+
+            {%- if section.settings.logo_position == 'logo-to-center' -%}
+            {%- render "header-search-opened", show_search:section.settings.show_search, fullwidth: false -%}
+            {%- if section.settings.show_search == "closed" -%}
+            {%- render "header-search-closed", section:section -%}
+            {%- elsif section.settings.show_search == "hide" -%}
+            <div></div>
+            {%- endif -%}
+            {%- endif -%}
+
+            {%- assign hide_search_opened = false -%}
+            {% if section.settings.logo_position == 'logo-to-center' %}
+            {{ logo }}
+            {%- assign hide_search_opened = true -%}
+            {% endif %}
+
+            {%- render "header-user-icons", section:section, hide_search_opened:hide_search_opened -%}
+
+          </div>
+
+          {%- if section.settings.menu != blank -%}
+          {%- assign visible_items_count = section.settings.visible_items_count | plus: 0 -%}
+          <header-menu-tiles class="header-tiles-container{% if section.settings.show_middle_line %} header-tiles-container__line{% endif %}" data-items="{{ visible_items_count }}">
+            {%- render "header-menu-tiles",
+                section:section,
+                linklist:section.settings.menu.links,
+                mega_menu_index:mega_menu_index,
+                icons:svg_icons,
+                visible_items_count:visible_items_count,
+                menu_font_weight:section.settings.menu_font_weight,
+                page_width:page_width,
+            -%}
+          </header-menu-tiles>
+          {%- endif -%}
+
+          {%- if section_settings_background -%}</div>{%- endif -%}
+        </div>
+        {%- if section.settings.show_bottom_line -%}
+        <div{% if section.settings.width_line == "content" %} class="{{ page_width }}"{% endif %}>
+          <div class="header__line"></div>
+        </div>
+        {%- endif -%}
+      </div>
+
+
+      
+  </header-desktop>
+</header>
+

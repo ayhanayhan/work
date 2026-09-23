@@ -1,0 +1,240 @@
+{%- comment -%}
+    Renders a product card
+
+    Accepts:
+    - product_card_product: {Object}
+    - image_ratio_value: {String} Size of the product image card. Values are "auto", "portrait", "landscape", "square" and "round". Default is "auto" (optional)
+    - show_badge_sold_out: {Boolean} Show the product badge "Sold Out". Default: true
+    - show_badge_on_sale: {Boolean} Show the product badge "On Sale". Default: true
+	- show_badge_feature: {Boolean} Show the product badge "Feature". Default: true
+    - show_countdown: {Boolean} Show the product countdown. Default: true
+    - show_secondary_image: {Boolean} Show the secondary image on hover. Default: false (optional)
+    - show_vendor: {Boolean} Show the product vendor. Default: false
+    - hover_underline: {Boolean} The product name hover underline. Default: false (optional)
+    - truncate_product_name: {Boolean} Truncate the product name. Value is 48. Default: false (optional)
+    - show_price: {Boolean} Show the product price. Default: true
+    - button_type_product: {String} Size of the product image card. Values are "hide", "show", "show only text" and "show only icon". Default is "show"
+    - image_hover_type: {String}
+    - text_aligment: {String}
+    - enable_rating_product_card: {Boolean} html content created from review apps
+
+    Usage:
+    {%- render 'product-card-placeholder',
+       image_hover_type: section.settings.image_hover,
+       show_price:section.settings.show_price,
+       show_vendor:section.settings.show_vendor
+    -%}
+{%- endcomment -%}
+{%- assign enable_rating_product_card = enable_rating_product_card | default: false -%}
+{%- assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t -%}
+{%- assign id_code = 'card-' | append:product_card_product.id | append: section.id -%}
+
+{%- capture badges -%}
+{%- if product_card_product.available == false and show_badge_sold_out -%}
+<span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+{%- elsif product_card_product.compare_at_price > product_card_product.price and product_card_product.available and show_badge_on_sale -%}
+<span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+{%- endif -%}
+{%- if product_card_product.metafields.ticarti.countdown != blank and show_countdown -%}
+{%- assign _time = product_card_product.metafields.ticarti.countdown -%}
+{%- assign year = _time | split:'T' | first | split:'-' | first -%}
+{%- assign month = _time | split:'T' | first | split:'-' -%}
+{%- assign month = month[1] -%}
+{%- assign day = _time | split:'T' | first | split:'-' | last -%}
+{%- assign hours = _time | split:'T' | last | split:':' | first -%}
+{%- assign minutes = _time | split:'T' | last | split:':' -%}
+{%- assign minutes = minutes[1] -%}
+{%- assign seconds = _time | split:'T' | last | split:':' | last | split:'Z' | first -%}
+
+<countdown-timer class="badges-item__medium badges-item__countdown-timer" data-end-date="{{ year }},{{ month | minus:1 }},{{ day }},{{ hours }},{{ minutes }},{{ seconds }}">
+    <style class="hide">
+    .badges-item__countdown-timer{
+        display:flex;
+        flex-direction:row;
+        color:var(--color-counter, var(--color-base-section, var(--color-countdown-text-main)));
+        background:var(--color-countdown-bg-block, var(--color-countdown-bg));
+    }
+    .badges-item__countdown-timer:not(.timer-activated){
+        display:none;
+    }
+    </style>
+    <p class="countdown-timer__item__days mt0 mb0">0</p>
+    <p class="mt0">:</p>
+    <p class="countdown-timer__item__hours mt0 mb0">0</p>
+    <p class="mt0">:</p>
+    <p class="countdown-timer__item__minutes mt0 mb0">0</p>
+    <p class="mt0">:</p>
+    <p class="countdown-timer__item__seconds mt0 mb0">0</p>
+</countdown-timer>
+{%- endif -%}
+{%- if product_card_product.metafields.ticarti.featured_badge != blank and show_badge_feature -%}
+<span class="badges-item__medium badges-item__main">{{ product_card_product.metafields.ticarti.featured_badge }}</span>
+{%- endif -%}
+{%- endcapture -%}
+<div id="product-{{ id_code }}" class="lookbook__product-card product-card {{ text_aligment }} {%- if show_secondary_image != "gallery" -%}{% if image_hover_type == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover_type }}{% endif %}-personal{% endif %}{% if settings.product_card_image_resize == "contain" %} product-card-image--contain{% endif %}">
+    {%- if product_card_product.featured_media != blank -%}
+    <div class="product-card__image__container image-hover-personal-element">
+        <div class="product-card__image">
+            <a href="{{ product_card_product.url }}" class="product-card__image__url{% if show_secondary_image == "gallery" %} product-card__image__url__slider-mask{% endif %}">
+                {%- if show_secondary_image != "gallery" -%}
+                <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+                {%- render "component-image-product-card",
+                    image_ratio_value: image_ratio_value,
+                    image_source: product_card_product.featured_media,
+                    image_source2: product_card_product.media[1],
+                    show_image_source2: show_secondary_image,
+                    section_index: section.index,
+                    load_priority_low: false,
+                    small_radius: small_radius
+                -%}
+                </div>
+                {%- else -%}
+                <swiper-slider class="swiper swiper__no-padding-bottom swiper-nested swiper__animated-arrows swiper-no-pad swiper-no-marg swiper-slide__with-bg{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}"
+                            data-swiper-desktop-grid="1"
+                            data-swiper-desktop-lg-grid="1"
+                            data-swiper-desktop-md-grid="1"
+                            data-swiper-tablet-grid="1"
+                            data-swiper-mobile-grid="1"
+                            data-gutter="0"
+                            data-gutter-mobile="0"
+                            data-grid="1,1,1,1,1"
+                            data-autoplay="false"
+                            data-autoheight="true"
+                            data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+                >
+                    <div class="swiper-wrapper">
+                        {%- liquid
+                            assign colors_array = product_card_product.metafields.ticarti.grouped_gallery | downcase
+                            if colors_array and colors_array != blank
+                            assign colors_array = product_card_product.metafields.ticarti.grouped_gallery | split: ','
+                            endif
+                        -%}
+                        {%- for media in product_card_product.media -%}
+                        {%- if media.media_type == 'image' -%}
+                        <div class="swiper-slide"
+                            {% if colors_array != blank %}data-current-color="{{ colors_array[forloop.index0] | downcase }}"{% endif %}
+                            lazy="true">
+                            <div class="image-hover-box__container">
+                                {%- render "component-image-product-card",
+                                    image_ratio_value: image_ratio_value,
+                                    image_source: media.preview_image,
+                                    load_priority_low: "false",
+                                    section_index: section.index,
+                                    small_radius: small_radius
+                                -%}
+                            </div>
+                        </div>
+                        {%- endif -%}
+                        {%- endfor -%}
+                    </div>
+                </swiper-slider>
+                <div class="swiper-control-container swiper-control-container__absolute">
+                <div class="internal-swiper-button-prev">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+                <div class="swiper-pagination hide-desktop"></div>
+                <div class="internal-swiper-button-next">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+                </div>
+                {%- endif -%}
+            </a>
+        </div>
+        <div class="badges__container badges__container__desktop{% if show_badge_on_sale == false %} hide__badges-item__sale{% endif %}">{{- badges -}}</div>
+    </div>
+    {%- endif -%}
+    <product-form class="lookbook__product-card__content">
+        {%- assign product_card_product_id = section.id | append: product_card_product.id -%}
+        {%- form 'product', product_card_product, id: product_card_product_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+        <div class="lookbook__product-card__content__main">
+            {%- if badges != blank -%}
+            <div class="badges__container badges__container__mobile">{{- badges -}}</div>
+            {%- endif -%}
+            {%- if show_vendor and product_card_product.vendor != blank -%}
+            <div class="body3 mt3">
+                <a class="mt0 lookbook__product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}"
+                href="{{ routes.collections_url }}/all?filter.p.vendor={{ product_card_product.vendor | escape }}">{{ product_card_product.vendor }}</a>
+            </div>
+            {%- endif -%}
+
+            <div class="body2 mt3 lookbook__product-card__heading">
+                <a href="font-inherit {{ product_card_product.url }}" class="product-card-name-size lookbook__product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+                  <h3>{%- if truncate_product_name -%}{{ product_card_product.title | escape | truncate: 48,last_characters }}{%- else -%}{{ product_card_product.title | escape }}{%- endif -%}</h3>
+                </a>
+            </div>
+
+            {%- if settings.enable_rating and settings.cart_type != "catalog_mode" -%}{%- if enable_rating_product_card -%}
+            {%- render 'review-stars' _product: product_card_product -%}
+            {%- endif -%}{%- endif -%}
+            {%- if show_price and settings.cart_type != "catalog_mode" -%}
+            <div id="price-{{ id_code }}">{%- render 'price', product: product_card_product, size:settings.product_card_price_size, button_type_product:button_type_product -%}</div>
+            {%- endif -%}
+        </div>
+
+        {%- if button_type_product != "hide" and settings.cart_type != "catalog_mode" -%}
+        {%- if product_card_product.has_only_default_variant -%}
+        <div class="lookbook__product-card__interface">
+            <div id="form-{{ id_code }}"
+                class="lookbook__product-card__form"
+                >
+                <input type="hidden" name="id" value="{{ product_card_product.selected_or_first_available_variant.id }}">
+                <button type="submit"
+                        name="add"
+                        class="lookbook__product-card__button quick-add__submit btn btn__transition-text w-full"
+                        {% if product_card_product.selected_or_first_available_variant.available == false %}
+                        disabled
+                        aria-disabled="true"
+                        {% endif %}
+                        >
+                    <div class="btn__texts">
+                        <span class="btn__top-text is-visible">
+                            {%- render "icon-cart" -%}
+                            <span class="btn__texts__text">
+                            {%- if product_card_product.selected_or_first_available_variant.available -%}
+                            {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'continue' and current_variant.inventory_quantity <= 0 -%}
+                            {{ "products.product.preorder" | t }}
+                            {%- else -%}
+                            {{ 'products.product.add_to_cart' | t }}
+                            {%- endif -%}
+                            {%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+                            </span>
+                        </span>
+                        <span class="btn__bottom-text is-hidden">
+                            {%- render "icon-cart" -%}
+                            <span class="btn__texts__text">
+                            {%- if product_card_product.selected_or_first_available_variant.available -%}
+                            {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'continue' and current_variant.inventory_quantity <= 0 -%}
+                            {{ "products.product.preorder" | t }}
+                            {%- else -%}
+                            {{ 'products.product.add_to_cart' | t }}
+                            {%- endif -%}
+                            {%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="loading-overlay__spinner hidden">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+        {%- else -%}
+        <div class="lookbook__product-card__interface">
+            <div class="lookbook__product-card__form">
+                <a href="{{ product_card_product.url }}" class="lookbook__product-card__button quick-add__submit btn btn__transition-text w-full">
+                    <div class="btn__texts">
+                        <span class="btn__top-text is-visible">
+                            {{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            <span class="btn__texts__text">{{ "products.product.choose_options" | t }}</span>
+                        </span>
+                        <span class="btn__bottom-text is-hidden">
+                            {{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            <span class="btn__texts__text">{{ "products.product.choose_options" | t }}</span>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {%- endif -%}
+        {%- endif -%}
+        {%- endform -%}
+    </product-form>
+</div>

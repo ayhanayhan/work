@@ -1,0 +1,178 @@
+{%- liquid
+    assign secondary_menu = ""
+    assign secondary_menu_links = ""
+    assign social_media = ""
+    assign country_selector = ""
+    assign language_selector = ""
+    assign mega_menu_index = '|'
+    assign svg_icons = ''
+    for block in section.blocks
+    case block.type
+    when 'main_menu_icons'
+    assign svg_icons = block
+    when 'mega_menu'
+    assign mega_menu_index = mega_menu_index | append: block.settings.mega_menu_item_name | append: '%%' | append: forloop.index0 | append: '|'
+    endcase
+    endfor
+    assign block_topbar = section.blocks | where: "type", "topbar"
+    assign block_topbar_object = section.blocks | where: "type", "topbar"
+    for block in block_topbar
+    assign block_topbar_object = block
+    assign secondary_menu_links = block.settings.secondary_menu.links
+    capture secondary_menu
+    render 'header-menu-secondary' linklist: block.settings.secondary_menu.links animation: 'menu--animation-underline'
+    endcapture
+    capture social_media
+    render "header-social-media", block:block
+    endcapture
+    capture country_selector
+    render "header-country-selector", block:block
+    endcapture
+    capture language_selector
+    render "header-language-selector", block:block
+    endcapture
+    endfor
+
+    render "section-css-background-header", section:section, block_topbar_object:block_topbar_object
+    render "section-component-top-line", section:section
+
+    assign sec_bg_desk = true
+    if template == "index" and settings.fixed_header_on_index
+    assign sec_bg_desk = false
+    endif
+    if section.settings.background_width == "fullwidth"
+    assign background_width_fullwidth = true
+    elsif template == "index" and settings.fixed_header_on_index
+    assign background_width_fullwidth = true
+    else
+    assign background_width_fullwidth = false
+    endif
+
+    capture page_width
+    if section.settings.width != "default"
+    echo section.settings.width
+    else
+    echo settings.page_width_main
+    endif
+    endcapture
+    assign topbar_settings_background = false
+    if block_topbar_object.settings.background != 'hide' and section.settings.background_width == "content_width" and sec_bg_desk
+    assign topbar_settings_background = true
+    endif
+    assign section_settings_background = false
+    if section.settings.background != 'hide' and section.settings.background_width == "content_width" and sec_bg_desk
+    assign section_settings_background = true
+    endif
+-%}
+
+
+<header id="theme-section-{{ section.id }}"
+        data-role="{{ theme.role }}"
+        data-section-name="header-layout-classic"
+  >
+    <div class="header__mobile{% if section.settings.background != 'hide' and background_width_fullwidth %} section-background{% endif %}">
+      {%- render "header-mobile",
+          section: section,
+          page_width:page_width,
+          secondary_menu_links:secondary_menu_links,
+          social_media: social_media,
+          country_selector: country_selector,
+          language_selector:language_selector,
+          svg_icons:svg_icons
+      -%}
+    </div>
+    <header-desktop class="header__desktop{% unless section.settings.icons_text contains 'show' %} header__hide-icon-text{% endunless %}{% if settings.show_shadow_header %} header__desktop__shadow{% endif %}">
+      <div class="{{ page_width }} header-boxed-shadow">
+        <div class="header-boxed-shadow__item"></div>
+      </div>
+
+      {%- render "header-topbar",
+          block_topbar:block_topbar,
+          block_topbar_object:block_topbar_object,
+          topbar_settings_background:topbar_settings_background,
+          page_width:page_width,
+          secondary_menu:secondary_menu,
+          social_media:social_media,
+          country_selector:country_selector,
+          language_selector:language_selector          
+      -%}
+  
+      <div class="header__main header-layout-classic{% if section.settings.background != 'hide' and background_width_fullwidth %} section-background{% endif %}">
+        {%- if section.settings.show_top_line -%}
+        <div{% if section.settings.width_line == "content" %} class="{{ page_width }}"{% endif %}>
+          <div class="header__line"></div>
+        </div>
+        {%- endif -%}
+        <div class="{{ page_width }}">
+          {%- if section_settings_background -%}<div class="section-background header__section-background__boxed border__radius">{%- endif -%}
+          <div class="header {{ section.settings.logo_position }}">
+            {%- capture logo -%}{%- render "header-logo-desktop",section:section -%}{%- endcapture -%}
+            {%- capture menubutton -%}
+            {%- if section.settings.menu != blank -%}
+            <modal-opener class="display-flex popup-modal__opener" data-modal="#header-modal-mainmenu">
+              <button type="button" class="header-modal-mainmenu__button header__button move-icon-up global__tooltip--hover" aria-haspopup="dialog">
+                {%- if section.settings.icons_text == 'show_only_text' -%}
+                <span class="body2 header__button__bubble__text">{{ 'sections.header.main_menu' | t }}</span>
+                {%- else -%}
+				        {{- 'icon-hamburger' | append: settings.system_icon_thickness | inline_asset_content -}}
+                <span class="body2 header__button__bubble__text">{{ 'sections.header.main_menu' | t }}</span>
+                {%- if section.settings.icons_text == 'tooltip' -%}
+                <global-tooltip class="global__tooltip global__tooltip__static">
+                  <div class="global__tooltip__content">{{ 'sections.header.main_menu' | t }}</div>
+                </global-tooltip>
+                {%- endif -%}
+                {%- endif -%}
+              </button>
+            </modal-opener>
+            {%- endif -%}
+            {%- endcapture -%}
+            
+            {%- if section.settings.logo_position == 'logo-to-center' -%}
+            {%- liquid
+                if section.settings.menu != blank
+                echo menubutton
+                else
+                echo '<div></div>'
+                endif
+                echo logo
+            -%}            
+            {%- else -%}
+            <div class="menu-with-logo">
+              {{ menubutton }}
+              {{ logo }}
+            </div>
+            {%- endif -%}
+
+            {%- liquid
+                if section.settings.logo_position != 'logo-to-center'
+                capture search
+                render "header-search-opened", show_search:section.settings.show_search, fullwidth: true
+                endcapture
+                if search == ''
+                echo '<div></div>'
+                else
+                echo search
+                endif
+                endif
+             -%}
+
+            {%- liquid
+                assign hide_search_opened = false
+                if section.settings.logo_position != 'logo-to-center' and section.settings.show_search != "closed"
+                assign hide_search_opened = true
+                endif
+            -%}
+            {%- render "header-user-icons", section:section, hide_search_opened:hide_search_opened -%}
+          </div>
+          {%- if section_settings_background -%}</div>{%- endif -%}
+        </div>
+        {%- if section.settings.show_bottom_line -%}
+        <div{% if section.settings.width_line == "content" %} class="{{ page_width }}"{% endif %}>
+          <div class="header__line"></div>
+        </div>
+        {%- endif -%}
+      </div>
+
+  </header-desktop>
+</header>
+

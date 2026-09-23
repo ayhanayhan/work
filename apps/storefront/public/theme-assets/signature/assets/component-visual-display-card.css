@@ -1,0 +1,85 @@
+.product-form__input {
+  padding: 0;
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+.product-form__item input[type=radio] {
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+  position: absolute;
+  top:0;
+  left:0;
+  height: 1px;
+  width: 1px;
+}
+.btn--variant-smallcard{
+  --background: var(--color-button_cardswatches-block, var(--color-button_cardswatches));
+  --color:var(--color-button-text_cardswatches-block, var(--color-base-section, var(--color-button-text_cardswatches, var(--color-base))));
+  --border:var(--color-button-border_cardswatches-block, var(--color-button-border_cardswatches));
+  --background-hover: var(--color-button-hover_cardswatches-block, var(--color-button-hover_cardswatches));
+  --color-hover:var(--color-button-text-hover_cardswatches-block, var(--color-base-section, var(--color-button-text-hover_cardswatches, var(--color-base))));
+  --border-hover:var(--color-button-border-hover_cardswatches-block, var(--color-base-section, var(--color-button-border-hover_cardswatches)));
+  --border-width:var(--border-button-width_cardswatches-block, var(--border-button-width_cardswatches));
+  --border-width-hover:var(--border-button-width-hover_cardswatches-block, var(--border-button-width-hover_cardswatches));
+  --self-border-width:var(--border-button-width_cardswatches-block, var(--border-button-width_cardswatches));
+  --icon:var(--color);
+  --icon-hover:var(--color-hover);
+  --height:100%;
+  --shadow-button-current:unset;
+  --shadow-button-current-hover:unset;
+  --button-opacity-hover:1;
+  --radius-button:var(--radius-button-swatches);
+  font-weight: var(--font-body-weight);
+  padding: 0 15px;
+  min-height:30px;
+  --background-soldout: var(--color-button-soldout_cardswatches-block, var(--color-button-soldout_cardswatches));
+  --color-soldout:var(--color-text-soldout_cardswatches-block, var(--color-text-soldout_cardswatches));
+  --border-soldout:var(--color-border-soldout_cardswatches-block, var(--color-border-soldout_cardswatches));
+}
+.product-form__input input[type=radio]:checked+label {
+  --color: var(--color-hover);
+  --background: var(--background-hover);
+  --border: var(--border-hover);
+  --border-width: var(--border-width-hover);
+  cursor: default;
+}
+.btn--variant-smallcard .variant__btn__text,
+.btn--variant-smallcard .btn__texts>*{
+  padding-top:7px;
+  padding-bottom:8px!important;
+}
+.product-card .variant__btn__text{
+  position:relative;
+  z-index:1;
+  padding-bottom: 1px;
+}
+.product-card.text-center .product-form__container__card{
+  justify-content:center;
+}
+.product-form__container__card{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.visual-display__color__card{
+  width:30px;
+  height:30px;
+}
+.visual-display__image__card{
+  width:100%;
+}
+.product-form__container__card>*{
+  position:relative;
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+.product-form__container__card.product-form__container__card--image>* {
+  flex: 0 0 calc((100% - 5px * 4) / 5);
+}
+@media (min-width: 1025px){
+  .visual-display__image__card:hover .visual-display-swatch__image:after,
+  .visual-display__image__card:hover .visual-display-swatch__image:before{
+    opacity:1;
+  }
+}

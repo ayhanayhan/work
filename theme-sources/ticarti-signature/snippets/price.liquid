@@ -1,0 +1,52 @@
+{%- liquid
+  if product.price_varies and button_type_product == "hide"
+  assign target = product
+  else
+  assign target = product.selected_or_first_available_variant
+  endif
+  
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign money_price = price | money
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+  endif
+
+  assign button_type_product = button_type_product | default: false
+  if product.price_varies and button_type_product == "hide"
+    assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+  endif
+
+  if size
+  assign size_value = size
+  else
+  assign size_value = "h5"
+  endif
+-%}
+<div class="price__container">
+  <div class="price">
+    {%- if compare_at_price == blank or compare_at_price <= price -%}
+    <div class="{{ size_value }} price__main">{{ money_price }}</div>
+    {%- else -%}
+    <div class="price__regular body3">
+      {% if settings.currency_code_enabled %}
+      {{ compare_at_price | money_with_currency }}
+      {% else %}
+      {{ compare_at_price | money }}
+      {% endif %}
+    </div>
+    <div class="price__sale {{ size_value }} mt3">{{ money_price }}</div>
+    {%- endif -%}
+  </div>
+  <div class="unit-price body3{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hide{% endif %}">
+    <span>{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
+    <span aria-hidden="true">/</span>
+    <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+    <span>
+      {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+      {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+      {%- endif -%}
+      {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+    </span>
+  </div>
+</div>

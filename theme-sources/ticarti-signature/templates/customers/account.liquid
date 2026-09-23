@@ -1,0 +1,90 @@
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<div class="top-spacing-normal {{ settings.page_width_main }} customer account">
+  <div class="page-grid-1 page-width-half addresses page-vertical-gap-40">
+    <h1 class="mt0 mb0 text-center">{{ 'customer.account.title' | t }}</h1>
+    <div class="display-flex justify-content-center">
+      <a href="{{ routes.account_logout_url }}" class="link">
+        {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+        <span>{{ 'customer.log_out' | t }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="page-grid-container-8_4 page-vertical-gap-40 mt40">
+    <div class="page-grid-1">
+      <h4 class="mt0 mb0 section-heading-text">{{ 'customer.orders.title' | t }}</h4>
+
+      {%- paginate customer.orders by 20 -%}
+      {%- if customer.orders.size > 0 -%}
+      <table role="table" class="order-history no-js-local">
+        <thead role="rowgroup">
+          <tr role="row">
+            <th id="ColumnOrder" scope="col" role="columnheader">{{ 'customer.orders.order_number' | t }}</th>
+            <th id="ColumnDate" scope="col" role="columnheader">{{ 'customer.orders.date' | t }}</th>
+            <th id="ColumnPayment" scope="col" role="columnheader">{{ 'customer.orders.payment_status' | t }}</th>
+            <th id="ColumnFulfillment" scope="col" role="columnheader">{{ 'customer.orders.fulfillment_status' | t }}</th>
+            <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
+          </tr>
+        </thead>
+        <tbody role="rowgroup">
+          {%- for order in customer.orders -%}
+          <tr role="row">
+            <td
+                id="RowOrder"
+                role="cell"
+                headers="ColumnOrder"
+                data-label="{{ 'customer.orders.order_number' | t }}"
+                >
+              <a href="{{ order.customer_url }}" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}" class="strong">
+                {{ order.name }}
+              </a>
+            </td>
+            <td headers="RowOrder ColumnDate" role="cell" data-label="{{ 'customer.orders.date' | t }}">
+              {{ order.created_at | time_tag: format: 'date' }}
+            </td>
+            <td headers="RowOrder ColumnPayment" role="cell" data-label="{{ 'customer.orders.payment_status' | t }}">
+              {{ order.financial_status_label }}
+            </td>
+            <td headers="RowOrder ColumnFulfillment" role="cell" data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+              {{ order.fulfillment_status_label }}
+            </td>
+            <td headers="RowOrder ColumnTotal" role="cell" data-label="{{ 'customer.orders.total' | t }}">
+              <span class="order__bold-price">{{ order.total_price | money_with_currency }}</span>
+            </td>
+          </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+      
+      {%- else -%}
+      <p class="mt0">{{ 'customer.orders.none' | t }}</p>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+      <div>
+        {% render 'pagination', paginate: paginate %}
+      </div>
+      {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+    
+    <div class="page-grid-1">
+      <div class="addresses__container__content">
+        <h4 class="mt0 mb0 section-heading-text">{{ 'customer.account.details' | t }}</h4>
+        <ul class="unstyle-ul addresses__list address__background mt20" role="list">
+          <li>
+            {{ customer.default_address | format_address }}
+            <a href="{{ routes.account_addresses_url }}" class="btn btn__transition-text w-full mt16">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</span>
+                <span class="btn__bottom-text is-hidden">{{ 'customer.account.view_addresses' | t }}</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+  </div>
+</div>

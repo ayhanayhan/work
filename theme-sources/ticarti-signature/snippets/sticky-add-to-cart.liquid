@@ -1,0 +1,75 @@
+{% comment %}
+    Sticky add to cart modal
+
+    Accepts:
+    - section: {Object} Section object
+    - block: {Object} Block object
+    - product: {Object} Product object
+    - enable_sticky_addtocart: {Boolean} Enable/disable this snippent
+
+    Usage:
+	{%- render "sticky-add-to-cart",
+    			section: section,
+				enable_sticky_addtocart: enable_sticky_addtocart -%}
+{% endcomment %}
+
+{%- if enable_sticky_addtocart and product.available -%}
+{{ 'component-sticky-addtocart.css' | asset_url | stylesheet_tag }}
+<sticky-cart-modal class="sticky-cart-modal w-full" id="sticky-cart-{{ section.id }}" data-section="{{ section.id }}">
+  <div class="sticky-cart{% if section.settings.default_variant == "select_variant" and product.variants.size > 1 %} sticky-cart__select_options__text{% endif %}">
+    <div class="sticky-cart-button btn btn--addtocart-page btn-wide btn__transition-text" tabindex="0">
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible add_to_cart__text">
+          {%- render "icon-cart" -%}
+          <span>{{ 'products.product.add_to_cart' | t }}</span>
+        </span>
+        <span class="btn__bottom-text is-hidden add_to_cart__text">
+          {%- render "icon-cart" -%}
+          <span>{{ 'products.product.add_to_cart' | t }}</span>
+        </span>
+        <span class="btn__top-text is-visible select_options__text">
+          <span>{{ 'products.product.select_options_button' | t }}</span>
+        </span>
+        <span class="btn__bottom-text is-hidden select_options__text">
+          <span>{{ 'products.product.select_options_button' | t }}</span>
+        </span>
+      </div>
+    </div>
+
+    {%- if settings.enable_compare and block.settings.show_compare -%}
+    <div class="global__tooltip--hover">
+      <compare-button
+         class="product-form__buttons__content__media__item btn--compare-productpage"
+         data-id="{{ product.selected_or_first_available_variant.id }}"
+         data-product-handle="{{ product.handle }}"
+        >
+		{{- 'icon-compare' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </compare-button>
+      <global-tooltip class="global__tooltip">
+        <div class="global__tooltip__content"
+             data-text="{{ 'compare.product.compare' | t }}"
+             data-text-active="{{ 'compare.product.compare-remove' | t }}"></div>
+      </global-tooltip>
+    </div>
+    {%- endif -%}
+
+    {%- if settings.enable_wishlist and block.settings.show_wishlist -%}
+    <div class="global__tooltip--hover">
+      <wishlist-button
+         class="product-form__buttons__content__media__item btn--wishlist-productpage"
+         data-id="{{ product.id }}"
+         data-product-handle="{{ product.handle }}"
+        >
+        {%- render "icon-wishlist" icon_type:"normal" -%}
+        {%- render "icon-wishlist" icon_type:"added" -%}
+      </wishlist-button>
+      <global-tooltip class="global__tooltip">
+        <div class="global__tooltip__content"
+             data-text="{{ 'wishlist.product.wishlist' | t }}"
+             data-text-active="{{ 'wishlist.product.wishlist-remove' | t }}"></div>
+      </global-tooltip>
+    </div>
+    {%- endif -%}
+  </div>
+</sticky-cart-modal>
+{%- endif -%}

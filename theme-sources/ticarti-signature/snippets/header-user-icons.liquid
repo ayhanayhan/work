@@ -1,0 +1,221 @@
+{% comment %}
+  Header icons: search, account, wishlist, compare, cart
+
+  Accepts:
+  - section: {Object} Section paramatres object
+  - hide_search_opened: {Boolean} default false
+  - disable_phones_block: {String} default empty. Value = disable
+
+  Usage:
+  {%- render "header-user-icons",
+      section:section,
+      hide_search_opened:hide_search_opened
+  -%}
+{% endcomment %}
+
+<div class="header__icons">
+  {%- if disable_phones_block != "disable" -%}
+  {% assign phone = section.blocks | where: "type", "phone" %}
+  {%- for block in phone -%}
+  {%- capture phone_content_button -%}
+  <div class="header-phone-number__desktop" id="header-contacts-heading-{{ block.id }}">
+    {%- if block.settings.phone__0 != blank or block.settings.phone_icon__0 != blank -%}
+      {%- if block.settings.phone_as_link__0 -%}
+      <a href="tel:{{ block.settings.phone__0 | replace:" ", "" }}" class="mt0 h5 clear-underline header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</a>
+      {%- else -%}
+      <p class="mt0 h5 header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</p>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if block.settings.text__0 != blank -%}<p class="mt0 body3 phone-slogan">{{ block.settings.text__0 }}</p>{%- endif -%}
+  </div>
+  {%- endcapture -%}
+  {%- capture phone_content -%}{%- render "header-contacts", block:block -%}{%- endcapture -%}
+  {%- if phone_content != blank -%}
+  <div class="header-phone-number__desktop__container enable-scrollbar-js" id="header-contacts-{{ block.id }}">
+    <div class="header-phone-number__desktop__main{% if block.settings.open_on == "click" %} header-phone-number__desktop__on-click{% endif %}">
+      {{ phone_content_button }}
+      {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+    <div class="header-phone-number__desktop_submenu">
+      <div class="header-phone-number__desktop_submenu__container scrollbar-height-js custom__scrollbar">
+        {{ phone_content }}
+      </div>
+    </div>
+  </div>
+  {%- else -%}
+  {{ phone_content_button }}
+  {%- endif -%}
+  {%- endfor -%}
+  {%- endif -%}
+
+  {%- unless section.settings.classic_menu_position contains "bottom-menu-to" -%}
+  {%- unless hide_search_opened -%}
+  {%- render "header-search-opened", show_search:section.settings.show_search, fullwidth: false -%}
+  {%- endunless -%}
+  {%- endunless -%}
+  
+  <div class="header__icons__customer__icons{% if section.settings.icons_text == 'show' %} gap-20{% endif %}">
+    {%- if section.settings.show_search == "closed" -%}
+    {%- unless section.settings.classic_menu_position contains "bottom-menu-to" and section.settings.logo_position == 'logo-to-center' -%}
+    {%- unless hide_search_opened -%}
+    {%- render "header-search-closed", section:section -%}
+    {%- endunless -%}
+    {%- endunless -%}
+    {%- endif -%}
+    {%- if shop.customer_accounts_enabled -%}
+    {%- if routes.account_login_url contains "/account/login" -%}
+    <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__button{% if section.settings.icons_text != 'show_only_text' %} move-icon-up{% endif %} global__tooltip--hover">
+      {%- if section.settings.icons_text != 'show_only_text' -%}
+      {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}
+      {%- endif -%}
+      <span class="body2 header__button__bubble__text">
+        {%- liquid
+          if customer
+            echo 'customer.account_fallback' | t
+          else
+            echo 'customer.log_in' | t
+          endif
+        -%}
+      </span>
+      {%- if section.settings.icons_text == 'tooltip' -%}
+      <global-tooltip class="global__tooltip global__tooltip__static">
+        <div class="global__tooltip__content">
+        {%- liquid
+          if customer
+            echo 'customer.account_fallback' | t
+          else
+            echo 'customer.log_in' | t
+          endif
+        -%}
+        </div>
+      </global-tooltip>
+      {%- endif -%}
+    </a>
+    {%- else -%}
+    <div class="header-customer-accounts">
+      <div class="header__button{% if section.settings.icons_text != 'show_only_text' %} move-icon-up{% endif %} global__tooltip--hover">
+        {%- if section.settings.icons_text != 'show_only_text' -%}
+        {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}
+        {%- endif -%}
+        <span class="body2 header__button__bubble__text">
+          {%- liquid
+            if customer
+              echo 'customer.account_title' | t
+            else
+              echo 'customer.log_in' | t
+            endif
+          -%}
+        </span>
+      </div>
+      <div class="header-customer-accounts__modal">
+        <p class="mt0 header-customer-accounts__modal__header">
+          <span class="header-customer-accounts__modal__title h6">
+            {% if customer and customer.first_name != blank %}
+              {{ 'customer.account_title_personalized' | t: first_name: customer.first_name }}
+            {% else %}
+              {{ 'customer.account_title' | t }}
+            {% endif %}
+          </span>
+          {% if customer %}
+          <span class="mt5 display-block header-customer-accounts__modal__email body2">
+            {% if customer.email %}
+              {{ customer.email }}
+            {% elsif customer.phone %}
+              {{ customer.phone }}
+            {% endif %}
+          </span>
+          {% endif %}
+        </p>
+        <div class="header-customer-accounts__modal__buttons">
+          {% unless customer %}
+            <div class="account-actions__sign-ins" data-skip-subtree-update="true">
+              <script src="{{ 'account-login-actions.js' | asset_url }}" type="module" fetchpriority="low"></script>
+              <account-login-actions class="account-actions__shop-login">{{ shop | login_button }}</account-login-actions>
+              <a href="{% if request.design_mode %}{{ routes.account_url }}{% else %}{{ routes.storefront_login_url }}{% endif %}" class="btn btn__transition-text w-full">
+                <div class="btn__texts">
+                  <span class="btn__top-text is-visible">
+                    <span class="account-actions__sign-in-text">{{ 'customer.sign_in_options' | t }}</span>
+                    <span class="account-actions__fallback-text">{{ 'customer.log_in' | t }}</span>
+                  </span>
+                  <span class="btn__bottom-text is-hidden">
+                    <span class="account-actions__sign-in-text">{{ 'customer.sign_in_options' | t }}</span>
+                    <span class="account-actions__fallback-text">{{ 'customer.log_in' | t }}</span>
+                  </span>
+                </div>
+              </a>
+            </div>
+          {% endunless %}
+          <div class="header-customer-accounts__nav">
+            <a href="{{ routes.account_url }}" class="btn btn--border btn__transition-text w-full">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{% if section.settings.icons_text != 'show_only_text' %}{{- 'icon-account-orders' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}{{ 'customer.account_orders' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{% if section.settings.icons_text != 'show_only_text' %}{{- 'icon-account-orders' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}{{ 'customer.account_orders' | t }}</span>
+              </div>
+            </a>
+            <a href="{{ routes.account_addresses_url }}" class="btn btn--border btn__transition-text w-full">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{% if section.settings.icons_text != 'show_only_text' %}{{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}{{ 'customer.account_profile' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{% if section.settings.icons_text != 'show_only_text' %}{{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}{{ 'customer.account_profile' | t }}</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- endif -%}
+    {%- endif -%}
+
+    {%- if settings.enable_compare -%}
+    <a href="{{ settings.page_compare.url }}" class="header__button{% if section.settings.icons_text != 'show_only_text' %} move-icon-up{% endif %} global__tooltip--hover">
+      {%- if section.settings.icons_text == 'show_only_text' -%}
+      <span class="body2 header__button__bubble__text">{{ 'compare.header.icon_compare' | t }}: <compare-bubble><span class="header__button__bubble__count">0</span></compare-bubble></span></span>
+      {%- else -%}
+	    {{- 'icon-compare' | append: settings.system_icon_thickness | inline_asset_content -}}
+      <span class="body2 header__button__bubble__text">{{ 'compare.header.icon_compare' | t }}</span>
+      <compare-bubble class="header__button__bubble">
+        <span class="body3-no-scale header__button__bubble__count"></span>
+      </compare-bubble>
+      {%- if section.settings.icons_text == 'tooltip' -%}
+      <global-tooltip class="global__tooltip global__tooltip__static">
+        <div class="global__tooltip__content">{{ 'compare.header.icon_compare' | t }}</div>
+      </global-tooltip>
+      {%- endif -%}
+      {%- endif -%}
+    </a>
+    {%- endif -%}
+    {%- if settings.enable_wishlist -%}
+    <a href="{{ settings.page_wishlist.url }}" class="header__button{% if section.settings.icons_text != 'show_only_text' %} move-icon-up{% endif %} global__tooltip--hover">
+      {%- if section.settings.icons_text == 'show_only_text' -%}
+      <span class="body2 header__button__bubble__text">{{ 'wishlist.header.icon_wishlist' | t }}: <wishlist-bubble><span class="header__button__bubble__count">0</span></wishlist-bubble></span>
+      {%- else -%}
+      {%- render 'icon-wishlist', icon_type:"normal" -%}
+      <span class="body2 header__button__bubble__text">{{ 'wishlist.header.icon_wishlist' | t }}</span>
+      <wishlist-bubble class="header__button__bubble">
+        <span class="body3-no-scale header__button__bubble__count"></span>
+      </wishlist-bubble>
+      {%- if section.settings.icons_text == 'tooltip' -%}
+      <global-tooltip class="global__tooltip global__tooltip__static">
+        <div class="global__tooltip__content">{{ 'wishlist.header.icon_wishlist' | t }}</div>
+      </global-tooltip>
+      {%- endif -%}
+      {%- endif -%}
+    </a>
+    {%- endif -%}
+    {%- if settings.cart_type != "catalog_mode" -%}
+    {%- if section.settings.icons_text == 'show_only_text' -%}
+    <a href="{{ routes.cart_url }}" class="header__button global__tooltip--hover" id="cart-icon-bubble-short">
+      {%- render 'cart-icon-bubble-short' -%}
+    </a>
+    {%- else -%}
+    <a href="{{ routes.cart_url }}" class="header__button move-icon-up global__tooltip--hover" id="cart-icon-bubble">
+      {%- render 'cart-icon-bubble' -%}
+      {%- if section.settings.icons_text == 'tooltip' -%}
+      <global-tooltip class="global__tooltip global__tooltip__static">
+        <div class="global__tooltip__content">{{ 'sections.header.icon_cart' | t }}</div>
+      </global-tooltip>
+      {%- endif -%}
+    </a>
+    {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>

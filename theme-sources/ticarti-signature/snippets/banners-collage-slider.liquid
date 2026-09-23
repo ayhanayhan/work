@@ -1,0 +1,85 @@
+{%- assign data_grid = "1,1,1,1,1" -%}
+<swiper-slider class="swiper bcollage-area-{{ forloop.index }}" data-items="{{ section.settings.grid | split: "grid-" | last }}"
+               data-gutter="10"
+               data-gutter-mobile="15"
+               data-grid="{{ data_grid }}"
+               data-effect="{{ section.settings.transition_effect }}"
+               {% if section.settings.autoplay_enabled and request.design_mode == false and section.blocks.size > 1 %} data-autoplay-delay="{{ section.settings.autoplay_time | times: 1000 }}"{% endif %}
+               data-autoplay="{%- if section.settings.autoplay_enabled and request.design_mode == false and section.blocks.size > 1 -%}true{%- else -%}false{%- endif -%}"
+               data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+  >
+  <div class="swiper-wrapper">
+
+    <div class="swiper-slide" lazy="true">
+      {%- liquid
+          capture ratio_mobile
+          if block.settings.image_ratio_mobile == "default"
+          if section.settings.image_size == "fixed" or section.settings.image_size == "fullscreen" or section.settings.image_size == "1"
+          echo '1'
+          elsif section.settings.image_size == "1.333333"
+          echo '4 / 3'
+          else
+          echo 'auto'
+          endif
+          else
+          echo block.settings.image_ratio_mobile
+          endif
+          endcapture
+          if forloop.index > 1
+          assign load_priority_low = 'true'
+          endif
+      -%}
+        
+      <div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+        {%- capture placeholder_icon -%}{%- cycle 'hero-apparel-1', 'hero-apparel-2' -%}{%- endcapture -%}
+        {%- render "component-banner-item",
+            section:section,
+            block:block,
+            desktop_grid:desktop_grid,
+            image_ratio_value: "auto",
+            image_ratio_mobile_value: ratio_mobile,
+            placeholder_icon: placeholder_icon,
+            load_priority_low: load_priority_low
+        -%}
+      </div>
+    </div>
+    {%- for block in section.blocks offset:presets_limit -%}
+    <div class="swiper-slide" lazy="true">
+      {%- liquid
+          capture ratio_mobile
+          if block.settings.image_ratio_mobile == "default"
+          if section.settings.image_size == "fixed" or section.settings.image_size == "fullscreen" or section.settings.image_size == "1"
+          echo '1'
+          elsif section.settings.image_size == "1.333333"
+          echo '4 / 3'
+          else
+          echo 'auto'
+          endif
+          else
+          echo block.settings.image_ratio_mobile
+          endif
+          endcapture
+      -%}
+        
+      <div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+        {%- capture placeholder_icon -%}{%- cycle 'hero-apparel-1', 'hero-apparel-2' -%}{%- endcapture -%}
+        {%- render "component-banner-item",
+            section:section,
+            block:block,
+            desktop_grid:desktop_grid,
+            image_ratio_value: "auto",
+            image_ratio_mobile_value: ratio_mobile,
+            placeholder_icon: placeholder_icon,
+            load_priority_low: 'true'
+        -%}
+      </div>
+    </div>
+    {%- endfor -%}
+  </div>
+  <div class="internal-swiper-button-prev">
+    {{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}
+  </div>
+  <div class="internal-swiper-button-next">
+    {{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}
+  </div>
+</swiper-slider>

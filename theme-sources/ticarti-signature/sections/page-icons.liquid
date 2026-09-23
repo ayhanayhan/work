@@ -1,0 +1,250 @@
+<style>
+  .icons__container{
+    display: grid;
+    grid-template-columns: repeat(var(--page-grid-value), 1fr);
+    align-content: flex-start;
+    gap:10px;
+  }
+  @media (min-width: 1600px){
+    .icons__container{
+      --page-grid-value:14;
+    }
+  }
+  @media (min-width: 1360px) and (max-width: 1599px){
+    .icons__container{
+      --page-grid-value:12;
+    }
+  }
+  @media (max-width: 1359px){
+    .icons__container{
+      --page-grid-value:10;
+    }
+  }
+  @media (max-width: 1024px){
+    .icons__container{
+      --page-grid-value:8;
+    }
+  }
+  @media (max-width: 576px){
+    .icons__container{
+      --page-grid-value:3;
+    }
+  }
+  
+  .icons__item{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    background: rgba(var(--color-base-rgb), .05);
+    flex: 0 0 auto;
+    border-radius: 10px;
+    cursor: copy;
+    transition: all var(--duration-medium) var(--animation-bezier);
+    word-break: break-all;
+    text-align:center;
+    padding:15px 10px;
+    position:relative;
+    overflow:hidden;
+  }
+  .icons__item__icon_copied{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background:var(--color-base);
+    color:var(--color-body-background);
+    opacity:0;
+    transition: all var(--duration-medium) var(--animation-bezier);
+  }
+  .icons__item--progress .icons__item__icon_copied{
+    opacity:1;
+  }
+  .icons__item .icons__item__icon_copied svg path{
+    fill:var(--color-body-background);
+  }
+  
+  .icons__item:hover{
+    color:var(--color-accent);
+  }
+  .icons__item svg path{
+    transition: all var(--duration-medium) var(--animation-bezier);
+  }
+  .icons__item:hover>.icons__item__icon svg path{
+    fill:var(--color-accent);
+  }
+  .icons__item *{
+    pointer-events: none;
+  }
+  .icons__item__icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .icons__item__icon svg{
+    width: 30px;
+    height: 30px;
+  }
+  .icons__item span{
+    margin-top: 10px;
+  }
+</style>
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+<div class="{{ page_width }} section-heading-container top-spacing-{{ section.settings.top_spacing }}">
+  <h1 class="page-grid-1 {{ section.settings.heading_aligment }} mt0"><span>Theme Icons</span></h1>
+</div>
+
+{%- assign headings = "
+General,
+Electronics and Household Appliances,
+Vehicle,
+Clothing Care,
+Sports,
+Pets,
+Hookah,
+Fashion,
+Social Media Icons,
+,
+Outdoor Gear
+"
+-%}
+{%- assign headings = headings | strip_newlines | split: ',' -%}
+{%- assign icons_list_arr = "
+arrow_down,arrow_left,arrow_right,arrow_up,bag,balance,basket,bell-ring,box,boxes,buy,calendar,cart,catalog,chat,chat_1,check,check_1,check_2,clock,compare,coupon,credit_card,driller,eco-friendly,edit,gift_card,globe,home,info,like,lock,mail,marker,mobile_store,no,number_1,number_2,number_3,number_4,number_5,number_6,number_7,number_8,number_9,number_10,phone,phone_1,piggy-bank,preorder,product_quality,product_return,question,refresh,return,rocket,sale,search,secure,secure_payment,sofa,star,store,tag,truck,truck_1,truck_2,truck_3,user,warning,wishlist,hand_heart,leather,material,page,gift,blog,order,sign_in,certificate_1,certificate_2
+||4g,5g,air_conditioner,cable,camera,chip,coffee_maker,computer_system_unit,dishwasher,drone,drone_1,drone_2,drone_3,drone_4,earphones,electric_mixer,energy,face_id,fingerprint,fridge,fridge_1,gamepad,gimbal,graphic_card,hair_dryer,hard_disk,headphone,headset,home_cinema,iron_1,iron_2,kettle,keyboard,laptop,marker_1,memory_hhd,memory_ssd,microwave,monitor,mouse,oven,pc,power_bank,printer,screen_size_laptop,screen_size_monitor,screen_size_smartphone,screen_size_tablet,screen_size_tv,server,smartphone,smartwatch,smoke_extraction,speaker,stove,tablet,touch_screen,tv,usb_drive,vacuum_cleaner,vacuum_cleaner_1,vacuum_cleaner_2,washing_machine,wifi,wifi_router,camera_1,camera_2,camera_3,camera_4,pot
+||bike,bike_jacket,bike_t_shirt,boot,boot_1,brakes,bucket,canister,car,car_audio,car_door,car_light,e_bike,garage,gear,gear_1,gear_2,helmet,helmet_1,helmet_2,helmet_3,motorcycle,motorcycle_1,motorcycle_2,piston,saddle,spark_plug,speedometer,spoiler,steering_wheel,suspension,timing_belt,tire,tire_1,tire_2,tire_3,tire_4,turbine,turbine_1,water_bottle,wheel,wheel_1,wheel_2,wheels,wrench
+||30c_or_80f,40c_or_105f,50c_or_120f,any_solvent,any_solvent_except_tetrachlorethylene,any_solvent_except_tetrachlorethylene_delicate,bleach_if_needed,chlorine_bleach,delicate,do_not_bleach,do_not_bleach_1,do_not_dry,do_not_dry_clean,do_not_iron,do_not_tumble_dry,do_not_wash,do_not_wet_clean,do_not_wet_cleaning,do_not_wring,drip_dry,drip_dry_1,drip_dry_flat_in_the_shade,drip_dry_in_the_shade,drip_dry_in_the_shade_1,dry,dry_clean,dry_flat,dry_flat_in_the_shade,dry_in_the_shade,dry_normal_high_heat,dry_normal_low_heat,dry_normal_medium_heat,hand_to_dry,hand_wash,iron_any_temp_steam,line_dry,line_dry_in_the_shade-1,line_dry_in_the_shade,low_heat,machine_wash,machine_wash_cold_permanent_press,machine_wash_gentle_or_delicate,machine_wash_permanent_press,maximum_temperature_110c_or_230f,maximum_temperature_150c_or_300f,maximum_temperature_200c_or_390f,no_steam,no_steam_finishing,non_chlorine_bleach,non_chlorine_bleach_if_needed,permanent_press,petroleum_solvent_only,petroleum_solvent_only_delicate,reduced_moisture,short_cycle,tumble_dry,water_temperature_not_above_30c_or_80f,water_temperature_not_above_50c_or_120f,water_temperature_not_above_60c_or_140f,water_temperature_not_above_95c_or_200f,wet_clean,wet_clean_delicate,wet_clean_very_delicate
+||ball,ball_1,basketball_рoop,boot_2,boot_3,goal,helmet_4,jersey,jersey_1,protection,water_bottle_1
+||bear,bird,bone,cat,chicken,collar,cow,dog,dog_house,feed,feed_1,fish,goat,horse,meat,mouse_1,paw,pig,rabbit,sheep,snake,tortoise
+||coal,hookah,hookah_1,tobacco
+||backpack,belt,bikini,bra,cap,clothes_hanger,diamond,dress_1,glasses,handbag,hat,hat_1,high_heels,hoodie,jacket,leggings,makeup,nightie,panties,pants,perfume,ring,shirt,shoes,skirt,socks,sweater,t_shirt,underpants,winter_hat,measuring_tape,boots
+||blogger_r,deviantart_r,digg_r,dribbble_r,dropbox_r,facebook_r,flickr_r,forrst_r,hangouts_r,instagram_r,linkedin_r,messenger_r,myspace_r,path_r,pinterest_r,plurk_r,rss_r,snapchat_r,stumbleupon_r,teamviewer_r,telegram_r,tiktok_r,tumblr_r,twitch_r,twitter_r,vimeo_r,vk_r,wechat_r,whatsapp_r,yahoo_r,youtube_r,paypal_r
+||blogger,deviantart,digg,dribbble,dropbox,facebook,flickr,forrst,hangouts,instagram,linkedin,messenger,myspace,path,pinterest,plurk,rss,snapchat,stumbleupon,teamviewer,telegram,tiktok,tumblr,twitch,twitter,vimeo,vk,wechat,whatsapp,yahoo,youtube,paypal
+||backpack_2,bonfire,camping_gas,carabiner,flashlight,mat,poles,pot_2,razor,sleeping_bag,snowflake,sunglasses,tent,thermo
+" -%}
+{%- assign icons_list_arr = icons_list_arr | strip_newlines | strip | split: "||" -%}
+
+{%- for heading in headings -%}
+<div class="{{ page_width }}{% unless forloop.first %} mt40{% endunless %}">
+  <h5 class="mt0 mb15">{{ heading | strip }}</h5>
+  <div class="icons__container">
+    {% assign icon_list = icons_list_arr[forloop.index0] %}
+    {% assign icon_list = icon_list | split: ',' | sort %}
+    {%- for icon_name in icon_list -%}
+    <div class="icons__item" title="copy">
+      <div class="icons__item__icon">
+        {%- render "icons-list" icon_name:icon_name -%}
+      </div>
+      <span class="body3">{{ icon_name }}</span>
+
+      <div class="icons__item__icon_copied">
+        <div class="body3">Copied</div>
+      </div>
+      
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endfor -%}
+
+<script>
+  var icons = document.querySelectorAll('.icons__item');
+  icons.forEach(icon => {
+    icon.addEventListener("click", copy_password);
+  })
+  function copy_password() {
+    var copyText = this.querySelector('span'),
+    	textArea = document.createElement("textarea"),
+    	item = this;
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    
+    item.classList.add('icons__item--progress');
+    setTimeout(function(){item.classList.remove('icons__item--progress');}, 500);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Icons",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "heading_aligment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "top_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    }
+  ]
+}
+{% endschema %}

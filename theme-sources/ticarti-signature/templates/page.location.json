@@ -1,0 +1,198 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_heading": true,
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false
+      }
+    },
+    "map_fLPC9h": {
+      "type": "map",
+      "blocks": {
+        "media_AQPQWa": {
+          "type": "media",
+          "settings": {
+            "api_key": "",
+            "map_address": "",
+            "show_pin": true,
+            "map_zoom_level": 14
+          }
+        }
+      },
+      "block_order": [
+        "media_AQPQWa"
+      ],
+      "name": "t:names.map",
+      "settings": {
+        "top_spacing": "normal",
+        "width": "default",
+        "desktop_content_height": 500,
+        "align_content": "center",
+        "text_align": "text-left",
+        "align_text": "center",
+        "icon_width": 40,
+        "row_reverse": false,
+        "text_content_width": 50,
+        "hover_underline": true,
+        "url": "",
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "color_text_icons": "rgba(0,0,0,0)",
+        "color_counter": "rgba(0,0,0,0)",
+        "color_secondary_background": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)",
+        "color_media_background": "rgba(0,0,0,0)",
+        "color_media_icon": "rgba(0,0,0,0)",
+        "color_media_background_hover": "rgba(0,0,0,0)",
+        "color_media_icon_hover": "rgba(0,0,0,0)"
+      }
+    },
+    "text_columns_with_icons_type_1_9CnaE9": {
+      "type": "text-columns-with-icons-type-1",
+      "blocks": {
+        "item_WW76yy": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Marker",
+            "block_heading": "",
+            "block_text": "<h5>Pickup Location</h5><p>You can pick up your orders from our pickup point at: </p><p>123 Madison Avenue, Suite 456, New York, NY 10010, USA</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_yDaGx7": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Clock",
+            "block_heading": "",
+            "block_text": "<h5>Pickup Hours: </h5><p>Open daily from 9:00 AM – 7:00 PM</p><p>Please bring your order confirmation email and ID for pickup.</p><p>For more information, contact: <a href=\"/pages/contacts-us\" title=\"Contacts Us\">support@yourstore.com</a></p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_rmjAbJ": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "phone",
+            "block_heading": "",
+            "block_text": "<h5>Pickup Phone: </h5><h4>(555) 555-1002</h4><p>9:00 AM – 7:00 PM</p>",
+            "button_name": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_WW76yy",
+        "item_yDaGx7",
+        "item_rmjAbJ"
+      ],
+      "name": "t:names.text_with_icons_type_1",
+      "settings": {
+        "main_subheading": "",
+        "main_heading": "",
+        "main_desc": "",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-grid-3",
+        "grid_tablet": "page-grid-st-3",
+        "text_align": "text-left",
+        "heading_size": "h5",
+        "icon_width": 30,
+        "show_icon_box": true,
+        "icon_box_roundness": 10,
+        "hover_underline": true,
+        "swipe": false,
+        "desktop_navigation": "dots_arrows",
+        "mobile_navigation": "dots",
+        "autoplay_enabled": false,
+        "autoplay_time": 5,
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "color_text_icons": "rgba(0,0,0,0)",
+        "color_text_icons_bg": "rgba(0,0,0,0)",
+        "color_link": "rgba(0,0,0,0)",
+        "color_link_icon": "rgba(0,0,0,0)",
+        "color_link_hover": "rgba(0,0,0,0)",
+        "color_link_icon_hover": "rgba(0,0,0,0)",
+        "color_background_box": "rgba(0,0,0,0)",
+        "color_media_arrows": "rgba(0,0,0,0)",
+        "color_media_dots": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "map_fLPC9h",
+    "text_columns_with_icons_type_1_9CnaE9"
+  ]
+}

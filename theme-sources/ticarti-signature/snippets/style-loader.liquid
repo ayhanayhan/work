@@ -1,0 +1,31 @@
+{%- assign _array = array | strip_newlines | split: ',' -%}
+{%- if request.design_mode -%}
+{%- for str in _array -%}{{ str | asset_url | stylesheet_tag }}{%- endfor -%}
+{%- else -%}
+<script>
+var styleVars = [{%- for str in _array -%}'{{- str -}}'{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}];
+var stylePaths = [{%- for str in _array -%}'{{ str | asset_url }}'{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}];
+var currentScript = document.currentScript;
+var insertAfter = currentScript;
+styleVars.forEach((varName, index) => {
+    const href = stylePaths[index];
+    const isAlreadyLoaded = document.querySelector(`link[href="${href}"]`);
+    if (!isAlreadyLoaded) {
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.href = href;
+        preloadLink.as = 'style';
+        insertAfter.parentNode.insertBefore(preloadLink, insertAfter.nextSibling);
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.media = 'print';
+        link.onload = function() {
+            this.media = 'all';
+        };
+        insertAfter.parentNode.insertBefore(link, insertAfter.nextSibling);
+        insertAfter = link;
+    }
+});
+</script>
+{%- endif -%}

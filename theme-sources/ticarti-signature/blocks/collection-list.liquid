@@ -1,0 +1,92 @@
+{%- capture block_styles -%}
+{%- capture __css -%}
+{%- if section.settings.color_base   != "rgba(0,0,0,0)" -%}
+  --color-base-section:{{ section.settings.color_base }};
+  color:{{ section.settings.color_base }};
+{%- endif -%}
+{%- if section.settings.color_accent != "rgba(0,0,0,0)" -%}--color-accent-section:{{ section.settings.color_accent }};{%- endif -%}
+{%- if block.settings.color_desc  != "rgba(0,0,0,0)" -%}color:{{ block.settings.color_desc }};{%- endif -%}
+{%- if block.settings.color_text_link != "rgba(0,0,0,0)" -%}--color-heading-link-block:{{ block.settings.color_text_link }};{%- endif -%}
+{%- if block.settings.color_text_link_hover != "rgba(0,0,0,0)" -%}--color-heading-hover-block:{{ block.settings.color_text_link_hover }};{%- endif -%}
+{%- endcapture -%}
+{%- if __css != blank -%}
+#theme-block-{{ block.id }}{
+  {{ __css }}
+}
+{%- endif -%}
+{%- endcapture -%}
+{%- if block_styles != blank -%}
+<style>{{ block_styles }}</style>
+{%- endif -%}
+<div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.main_heading != blank -%}
+  <div class="mb20 {{ section.settings.heading_aligment_block }}">
+    <h4 class="mt0">{{ block.settings.main_heading }}</h4>
+  </div>
+  {%- endif -%}
+  <div class="page-grid-sp-1 {{ section.settings.grid_tablet_collection }} {{ section.settings.grid_collection }}{% if section.settings.heading_aligment_block == "text-center-desktop" %} justify-content-center-desktop{% endif %}">
+  {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection list",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "main_heading",
+        "default": "Collections",
+        "label": "Heading"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link",
+        "default":"rgba(0,0,0,0)",
+        "label": "Heading"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Heading link hover"
+      },
+      {
+        "type": "color",
+        "id": "color_desc",
+        "default":"rgba(0,0,0,0)",
+        "label": "Description"
+      }
+    ],
+    "blocks": [{"type": "collection-item"}],
+    "presets": [
+      {
+      	"name": "Collection list",
+        "blocks": [
+          {
+            "type": "collection-item"
+          },
+          {
+            "type": "collection-item"
+          },
+          {
+            "type": "collection-item"
+          },
+          {
+            "type": "collection-item"
+          },
+          {
+            "type": "collection-item"
+          },
+          {
+            "type": "collection-item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

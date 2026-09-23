@@ -1,0 +1,1180 @@
+{%- liquid
+    assign enable_products_count = section.settings.enable_products_count    
+    if section.settings.enable_filtering contains 'enable'
+    assign enable_filtering = true
+    assign horizontal_filters = false
+    elsif section.settings.enable_filtering == 'horizontal'
+    assign enable_filtering = true
+    assign horizontal_filters = true
+    else
+    assign enable_filtering = false
+    endif
+    assign results = search
+    assign sort_by = results.sort_by | default: results.default_sort_by
+    if results.url
+      assign results_url = results.url
+    else
+      assign terms = results.terms | escape
+      assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+    endif
+    assign enable_products_count_main = section.settings.enable_products_count_main
+    if search.performed and enable_filtering == false and search.results_count > 0
+    assign enable_products_count_main = false
+    endif
+-%}
+
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-visual-display.css' | asset_url | stylesheet_tag }}
+{{ 'component-visual-display-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-card-list.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.image_action == "gallery" -%}
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+{{ 'component-swiper-slider.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+{%- if enable_filtering -%}
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'component-toggle.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+{%- if enable_filtering and horizontal_filters -%}
+{{ 'component-facets--horizontal.css' | asset_url | stylesheet_tag }}
+{%- elsif enable_filtering -%}
+{{ 'component-facets--vertical.css' | asset_url | stylesheet_tag }}
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    window.addEventListener('resize', loaderOnResize);
+    loaderOnResize();
+  });
+  function loaderOnResize(){
+    var facet_filters_form = document.querySelector('.facet-filters-form'),
+        product_grid__container = document.querySelector('.product-grid__container');
+
+    var x = Math.round(facet_filters_form.offsetLeft);
+    var x2 = Math.round(product_grid__container.offsetLeft);
+    
+    document.querySelector('.themeloader_container').style.setProperty('--left', x2 + 'px');
+    document.querySelector('.themeloader_container').style.setProperty('--right', x + 'px');
+  }
+</script>
+{%- endif -%}
+{%- if section.settings.enable_infinite_scroll != "buttons" -%}
+<script src="{{ 'infinity-scroll.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+<script src="{{ 'component-collection-grid.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  .facets-toolbar{
+    display:grid;
+    grid-template-columns: 30% auto 30%;
+    align-items:center;
+  }
+  .toolbar__design_search_page{
+    display:flex;
+    justify-content:center;
+  }
+  @media (min-width:1025px){
+    .mobile-facets{
+      display:none;
+    }
+    [class*="page-grid-"].page-grid__collection-sidebar{
+      --facets-padding:{{ section.settings.filters_padding }}px;
+    }
+  }
+  @media (max-width:1024px){
+    .facets__horizontal,
+    .facets-toolbar .facet-filters-form__desktop{
+      display:none;
+    }
+    .facets-toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      row-gap: 30px;
+    }
+    .facets-toolbar .products_count{
+      text-align:center;
+      order:0;
+      width:100%;
+    }
+    .facets-toolbar .mobile-facets{
+      order:1;
+    }
+    .facets__horizontal-result+* #ProductGridContainer{
+      margin-top:0;
+    }
+    .facets__horizontal-result .active-facets-container:not(:empty){
+      margin-bottom:40px;
+    }
+  }
+</style>
+
+{%- render "section-css-background", section:section -%}
+{%- render "section-component-top-line", section:section -%}
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+{%- assign section_settings_background = false -%}{%- if section.settings.background != 'hide' and section.settings.background_width == "content_width" -%}{%- assign section_settings_background = true -%}{%- endif -%}
+{%- assign toolbar__design = 'toolbar__design_search_page' -%}
+
+<div id="theme-section-{{ section.id }}"
+     class="{% if section.settings.show_lines == false or section.settings.background == 'hide' %}top-spacing-{{ section.settings.top_spacing }}{% endif %}{% if section.settings.background != 'hide' and section.settings.background_width == "fullwidth" %} section-background section-background--{{ section.settings.background_spacing }}{% endif %}"
+     data-section-name="brands-list">
+  <div class="{{ page_width }}{% if section_settings_background %} section-background--mobile-width{% endif %}">
+  {%- if section_settings_background -%}<div class="section-background section-background--{{ section.settings.background_spacing }} border__radius">{%- endif -%}
+
+
+    <div class="page-grid-st-1 page-width-eight no-row-gap text-center">
+      {%- if search.performed -%}
+      <h1 class="h2 mt0 mb0">{{ 'templates.search.title' | t }}</h1>
+      {%- else -%}
+      <h1 class="h2 mt0 mb0">{{ 'general.search.search' | t }}</h1>
+      {%- endif -%}
+      
+      <div class="mt40">
+        {%- if settings.predictive_search_enabled -%}
+        <predictive-search data-loading-text="{{ 'accessibility.loading' | t }}">
+        {%- endif -%} 
+          <form action="{{ routes.search_url }}" method="get" role="search" class="search header__icons__only-space w-full">
+            <div class="field search__field__input">
+              <input class="field__input"
+                     id="Search-In-Template"
+                     type="search"
+                     name="q"
+                     value="{{ search.terms | escape }}"
+                     placeholder="{{ 'general.search.search' | t }}"
+                     {%- if settings.predictive_search_enabled -%}
+                     role="combobox"
+                     aria-expanded="false"
+                     aria-owns="predictive-search-results-list"
+                     aria-controls="predictive-search-results-list"
+                     aria-haspopup="listbox"
+                     aria-autocomplete="list"
+                     autocorrect="off"
+                     autocomplete="off"
+                     autocapitalize="off"
+                     spellcheck="false"
+                     {%- endif -%}
+                     >
+              <label class="field__label" for="Search-In-Template">{{ 'general.search.search' | t }}</label>
+              <input type="hidden" name="options[prefix]" value="last">
+              
+              {%- if settings.predictive_search_enabled -%}
+              <div class="predictive-search-container">
+                <div class="predictive-search predictive-search--search-template custom__scrollbar" tabindex="-1" data-predictive-search>
+                  <div class="predictive-search__loading-state hide">
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="loading-overlay__spinner spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                      <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+              {%- endif -%}
+              
+              <button type="submit" class="search__button field__button field__button__type2" aria-label="{{ 'general.search.search' | t }}">
+				{{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </button>
+            </div>
+          </form>
+
+        {%- if settings.predictive_search_enabled -%}
+        </predictive-search>
+        {%- endif -%} 
+      </div>
+      {%- if search.performed -%}
+      {%- unless enable_filtering -%}
+      {%- if search.results_count > 0 -%}
+      <p class="mt40 mb40 body2 strong" role="status">{{ 'templates.search.results_with_count_and_term' | t: terms: search.terms, count: search.results_count }}</p>
+      {%- endif -%}
+      {%- endunless -%}
+      {%- if search.results_count == 0 and search.filters == empty -%}
+      <h4 class="mt40 mb0" role="status">{{ 'templates.search.no_results_heading' | t: terms: search.terms }}</h4>
+      <p class="mt16 body2" role="status">{{ 'templates.search.no_results_text' | t }}</p>
+      {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    {%- if search.filters != empty -%}
+    {%- if search.filters != empty or enable_products_count_main -%}
+    {%- if enable_filtering or enable_products_count_main -%}
+    <div class="facets-toolbar mt40 mb0 {{ toolbar__design }}{% if enable_products_count_main == false %} hide-desktop{% endif %}">
+      {%- if enable_filtering -%}
+      <menu-drawer class="mobile-facets">
+        <details id="mobile-facets" class="mobile-facets__disclosure disclosure-has-popup">
+          <summary>
+            <div class="mobile-facets__button body2 strong">
+			  {{- 'icon-filter' | append: settings.system_icon_thickness | inline_asset_content -}}
+              <span tabindex="0">
+                {{ 'products.facets.filter_button' | t }}
+              </span>
+            </div>
+          </summary>
+    
+          <facet-filters-form>
+            <div class="popup-modal popup-modal__left">
+              <div class="popup-modal__overlay" onclick="this.closest('menu-drawer').closeMenuDrawer('custom')"></div>
+              <div class="popup-modal__content popup-modal__content__f-height">
+                <button class="popup-modal__toggle" type="button" aria-label="{{ 'accessibility.close' | t }}">
+				  {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </button>
+                <div class="popup-modal__content__data custom__scrollbar" role="dialog" aria-modal="true" aria-label="{{ 'sections.cart.title' | t }}" tabindex="-1">
+  
+                  {%- render "facets-mobile", 
+                      results: search,
+                      enable_filtering: enable_filtering,
+                      enable_sorting: false,
+                      enable_products_count: false
+                  -%}
+                  
+                </div>
+              </div>
+            </div>
+          </facet-filters-form>
+        </details>
+      </menu-drawer>
+      {%- endif -%}
+      
+      {%- if enable_products_count_main -%}
+      <p id="ProductCount" class="mt0 products_count body2 strong">
+        {%- if results.results_count -%}
+          {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+        {%- elsif results.products_count == results.all_products_count -%}
+          {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
+        {%- else -%}
+          {{ 'products.facets.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
+        {%- endif -%}
+      </p>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+
+    {%- if horizontal_filters and enable_filtering -%}
+    <div class="page-grid-1 mt40 no-row-gap">
+      {%- render 'facets-horizontal', 
+          results: search,
+          enable_filtering: enable_filtering,
+          enable_sorting: false,
+          enable_products_count: enable_products_count
+      -%}
+    </div>
+    <div class="page-grid-1 no-row-gap facets__horizontal-result">
+      {%- render 'facets-remove', 
+          results: search,
+          results_url: results_url
+      -%}
+    </div>
+    {%- endif -%}
+    
+    <div class="page-grid-1 no-row-gap{% if enable_filtering and horizontal_filters == false %} page-grid__collection-sidebar mt40{% endif %}">
+      {%- if enable_filtering and horizontal_filters == false -%}
+      <div class="hide-st facet-filters-form">
+        {%- render 'facets',
+            results: search,
+            enable_filtering: enable_filtering,
+            enable_products_count: enable_products_count
+        -%}
+      </div>
+      {%- endif -%}
+      <div class="product-grid__container">
+        {% if enable_filtering and horizontal_filters == false %}
+        {%- render 'facets-remove', 
+            results: search,
+            results_url: results_url
+        -%}
+        {% endif %}
+        <div id="ProductGridContainer">
+          {%- paginate search.results by section.settings.products_per_page -%}
+          {%- if search.results.size == 0 and search.filters != empty -%}
+          <div class="collection collection--empty w-full text-center" id="product-grid" data-id="{{ section.id }}">
+            <svg class="collection-svg__empty theme-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M40 20C40 31.0457 31.0457 40 20 40C8.9543 40 0 31.0457 0 20C0 8.9543 8.9543 0 20 0C31.0457 0 40 8.9543 40 20ZM36 20C36 28.8366 28.8366 36 20 36C16.3027 36 12.8982 34.7459 10.1889 32.6398L32.6398 10.1889C34.7459 12.8982 36 16.3027 36 20ZM29.8115 7.36042C27.1021 5.25422 23.6975 4 20 4C11.1634 4 4 11.1634 4 20C4 23.6975 5.25422 27.1021 7.36042 29.8115L29.8115 7.36042Z" fill="black"/>
+            </svg>
+            <h4 class="mt16 mb0">
+              {{ 'sections.collection_template.empty' | t }}<br>
+            </h4>
+            <p class="mt16 body2">{{ 'sections.collection_template.use_fewer_filters_html' | t: link: results_url, class: "btn-small color-accent-to-base" }}</p>
+          </div>
+          {%- else -%}
+          <div class="collection" id="product-grid" data-id="{{ section.id }}">
+            <div class="{{ section.settings.mobile_grid }} {{ section.settings.grid_tablet }} {{ section.settings.grid }} collection__container page-vertical-gap-40"
+                 data-d="{{ section.settings.grid }}"
+                 data-t="{{ section.settings.grid_tablet }}"
+                 data-m="{{ section.settings.mobile_grid }}"
+              >
+              {%- for item in search.results -%}
+                {%- case item.object_type -%}
+                {%- when 'product' -%}
+                {%- render 'product-card',
+                    customize:section.settings.customize,
+                    product_card_product: item,
+                    product_collection:search,
+                    image_ratio_value: section.settings.image_ratio,
+                    image_hover_type: section.settings.image_hover,
+                    show_secondary_image: section.settings.image_action,
+                    show_price:section.settings.show_price,
+                    show_vendor:section.settings.show_vendor,
+                    show_type:section.settings.show_type,
+                    hover_underline:section.settings.hover_underline,
+                    button_type_product: section.settings.button_type_product,
+                    show_quantity: section.settings.show_quantity,
+                    show_badge_sold_out:section.settings.show_badge_sold_out,
+                    show_badge_on_sale:section.settings.show_badge_on_sale,
+                    show_badge_feature:section.settings.show_badge_feature,
+                    show_countdown:section.settings.show_countdown,
+                    truncate_product_name:section.settings.truncate_product_name,
+                    show_wishlist: section.settings.show_wishlist,
+                    show_compare: section.settings.show_compare,
+                    show_quick_view: section.settings.show_quick_view,
+                    show_wishlist_mobile: section.settings.show_wishlist_mobile,
+                    show_compare_mobile: section.settings.show_compare_mobile,
+                    show_quick_view_mobile: section.settings.show_quick_view_mobile,
+                    text_aligment: section.settings.text_align,
+                    show_description: section.settings.show_description,
+                    enable_rating_product_card: section.settings.enable_rating_product_card
+                -%}
+              {%- when 'article' -%}
+                {%- assign article = item -%}
+                {%- assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t -%}
+                <div class="blog-posts {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}">
+                  {%- if section.settings.show_image_b and article.image != blank -%}
+                  <a href="{{ article.url }}" class="image-hover-box__container{% if section.settings.image_ratio_b == '1.00' %} image-hover-box--circle{% endif %}">
+                    {%- render "component-image",
+                        image_ratio_value: section.settings.image_ratio_b,
+                        image_source: article.image
+                    -%}
+                    <div class="badges__container">
+                      <span class="badges-item__medium badges-item__search-page">{{ 'templates.search.blog' | t }}</span>
+                    </div>
+                  </a>
+                  {%- else -%}
+                  <div class="badges__container">
+                    <span class="badges-item__medium badges-item__search-page">{{ 'templates.search.blog' | t }}</span>
+                  </div>
+                  {%- endif -%}
+                
+                  {%- capture content -%}
+                  {%- liquid
+                  if section.settings.showtags_b and article.tags.size > 0
+                  assign tags = true
+                  else
+                  assign tags = false
+                  endif
+                  -%}
+                  {%- if tags or section.settings.show_date_b or section.settings.show_author_b -%}
+                  <ul class="unstyle-ul blog-posts__meta body3">
+                    {%- if section.settings.show_date_b -%}
+                    <li class="author-toolbar__item" itemprop="dateCreated pubdate datePublished">
+                      {{- 'icon-calendar' | append: settings.system_icon_thickness | inline_asset_content -}}<span>{{- article.published_at | time_tag: format: "month_day_year" -}}</span>
+                    </li>
+                    {%- endif -%}            
+                    {%- if section.settings.show_author_b -%}
+                    <li class="author-toolbar__item" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                      {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}<span itemprop="name">{{ article.author -}}</span>
+                    </li>
+                    {%- endif -%}
+                    {%- if tags -%}
+                    <li class="author-toolbar__item author-toolbar__item__tags">
+					  {{- 'icon-discount-2' | append: settings.system_icon_thickness | inline_asset_content -}}
+                      <span>
+                        {% for tag in article.tags %}
+                        {%- assign tag_html = "<span>" | append: tag | append: "</span>" -%}
+                        {{ tag_html | link_to_tag: tag | replace: '<a', '<a class="link link__base-to_accent-color"' }}{% unless forloop.last %}, {% endunless %}
+                        {% endfor %}
+                      </span>
+                    </li>
+                    {%- endif -%}
+                  </ul>
+                  {%- endif -%}
+                
+                  {{ '<' | append: section.settings.heading_size_b }} class="blog-posts__heading mt0 mb0">
+                  <a href="{{ article.url }}" class="clear-underline heading-color-block-hover a--no-hover-color{% if section.settings.hover_underline_b %} animation-underline{% endif %}">
+                    {%- if section.settings.truncate_post_heading_b -%}
+                    {{ article.title | escape | truncate: 63,last_characters }}
+                    {%- else -%}
+                    {{ article.title | escape }}
+                    {%- endif -%}
+                  </a>
+                  {{ '</' | append: section.settings.heading_size_b }}>
+                  
+                  {%- if section.settings.excerpt_b != 'hide' -%}
+                  {%- if article.excerpt.size > 0 or article.content.size > 0 -%}
+                  <div class="blog-posts__excerpt section__richtext__editor">
+                    {%- if article.excerpt.size > 0 -%}
+                      {%- if section.settings.excerpt_b == 'show_truncated' -%}
+                      {{ article.excerpt | strip_html | truncatewords: 20,last_characters }}
+                      {%- else -%}
+                      {{ article.excerpt }}
+                      {%- endif -%}
+                    {%- else -%}
+                      {%- if section.settings.excerpt_b == 'show_truncated' -%}
+                      {{ article.content | strip_html | truncatewords: 20,last_characters }}
+                      {%- else -%}
+                      {{ article.content }}
+                      {%- endif -%}
+                    {%- endif -%}
+                  </div>
+                  {%- endif -%}
+                  {%- endif -%}
+                
+                  {%- if section.settings.show_button_b -%}
+                  <div class="blog-posts__btn">
+                    <a href="{{ article.url }}" class="btn btn-small-width btn__transition-text clear-underline">
+                      <div class="btn__texts">
+                        <span class="btn__top-text is-visible">{{ "blogs.card.learn_more" | t }}</span>
+                        <span class="btn__bottom-text is-hidden">{{ "blogs.card.learn_more" | t }}</span>
+                      </div>
+                    </a>
+                  </div>
+                  {%- endif -%}
+                
+                  {%- if blog.comments_enabled? and section.settings.show_comment_count_b -%}
+                  {%- if article.comments.size > 0 -%}{%- assign comment_url = article.url | append: '#comments' -%}{%- else -%}{%- assign comment_url = article.url | append: '#addcomment' -%}{%- endif -%}
+                  <div class="blog-posts__comments__container">
+                    <div class="blog-posts__comments body3">
+                      <a href="{{ comment_url }}" class="clear-underline">
+						{{- 'icon-chat' | append: settings.system_icon_thickness | inline_asset_content -}}
+                        {{ article.comments_count }}
+                      </a>
+                    </div>
+                  </div>
+                  {%- endif -%}
+                  {%- endcapture -%}
+                  {%- if content != blank -%}
+                  <div class="blog-posts__container">
+                    {{ content }}
+                  </div>
+                  {%- endif -%}
+                </div>
+                  
+              {%- when 'page' -%}
+
+              <a href="{{ item.url }}" class="card-page clear-underline">
+                <div class="badges__container">
+                  <span class="badges-item__medium badges-item__search-page">{{ 'templates.search.page' | t }}</span>
+                </div>
+                <h5 class="mt0 mb0 h4">{{ item.title | truncate: 50 | escape }}</h5>
+              </a>
+                  
+              {%- endcase -%}
+              {%- endfor -%}
+            </div>
+          </div>
+
+          {%- if section.settings.enable_infinite_scroll == "buttons" -%}
+            
+          {%- if paginate.pages > 1 -%}
+          <div class="mt40">
+            <div class="separate-line"></div>
+            {%- render 'pagination', paginate: paginate, anchor: '', aligment: section.settings.pagination_aligment -%}
+          </div>
+          {%- endif -%}
+
+          {%- else -%}
+
+          <infinity-button class="infinitybutton{% if section.settings.enable_infinite_scroll == 'autoscroll' %} autoscroll_yes{% endif %}{% if paginate.next == empty? and paginate.previous == empty? %} hide{% endif %}{% if section.settings.pagination_aligment == "text-center" %} justify-content-center{% endif %}{% if section.settings.pagination_aligment == "text-right" %} justify-content-end{% endif %}">
+            {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="btn btn--border btn__transition-text btn-wide{% if section.settings.enable_infinite_scroll == 'autoscroll' %} autoscroll hide{% else %} mt40{% endif %}">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ 'sections.collection_template.button_show_more' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{{ 'sections.collection_template.button_show_more' | t }}</span>
+              </div>
+            </a>
+            {%- else -%}
+            {%- if paginate.previous and section.settings.showbuttonnomore -%}
+            <a href="{{ paginate.next.url }}" class="mt40 btn btn--border btn__transition-text btn-wide"
+               aria-disabled="true">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ 'sections.collection_template.button_show_more_disabled' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{{ 'sections.collection_template.button_show_more_disabled' | t }}</span>
+              </div>
+            </a>
+            {%- endif -%}
+            {%- endif -%}
+
+          </infinity-button>
+          {%- endif -%}
+            
+          {%- endif -%}
+        
+          {%- endpaginate -%}
+        </div>
+      </div>
+    </div>
+    {%- endif -%}
+    {%- endif -%}
+    {% if section_settings_background %}</div>{%- endif -%}
+  </div>
+</div>
+
+{%- render "loader", custom_class:"collection_facets_loader" -%}
+{%- render "sticky-filter-button", section:section, enable_filtering:enable_filtering, enable_sorting:false -%}
+
+{% schema %}
+{
+  "name": "Search results",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "top_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    },
+    {
+      "type": "select",
+      "id": "grid",
+      "options": [
+        {
+          "value": "page-grid-2",
+          "label": "2"
+        },
+        {
+          "value": "page-grid-3",
+          "label": "3"
+        },
+        {
+          "value": "page-grid-4",
+          "label": "4"
+        },
+        {
+          "value": "page-grid-5",
+          "label": "5"
+        }
+      ],
+      "default": "page-grid-5",
+      "label": "Number of columns"
+    },
+    {
+      "type": "select",
+      "id": "grid_tablet",
+      "options": [
+        {
+          "value": "page-grid-st-2",
+          "label": "2"
+        },
+        {
+          "value": "page-grid-st-3",
+          "label": "3"
+        },
+        {
+          "value": "page-grid-st-4",
+          "label": "4"
+        }
+      ],
+      "default": "page-grid-st-4",
+      "label": "Number of columns on tablet"
+    },
+    {
+      "type": "select",
+      "id": "mobile_grid",
+      "options": [
+        {
+          "value": "page-grid-sp-1",
+          "label": "One item per row"
+        },
+        {
+          "value": "page-grid-sp-2",
+          "label": "Two items per row"
+        }
+      ],
+      "default": "page-grid-sp-2",
+      "label": "Mobile grid"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 50,
+      "step": 1,
+      "default": 16,
+      "label": "Products per page"
+    },
+    {
+      "type": "select",
+      "id": "enable_filtering",
+      "options": [
+        {
+          "value": "disable",
+          "label": "Hide"
+        },
+        {
+          "value": "enable",
+          "label": "Vertical"
+        },
+        {
+          "value": "enable_closed",
+          "label": "Vertical tabs closed"
+        },
+        {
+          "value": "horizontal",
+          "label": "Horizontal"
+        }
+      ],
+      "default": "enable",
+      "label": "Filtering",
+      "info": "Customize [filters](\/admin\/menus)"
+    },
+    {
+      "visible_if": "{{ section.settings.enable_filtering contains 'enable' }}",
+      "type": "range",
+      "id": "filters_padding",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 20,
+      "label": "Filters right padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_products_count",
+      "default": true,
+      "label": "Enable checkbox products count"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_products_count_main",
+      "default": true,
+      "label": "Enable main products count"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_filter_button",
+      "default": true,
+      "label": "Enable sticky filter button for mobile"
+    },
+    {
+      "type": "select",
+      "id": "enable_infinite_scroll",
+      "label": "Pagination",
+      "options": [
+        {
+          "value": "buttons",
+          "label": "Pagination buttons"
+        },
+        {
+          "value": "showmore",
+          "label": "\"Show More\" Button"
+        },
+        {
+          "value": "autoscroll",
+          "label": "Auto Scroll"
+        }
+      ],
+      "default": "showmore"
+    },
+    {
+      "type": "select",
+      "id": "pagination_aligment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        },
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+      ],
+      "default": "text-left",
+      "label": "Pagination aligment"
+    },
+    {
+      "type": "checkbox",
+      "id": "showbuttonnomore",
+      "label": "Show text \"No more products\"",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "select",
+      "id": "image_hover",
+      "options": [
+        {
+          "value": "default",
+          "label": "Basic theme settings"
+        },
+        {
+          "value": "image-hover-none",
+          "label": "Disable"
+        },
+        {
+          "value": "image-hover01",
+          "label": "Zoom in #1"
+        },
+        {
+          "value": "image-hover01 image-hover01-rotate",
+          "label": "Zoom in and rotate"
+        },
+        {
+          "value": "image-hover02",
+          "label": "Zoom in #2"
+        },
+        {
+          "value": "image-hover03",
+          "label": "Zoom out #1"
+        },
+        {
+          "value": "image-hover04",
+          "label": "Zoom out #2"
+        },
+        {
+          "value": "image-hover05",
+          "label": "Slide"
+        },
+        {
+          "value": "image-hover06",
+          "label": "Shine"
+        }
+      ],
+      "default": "default",
+      "label": "Image hover effect"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto"
+        },
+        {
+          "value": "0.75",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "1.333333",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "1.00",
+          "label": "Round (1:1)"
+        },
+        {
+          "value": "0.5625",
+          "label": "Social story (9:16)"
+        },
+        {
+          "value": "1.777777",
+          "label": "Widescreen (16:9)"
+        }
+      ],
+      "default": "auto",
+      "label": "Image ratio"
+    },
+    {
+      "type": "select",
+      "id": "image_action",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Only image"
+        },
+        {
+          "value": "show_secondary_image",
+          "label": "Show second image on hover"
+        },
+        {
+          "value": "show_secondary_image_video",
+          "label": "Show video on hover"
+        },
+        {
+          "value": "gallery",
+          "label": "Gallery"
+        }
+      ],
+      "default": "show_secondary_image",
+      "label": "Image action"
+    },
+    {
+      "type": "checkbox",
+      "id": "customize",
+      "default": false,
+      "label": "Customize"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "select",
+      "id": "text_align",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Text align"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "hover_underline",
+      "default": true,
+      "label": "Underline on hover"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_badge_on_sale",
+      "default": true,
+      "label": "Show badge \"Sale\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_badge_sold_out",
+      "default": true,
+      "label": "Show badge \"Sold Out\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_badge_feature",
+      "default": true,
+      "label": "Show badge \"Feature\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_countdown",
+      "default": true,
+      "label": "Show \"Countdown\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": true,
+      "label": "Show vendor"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_type",
+      "default": true,
+      "label": "Show type"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_price",
+      "default": true,
+      "label": "Show price"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_description",
+      "default": true,
+      "label": "Show small description",
+      "info": "Description you can create using metafields"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "truncate_product_name",
+      "default": false,
+      "label": "Truncate product name"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true and section.settings.button_type_product != 'hide' }}",
+      "type": "checkbox",
+      "id": "show_quantity",
+      "default": false,
+      "label": "Enable quantity",
+      "info": "Button type always \"Show only icon\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "select",
+      "id": "button_type_product",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "show",
+          "label": "Show"
+        },
+        {
+          "value": "only_text",
+          "label": "Show only text"
+        },
+        {
+          "value": "only_icon",
+          "label": "Show only icon"
+        }
+      ],
+      "default": "hide",
+      "label": "Button \"Add to cart\""
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true and section.settings.button_type_product != 'hide' }}",
+      "type": "checkbox",
+      "id": "button_type_product_mobile",
+      "default": true,
+      "label": "Button \"Add to cart\" on mobile"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true and settings.enable_rating == true }}",
+      "type": "checkbox",
+      "id": "enable_rating_product_card",
+      "default": true,
+      "label": "Enable review stars"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "header",
+      "content": "Media buttons desktop"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "default": true,
+      "label": "Show wishlist"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_compare",
+      "default": true,
+      "label": "Show compare"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_quick_view",
+      "default": true,
+      "label": "Show quick view"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "header",
+      "content": "Media buttons mobile"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_wishlist_mobile",
+      "default": true,
+      "label": "Show wishlist"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_compare_mobile",
+      "default": true,
+      "label": "Show compare"
+    },
+    {
+      "visible_if": "{{ section.settings.customize == true }}",
+      "type": "checkbox",
+      "id": "show_quick_view_mobile",
+      "default": true,
+      "label": "Show quick view"
+    },
+    {
+      "type": "header",
+      "content": "Posts"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_b",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto"
+        },
+        {
+          "value": "0.75",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "1.333333",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "1.00",
+          "label": "Round (1:1)"
+        },
+        {
+          "value": "0.5625",
+          "label": "Social story (9:16)"
+        },
+        {
+          "value": "1.777777",
+          "label": "Widescreen (16:9)"
+        }
+      ],
+      "default": "auto",
+      "label": "Image ratio"
+    },
+    {
+      "type": "select",
+      "id": "texts_aligment_b",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Alignment"
+    },
+    {
+      "type": "select",
+      "id": "heading_size_b",
+      "options": [
+        {
+          "value": "h3",
+          "label": "Large"
+        },
+        {
+          "value": "h4",
+          "label": "Medium"
+        },
+        {
+          "value": "h5",
+          "label": "Small"
+        }
+      ],
+      "default": "h4",
+      "label": "Heading size"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_b",
+      "default": true,
+      "label": "Show featured image"
+    },
+    {
+      "type": "checkbox",
+      "id": "truncate_post_heading_b",
+      "default": false,
+      "label": "Truncate post heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "hover_underline_b",
+      "default": false,
+      "label": "Underline on hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "showtags_b",
+      "default": true,
+      "label": "Show tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date_b",
+      "default": true,
+      "label": "Show date"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author_b",
+      "default": true,
+      "label": "Show author"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_b",
+      "default": true,
+      "label": "Show button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comment_count_b",
+      "default": true,
+      "label": "Show comment count"
+    },
+    {
+      "type": "select",
+      "id": "excerpt_b",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "show",
+          "label": "Show"
+        },
+        {
+          "value": "show_truncated",
+          "label": "Show truncated content"
+        }
+      ],
+      "default": "show_truncated",
+      "label": "Excerpt"
+    }
+  ]
+}
+{% endschema %}

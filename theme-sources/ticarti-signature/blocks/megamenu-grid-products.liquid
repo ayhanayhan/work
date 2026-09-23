@@ -1,0 +1,485 @@
+{%- if request.visual_preview_mode -%}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-grid-of-products.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+<div id="theme-block-{{ block.id }}" class="mt-first-0" {{ block.shopify_attributes }} 
+{% if block.settings.enable_dynamic_grid == true %}style="--width-desktop:{{ block.settings.grid_width_desktop }}%;"{% endif %}
+>
+  {%- liquid
+      assign product_limit = block.settings.product_limit
+      assign show_vendor = block.settings.show_vendor
+      assign hover_underline = block.settings.hover_underline
+      assign truncate_product_name = block.settings.truncate_product_name
+      assign show_price = block.settings.show_price
+      assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t
+      if block.settings.show_secondary_image
+      assign show_secondary_image = "show_secondary_image"
+      else
+      assign show_secondary_image = false
+      endif
+  -%}
+  {%- if block.settings.heading_text != blank -%}
+  <h5 class="mt0 mb0">{{ block.settings.heading_text }}</h5>
+  {%- endif -%}
+  <div class="vertical-container vertical-container--{{ block.settings.grid }} mt16">
+    {%- assign __collection = block.settings.collection -%}
+    {%- if __collection != blank -%}
+    {%- for product in __collection.products limit: product_limit -%}
+    <div class="product-card-small hover-area {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}{% if block.settings.align_content == "center" %} align-items-center{% endif %}">
+      {%- if product.featured_media != blank -%}
+      <a href="{{ product.url }}" class="product-card-small__image-container product-card__image-container">
+        {%- liquid
+            assign image_ratio_value = block.settings.image_ratio
+            if forloop.index > 4
+            assign load_priority_low = 'true'
+            endif
+        -%}
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+          {%- render "component-image-product-card",
+              image_ratio_value: image_ratio_value,
+              image_source: product.featured_media,
+              image_source2: product.media[1],
+              show_image_source2: show_secondary_image,
+              load_priority_low: load_priority_low,
+              section_index: 10
+          -%}
+        </div>
+      </a>
+      {%- endif -%}
+      <div class="product-card-small__content mt--first-child-0">
+        {%- capture badges -%}
+        {%- if product.available == false and block.settings.show_badge_sold_out -%}
+        <span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+        {%- elsif product.compare_at_price > product.price and product.available and block.settings.show_badge_on_sale -%}
+        <span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+        {%- endif -%}
+        {%- if product.metafields.softali.featured_badge != blank and block.settings.show_badge_feature -%}
+        <span class="badges-item__medium badges-item__main">{{ product.metafields.softali.featured_badge }}</span>
+        {%- endif -%}
+        {%- endcapture -%}
+        
+        {%- if badges != blank -%}
+        <div class="badges__container">{{- badges -}}</div>
+        {%- endif -%}
+        
+        {%- if show_vendor and product.vendor != blank -%}
+        <div class="body3 mt10">
+          <a class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}"
+             href="{{ routes.collections_url }}/{% if __collection == blank %}all{% else %}{{ __collection.handle }}{% endif %}?filter.p.vendor={{ product.vendor | escape }}">{{ product.vendor }}</a>
+        </div>
+        {%- endif -%}
+        <div class="body2 mt3">
+          <a href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+            {%- if truncate_product_name -%}
+            {{ product.title | escape | truncate: 48,last_characters }}
+            {%- else -%}
+            {{ product.title | escape }}
+            {%- endif -%}
+          </a>
+        </div>
+        {%- if show_price and settings.cart_type != "catalog_mode" -%}
+        {%- render 'price', product: product -%}
+        {%- endif -%}
+        {%- if settings.enable_rating and settings.cart_type != "catalog_mode" -%}{%- if block.settings.enable_rating_product_card -%}
+        {%- render 'review-stars' _product: product -%}
+        {%- endif -%}{%- endif -%}
+      </div>
+    </div>
+    {%- endfor -%}
+    {%- else -%}
+    {%- for i in (1..block.settings.product_limit) -%}
+
+    <div class="product-card-small hover-area {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}{% if block.settings.align_content == "center" %} align-items-center{% endif %}">
+      <div class="product-card-small__image-container product-card__image-container">
+        {%- liquid
+            assign image_ratio_value = block.settings.image_ratio
+            capture placeholder_icon
+            cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4'
+            endcapture
+        -%}
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+          {%- render "component-image-product-card",
+              image_ratio_value: image_ratio_value,
+              image_source: "",
+              image_source2: "",
+              show_image_source2: show_secondary_image,
+              load_priority_low: load_priority_low,
+              section_index: 10,
+              placeholder_icon:placeholder_icon
+          -%}
+        </div>
+      </div>
+      <div class="product-card-small__content mt--first-child-0">
+        {%- if show_vendor -%}
+        <div class="body3 mt3">
+          <div class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">
+            VENDOR
+          </div>
+        </div>
+        {%- endif -%}
+        <div class="body2 mt3">
+          <div href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+            {{ "Product name" | escape }}
+          </div>
+        </div>
+        {%- if show_price -%}
+        <div class="price mt3">
+          <div class="price__regular body3">$12.18{% if settings.currency_code_enabled %} USD{% endif %}</div>
+          <div class="price__sale h5 mt3">From $8.66{% if settings.currency_code_enabled %} USD{% endif %}</div>
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+      
+    {%- endfor -%}
+    {%- endif -%}
+  </div>
+  {%- if block.settings.link_name != blank and block.settings.collection.products.size > block.settings.product_limit -%}
+  <div class="mt16 display-inline-flex">
+    <a href="{{ block.settings.collection.url }}" class="link link-hover-span body3">
+      <span>{{ block.settings.link_name }}</span>
+      {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </a>
+  </div>
+  {%- elsif __collection == blank -%}
+  <div class="mt16 display-inline-flex">
+    <div class="link link-hover-span body3">
+      <span>{{ block.settings.link_name }}</span>
+      {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+  </div>
+  {%- endif -%}
+  {%- capture block_styles -%}
+  {%- capture __css -%}
+  {%- if block.settings.color_heading      != "rgba(0,0,0,0)" -%}--color-heading-block:{{ block.settings.color_heading }};{%- endif -%}
+  {%- if block.settings.color_text_link != "rgba(0,0,0,0)" -%}--color-heading-link-block:{{ block.settings.color_text_link }};{%- endif -%}
+  {%- if block.settings.color_text_link_hover != "rgba(0,0,0,0)" -%}--color-heading-hover-block:{{ block.settings.color_text_link_hover }};{%- endif -%}
+  {%- if block.settings.color_vendor != "rgba(0,0,0,0)" -%}--color-link-button-block-inverse:{{ block.settings.color_vendor }};{%- endif -%}
+  {%- if block.settings.color_vendor_hover != "rgba(0,0,0,0)" -%}--color-link-button-block-inverse-hover:{{ block.settings.color_vendor_hover }};{%- endif -%}
+  {%- if block.settings.color_price != "rgba(0,0,0,0)" -%}--color-price-main-block:{{ block.settings.color_price }};{%- endif -%}
+  {%- if block.settings.color_save_price != "rgba(0,0,0,0)" -%}--color-save-price-block:{{ block.settings.color_save_price }};{%- endif -%}
+  {%- if block.settings.color_old_price != "rgba(0,0,0,0)" -%}--color-old-price-main-block:{{ block.settings.color_old_price }};{%- endif -%}
+  {%- if block.settings.link_color != "rgba(0,0,0,0)" -%}--color-link-button-block:{{ block.settings.link_color }};{%- endif -%}
+  {%- if block.settings.link_color != "rgba(0,0,0,0)" -%}--color-link-button-icon-block:{{ block.settings.link_color }};{%- endif -%}
+  {%- if block.settings.link_color_hover != "rgba(0,0,0,0)" -%}--color-link-button-block-hover:{{ block.settings.link_color_hover }};{%- endif -%}
+  {%- if block.settings.link_color_hover != "rgba(0,0,0,0)" -%}--color-link-button-icon-block-hover:{{ block.settings.link_color_hover }};{%- endif -%}
+  {%- if block.settings.roundness_type == "custom" -%}--radius-image:{{ block.settings.roundness }}px;{%- endif -%}
+  {%- if block.settings.color_active_rating   != "rgba(0,0,0,0)" -%}--color-rating-active:{{ block.settings.color_active_rating }};{%- endif -%}
+  {%- if block.settings.color_base_rating   != "rgba(0,0,0,0)" -%}--color-rating-base:{{ block.settings.color_base_rating }};{%- endif -%}
+  {%- endcapture -%}
+  {%- if __css != blank -%}
+  #theme-block-{{ block.id }}{
+    {{ __css }}
+  }
+  {%- endif -%}
+  {%- endcapture -%}
+  {%- if block_styles != blank -%}
+  <style>{{ block_styles }}</style>
+  {%- endif -%}
+</div>
+
+{% schema %}
+  {
+    "name": "Grid of products",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_dynamic_grid",
+        "default": false,
+        "label": "t:options.header.dynamic_width_desktop"
+      },
+      {
+        "visible_if": "{{ block.settings.enable_dynamic_grid == true }}",
+        "type": "range",
+        "id": "grid_width_desktop",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 25,
+        "unit": "%",
+        "label": "t:options.header.width_desktop"
+      },
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "text",
+        "id": "heading_text",
+        "default": "Collection",
+        "label": "Heading"
+      },
+      {
+        "type": "select",
+        "id": "grid",
+        "options": [
+          {
+            "value": "1",
+            "label": "1"
+          },
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          }
+        ],
+        "default": "1",
+        "label": "Number of columns"
+      },
+      {
+        "type": "header",
+        "content": "Link"
+      },
+	  {
+		"type": "text",
+		"id": "link_name",
+		"default": "Shop all",
+		"label": "Link name"
+	  },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "range",
+        "id": "product_limit",
+        "min": 2,
+        "max": 15,
+        "step": 1,
+        "default": 3,
+		"label": "Products"
+      },
+      {
+        "type": "select",
+        "id": "align_content",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ],
+        "default": "center",
+        "label": "Align text relative to image"
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Auto"
+          },
+          {
+            "value": "0.75",
+            "label": "Portrait (3:4)"
+          },
+          {
+            "value": "1.333333",
+            "label": "Landscape (4:3)"
+          },
+          {
+            "value": "1",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "1.00",
+            "label": "Round (1:1)"
+          },
+          {
+            "value": "0.5625",
+            "label": "Social story (9:16)"
+          },
+          {
+            "value": "1.777777",
+            "label": "Widescreen (16:9)"
+          }
+        ],
+        "default": "auto",
+        "label": "Image ratio"
+      },
+      {
+        "type": "select",
+        "id": "roundness_type",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "custom",
+            "label": "Custom"
+          }
+        ],
+        "default": "default",
+        "label": "Roundness of the image"
+      },
+      {
+        "visible_if": "{{ block.settings.roundness_type == 'custom' }}",
+        "type": "range",
+        "id": "roundness",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Custom roundness",
+        "default": 20
+      },
+      {
+        "type": "checkbox",
+        "id": "show_secondary_image",
+        "default": true,
+		"label": "Show second image on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "default": true,
+		"label": "Show vendor"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_price",
+        "default": true,
+		"label": "Show price"
+      },
+      {
+        "type": "checkbox",
+        "id": "truncate_product_name",
+        "default": false,
+		"label": "Truncate product name"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "checkbox",
+        "id": "enable_rating_product_card",
+        "default": true,
+        "label": "Enable review stars"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_underline",
+        "default": true,
+        "label": "Underline on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_badge_on_sale",
+        "default": true,
+		    "label": "Show badge \"Sale\""
+      },
+      {
+        "type": "checkbox",
+        "id": "show_badge_sold_out",
+        "default": true,
+		    "label": "Show badge \"Sold Out\""
+      },
+      {
+        "type": "checkbox",
+        "id": "show_badge_feature",
+        "default": true,
+		    "label": "Show badge \"Feature\""
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_heading",
+        "default":"rgba(0,0,0,0)",
+        "label": "Heading"
+      },
+      {
+        "type": "header",
+        "content": "Product card color"
+      },
+      {
+        "type": "color",
+        "id": "color_vendor",
+        "default":"rgba(0,0,0,0)",
+        "label": "Vendor"
+      },
+      {
+        "type": "color",
+        "id": "color_vendor_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Vendor hover"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link",
+        "default":"rgba(0,0,0,0)",
+        "label": "Product name"
+      },
+      {
+        "type": "color",
+        "id": "color_text_link_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Product name hover"
+      },
+      {
+        "type": "color",
+        "id": "color_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Regular Price"
+      },
+      {
+        "type": "color",
+        "id": "color_save_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Sale Price"
+      },
+      {
+        "type": "color",
+        "id": "color_old_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Old price"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "default": "rgba(0,0,0,0)",
+        "label": "Link"
+      },
+      {
+        "type": "color",
+        "id": "link_color_hover",
+        "default": "rgba(0,0,0,0)",
+        "label": "Link hover"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "header",
+        "content": "Review stars"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "color",
+        "id": "color_active_rating",
+        "default": "rgba(0,0,0,0)",
+        "label": "Stars active"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "color",
+        "id": "color_base_rating",
+        "default": "rgba(0,0,0,0)",
+        "label": "Stars base"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Grid of products"
+      }
+    ]
+  }
+{% endschema %}

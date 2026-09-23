@@ -1,0 +1,216 @@
+{{ 'component-inputs.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+<style>
+#main-cart-footer .top-spacing-medium{
+  margin-top:40px;
+}
+</style>
+
+<div id="main-cart-footer"
+     class="{% if cart == empty %} is-empty{% endif %}"
+     data-id="{{ section.id }}"
+     data-section-name="main-cart-footer"
+  >
+{%- render "section-component-top-line", section:section, boxed_line:true -%}
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+
+<div class="top-spacing-{{ section.settings.top_spacing }}">
+  <div class="{{ page_width }}">
+    <div class="cart__blocks__container">
+      {%- capture notes -%}
+      {%- if settings.show_cart_note -%}
+      <h6 class="mt0 mb16 cart-page__message-heading">{{ "general.cart.heading_message" | t }}</h6>
+      <cart-note class="field field--text-area">
+        <textarea class="text-area field__input"
+                  id="Cart-note"
+                  name="note"
+                  placeholder="{{ 'sections.cart.note' | t }}"
+                  >{{ cart.note }}</textarea>
+        <label class="field__label" for="Cart-note">{{ 'sections.cart.note' | t }}</label>
+      </cart-note>
+      {%- endif -%}
+      {%- endcapture -%}
+      <div class="cart__notes__container">{{ notes }}</div>
+      <div class="cart__blocks">
+        <div class="cart__footer__content js-contents body3">
+          {%- if settings.show_add_discount_code -%}
+          <div class="discount-container">
+            <h6 class="mt0 mb16 cart-page__message-discount">{{ "general.cart.heading_discount" | t }}</h6>
+            {%- render "cart-discount", section_id:section.id -%}
+          </div>
+          {%- endif -%}
+          <div class="totals{% if settings.show_add_discount_code %} mt40{% endif %}">
+            <h3 class="mt0 mb0 totals__subtotal">{{ 'sections.cart.subtotal' | t }}</h3>&nbsp;
+            <p class="mt0 h3 totals__subtotal-value">{{ cart.total_price | money_with_currency }}</p>
+          </div>
+          {% if settings.show_installments %}
+            <span class="cart__summary-item cart__installments display-block mt10">{% form 'cart', cart %}{{ form | payment_terms }}{% endform %}</span>
+          {% endif %}
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <div class="mt10">
+            <ul class="discounts unstyle-ul body2" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+              {%- for discount in cart.cart_level_discount_applications -%}
+              <li class="discounts__discount cart-item-message__content">
+				{{- 'icon-discount' | append: settings.system_icon_thickness | inline_asset_content -}}
+                <span class="cart-item-message__content__text">{{ discount.title }}(-{{ discount.total_allocated_amount | money }})</span>
+              </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          {%- endif -%}
+
+          {%- capture _content -%}
+          {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+          {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif cart.taxes_included -%}
+          {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+          {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+          {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+          {%- endcapture -%}
+          {%- if _content != blank -%}
+          <div class="tax-note mt10">{{ _content }}</div>
+          {%- endif -%}
+        </div>
+        
+        {%- if settings.terms_and_condition_checkbox -%}
+        <terms_and_condition-checkbox class="mt20 display-block">
+          <label for="product-terms_and_condition_checkbox-{{ section.id }}" class="checkbox-input body2">
+            <input id="product-terms_and_condition_checkbox-{{ section.id }}"
+                   type="checkbox">
+            <div class="checkbox-input__checkmark">
+              <div class="checkbox-input__flip">
+                <div class="checkbox-input__front"></div>
+                <div class="checkbox-input__back">
+				  {{- 'icon-checkmark' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </div>
+              </div>
+            </div>
+            <span>{{ 'general.accept_terms_checkbox_html' | t }}</span>
+          </label>
+        </terms_and_condition-checkbox>
+        {%- endif -%}
+        
+        {%- if settings.show_checkout_button -%}
+        <div class="mt20">
+          <button type="submit"
+                  id="checkout"
+                  class="btn btn__transition-text btn--checkout w-full"
+                  name="checkout"
+                  form="cart"
+                  >
+            <div class="btn__texts">
+              <span class="btn__top-text is-visible">{{- 'icon-check' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'sections.cart.checkout' | t }}</span>
+              <span class="btn__bottom-text is-hidden">{{- 'icon-check' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'sections.cart.checkout' | t }}</span>
+            </div>
+          </button>
+        </div>
+		    {%- endif -%}
+        
+        {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+        <div class="cart__dynamic-checkout-buttons additional-checkout-buttons additional-checkout-buttons--vertical mt10">{{ content_for_additional_checkout_buttons }}</div>
+        {% endif %}
+        
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+        
+        <div id="cart-errors"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+{% schema %}
+{
+  "name": "Subtotal",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_aligment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "top_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    },
+    {
+      "type": "header",
+      "content": "Dividing line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_lines",
+      "default": false,
+      "label": "Show"
+    }
+  ]
+}
+{% endschema %}

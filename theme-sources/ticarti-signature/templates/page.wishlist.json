@@ -1,0 +1,38 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-wishlist",
+      "settings": {
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-grid-md-6 page-grid-lg-6 page-grid-6",
+        "grid_tablet": "page-grid-st-4",
+        "mobile_grid": "2",
+        "image_hover": "default",
+        "image_ratio": "auto",
+        "text_align": "text-center",
+        "image_action": "show_secondary_image",
+        "hover_underline": true,
+        "show_badge_on_sale": false,
+        "show_badge_sold_out": true,
+        "show_badge_feature": true,
+        "show_countdown": true,
+        "show_vendor": true,
+        "show_type": true,
+        "show_price": true,
+        "show_description": true,
+        "truncate_product_name": false,
+        "show_quantity": false,
+        "button_type_product": "hide",
+        "show_compare": true,
+        "show_quick_view": true,
+        "show_compare_mobile": true,
+        "show_quick_view_mobile": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

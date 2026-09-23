@@ -1,0 +1,31 @@
+{%- if block.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+{%- if block.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+<div class="header__separate-line"></div>
+{%- endif -%}
+<localization-form>
+  {%- form 'localization', id: 'HeaderLanguageForm', class: 'disclosure-form' -%}
+    <div class="disclosure-form-field">
+      <button type="button" class="disclosure-selector body3" aria-expanded="false" aria-controls="HeaderLanguageList" aria-describedby="HeaderLanguageLabel">
+        {{ localization.language.endonym_name | capitalize }}
+        <div class="disclosure-form-field__icon">
+          {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </div>
+      </button>
+      <div id="HeaderLanguageList" class="disclosure_element disclosure__list tobottom toright" hidden>
+        <div class="disclosure__list__content custom__scrollbar">
+          <ul role="list" class="unstyle-ul">
+            {%- for language in localization.available_languages -%}
+            <li tabindex="-1">
+              <a class="disclosure__link link link-hover-span link__base-to_accent-color body3{% if language.iso_code == localization.language.iso_code %} link-active{% endif %}" href="#" hreflang="{{ language.iso_code }}" lang="{{ language.iso_code }}"{% if language.iso_code == localization.language.iso_code %} aria-current="true"{% endif %} data-value="{{ language.iso_code }}">
+                <span>{{ language.endonym_name | capitalize }}</span>
+              </a>
+            </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+      <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}">
+    </div>
+  {%- endform -%}
+</localization-form>
+{%- endif -%}

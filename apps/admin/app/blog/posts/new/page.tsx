@@ -1,0 +1,1 @@
+import AdminApp from '../../../components/AdminApp';export const metadata={title:'Yeni Blog Yazısı | Ticarti'};export default function Page(){return <AdminApp tab="Blog" blogPage="posts" blogEditorId="new"/>}

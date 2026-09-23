@@ -1,0 +1,533 @@
+<style>
+.current-sales-popup__block{
+  {%- if section.settings.color_base       != 'rgba(0,0,0,0)' -%}
+  --color-base-section:{{ section.settings.color_base }};
+  color:{{ section.settings.color_base }};
+  {%- endif -%}
+  {%- if section.settings.color_accent     != 'rgba(0,0,0,0)' -%}--color-accent-section:{{ section.settings.color_accent }};{%- endif -%}
+  {%- if section.settings.color_background != 'rgba(0,0,0,0)' -%}--color-body-background:{{ section.settings.color_background }};{%- endif -%}
+  {%- if section.settings.color_shadow     != 'rgba(0,0,0,0)' -%}--shadow-modal-color:{{ section.settings.color_shadow | color_modify: 'alpha', 0.15 }};{%- endif -%}
+}
+{%- if request.visual_preview_mode -%}
+current-sales-popup{
+  position:inherit;
+  transform: translateY(0);
+}
+.current-sales-popup__block:first-child{
+  position:inherit;
+  opacity:1;
+  visibility:visible;
+  transform: translateY(0);
+}
+{%- endif -%}
+</style>
+<current-sales-popup  id="theme-section-{{ section.id }}"
+              class="current-sales-popup__container {{ section.settings.position_desktop }}{% if section.settings.show_mobile == false %} csld-hide-sp{% endif %}{% if section.settings.show_tablet == false %} csld-hide-st{% endif %}"
+              data-start="{{ section.settings.val_first | times: 1000 | round }}"
+              data-min="{{ section.settings.val_min | times: 1000 | round }}"
+              data-max="{{ section.settings.val_max | times: 1000 | round }}"
+              data-section-name="current-sales-popup"
+              >
+  <div class="current-sales-popup__block__container">
+    {%- for block in section.blocks -%}
+    {%- assign b_s = block.settings -%}
+    {%- assign product = block.settings.product -%}
+    <div  class="current-sales-popup__block {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %} hover-area"
+          data-text="{{ b_s.text1 }}{% unless b_s.text2 == '' %}||{{ b_s.text2 }}{% endunless %}{% unless b_s.text3 == '' %}||{{ b_s.text3 }}{% endunless %}{% unless b_s.text4 == '' %}||{{ b_s.text4 }}{% endunless %}{% unless b_s.text5 == '' %}||{{ b_s.text5 }}{% endunless %}"
+          data-min="{{ b_s.val_min }}"
+          data-max="{{ b_s.val_max }}"
+      >
+      <button class="current-sales-popup__container__close popup-modal__toggle modal-close-animation" type="button" aria-label="{{ 'accessibility.close' | t }}">
+		{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </button>
+      {%- assign image_ratio_value = section.settings.image_ratio -%}
+      {%- if product == blank -%}
+      {%- liquid
+          capture placeholder_icon
+          cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4'
+          endcapture
+      -%}
+      <a href="#" class="current-sales-popup__block__image">
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+          {%- render "component-image-product-card",
+              image_ratio_value: image_ratio_value,
+              image_source: "",
+              image_source2: "",
+              placeholder_icon:placeholder_icon
+          -%}
+        </div>
+      </a>
+      {%- else -%}
+      {%- if product.featured_media != blank -%}
+      <a href="{{ product.url }}" class="current-sales-popup__block__image">
+        <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+          {%- render "component-image-product-card",
+              image_ratio_value: image_ratio_value,
+              image_source: product.featured_media,
+              show_image_source2: false
+          -%}
+        </div>
+      </a>
+      {%- endif -%}
+      {%- endif -%}
+      <div class="current-sales-popup__block__content mt--first-child-0">
+        <div class="current-sales-popup__block__content__top">
+          {%- if section.settings.text1 != blank -%}<p class="mt0 current-sales-popup__block__content__text body2">{{ section.settings.text1 }}</p>{%- endif -%}
+          {%- if product == blank -%}
+          <a href="#" class="current-sales-popup__block__content__heading link link--medium link__base-to_accent-color strong animation-underline">Product name</a>
+          {%- else -%}
+          <a href="{{ product.url }}" class="current-sales-popup__block__content__heading link link--medium link__base-to_accent-color strong animation-underline">{{ product.title }}</a>
+          {%- endif -%}
+        </div>
+        <p class="mt5 current-sales-popup__block__content__message body3"><span class="current-sales-popup__block__content__message__time">2</span>&nbsp;<span class="current-sales-popup__block__content__message__text">minutes ago from New York, USA</span></p>
+      </div>
+    </div>
+    {%- endfor -%}
+  </div>
+</current-sales-popup>
+
+{% stylesheet %}
+current-sales-popup{
+  --custom-image-radius:calc(var(--radius) - 15px);
+  display:block;
+  position:fixed;
+  z-index:20;
+}
+
+current-sales-popup .popup-modal__toggle{
+  position: absolute;
+  display: flex;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  border: none;
+  box-shadow: none;
+  text-decoration: none;
+  background-color: transparent;
+  padding: 15px 15px 15px 15px;
+  margin: 0;
+  z-index:10;
+}
+.current-sales-popup__block{
+  display:flex;
+  flex-direction:row;
+  align-items: stretch;
+  gap:15px;
+  padding:15px;
+  border-radius:var(--radius);
+  min-width: 358px;
+  max-width: 358px;
+  background:var(--color-body-background);
+  box-shadow:var(--shadow-modal) var(--shadow-modal-color);
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  position:absolute;
+  top:50%;
+  transform: translate(-110%, -50%);
+  left:10px;
+  transition: all var(--duration-medium) var(--animation-bezier);
+}
+.current-sales-popup__block.active{
+  transform: translate(0%, -50%);
+  visibility:visible;
+  opacity:1;
+  pointer-events:all;
+  transition: all var(--duration-medium) var(--animation-bezier);
+}
+.current-sales-popup__block__content{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-right:35px;
+}
+.current-sales-popup__block__content__top{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap:5px;
+}
+.current-sales-popup__block__image{
+  flex:0 0 80px;
+  align-self: center;
+}
+@media (min-width:577px){
+  .csl-center-left{
+    left:0;
+    top:50%;
+    transform: translateY(-50%);
+  }
+  .csl-center-right{
+    right:0;
+    top:50%;
+    transform: translateY(-50%);
+  }
+  .csl-bottom-left{
+    left:0;
+    bottom:30px;
+  }
+  .csl-bottom-center{
+    left:50%;
+    transform: translateX(-50%);
+    bottom:10px;
+  }
+  .csl-bottom-right{
+    right:0;
+    bottom:10px;
+  }
+  .csl-bottom-left .current-sales-popup__block{
+    top:0;
+    transform: translate(-110%, -100%);
+  }
+  .csl-bottom-left .current-sales-popup__block.active{
+    transform: translate(0%, -100%);
+  }
+  .csl-bottom-right .current-sales-popup__block{
+    top:0;
+    transform: translate(110%, -100%);
+    left:unset;
+    right: 10px;
+  }
+  .csl-bottom-right .current-sales-popup__block.active{
+    transform: translate(0%, -100%);
+  }
+  .csl-center-right .current-sales-popup__block{
+    transform: translate(-110%, -50%);
+    left:unset;
+    right: 10px;
+  }
+  .csl-center-right .current-sales-popup__block.active{
+    transform: translate(0%, -50%);
+  }
+  .csl-bottom-center .current-sales-popup__block{
+    top:0;
+    left:0;
+    transform: translate(-50%, 10%);
+  }
+  .csl-bottom-center .current-sales-popup__block.active{
+    transform: translate(-50%, -100%);
+  }
+}
+@media (min-width:577px) and (max-width:1024px){
+  .csl-bottom-left{
+    bottom:10px;
+  }
+}
+@media (min-width:577px) and (max-width:1024px){
+  .csld-hide-st{
+    display:none;
+    pointer-events:none;
+  }
+}
+@media (max-width:576px){
+  .csld-hide-sp{
+    display:none;
+    pointer-events:none;
+  }
+  current-sales-popup{
+    width:100%;
+    bottom:0;
+    left:0;
+  }
+  .current-sales-popup__block{
+    border-radius:var(--radius);
+    width: 100%;
+    max-width: unset;
+    top:0;
+    transform: translate(0, 10%);
+    left:0;
+    padding-bottom:40px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .current-sales-popup__block.active{
+    transform: translate(0, -100%);
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "t:names.current_sales_popup",
+  	"tag": "section",
+    "limit":1,
+    "enabled_on": {
+      "groups": ["custom.popups"]
+    },
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_tablet",
+        "default": true,
+        "label": "Show on tablet device"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_mobile",
+        "default": false,
+        "label": "Show on mobile device"
+      },
+      {
+        "type": "select",
+        "id": "position_desktop",
+        "options": [
+          {
+            "value": "csl-center-left",
+            "label": "Center left"
+          },
+          {
+            "value": "csl-center-right",
+            "label": "Center right"
+          },
+          {
+            "value": "csl-bottom-left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "csl-bottom-center",
+            "label": "Bottom"
+          },
+          {
+            "value": "csl-bottom-right",
+            "label": "Bottom right"
+          }
+        ],
+        "default": "csl-center-left",
+        "label": "Desktop position"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "select",
+        "id": "image_hover",
+        "options": [
+          {
+            "value": "default",
+            "label": "Basic theme settings"
+          },
+          {
+            "value": "image-hover-none",
+            "label": "Disable"
+          },
+          {
+            "value": "image-hover01",
+            "label": "Zoom in #1"
+          },
+          {
+            "value": "image-hover01 image-hover01-rotate",
+            "label": "Zoom in and rotate"
+          },
+          {
+            "value": "image-hover02",
+            "label": "Zoom in #2"
+          },
+          {
+            "value": "image-hover03",
+            "label": "Zoom out #1"
+          },
+          {
+            "value": "image-hover04",
+            "label": "Zoom out #2"
+          },
+          {
+            "value": "image-hover05",
+            "label": "Slide"
+          },
+          {
+            "value": "image-hover06",
+            "label": "Shine"
+          }
+        ],
+        "default": "default",
+        "label": "Image hover effect"
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Auto"
+          },
+          {
+            "value": "0.75",
+            "label": "Portrait (3:4)"
+          },
+          {
+            "value": "1.333333",
+            "label": "Landscape (4:3)"
+          },
+          {
+            "value": "1",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "1.00",
+            "label": "Round (1:1)"
+          },
+          {
+            "value": "0.5625",
+            "label": "Social story (9:16)"
+          },
+          {
+            "value": "1.777777",
+            "label": "Widescreen (16:9)"
+          }
+        ],
+        "default": "auto",
+        "label": "Image ratio"
+      },
+      {
+        "type": "text",
+        "id": "text1",
+        "label": "Main text",
+		    "default": "Someone purchsed a"
+      },
+      {
+        "type": "range",
+        "id": "val_first",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "s",
+        "label": "Delay before first message after page load",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "val_min",
+        "min": 5,
+        "max": 105,
+        "step": 1,
+        "unit": "s",
+        "label": "Random range in seconds with next product. Minimum",
+        "default": 10,
+        "info": "Value in seconds. Range with new message"
+      },
+      {
+        "type": "range",
+        "id": "val_max",
+        "min": 5,
+        "max": 105,
+        "step": 1,
+        "unit": "s",
+        "label": "Random range in seconds with next product. Maximum",
+        "default": 40,
+        "info": "Value in seconds. Range with new message"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_base",
+        "default":"rgba(0,0,0,0)",
+        "label": "Base"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "default":"rgba(0,0,0,0)",
+        "label": "Accent"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "default":"rgba(0,0,0,0)",
+        "label": "Background"
+      },
+      {
+        "type": "color",
+        "id": "color_shadow",
+        "default":"rgba(0,0,0,0)",
+        "label": "Shadow"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "settings": [
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          },
+          {
+            "type": "range",
+            "id": "val_min",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "s",
+            "label": "Time of purchase. Min",
+            "default": 1
+          },
+          {
+            "type": "range",
+            "id": "val_max",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "s",
+            "label": "Time of purchase. Max",
+            "default": 16
+          },
+          {
+            "type": "text",
+            "id": "text1",
+            "label": "Random advertising text 1",
+            "default": "minutes ago from New York, USA"
+          },
+          {
+            "type": "text",
+            "id": "text2",
+            "label": "Random advertising text 2",
+            "default": "minutes ago from Berlin, Germany"
+          },
+          {
+            "type": "text",
+            "id": "text3",
+            "label": "Random advertising text 3",
+            "default": "minutes ago from Tokyo, Japan"
+          },
+          {
+            "type": "text",
+            "id": "text4",
+            "label": "Random advertising text 4",
+            "default": "minutes ago from Pekin, China"
+          },
+          {
+            "type": "text",
+            "id": "text5",
+            "label": "Random advertising text 5",
+            "default": "minutes ago from London, England"
+          }
+        ]
+      }
+    ],    
+    "presets": [
+      {
+      	"name": "t:names.current_sales_popup",
+        "category": "t:categories.popups",
+        "blocks": [
+          {
+            "type": "product"
+          },
+          {
+            "type": "product"
+          },
+          {
+            "type": "product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

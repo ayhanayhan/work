@@ -1,0 +1,135 @@
+{% comment %}
+    Classic main menu
+
+    link: {{ Object }} menu links
+    megamenu_item: {{ String }} block name
+    fullwidth_menu: {{ String }} Mega menu main background width
+    page_width: {{ String }} style with mega menu content width
+    vertical_menu: {{ Boolean }} default false
+
+    Usage:
+    {% render "menu-megamenu", link:link, megamenu_item:megamenu_item, fullwidth_menu:true, page_width:page_width %}
+{% endcomment %}
+
+{%- assign megamenu_block = section.blocks[megamenu_item] -%}
+{%- capture megamenu_content -%}
+<div class="megamenu-container_content__html page-grid-{{ megamenu_block.settings.grid }}{% if megamenu_block.settings.text_aligment == "center" %} megamenu-items--text-center{% endif %}" data-parent-megamenu="{{ link.title | handleize  }}"
+     style="--megamenu-vertical:{{ megamenu_block.settings.vertical_spacing }}px;">
+  {%- assign htmlopened = false -%}
+  {%- for childlink in link.links -%}
+
+  {%- liquid
+      capture image_next
+      assign index = forloop.index | plus: 1
+      assign image = 'icon_image' | append: index
+      assign image = megamenu_block.settings[image]
+      if image != blank
+      echo true
+      endif
+      endcapture
+  -%}
+  {%- capture image -%}
+  {%- assign image = 'icon_image' | append: forloop.index -%}
+  {%- assign image = megamenu_block.settings[image] -%}
+  {%- if image != blank -%}
+  {%- assign image_ratio_value = megamenu_block.settings.image_ratio -%}
+  <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %} w-full">
+    {%- render "component-image",
+        image_ratio_value: image_ratio_value,
+        image_source: image
+    -%}
+  </div>
+  {%- endif -%}
+  {%- endcapture -%}
+
+  {%- if childlink.links == blank and link.links[forloop.index].links == blank and forloop.last == false and htmlopened == false and megamenu_block.settings.group_items and image == blank -%}
+  {%- assign htmlopened = true -%}
+  <div class="megamenu-group{% if megamenu_block.settings.submenu_size == "big" %} megamenu-group__gap-small{% endif %}">
+  {%- endif -%}
+  
+  {%- if childlink.links != blank -%}
+  <div class="megamenu-childs__container">    
+    <a href="{{ childlink.url }}" class="submenu__item submenu__item__level-2 megamenu-item{% if megamenu_block.settings.submenu_size == "big" %} body2 megamenu-item--small{% else %} h5{% endif %}{% if megamenu_block.settings.image_hover == "default" %} {{ settings.image_hover }}{% else %} {{ megamenu_block.settings.image_hover }}{% endif %} hover-area">
+      {{ image }}
+      <span><span class="submenu__item_text">{{ childlink.title | escape }}</span>{%- render "menu-badge" item_name:childlink.title, show_inline:true -%}</span>
+    </a>
+
+      <ul class="unstyle-ul megamenu-childs grandchild-grid" style="--total-items:{{ childlink.links | size }};">
+        {%- liquid
+            assign list = 'mm_list' | append: forloop.index
+            assign metao = megamenu_block.settings[list]
+            if metao
+            paginate metao.images.value by 200
+            assign arr = metao.images.value | reverse | reverse
+            endpaginate
+            endif
+        -%}
+        {%- for grandchildlink in childlink.links -%}
+        <li class="megamenu-grandchild">
+          <a href="{{ grandchildlink.url }}" class="submenu__item{% if megamenu_block.settings.submenu_size == "big" %} h5 megamenu-item__submenu--big{% else %} body2{% endif %}">
+            <span><span class="submenu__item_text">{{ grandchildlink.title | escape }}</span>{%- render "menu-badge" item_name:grandchildlink.title, show_inline:true -%}</span>
+          </a>
+          {%- if metao -%}
+          {%- if arr[forloop.index0] -%}
+          <a href="{{ grandchildlink.url }}" class="submenu__item__hover-image{% if megamenu_block.settings.hover_image_shadow %} submenu__item__hover-image--shadow{% endif %}"
+            {% if megamenu_block.settings.color_hover_image != "rgba(0,0,0,0)" %}style="--img-color-border:{{ megamenu_block.settings.color_hover_image }};"{% endif %}
+            >
+            {%- render "component-image",
+                image_ratio_value: "auto",
+                image_source: arr[forloop.index0],
+                alt:'demo-image'
+            -%}
+          </a>
+          {%- endif -%}
+          {%- endif -%}
+        </li>
+        {%- endfor -%}
+      </ul>
+
+  </div>
+  {%- else -%}
+  <div>
+    <a href="{{ childlink.url }}" class="submenu__item submenu__item__level-2 megamenu-item{% if megamenu_block.settings.submenu_size == "big" %} body2{% else %} h5{% endif %}{% if megamenu_block.settings.image_hover == "default" %} {{ settings.image_hover }}{% else %} {{ megamenu_block.settings.image_hover }}{% endif %} hover-area">
+      {{ image }}
+      <span><span class="submenu__item_text">{{ childlink.title | escape }}</span>{%- render "menu-badge" item_name:childlink.title, show_inline:true -%}</span>
+    </a>
+  </div>
+  {%- endif -%}
+
+  {%- liquid
+      if megamenu_block.settings.group_items
+      if forloop.last and htmlopened
+      echo "</div>"
+      elsif link.links[forloop.index].links != blank and htmlopened
+      assign htmlopened = false
+      echo "</div>"
+      elsif image_next != blank and htmlopened 
+      assign htmlopened = false
+      echo "</div>"
+      endif
+      endif
+  -%}
+
+  {%- endfor -%}
+</div>
+{%- endcapture -%}
+
+{%- if vertical_menu == true -%}
+<div id="{{ megamenu_block.id }}" class="submenu-container megamenu-container" {{ megamenu_block.shopify_attributes }}>
+  <div class="submenu-design__megamenu">
+    <div class="megamenu-container-width">
+      {{ megamenu_content }}
+    </div>
+  </div>
+</div>
+{%- else -%}
+<li id="{{ megamenu_block.id }}" class="submenu-container megamenu-container" {{ megamenu_block.shopify_attributes }}>
+  <div class="submenu-design__megamenu scrollbar-height-megamenu-js">
+    <div class="megamenu-container_content custom__scrollbar">
+      <div class="megamenu-{{ page_width }}">
+        {{ megamenu_content }}
+      </div>
+    </div>
+  </div>
+</li>
+{%- endif -%}

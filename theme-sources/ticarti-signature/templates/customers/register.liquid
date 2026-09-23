@@ -1,0 +1,118 @@
+<link rel="stylesheet" href="{{ 'component-inputs.css' | asset_url }}" media="print" onload="this.media='all'">
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<div class="top-spacing-normal {{ settings.page_width_main }}">
+  <div class="page-grid-1 page-width-half section-heading-container text-center">
+      <h1 class="mt0 mb0">{{ 'customer.register.title' | t }}</h1>
+  </div>
+  <div class="page-grid-1 page-width-one-third">
+    {%- form 'create_customer', novalidate: 'novalidate' -%}
+
+    {%- if form.errors -%}
+    <div class="errors-container errors text-left mb30">
+      <h6 class="mt0 mb0" autofocus>
+        {{ 'templates.contact.form.error_heading' | t }}
+      </h6>
+      <ul> 
+        {%- for field in form.errors -%}
+        <li>
+          {%- if field == 'form' -%}
+          {{ form.errors.messages[field] }}
+          {%- else -%}
+          <a href="#RegisterForm-{{ field }}">
+            {{ form.errors.translated_fields[field] | capitalize }}
+            {{ form.errors.messages[field] }}
+          </a>
+          {%- endif -%}
+        </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+
+    <div class="field field-with-icon">
+      <input class="field__input"
+             type="text"
+             name="customer[first_name]"
+             id="RegisterForm-FirstName"
+             {% if form.first_name %}value="{{ form.first_name }}"{% endif %}
+             autocomplete="given-name"
+             placeholder="{{ 'customer.register.first_name' | t }}"
+             >
+      <label class="field__label" for="RegisterForm-FirstName">{{ 'customer.register.first_name' | t }}</label>
+      <div class="field__icon">
+        {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </div>
+    </div>
+    <div class="field field-with-icon form-inputs-top-spacing">
+      <input class="field__input"
+             type="text"
+             name="customer[last_name]"
+             id="RegisterForm-LastName"
+             {% if form.last_name %}value="{{ form.last_name }}"{% endif %}
+             autocomplete="family-name"
+             placeholder="{{ 'customer.register.last_name' | t }}"
+             >
+      <label class="field__label" for="RegisterForm-LastName">{{ 'customer.register.last_name' | t }}</label>
+      <div class="field__icon">
+        {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </div>
+    </div>
+    <div class="field field-with-icon form-inputs-top-spacing">
+      <input class="field__input"
+             type="email"
+             name="customer[email]"
+             id="RegisterForm-email"
+             {% if form.email %} value="{{ form.email }}"{% endif %}
+             spellcheck="false"
+             autocapitalize="off"
+             autocomplete="email"
+             aria-required="true"
+             {% if form.errors contains 'email' %}
+             aria-invalid="true"
+             aria-describedby="RegisterForm-email-error"
+             {% endif %}
+             placeholder="{{ 'customer.register.email' | t }}"
+             required
+             >
+      {%- if form.errors contains 'email' -%}
+      <label class="field__label field__label--error" for="RegisterForm-email-error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</label>
+      {%- else -%}
+      <label class="field__label" for="RegisterForm-email">{{ 'customer.login_page.email' | t }}</label>
+      {%- endif -%}
+      <div class="field__icon">
+        {{- 'icon-mail' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </div>
+    </div>
+    <div class="field field-with-icon form-inputs-top-spacing">
+      <input class="field__input"
+             type="password"
+             name="customer[password]"
+             id="RegisterForm-password"
+             aria-required="true"
+             {% if form.errors contains 'password' %}
+             aria-invalid="true"
+             aria-describedby="RegisterForm-password-error"
+             {% endif %}
+             placeholder="{{ 'customer.register.password' | t }}"
+             required
+             >
+      {%- if form.errors contains 'password' -%}
+      <label class="field__label field__label--error" for="RegisterForm-password-error">{{ form.errors.translated_fields['password'] | capitalize }} {{ form.errors.messages['password'] }}.</label>
+      {%- else -%}
+      <label class="field__label" for="RegisterForm-password">{{ 'customer.register.password' | t }}</label>
+      {%- endif -%}
+      <div class="field__icon">
+        {{- 'icon-lock' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </div>
+    </div>
+
+    <button class="btn btn__transition-text w-full form-inputs-top-spacing-button">
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ 'customer.register.submit' | t }}</span>
+        <span class="btn__bottom-text is-hidden">{{ 'customer.register.submit' | t }}</span>
+      </div>
+    </button>
+    {%- endform -%}
+  </div>
+</div>

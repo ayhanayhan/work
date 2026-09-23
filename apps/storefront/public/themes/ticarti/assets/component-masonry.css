@@ -1,0 +1,50 @@
+masonry-items .wokiee-review__item{
+  height: min-content;
+}
+masonry-items.initialized{
+  margin-bottom:calc(var(--page-padding) * -1);
+}
+masonry-items.initialized>*{
+  margin-bottom:var(--page-padding);
+}
+masonry-items.initialized[data-items="2"]>*{
+  width:calc((100% - var(--page-padding) * 1) / 2);
+}
+masonry-items.initialized[data-items="3"]>*{
+  width:calc((100% - var(--page-padding) * 2) / 3);
+}
+masonry-items.initialized[data-items="4"]>*{
+  width:calc((100% - var(--page-padding) * 3) / 4);
+}
+masonry-items.initialized[data-items="5"]>*{
+  width:calc((100% - var(--page-padding) * 4) / 5);
+}
+masonry-items.initialized[data-items="6"]>*{
+  width:calc((100% - var(--page-padding) * 5) / 6);
+}
+@media (min-width:1025px) and (max-width:1200px){
+   masonry-items.initialized[data-items="4"]>*{
+    width:calc((100% - var(--page-padding)) / 2);
+  }
+  masonry-items.initialized[data-items="5"]>*,
+  masonry-items.initialized[data-items="6"]>*{
+    width:calc((100% - var(--page-padding) * 2) / 3);
+  }
+}
+@media (min-width:577px) and (max-width:1024px){
+  masonry-items.initialized[data-items="2"]>*,
+  masonry-items.initialized[data-items="3"]>*,
+  masonry-items.initialized[data-items="4"]>*,
+  masonry-items.initialized[data-items="5"]>*,
+  masonry-items.initialized[data-items="6"]>*{
+    width:calc((100% - var(--page-padding)) / 2);
+  }
+}
+@media (max-width:576px){
+  masonry-items.initialized[data-mobile]>*{
+    width:calc((100% - var(--page-padding)) / 2);
+  }
+  masonry-items.initialized[data-mobile].page-grid-sp-1>*{
+    width:100%;
+  }
+}

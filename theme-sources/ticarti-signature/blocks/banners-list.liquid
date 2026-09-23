@@ -1,0 +1,57 @@
+{{ 'section-banner.css' | asset_url | stylesheet_tag }}
+{{ 'component-media-video-button.css' | asset_url | stylesheet_tag }}
+{%- capture block_styles -%}
+{%- capture __css -%}
+{%- if section.settings.color_base   != "rgba(0,0,0,0)" -%}--color-base-section:{{ section.settings.color_base }};{%- endif -%}
+{%- if section.settings.color_accent != "rgba(0,0,0,0)" -%}--color-accent-section:{{ section.settings.color_accent }};{%- endif -%}
+{%- endcapture -%}
+{%- if __css != blank -%}
+#theme-block-{{ block.id }}{
+  {{ __css }}
+}
+{%- endif -%}
+{%- endcapture -%}
+{%- if block_styles != blank -%}
+<style>{{ block_styles }}</style>
+{%- endif -%}
+<div id="theme-block-{{ block.id }}" class="block-banners-list" {{ block.shopify_attributes }}>
+  {%- if block.settings.main_heading != blank -%}
+  <div class="mb20 {{ section.settings.heading_aligment_block }}">
+    <h4 class="mt0">{{ block.settings.main_heading }}</h4>
+  </div>
+  {%- endif -%}
+  <div class="page-grid-sp-{{ section.settings.mobile_grid }} {{ section.settings.grid_tablet }} {{ section.settings.grid }}{% if section.settings.heading_aligment_block == "text-center-desktop" %} justify-content-center-desktop{% endif %}">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Banners",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "main_heading",
+        "default": "Banners",
+        "label": "Heading"
+      }
+    ],
+    "blocks": [{"type": "banner-item"}],
+    "presets": [
+      {
+      	"name": "Banners",
+        "blocks": [
+          {
+            "type": "banner-item"
+          },
+          {
+            "type": "banner-item"
+          },
+          {
+            "type": "banner-item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

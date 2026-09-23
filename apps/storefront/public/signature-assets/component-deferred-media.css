@@ -1,0 +1,116 @@
+.deferred-media{
+  display: block;
+  position: relative;
+}
+.deferred-media__poster{
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:var(--color-body-background);
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+.deferred-media[loaded]>.deferred-media__poster{
+  z-index: 0;
+  visibility: hidden;
+}
+.media model-viewer,
+.deferred-media .shopify-model-viewer-ui,
+.deferred-media template,
+.deferred-media video{
+  display: block;
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+.deferred-media iframe{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background-color:var(--color-body-background);
+  z-index: 1;
+}
+.deferred-media:not([loaded]) template {
+  z-index: -1;
+}
+
+
+.deferred-media__poster-button{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-media-background-section, var(--color-media-background));
+  height: 40px;
+  width: 40px;
+  z-index: 1;
+  transition: background var(--duration-medium) var(--animation-bezier);
+}
+.deferred-media__poster-button svg{
+  width: 20px;
+  height: 20px;
+}
+.deferred-media__poster-model .deferred-media__poster-button svg{
+  width: 12px;
+  height: 12px;
+}
+.deferred-media__poster-button svg path{
+  fill: var(--color-media-icon-main-section, var(--color-media-icon-main));
+}
+@media (min-width:1025px) {
+  .deferred-media__poster-button:hover{
+    background: var(--color-media-background-hover-section, var(--color-media-background-hover));
+  }
+  .deferred-media__poster-button:hover svg path{
+    fill: var(--color-media-icon-hover-main-section, var(--color-media-icon-hover-main));
+  }
+}
+.deferred-media__poster img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+}
+.deferred-media.media_ratio_custom{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.deferred-media.media_ratio_custom video,
+.deferred-media.media_ratio_custom iframe{
+  height: auto;
+  max-height: 100%;
+  top: auto;
+  border-radius:var(--radius);
+}
+.deferred-media.media_ratio_custom img {
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+[class*="media-design__columns"] .product-media-modal__model{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+[class*="media-design__columns"] .product-media-modal__model product-model{
+  width: auto;
+  height: 100%;
+}
+[class*="media-design__columns"] .product-media-modal__model product-model.product-model__horizontal{
+  width: auto;
+  height: 100%;
+}

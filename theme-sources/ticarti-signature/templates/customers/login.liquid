@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="{{ 'component-inputs.css' | asset_url }}" media="print" onload="this.media='all'">
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<div class="customer__account top-spacing-normal {{ settings.page_width_main }}">
+  <div id="recover">
+    <div class="page-grid-1 page-width-half section-heading-container">
+      <h1 class="mt0 mb0">{{ 'customer.recover_password.title' | t }}</h1>
+    </div>
+    <div class="page-grid-1 page-width-one-third">
+      <p class="mt0 mb10">{{ 'customer.recover_password.subtext' | t }}</p>
+      {%- form 'recover_customer_password' -%}
+      {% assign recover_success = form.posted_successfully? %}
+      
+      <div class="field field-with-icon">
+        <input class="field__input"
+               type="email"
+               value=""
+               name="email"
+               id="RecoverEmail"
+               autocorrect="off"
+               autocapitalize="off"
+               autocomplete="email"
+               {% if form.errors %}
+               aria-invalid="true"
+               aria-describedby="RecoverEmail-email-error"
+               autofocus
+               {% endif %}
+               placeholder="{{ 'customer.login_page.email' | t }}"
+               required
+               >
+        
+        {%- if form.errors -%}
+        <label class="field__label field__label--error" for="RecoverEmail-email-error">{{ form.errors.messages['form'] }}</label>
+        {%- else -%}
+        <label class="field__label" for="RecoverEmail">{{ 'customer.login_page.email' | t }}</label>
+        {%- endif -%}
+        <div class="field__icon">
+          {{- 'icon-mail' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </div>
+      </div>
+
+      <button class="btn btn__transition-text w-full form-inputs-top-spacing">
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">{{ 'customer.login_page.submit' | t }}</span>
+          <span class="btn__bottom-text is-hidden">{{ 'customer.login_page.submit' | t }}</span>
+        </div>
+      </button>
+
+      <div class="form-inputs-top-spacing">
+        <a href="#login" class="link">
+          {{ 'customer.login_page.cancel' | t }}
+        </a>
+      </div>
+      {%- endform -%}
+          
+    </div>
+  </div>
+
+  <div id="login">
+    <div class="page-grid-1 page-width-half section-heading-container">
+      <h1 class="mt0 mb0">{{ 'customer.login_page.title' | t }}</h1>
+    </div>
+    <div class="page-grid-1 page-width-one-third">
+      <div>
+        {%- if recover_success == true -%}
+        <h6 class="mt0 mb30 text-left" autofocus>
+          {{ 'customer.recover_password.success' | t }}
+        </h6>
+        {%- endif -%}
+        {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+        <div class="errors-container text-left mb30">
+          <h6 class="mt0 mb0" autofocus>
+            {{ 'templates.contact.form.error_heading' | t }}
+          </h6>
+          {{ form.errors | default_errors }}
+        </div>
+        {%- endif -%}
+        <div class="field field-with-icon">
+          <input class="field__input"
+                 type="email"
+                 name="customer[email]"
+                 id="CustomerEmail"
+                 autocomplete="email"
+                 autocorrect="off"
+                 autocapitalize="off"
+                 {% if form.errors contains 'form' %}
+                 aria-invalid="true"
+                 {% endif %}
+                 placeholder="{{ 'customer.login_page.email' | t }}"
+                 required
+                 >
+          <label class="field__label" for="CustomerEmail">{{ 'customer.login_page.email' | t }}</label>
+          <div class="field__icon">
+            {{- 'icon-mail' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+        </div>
+        {%- if form.password_needed -%}
+        <div class="field field-with-icon form-inputs-top-spacing">
+          <input class="field__input"
+                 type="password"
+                 value=""
+                 name="customer[password]"
+                 id="CustomerPassword"
+                 autocomplete="current-password"
+                 {% if form.errors contains 'form' %}
+                 aria-invalid="true"
+                 {% endif %}
+                 placeholder="{{ 'customer.login_page.password' | t }}"
+                 required
+                 >
+          <label class="field__label" for="CustomerPassword">{{ 'customer.login_page.password' | t }}</label>
+          <div class="field__icon">
+            {{- 'icon-lock' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+        </div>
+        {%- endif -%}
+  
+        {%- if form.password_needed -%}
+        <div class="form-inputs-top-spacing">
+          <a href="#recover" class="link">
+            {{ 'customer.login_page.forgot_password' | t }}
+          </a>
+        </div>
+        {%- endif -%}
+        
+        <button class="btn btn__transition-text w-full form-inputs-top-spacing-button">
+          <div class="btn__texts">
+            <span class="btn__top-text is-visible">{{ 'customer.login_page.sign_in' | t }}</span>
+            <span class="btn__bottom-text is-hidden">{{ 'customer.login_page.sign_in' | t }}</span>
+          </div>
+        </button>
+  
+        
+        <h5 class="mt40 mb0">{{ 'customer.login_page.new_customer' | t }}</h5>
+        <div class="form-inputs-top-spacing-button">
+          <a href="{{ routes.account_register_url }}" class="btn btn--border btn__transition-text  w-full">
+            <div class="btn__texts">
+              <span class="btn__top-text is-visible">{{ 'customer.login_page.create_account' | t }}</span>
+              <span class="btn__bottom-text is-hidden">{{ 'customer.login_page.create_account' | t }}</span>
+            </div>
+          </a>
+        </div>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if shop.checkout.guest_login -%}
+  <div class="page-grid-1 page-width-half section-heading-container">
+    <h1 class="mt0 mb0">{{ 'customer.login_page.guest_title' | t }}</h1>
+  </div>
+  <div class="page-grid-1 page-width-one-third">
+    {%- form 'guest_login' -%}
+      <button class="btn btn__transition-text w-full">
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">{{ 'customer.login_page.guest_continue' | t }}</span>
+          <span class="btn__bottom-text is-hidden">{{ 'customer.login_page.guest_continue' | t }}</span>
+        </div>
+      </button>
+    {%- endform -%}
+  </div>
+  {%- endif -%}
+
+</div>
+

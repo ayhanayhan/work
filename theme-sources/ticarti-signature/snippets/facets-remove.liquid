@@ -1,0 +1,49 @@
+{% comment %}
+  Article card component for grids 
+
+  Accepts:
+  - section: {Object} Section paramatres object
+
+  Usage:
+  {%- render 'facets-remove', 
+      results: collection,
+      results_url: results_url
+  -%}
+{% endcomment %}
+
+{%- capture facets_content -%}
+{%- for filter in results.filters -%}
+{%- for value in filter.active_values -%}
+<facet-remove>
+  <a href="{{ value.url_to_remove }}" class="active-facets__button btn btn--reset-facet btn__transition-text">
+    <div class="btn__texts">
+      {%- capture text -%}{{ value.label | escape }}<div class="display-flex">{{- 'icon-close-small' | append: settings.system_icon_thickness | inline_asset_content -}}</div>{%- endcapture -%}
+      <span class="btn__top-text is-visible">{{ text }}</span>
+      <span class="btn__bottom-text is-hidden">{{ text }}</span>
+    </div>
+  </a>
+</facet-remove>
+{%- endfor -%}
+{% if filter.type == "price_range" %}
+{%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+<facet-remove>
+  <a href="{{ filter.url_to_remove }}" class="active-facets__button btn btn--reset-facet btn__transition-text">
+    <div class="btn__texts">
+      {%- capture text -%}{%- if filter.min_value.value -%}{{ filter.min_value.value | money }}{%- else -%}{{ 0 | money }}{%- endif -%}-{%- if filter.max_value.value -%}{{ filter.max_value.value | money }}{%- else -%}{{ filter.range_max | money }}{%- endif -%}<div class="display-flex">{{- 'icon-close-small' | append: settings.system_icon_thickness | inline_asset_content -}}</div>{%- endcapture -%}
+      <span class="btn__top-text is-visible">{{ text }}</span>
+      <span class="btn__bottom-text is-hidden">{{ text }}</span>
+    </div>
+  </a>
+</facet-remove>
+{%- endif -%}
+{% endif %}
+{%- endfor -%}
+{%- endcapture -%}
+<div class="active-facets-container active-facets-desktop">{%- if facets_content != blank -%}
+  {{ facets_content }}
+  <facet-remove class="active-facets__button-wrapper">
+    <a href="{{ results_url }}" class="active-facets__button-remove btn-small transition-up">
+	  {{- 'icon-remove' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </a>
+  </facet-remove>
+{%- endif -%}</div>

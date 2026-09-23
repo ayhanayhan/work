@@ -1,0 +1,75 @@
+{% comment %}
+    menu
+
+    section: {{ Object }}
+    linklist: {{ Object }} menu links
+
+    Usage:
+    {% render 'menu-closed', section:section, linklist:section.settings.menu.links %}
+{% endcomment %}
+
+{%- liquid
+    assign block_images = section.blocks | where: "type", "images"
+    for block in block_images
+    assign block_images_object = block
+    endfor
+    capture page_width
+    if section.settings.width != "default"
+    echo section.settings.width
+    else
+    echo settings.page_width_main
+    endif
+    endcapture
+-%}
+<nav class="main-menu-closed{% if section.settings.menu_text_position == "center" %} main-menu-closed__text-center{% endif %}">
+  <div class="{{ page_width }}">
+    <div class="page-grid-{{ section.settings.grid }} page-vertical-gap-40" data-parent-megamenu="closed-menu">
+      {%- for link in linklist -%}
+      
+      {%- capture image -%}
+      {%- assign image = 'icon_image' | append: forloop.index -%}
+      {%- assign image = block_images_object.settings[image] -%}
+      {%- if image != blank -%}
+      {%- assign image_ratio_value = block_images_object.settings.image_ratio -%}
+      <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %} w-full">
+        {%- render "component-image",
+            image_ratio_value: image_ratio_value,
+            image_source: image
+        -%}
+      </div>
+      {%- endif -%}
+      {%- endcapture -%}
+      
+      {%- if link.links != blank -%}
+      <div class="">
+        <a href="{{ link.url }}" class="menu-item {% if section.settings.submenu_size == "big" %} body2 menu-item--small{% else %} h4{% endif %}{% if block_images_object.settings.image_hover == "default" %} {{ settings.image_hover }}{% else %} {{ block_images_object.settings.image_hover }}{% endif %} hover-area{% if settings.header_links_underline %} menu-item-animation{% endif %}{% if link.current %} menu-item--active{% endif %}">
+          {{ image }}
+          <span><span class="submenu__item_text">{{ link.title | escape }}</span>{%- render "menu-badge" section:section, item_name:link.title, show_inline:true -%}</span>
+        </a>
+        <ul class="unstyle-ul menu-item__childs">
+          {%- for childlink in link.links -%}
+          <li class="submenu-container submenu--to-left">
+            <a href="{{ childlink.url }}" class="menu-item__submenu {% if section.settings.submenu_size == "big" %} h5 menu-item__submenu--big{% else %} body2{% endif %}{% if settings.header_links_underline %} menu-item-animation{% endif %}">
+              <span><span class="submenu__item_text">{{ childlink.title | escape }}</span>{%- render "menu-badge" section:section, item_name:childlink.title, show_inline:true -%}</span>{%  if childlink.links != blank -%}{{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+            </a>
+            {%- liquid
+                if childlink.links != blank
+                render "menu-submenu", link:childlink
+                endif
+             -%}
+          </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      {%- else -%}
+      <div class="">
+        <a href="{{ link.url }}" class="menu-item {% if section.settings.submenu_size == "big" %} body2 menu-item--small{% else %} h4{% endif %}{% if block_images_object.settings.image_hover == "default" %} {{ settings.image_hover }}{% else %} {{ block_images_object.settings.image_hover }}{% endif %} hover-area{% if settings.header_links_underline %} menu-item-animation{% endif %}{% if link.current %} menu-item--active{% endif %}">
+          {{ image }}
+          <span><span class="submenu__item_text">{{ link.title | escape }}</span>{%- render "menu-badge" section:section, item_name:link.title, show_inline:true -%}</span>
+        </a>
+      </div>
+      {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</nav>

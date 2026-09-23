@@ -1,0 +1,22 @@
+{%- if linklist != blank -%}
+<nav class="list-menu {{ animation }} list-menu--secondary">
+  <ul class="unstyle-ul list-menu--inline">
+    {%- for link in linklist -%}
+    {%- if link.links != blank -%}    
+    <li class="list-menu--hover submenu-container submenu--to-left">
+      <a href="{{ link.url }}" class="body3 list-menu__item{% if link.current %} list-menu__item--active{% endif %}">
+        <span>{{ link.title | escape }}{%- render "menu-badge" item_name:link.title, show_inline:true -%}{{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+      </a>
+      {%- render "menu-submenu", link:link, font_size: "body3" -%}
+    </li>
+    {%- else -%}
+    <li class="list-menu--hover">
+      <a href="{{ link.url }}" class="body3 list-menu__item{% if link.current %} list-menu__item--active{% endif %}">
+        <span>{{ link.title | escape }}{%- render "menu-badge" item_name:link.title, show_inline:true -%}</span>
+      </a>
+    </li>
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</nav>
+{%- endif -%}

@@ -1,0 +1,405 @@
+{
+  "sections": {
+    "template--15772581953618__slider_fiwWai": {
+      "type": "slider",
+      "settings": {
+        "main_subheading": "Mix & Match Your Favorites",
+        "main_heading": "Buy Any 2, Get 1 Free!",
+        "heading_aligment": "text-left",
+        "top_spacing": "none",
+        "width": "fullwidth",
+        "heightDesktop": 650,
+        "items": [
+          {
+            "title": "Buy Any 2, Get 1 Free!",
+            "subtitle": "Mix & Match Your Favorites",
+            "buttonText": "Discover Now!",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/preview_images/8ffd06bf57114d04b86b080dd55cc504.thumbnail.0000000000.jpg?v=1756655212&width=1920"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__collection_list_Rz9yWC": {
+      "type": "collection-list",
+      "settings": {
+        "main_subheading": "Our Collections",
+        "main_heading": "Discover What You Love",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "grid": "page-grid-6",
+        "grid_tablet": "page-grid-st-3",
+        "items": [
+          {
+            "title": "Bras",
+            "count": 15,
+            "linkUrl": "/products?category=bras",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_72.jpg?v=1756728998&width=496"
+          },
+          {
+            "title": "Panties",
+            "count": 15,
+            "linkUrl": "/products?category=panties",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_73.jpg?v=1756728998&width=496"
+          },
+          {
+            "title": "Sleep",
+            "count": 15,
+            "linkUrl": "/products?category=sleep",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_74.jpg?v=1756728998&width=496"
+          },
+          {
+            "title": "Lingerie",
+            "count": 15,
+            "linkUrl": "/products?category=lingerie",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_75.jpg?v=1756728998&width=496"
+          },
+          {
+            "title": "Apparel",
+            "count": 15,
+            "linkUrl": "/products?category=apparel",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_76.jpg?v=1756728998&width=496"
+          },
+          {
+            "title": "Swim",
+            "count": 15,
+            "linkUrl": "/products?category=swim",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Frame_77.jpg?v=1756728998&width=496"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__banners_TP7wDb": {
+      "type": "banners",
+      "settings": {
+        "main_subheading": "Shop the Savings",
+        "main_heading": "Exclusive Deals",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "grid": "page-grid-2",
+        "grid_tablet": "page-grid-st-1",
+        "items": [
+          {
+            "title": "Get 50% Off",
+            "subtitle": "Buy 1, Get 50% Off the 2nd Bra",
+            "buttonText": "Discover Now!",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Rectangle_241_2.jpg?v=1756732951&width=1450"
+          },
+          {
+            "title": "20% Off",
+            "subtitle": "Complete the look! Save 20% when you buy any matching bra & panty set.",
+            "buttonText": "Discover Now!",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Rectangle_242_1.jpg?v=1756732951&width=1450"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__banners_WpErMd": {
+      "type": "banners",
+      "settings": {
+        "main_heading": "",
+        "top_spacing": "small",
+        "width": "page-width",
+        "grid": "page-grid-1",
+        "grid_tablet": "page-grid-st-1",
+        "items": [
+          {
+            "title": "15% Off All Nightwear",
+            "subtitle": "From satin slips to lace robes – indulge in elegance this weekend only.",
+            "buttonText": "Discover Now!",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Rectangle_249.jpg?v=1756733640&width=1800"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__ticker_text_LkBjgQ": {
+      "type": "ticker-text",
+      "settings": {
+        "top_spacing": "normal",
+        "items": [
+          {
+            "text": "THIS WEEK ONLY"
+          },
+          {
+            "text": "Luxury Lingerie – 25% Off"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__featured_collection_qUYBeC": {
+      "type": "featured-collection",
+      "settings": {
+        "main_subheading": "Top Rated",
+        "main_heading": "Most-Loved Products",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "count": 8,
+        "buttonText": "Shop All"
+      }
+    },
+    "template--15772581953618__brands_grid_KWbLyW": {
+      "type": "brands-grid",
+      "settings": {
+        "main_subheading": "Featured Vendors",
+        "main_heading": "Exclusive Vendor Spotlight",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "grid": "page-grid-8",
+        "grid_tablet": "page-grid-st-4",
+        "items": [
+          {
+            "title": "Brand 1",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_11.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 2",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_17.jpg?v=1756734489&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 3",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_16.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 4",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_12.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 5",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_9.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 6",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_18.jpg?v=1756734508&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 7",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_15.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          },
+          {
+            "title": "Brand 8",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/Logo_14.jpg?v=1755948223&width=274",
+            "linkUrl": "/products"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__featured_product_XaVfUw": {
+      "type": "featured-product",
+      "settings": {
+        "main_subheading": "Best Choice",
+        "main_heading": "Sheer Lace Bralette & Shorts",
+        "title": "Sheer Lace Bralette & Shorts",
+        "top_spacing": "normal",
+        "background": "color",
+        "color_background": "#fce4ec",
+        "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/31_28fea2e9-1e80-48c7-8e38-1f5b120bafba.jpg?v=1756641934&width=1445"
+      }
+    },
+    "template--15772581953618__media_with_text_rLTi6i": {
+      "type": "media-with-text",
+      "settings": {
+        "main_subheading": "About Us",
+        "main_heading": "Build Your Perfect Store with Wokiee!",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "body": "Wokiee is one of the most powerful and flexible themes for creating a modern online store on the Shopify platform. It’s perfect for any type of business, no matter what you sell: fashion clothing, accessories, cosmetics, electronics, or even auto parts. This theme is designed to make your online store look stylish and professional while offering your customers an exceptional user experience.",
+        "buttonText": "Buy Theme!",
+        "linkUrl": "/products",
+        "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/preview_images/60bad0cc54c44619af59e99dcecee7f8.thumbnail.0000000000.jpg?v=1756651579&width=754"
+      }
+    },
+    "template--15772581953618__wokiee_review_NjHqjc": {
+      "type": "wokiee-review",
+      "settings": {
+        "main_subheading": "",
+        "main_heading": "Reviews",
+        "top_spacing": "normal",
+        "background": "color",
+        "color_background": "#fce4ec",
+        "items": [
+          {
+            "title": "Exceptional Support and Clean Code",
+            "content": "I was impressed by how fast the support team responded to my questions. Even as someone with basic coding knowledge, I found the theme incredibly easy to work with. The code is well-organized, and everything runs smoothly.",
+            "author": "— Lucas M",
+            "rating": 5
+          },
+          {
+            "title": "Reliable Theme with Excellent Customer Service",
+            "content": "After trying multiple themes over the past two years, I finally settled on Wokiee — and I haven’t looked back since. It’s one of the most reliable and well-built themes I’ve worked with.",
+            "author": "— Sophie N",
+            "rating": 5
+          },
+          {
+            "title": "Beautiful Design and Great Flexibility",
+            "content": "Wokiee is hands down the best Shopify theme I’ve used. The design options are stunning and fully customizable.",
+            "author": "— Rachel L",
+            "rating": 5
+          },
+          {
+            "title": "Amazing Customization Options!",
+            "content": "Wokiee gave me full creative control over my store’s layout and visuals.",
+            "author": "— James T",
+            "rating": 5
+          },
+          {
+            "title": "High-Quality Theme with Professional Code",
+            "content": "You can tell Wokiee was built by pros. The code is clean and optimized for performance.",
+            "author": "— Anna V",
+            "rating": 5
+          },
+          {
+            "title": "Top-Notch Support and Regular Updates",
+            "content": "The customer support team is incredible — helpful, responsive, and very professional.",
+            "author": "— David P",
+            "rating": 5
+          }
+        ]
+      }
+    },
+    "template--15772581953618__shop_the_feed_K6JWzF": {
+      "type": "shop-the-feed",
+      "settings": {
+        "__sectionName": "shop-the-feed",
+        "main_subheading": "Shop the Feed",
+        "main_heading": "Get the Look",
+        "top_spacing": "normal",
+        "width": "page-width",
+        "grid": "page-grid-4",
+        "grid_tablet": "page-grid-st-2",
+        "items": [
+          {
+            "title": "Look",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/preview_images/b1d8b47b438d47bcb6a52b1c61f3cd83.thumbnail.0000000000.jpg?v=1756736889&width=736"
+          },
+          {
+            "title": "Look",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/preview_images/b7e35ac0073347c19f529e65246c9c81.thumbnail.0000000000.jpg?v=1756736894&width=736"
+          },
+          {
+            "title": "Look",
+            "linkUrl": "/products",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/files/preview_images/8f2f68163aa74619a80cc742f57cca97.thumbnail.0000000000.jpg?v=1756736889&width=736"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__blog_posts_4xFcEW": {
+      "type": "blog-posts",
+      "settings": {
+        "main_subheading": "Our Blog",
+        "main_heading": "Lingerie Tips & Trends",
+        "top_spacing": "normal",
+        "background": "color",
+        "color_background": "#fce4ec",
+        "width": "page-width",
+        "grid": "page-grid-3",
+        "grid_tablet": "page-grid-st-3",
+        "items": [
+          {
+            "title": "Top 5 Wokiee Features for Your Store",
+            "date": "September 01, 2025",
+            "excerpt": "Introduction If you want your Shopify store to stand out, you need a theme that’s both stylish and functional.",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/articles/Rectangle_255_8160a4d5-e8c8-4ba2-b5bc-0aa50486ff1d.jpg?v=1756738228&width=974",
+            "linkUrl": "/blog"
+          },
+          {
+            "title": "Customize Your Shopify with Wokiee",
+            "date": "September 01, 2025",
+            "excerpt": "Introduction Customizing your Shopify store is essential for creating a unique brand identity.",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/articles/Rectangle_256_b38ad975-4c83-4420-b570-f85b7a04bf81.jpg?v=1756738272&width=974",
+            "linkUrl": "/blog"
+          },
+          {
+            "title": "Boost Your Shopify with Wokiee",
+            "date": "September 01, 2025",
+            "excerpt": "Build a flexible storefront with the Wokiee theme.",
+            "imageUrl": "//wokiee-video.myshopify.com/cdn/shop/articles/Rectangle_257_684532c2-f1af-4793-bacc-3d62ca0ad034.jpg?v=1756738245&width=974",
+            "linkUrl": "/blog"
+          }
+        ]
+      }
+    },
+    "template--15772581953618__accordion_YjkdRk": {
+      "type": "accordion",
+      "settings": {
+        "main_subheading": "Frequently Asked Questions",
+        "main_heading": "Your Lingerie Questions Answered",
+        "top_spacing": "normal",
+        "items": [
+          {
+            "title": "How do I choose the right bra size?",
+            "content": "Finding the perfect bra size is essential for comfort and support. Start by measuring your underbust and bust and compare these measurements with our size chart."
+          },
+          {
+            "title": "Can I return or exchange items?",
+            "content": "Yes. Please review the store return policy for the current return window and conditions."
+          },
+          {
+            "title": "How should I care for my lingerie?",
+            "content": "Follow the care label and use gentle washing methods to preserve delicate fabrics."
+          },
+          {
+            "title": "Do you offer international shipping?",
+            "content": "Shipping availability and rates depend on the delivery country and checkout settings."
+          },
+          {
+            "title": "Are your products made from skin-friendly materials?",
+            "content": "Product materials are listed on each product page."
+          }
+        ]
+      }
+    },
+    "template--15772581953618__text_columns_with_icons_type_2_GnJA3D": {
+      "type": "text-columns-with-icons-type-2",
+      "settings": {
+        "top_spacing": "normal",
+        "grid": "page-grid-2",
+        "grid_tablet": "page-grid-st-2",
+        "items": [
+          {
+            "icon": "truck_1",
+            "title": "Free Shipping on Orders Over $149",
+            "content": "Enjoy free standard shipping when you spend $149 or more. No hidden fees — just more value with every order."
+          },
+          {
+            "icon": "Return",
+            "title": "Easy 30-day Returns",
+            "content": "Changed your mind? No problem. You have 30 days to return your item, no questions asked."
+          }
+        ]
+      }
+    }
+  },
+  "order": [
+    "template--15772581953618__slider_fiwWai",
+    "template--15772581953618__collection_list_Rz9yWC",
+    "template--15772581953618__banners_TP7wDb",
+    "template--15772581953618__banners_WpErMd",
+    "template--15772581953618__ticker_text_LkBjgQ",
+    "template--15772581953618__featured_collection_qUYBeC",
+    "template--15772581953618__brands_grid_KWbLyW",
+    "template--15772581953618__featured_product_XaVfUw",
+    "template--15772581953618__media_with_text_rLTi6i",
+    "template--15772581953618__wokiee_review_NjHqjc",
+    "template--15772581953618__shop_the_feed_K6JWzF",
+    "template--15772581953618__blog_posts_4xFcEW",
+    "template--15772581953618__accordion_YjkdRk",
+    "template--15772581953618__text_columns_with_icons_type_2_GnJA3D"
+  ]
+}

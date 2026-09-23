@@ -1,0 +1,27 @@
+{%- assign price_max = settings.free_delivery_price | times:100 -%}
+<free-delivery-bar class="free-delivery-bar__toolbar{% if settings.border_width == 0 %} free-delivery-bar__main-border{% endif %}" style="--length:{{ cart.total_price }};"
+                   data-price-max="{{ price_max }}"
+                   {%- assign price_current = cart.total_price | money_without_currency -%}
+                   {%- if price_current contains '.' -%}
+                   {%- assign _price_current = price_current | split: '.' | last -%}
+                   {%- if _price_current contains ',' -%}
+                   data-price-current="{{ price_current | replace_first: '.', '' | replace:',','.' }}"
+                   {%- else -%}
+                   data-price-current="{{ price_current | replace:',','' }}"
+                   {%- endif -%}
+                   {%- else -%}
+                   data-price-current="{{ price_current | replace:',','.' }}"
+                   {%- endif -%}
+                   data-price-max-real="{{ settings.free_delivery_price }}"
+                   data-symbol="{{ 0 | money_without_trailing_zeros }}">
+  <div class="hide free-delivery-bar__toolbar__text free-delivery-bar__toolbar__full">
+    {{- 'icon-truck' | append: settings.system_icon_thickness | inline_asset_content -}}
+    <span>{{ "general.free_shipping.free_shipping_html" | t }}</span>
+  </div>
+  <div class="hide free-delivery-bar__toolbar__text free-delivery-bar__toolbar__text__current">
+	{{- 'icon-truck' | append: settings.system_icon_thickness | inline_asset_content -}}
+    {%- assign bar = '<span class="fshbar"></span>' -%}
+    <span>{{ "general.free_shipping.normal_html" | t:price:bar }}</span>
+  </div>
+  <div class="free-delivery-bar__toolbar__bar"></div>
+</free-delivery-bar>

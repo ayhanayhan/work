@@ -1,0 +1,15 @@
+{%- if section.settings.enable_texts == 'show_only_text' -%}
+<div class="footer-sticky-nav__item__icon">
+<span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.cart' | t }}: <span class="cart-count-bubble">{{ cart.item_count }}</span></span>
+</div>
+{%- else -%}
+<div class="footer-sticky-nav__item__icon">
+    {%- render 'icon-cart' -%}
+    <div class="cart-count-bubble header__button__bubble">{%- if cart != empty -%}{%- if cart.item_count < 100 -%}
+      <span class="body3-no-scale header__button__bubble__count" aria-hidden="true">{{ cart.item_count }}</span>
+      {%- endif -%}
+      <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+    {%- endif -%}</div>
+</div>
+<span class="footer-sticky-nav__item__text">{{ 'sections.footer_sticky_nav.cart' | t }}</span>
+{%- endif -%}

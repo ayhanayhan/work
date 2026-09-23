@@ -1,0 +1,26 @@
+{
+  "format": "TICARTI_THEME_DATA_CONTRACT",
+  "version": "1.0.0",
+  "theme": "Ticarti Signature Complete",
+  "description": "Optional presentation data used by the storefront source-port. Existing commerce fields remain authoritative; these fields only extend presentation behavior.",
+  "productMetadata": {
+    "namespace": "signature",
+    "fields": {
+      "featuredBadge": {"type": "string", "example": "Yeni"},
+      "smallDescription": {"type": "string"},
+      "countdown": {"type": "string", "format": "date-time"},
+      "customTabs": {"type": "array", "items": {"title": "string", "html": "string"}},
+      "galleryLayout": {"type": "string", "allowed": ["slider", "grid", "stacked", "thumbnails"]},
+      "groupedGallery": {"type": "array", "items": "string"},
+      "sizeGuideHtml": {"type": "string"},
+      "shippingNote": {"type": "string"},
+      "preorderLabel": {"type": "string"}
+    }
+  },
+  "themeSettings": {
+    "fonts": ["bodyFont", "headingFont", "menuFont", "buttonFont", "priceFont"],
+    "layout": ["contentWidth", "roundness", "headerVariant", "productCardVariant", "productPageVariant"],
+    "colors": ["background", "text", "heading", "accent", "line", "price"]
+  },
+  "fallbackPolicy": "When an optional presentation field is absent, the storefront uses the existing Ticarti product/store/category data without blocking rendering."
+}

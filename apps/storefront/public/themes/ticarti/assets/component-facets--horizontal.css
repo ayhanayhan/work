@@ -1,0 +1,78 @@
+@media (min-width:1025px){
+  .facets__wrapper{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px 30px;
+  }
+  .facet__heading{
+    font-family: var(--font-h4h5h6-family,var(--font-heading-family));
+    font-style: var(--font-h4h5h6-style,var(--font-heading-style));
+    font-weight: var(--font-h4h5h6-weight,var(--font-heading-weight));
+    line-height: var(--font-heading-line-height);
+    font-size: calc(16px * var(--font-h4h5h6_scale, var(--font-heading-scale)));
+  }
+  .facets__disclosure{
+    position: relative;
+  }
+  .facets__display{
+    position: absolute;
+    top: calc(100% + 35px);
+    left: -20px;
+    background-color: var(--color-body-background);
+    border-radius: var(--radius);
+    width: 296px;
+    box-shadow: 4px 8px 20px 0px #00000017;
+    padding-bottom: 10px;
+    z-index:4;
+    opacity:1;
+    clip-path: xywh(-10% -10% 120% 0);
+  }
+  .details__opened .facets__display{
+    --duration-short:0.5s;
+    transition: top .25s var(--animation-bezier),
+                opacity var(--duration-short) var(--animation-bezier),
+                clip-path var(--duration-short) var(--animation-bezier);
+  }
+  .details__opened[open] .facets__display{
+    opacity:1;
+    top: calc(100% + 10px);
+    clip-path: xywh(-20% -10% 140% 140%);
+  }
+  .facets__display__content {
+    max-height: 500px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top:10px;
+    padding: 10px 12px 10px 20px;
+    margin-right:8px;
+  }
+  .facets__header{
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    gap:10px;
+    justify-content:space-between;
+    padding:20px;
+    border-bottom:1px solid var(--color-lines);
+  }
+  .facets__selected__box{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  facet-remove{
+    display:flex;
+  }
+  .facet__heading.link__base-to_accent-color {
+    --color-link-text: var(--color-base);
+    --color-link-icon: var(--color-base);
+    --color-link-text-hover: var(--color-base);
+    --color-link-icon-hover: var(--color-base);
+  }
+  .active-facets-container:not(:empty){
+    margin:40px 0 0;
+  }
+  .facets__price{
+    padding:20px 20px 10px;
+  }
+}

@@ -1,0 +1,68 @@
+{%- if show_search == "opened" -%}
+{%- comment -%}
+    Renders a product card
+
+    Accepts:
+    - show_search: {Boolean} on/off search
+	- fullwidth: {Boolean} search width
+	- mobile: {Boolean} Search is for mobile. Default: false
+
+    Usage:
+    {%- render "header-search-opened" show_search:section.settings.show_search, fullwidth: true -%}
+{%- endcomment -%}
+<div class="search-container">
+{%- if settings.predictive_search_enabled -%}
+<predictive-search class="header-short-search" data-loading-text="{{ 'accessibility.loading' | t }}">
+{%- endif -%} 
+  <form action="{{ routes.search_url }}" method="get" role="search" class="search header__icons__only-space{% if fullwidth %} w-full{% else %} search--small2{% endif %}">
+    <div class="field">
+      <input class="field__input"
+             id="Search-simple"
+             type="search"
+             name="q"
+             placeholder="{{ 'general.search.search' | t }}"
+             {%- if settings.predictive_search_enabled -%}
+             role="combobox"
+             aria-expanded="false"
+             aria-owns="predictive-search-results-list"
+             aria-controls="predictive-search-results-list"
+             aria-haspopup="listbox"
+             aria-autocomplete="list"
+             autocorrect="off"
+             autocomplete="off"
+             autocapitalize="off"
+             spellcheck="false"
+             {%- endif -%}
+             >
+      <label class="field__label" for="Search-simple">{{ 'general.search.search' | t }}</label>
+      <input type="hidden" name="options[prefix]" value="last">
+
+      {%- if settings.predictive_search_enabled -%}
+      <div class="predictive-search-container">
+        <div class="predictive-search predictive-search--search-template custom__scrollbar" tabindex="-1" data-predictive-search>
+          <div class="predictive-search__loading-state hide">
+            <svg aria-hidden="true" focusable="false" role="presentation" class="loading-overlay__spinner spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+              <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+      {%- endif -%}
+      
+      <button type="submit" class="search__button field__button btn__transition-text" aria-label="{{ 'general.search.search' | t }}">
+        <span class="btn__top-text is-visible">
+          {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </span>
+        <span class="btn__bottom-text is-hidden">
+          {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </span>
+      </button>
+    </div>
+  </form>
+{%- if settings.predictive_search_enabled -%}
+</predictive-search>
+{%- endif -%}
+</div>
+{%- endif -%}

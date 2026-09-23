@@ -1,0 +1,38 @@
+<div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }} 
+{% if block.settings.enable_dynamic_grid == true %}style="--width-desktop:{{ block.settings.grid_width_desktop }}%;"{% endif %}
+>
+<div></div>
+</div>
+{% schema %}
+  {
+    "name": "Empty column",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Empty column. An empty column works on a large screen. It's needed for dynamic placement of design columns."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dynamic_grid",
+        "default": false,
+        "label": "t:options.header.dynamic_width_desktop"
+      },
+      {
+        "visible_if": "{{ block.settings.enable_dynamic_grid == true }}",
+        "type": "range",
+        "id": "grid_width_desktop",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 25,
+        "unit": "%",
+        "label": "t:options.header.width_desktop"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Empty column",
+      }
+    ]
+  }
+{% endschema %}

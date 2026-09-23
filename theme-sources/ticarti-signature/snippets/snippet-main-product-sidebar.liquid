@@ -1,0 +1,1042 @@
+{% comment %}
+  Displays information in the product sidebar.
+
+  Accepts:
+  - section: {Object} Section paramatres object
+  - product: {Object} Product paramatres object
+  - current_variant: {Object} Product paramatres object
+  - page_width: {String}
+  Usage:
+  {% render 'snippet-main-product-sidebar' section:section, product:product, current_variant:current_variant, page_width:page_width %}
+{% endcomment %}
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- capture badges -%}
+{%- if product.available == false or current_variant.available == false -%}
+<span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+{%- endif -%}
+{%- if product.metafields.ticarti.featured_badge != blank and show_badge_feature -%}
+<span class="badges-item__medium badges-item__main">{{ product.metafields.ticarti.featured_badge }}</span>
+{%- endif -%}
+{%- endcapture -%}
+<div id="badge__container-{{ section.id }}" class="badges__container badges__container--gap5">{{- badges -}}</div>
+
+{%- assign buttons = false -%}
+{%- assign blurbs = false -%}
+{%- for block in section.blocks -%}
+
+  {%- if 'message,popup,link,share' contains block.type and buttons == false -%}
+  {%- assign buttons = true -%}
+  <div class="product__buttons__container"{% if page_width == 'page-width' and section.settings.page_width <= 49 %} style="--desktop-count:2;"{% endif %}>
+  {%- endif -%}
+ 
+  {%- case block.type -%}
+    {%- when "@app" -%}
+    {% render block %}
+    {%- when "information" -%}
+    <div class="product__information" id="information-{{ section.id }}">
+      <ul class="unstyle-ul body3">
+        {%- if block.settings.show_sku -%}
+        <li{% if current_variant.sku == blank %} class="hide"{% endif %}>
+          <span class="mt0">{{ 'products.product.information.sku' | t }}</span>
+          <span class="product__sku">{{ current_variant.sku }}</span>
+        </li>
+        {%- endif -%}
+        {%- if block.settings.show_barcode -%}
+        <li{% if current_variant.barcode == blank %} class="hide"{% endif %}>
+          <span class="mt0">{{ 'products.product.information.barcode' | t }}</span> {{ current_variant.barcode }}
+        </li>
+        {%- endif -%}
+        {%- if block.settings.show_vendor and product.vendor != blank -%}
+        <li>
+          <span class="mt0">{{ 'products.product.information.vendor' | t }}</span>
+          <a class="mt0 link link__base-to_accent-color text-uppercase a--no-hover-color"
+             href="{{ routes.collections_url }}/{% if collection == blank %}all{% else %}{{ collection.handle }}{% endif %}?filter.p.vendor={{ product.vendor | escape }}">{{ product.vendor }}</a>
+        </li>
+        {%- endif -%}
+        {%- if block.settings.show_type and product.type != blank -%}
+        <li>
+          <span class="mt0">{{ 'products.product.information.type' | t }}</span>
+          <a class="mt0 link link__base-to_accent-color text-uppercase a--no-hover-color"
+             href="{{ routes.collections_url }}/{% if collection == blank %}all{% else %}{{ collection.handle }}{% endif %}?filter.p.product_type={{ product.type | escape }}">{{ product.type }}</a>
+        </li>
+        {%- endif -%}
+      </ul>
+    </div>
+    {%- when 'title' -%}
+    <div id="theme-block-{{ block.id }}" class="product__title" {{ block.shopify_attributes }}>
+      {%- assign title_link = title_link | default: false, allow_false: true -%}
+      {%- if title_link -%}
+      <a href="{{ product.url }}" class="clear-underline">
+        <h2 class="mt0 featured-product-heading {{ block.settings.heading_size }}">{{ product.title | escape }}</h2>
+      </a>
+      {%- else -%}
+      <h1 class="mt0 {{ block.settings.heading_size }}">{{ product.title | escape }}</h1>
+      {%- endif -%}
+    </div>
+    {%- when 'price' -%}
+    {%- if settings.cart_type != "catalog_mode" -%}
+    <div class="product__price-container">
+      <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+        {%- if block.settings.prices_in_one_line -%}
+        {%- if current_variant.compare_at_price > current_variant.price and product.available -%}
+        {%- render 'product-page-price-inline',
+                   block:block,
+                   product: product,
+                   size:block.settings.price_size,
+                   current_variant:current_variant
+        -%}
+        {%- else -%}
+        {%- render 'price',
+                   product: product,
+                   size:block.settings.price_size
+        -%}
+        {%- endif -%}
+        {%- else -%}
+        {%- if current_variant.compare_at_price > current_variant.price and product.available and block.settings.show_badge_on_sale -%}
+        <div class="badges__container badges__container--gap5 mb8">
+          {%- capture percent -%}{%- render 'badge-sale-percent', target:current_variant -%}{%- endcapture -%}
+          <span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale_html' | t: percent_text: percent }}</span>
+        </div>
+        {%- endif -%}
+        {%- render 'price',
+                   product: product,
+                   size:block.settings.price_size
+        -%}
+        {%- endif -%}
+      </div>
+      {%- if product.quantity_price_breaks_configured? -%}
+      <div class="volume-pricing-note body3" id="Volume-Note-{{ section.id }}">
+        <span>{{ 'products.product.volume_pricing.note' | t }}</span>
+      </div>
+      {%- endif -%}
+
+      {%- if block.settings.show_tax or block.settings.show_shipping -%}
+      {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+      <div class="product__tax caption body3 mt-first-0 rte">
+        {%- if block.settings.show_tax -%}
+        {%- if cart.duties_included and cart.taxes_included -%}
+          <p class="mt0">{{ 'products.product.duties_and_taxes_included' | t }}</p>
+        {%- elsif cart.taxes_included -%}
+          <p class="mt0">{{ 'products.product.taxes_included' | t }}</p>
+        {%- elsif cart.duties_included -%}
+          <p class="mt0">{{ 'products.product.duties_included' | t }}</p>
+        {%- endif -%}
+        {%- endif -%}
+        {%- if block.settings.show_shipping -%}
+        {%- if shop.shipping_policy.body != blank -%}
+          <p class="mt10">{{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}</p>
+        {%- endif -%}
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      {%- endif -%}
+      {%- if block_settings.show_installments -%}
+      <div class="payment_terms body3" {{ block.shopify_attributes }}>
+        {%- assign product_form_installment_id = 'product-form-installment-' | append: section.id -%}
+        {%- form 'product', product, id: product_form_installment_id, class: 'installment caption-large' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {{ form | payment_terms }}
+        {%- endform -%}
+      </div>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+    {%- when 'free-shipping' -%}
+    <div id="product-page-free-delivery" class="free-delivery-bar">
+      {%- render "free-delivery-bar" -%}
+    </div>
+    {%- when 'variant_picker' -%}
+      {%- assign updateurl = updateurl | default: true, allow_false: true -%}
+      {% render 'product-variant-picker', section:section, product: product, block: block, product_form_id: product_form_id, page_width:page_width, updateurl:updateurl %}
+    {%- when "buy_buttons" -%}
+    {%- liquid
+        assign enable_sticky_addtocart = block.settings.enable_sticky_addtocart
+        assign gift_card_recipient_feature_active = false
+        if block.settings.show_gift_card_recipient and product.gift_card?
+          assign gift_card_recipient_feature_active = true
+        endif
+  
+        assign show_dynamic_checkout = false
+        if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
+          assign show_dynamic_checkout = true
+        endif
+    -%}
+    <div id="product-container" class="product__buttons{% if page_width == 'page-wide' and section.settings.page_width >= 50 %} product__buttons--small{% endif %}" {{ block.shopify_attributes }}>
+      {%- if settings.cart_type != "catalog_mode" -%}
+      <product-form class="product-form" data-hide-errors="{{ gift_card_recipient_feature_active }}">
+
+        <div class="product-form__error-message-wrapper" role="alert" hidden>
+          <span class="product-form__error-message"></span>
+          {{- 'icon-attention' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </div>
+
+        {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+        {%- if gift_card_recipient_feature_active -%}
+          {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+        {%- endif -%}
+
+        <div class="product-form__buttons">
+          
+          <div class="product-form__buttons__content">
+            {%- if block.settings.show_quantity -%}
+            {%- assign inv_man = current_variant.inventory_management -%}{%- assign inv_qua = current_variant.inventory_quantity | plus: 0 -%}{%- unless inv_man -%}{%- assign inv_qua = 100000 -%}{%- endunless -%}{%- if current_variant.inventory_policy == "continue" -%}{%- assign inv_qua = 100000 -%}{%- endif -%}
+            <quantity-input id="Quantity-container-{{ section.id }}"
+                            class="field quantity">
+              <label for="Quantity-{{ section.id }}" class="quantity-label" style="">
+                {{ 'products.product.quantity.label' | t }}
+              </label>
+              <button class="quantity__button" name="minus" type="button"{% if inv_qua == 1 %} style="display: none;"{% endif %}>
+                <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}</span>
+				        {{- 'icon-minus' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </button>
+              <input class="field__input quantity__input"
+                     type="number"
+                     name="quantity"
+                     id="Quantity-{{ section.id }}"
+                     min="1"
+                     max="{{ inv_qua }}"
+                     value="1"
+                     form="{{ product_form_id }}"
+                     title="{% if inv_qua < 100000 %}{{ 'products.product.inventory_in_stock_show_count' | t: quantity: inv_qua }}{% else %}{{ 'products.product.inventory_in_stock' | t }}{% endif %}"
+                     >
+              <button class="quantity__button"
+                      name="plus"
+                      type="button"
+                      title="{% if inv_qua < 100000 %}{{ 'products.product.inventory_in_stock_show_count' | t: quantity: inv_qua }}{% else %}{{ 'products.product.inventory_in_stock' | t }}{% endif %}"
+                      {% if inv_qua == 1 %}style="display: none;"{% endif %}
+                >
+                <span class="visually-hidden">{{ 'products.product.quantity.increase' | t: product: product.title | escape }}</span>
+				        {{- 'icon-plus' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </button>
+            </quantity-input>
+            {%- endif -%}
+
+            <div class="product-form__buttons__content__media">
+              {%- if section.settings.default_variant == "select_variant" -%}
+              <div class="btn btn--addtocart-page select-options-button w-full">
+                <div class="btn__texts">
+                  <span class="btn__top-text is-visible">
+                    {{ 'products.product.select_options_button' | t }}
+                  </span>
+                </div>
+              </div>
+              {%- endif -%}
+              {%- assign button_type_product = block.settings.button_type_product -%}
+              <button
+                      type="submit"
+                      name="add"
+                      class="product-form__submit btn btn--addtocart-page btn__transition-text w-full{% if button_type_product == "only_icon" %} only-child{% endif %}"
+                      {% if current_variant.available == false %}disabled{% endif %}
+                      >
+                <div class="btn__texts">
+                  <span class="btn__top-text is-visible">
+                  {%- if current_variant.available -%}
+                  {%- if button_type_product != "only_text" -%}
+                    {%- render "icon-cart" -%}
+                  {%- endif -%}
+                  {%- if button_type_product != "only_icon" -%}
+                  {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'continue' and current_variant.inventory_quantity <= 0 -%}
+                    <span class="btn__texts__item">{{ "products.product.preorder" | t }}</span>
+                  {%- else -%}
+                    <span class="btn__texts__item">{{ 'products.product.add_to_cart' | t }}</span>
+                  {%- endif -%}
+                  {%- endif -%}
+                  {%- else -%}
+                    <span class="btn__texts__item">{{ 'products.product.sold_out' | t }}</span>
+                  {%- endif -%}
+                  </span>
+                  <span class="btn__bottom-text is-hidden">
+                  {%- if current_variant.available -%}
+                  {%- if button_type_product != "only_text" -%}
+                    {%- render "icon-cart" -%}
+                  {%- endif -%}
+                  {%- if button_type_product != "only_icon" -%}
+                  {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'continue' and current_variant.inventory_quantity <= 0 -%}
+                    <span class="btn__texts__item">{{ "products.product.preorder" | t }}</span>
+                  {%- else -%}
+                    <span class="btn__texts__item">{{ 'products.product.add_to_cart' | t }}</span>
+                  {%- endif -%}
+                  {%- endif -%}
+                  {%- else -%}
+                    <span class="btn__texts__item">{{ 'products.product.sold_out' | t }}</span>
+                  {%- endif -%}
+                  </span>
+                </div>
+                <div class="loading-overlay__spinner hidden">
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                  </svg>
+                </div>
+              </button>
+
+              {%- if settings.enable_compare and block.settings.show_compare -%}
+              <div class="global__tooltip--hover">
+                <compare-button
+                   class="product-form__buttons__content__media__item btn--compare-productpage"
+                   data-id="{{ current_variant.id }}"
+                   data-product-handle="{{ product.handle }}"
+                  >
+				  {{- 'icon-compare' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </compare-button>
+                <global-tooltip class="global__tooltip">
+                  <div class="global__tooltip__content"
+                       data-text="{{ 'compare.product.compare' | t }}"
+                       data-text-active="{{ 'compare.product.compare-remove' | t }}"></div>
+                </global-tooltip>
+              </div>
+              {%- endif -%}
+
+              {%- if settings.enable_wishlist and block.settings.show_wishlist -%}
+              <div class="global__tooltip--hover">
+                <wishlist-button
+                   class="product-form__buttons__content__media__item btn--wishlist-productpage"
+                   data-id="{{ product.id }}"
+                   data-product-handle="{{ product.handle }}"
+                  >
+                  {%- render "icon-wishlist" icon_type:"normal" -%}
+                  {%- render "icon-wishlist" icon_type:"added" -%}
+                </wishlist-button>
+                <global-tooltip class="global__tooltip">
+                  <div class="global__tooltip__content"
+                  data-text="{{ 'wishlist.product.wishlist' | t }}"
+                  data-text-active="{{ 'wishlist.product.wishlist-remove' | t }}"></div>
+                </global-tooltip>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- if show_dynamic_checkout -%}
+          {%- if settings.terms_and_condition_checkbox -%}
+          <terms_and_condition-checkbox class="mb15 display-flex">
+            <label for="product-terms_and_condition_checkbox-{{ section.id }}" class="checkbox-input body2">
+              <input id="product-terms_and_condition_checkbox-{{ section.id }}"
+                     type="checkbox">
+              <div class="checkbox-input__checkmark">
+                <div class="checkbox-input__flip">
+                  <div class="checkbox-input__front"></div>
+                  <div class="checkbox-input__back">
+					{{- 'icon-checkmark' | append: settings.system_icon_thickness | inline_asset_content -}}
+                  </div>
+                </div>
+              </div>
+              <span>{{ 'general.accept_terms_checkbox_html' | t }}</span>
+            </label>
+          </terms_and_condition-checkbox>
+          {%- endif -%}
+          {{ form | payment_button }}
+          {%- endif -%}
+        </div>
+
+        {%- endform -%}
+      </product-form>
+      {%- endif -%}
+
+      {%- if block.settings.show_pickup_availability -%}
+      <link rel="stylesheet" href="{{ 'component-pickup-availability.css' | asset_url }}" media="print" onload="this.media='all'">
+      <noscript>{{ 'component-pickup-availability.css' | asset_url | stylesheet_tag }}</noscript>
+      {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+      <pickup-availability
+        class="display-block product__pickup-availabilities quick-add-hidden"
+        {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %}
+          available
+        {% endif %}
+        data-root-url="{{ routes.root_url }}"
+        data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+        data-has-only-default-variant="{{ product.has_only_default_variant }}"
+      >
+        <template>
+          <pickup-availability-preview class="pickup-availability-preview">
+            <div class="pickup-availability-info">
+              <p class="caption-large">{{ 'products.product.pickup_availability.unavailable' | t }}</p>
+              <button class="pickup-availability-button link link--text underlined-link">
+                {{ 'products.product.pickup_availability.refresh' | t }}
+              </button>
+            </div>
+          </pickup-availability-preview>
+        </template>
+      </pickup-availability>
+      <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
+      {%- endif -%}
+    </div>
+    {%- when "message" -%}
+    <modal-opener id="theme-block-{{ block.id }}" class="product__info__button display-flex popup-modal__opener" data-modal="#PopupModal-message" {{ block.shopify_attributes }}>
+      <button id="ProductPopup-message"
+              class="btn btn--border btn__transition-text popup-modal__button w-full"
+              type="button" aria-haspopup="dialog"
+        >
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">
+            {%- if block.settings.show_icon -%}
+			{{- 'icon-chat' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            {{ block.settings.text }}
+          </span>
+          <span class="btn__bottom-text is-hidden">
+            {%- if block.settings.show_icon -%}
+            {{- 'icon-chat' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+            {{ block.settings.text }}
+          </span>
+        </div>
+      </button>
+    </modal-opener>
+    {%- when "popup" -%}
+    <modal-opener id="theme-block-{{ block.id }}" class="product__info__button display-flex popup-modal__opener" data-modal="#PopupModal-{{ block.id }}" {{ block.shopify_attributes }}>
+      <button id="ProductPopup-{{ block.id }}"
+              class="btn btn--border btn__transition-text popup-modal__button w-full"
+              type="button" aria-haspopup="dialog"
+        >
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">
+            {% render 'icons-list' icon_name: block.settings.icon_name %}
+            <span>{{ block.settings.text | default: block.settings.page.title }}</span>
+          </span>
+          <span class="btn__bottom-text is-hidden">
+            {% render 'icons-list' icon_name: block.settings.icon_name %}
+            <span>{{ block.settings.text | default: block.settings.page.title }}</span>
+          </span>
+        </div>
+      </button>
+    </modal-opener>
+    {%- when "link" -%}
+    <div id="theme-block-{{ block.id }}" class="product__info__button display-flex product__simple-link">
+      <a href="{{ block.settings.url }}" class="btn btn--border btn__transition-text popup-modal__button w-full">
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">
+            {% render 'icons-list' icon_name: block.settings.icon_name %}
+            <span>{{ block.settings.text }}</span>
+          </span>
+          <span class="btn__bottom-text is-hidden">
+            {% render 'icons-list' icon_name: block.settings.icon_name %}
+            <span>{{ block.settings.text }}</span>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    {%- when 'share' -%}
+    <div class="product__info__button" {{ block.shopify_attributes }}>
+      <script src="{{ 'share.js' | asset_url }}" defer="defer"></script>
+      {%- assign share_url = product.selected_variant.url | default: product.url | prepend: request.origin -%}
+      <share-button id="Share-{{ section.id }}" class="share-button quick-add-hidden">
+        <button class="btn btn--border btn__transition-text share-button__button hidden w-full">
+          <div class="btn__texts">
+            <span class="btn__top-text is-visible">
+              {%- if block.settings.show_icon -%}{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+              <span>{{ block.settings.share_label | escape }}</span>
+            </span>
+            <span class="btn__bottom-text is-hidden">
+              {%- if block.settings.show_icon -%}{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+              <span>{{ block.settings.share_label | escape }}</span>
+            </span>
+          </div>
+        </button>
+        <details id="Details-{{ block.id }}-{{ section.id }}">
+          <summary class="share-button__button">
+            <div class="btn btn__transition-text share-button__button">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">
+                  {%- if block.settings.show_icon -%}{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+                  <span>{{ block.settings.share_label | escape }}</span>
+                </span>
+                <span class="btn__bottom-text is-hidden">
+                  {%- if block.settings.show_icon -%}{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+                  <span>{{ block.settings.share_label | escape }}</span>
+                </span>
+              </div>
+            </div>
+          </summary>
+          <div id="Article-share-{{ section.id }}" class="share-button__fallback">
+            <div class="field mt20">
+              <input type="text"
+                     class="field__input"
+                     id="ShareUrl-{{ section.id }}"
+                     value="{{ share_link }}"
+                     placeholder="{{ 'general.share.share_url' | t }}"
+                     onclick="this.select();"
+                     readonly
+                     >
+
+              <label class="field__label" for="ShareUrl-{{ section.id }}">{{ 'general.share.share_url' | t }}</label>
+              <button class="field__button btn__transition-text share-button__close hidden no-js-hidden">
+                <span class="btn__top-text is-visible">{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                <span class="btn__bottom-text is-hidden">{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                <span class="visually-hidden">{{ 'general.share.close' | t }}</span>
+              </button>
+              <button class="field__button btn__transition-text share-button__copy no-js-hidden">
+                <span class="btn__top-text is-visible">{{- 'icon-clipboard' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                <span class="btn__bottom-text is-hidden">{{- 'icon-clipboard' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+                <span class="visually-hidden">{{ 'general.share.copy_to_clipboard' | t }}</span>
+              </button>
+            </div>
+            <div id="ShareMessage-{{ section.id }}" class="share-button__message hidden body2 mt16" role="status"></div>
+          </div>
+        </details>
+      </share-button>
+    </div>
+    {%- when 'text' -%}
+    {%- capture text_content -%}
+    {%- for i in (1..5) -%}
+    {%- assign icon_name = 'icon_name_' | append: i -%}
+    {%- assign content = 'content_' | append: i -%}
+    {%- assign icon_name = block.settings[icon_name] -%}
+    {%- assign content = block.settings[content] -%}
+    {%- if icon_name != blank or content != blank -%}
+    <div class="product__text {{ block.settings.align_content }}">
+      {%- if icon_name != blank -%}
+      {%- render "icons-list" icon_name: icon_name -%}
+      {%- endif -%}
+      {%- if content != blank -%}
+      <div class="product__text__content mt--first-child-0 product__text--{{ block.settings.text_size }} body2">
+        {{ content }}
+      </div>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    {%- if text_content != blank -%}
+    <div id="theme-block-{{ block.id }}" class="product__text__container mt--first-child-0" style="--icon-width:{{ block.settings.icon_width }}px;" {{ block.shopify_attributes }}>
+      {{ text_content }}
+    </div>
+    {%- endif -%}
+    {%- when "custom_liquid" -%}
+    {{ block.settings.custom_liquid }}
+    {%- when "inventory" -%}
+      {%- capture invertory -%}
+      {%- if product.available and current_variant.available -%}
+      {%- if current_variant.inventory_management == "shopify" and current_variant.inventory_policy != "continue" and current_variant.inventory_quantity <= block.settings.inventory -%}
+      <div class="display-flex animation-pulse">{%- render "icons-inventory" icon_name:"hot" -%}</div>
+      <span class="inventory-block__hot h6">{{ 'products.product.inventory.hot' | t: quantity: current_variant.inventory_quantity }}</span>
+      {%- else -%}
+      {%- render "icons-inventory" icon_name:"normal" -%}
+      <span class="inventory-block__normal h6">{{ 'products.product.inventory.normal' | t }}</span>
+      {%- endif -%}
+      {%- endif -%}
+      {%- endcapture -%}
+      <div id="inventory-{{ section.id }}" class="inventory-block" {{ block.shopify_attributes }}>{{ invertory }}</div>
+
+    {%- when "countdown" -%}
+
+    {%- if product.metafields.ticarti.countdown != blank -%}             
+    <div id="theme-block-{{ block.id }}" class="product__countdown__box">
+      {%- if block.settings.heading != blank -%}
+      <div class="product__countdown__box__heading">
+        <div class="display-flex animation-pulse">{%- render "icons-inventory" icon_name:"hot" -%}</div>
+        <p class="mt0 {{ block.settings.heading_size }}">{{ block.settings.heading }}</p>
+      </div>
+      {%- endif -%}
+      <div class="product__countdown__box__content">
+        {%- assign _time = product.metafields.ticarti.countdown -%}
+        {%- assign year = _time | split:'T' | first | split:'-' | first -%}
+        {%- assign month = _time | split:'T' | first | split:'-' -%}
+        {%- assign month = month[1] -%}
+        {%- assign day = _time | split:'T' | first | split:'-' | last -%}
+        {%- assign hours = _time | split:'T' | last | split:':' | first -%}
+        {%- assign minutes = _time | split:'T' | last | split:':' -%}
+        {%- assign minutes = minutes[1] -%}
+        {%- assign seconds = _time | split:'T' | last | split:':' | last | split:'Z' | first -%}
+        <countdown-timer class="mt10 product-countdown-timer countdown-timer" data-end-date="{{ year }},{{ month | minus:1 }},{{ day }},{{ hours }},{{ minutes }},{{ seconds }}">
+          <style class="hide">
+            .countdown-timer{
+              display:grid;
+              --column:minmax(40px, 70px);
+              --colgap:20px;
+              grid-template-columns: var(--column) var(--colgap) var(--column) var(--colgap) var(--column) var(--colgap) var(--column);
+              margin:30px 0;
+            }
+            .product-countdown-timer.countdown-timer{
+              margin:0;
+            }
+            .countdown-timer > *{
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .countdown-timer_item{
+              white-space: nowrap;
+              aspect-ratio:1;
+              background:var(--color-secondary-background-block, var(--color-secondary-background));
+              border-radius:var(--radius-image);
+            }
+            .text-center .countdown-timer{
+              justify-content:center;
+            }
+            .countdown-timer_item .h2{
+              font-size:40px;
+            }
+            .countdown-timer_item [class*="countdown-timer__item__"]{
+              color:var(--color-counter, var(--color-base-section, var(--color-heading-main)));
+            }
+            .countdown-timer_item_colon svg path{
+              fill:var(--color-text, var(--color-base-section, var(--color-base)));
+            }
+            @media (max-width:1024px){
+              .countdown-timer{
+                --column:1fr;
+              }
+              .countdown-timer_item{
+                aspect-ratio:unset;
+                height:70px;
+              }
+            }
+            @media (max-width:576px){
+              .countdown-timer_item{
+                height:61px;
+              }
+              .countdown-timer_item .h2{
+                font-size:36px;
+              }
+            }
+          </style>
+          <div class="countdown-timer_item">
+            <p class="countdown-timer__item__days h2 mt0 mb0">0</p>
+          </div>
+          <div class="countdown-timer_item_colon">
+			{{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+          <div class="countdown-timer_item">
+            <p class="countdown-timer__item__hours h2 mt0 mb0">0</p>
+          </div>
+          <div class="countdown-timer_item_colon">
+            {{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+          <div class="countdown-timer_item">
+            <p class="countdown-timer__item__minutes h2 mt0 mb0">0</p>
+          </div>
+          <div class="countdown-timer_item_colon">
+            {{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+          <div class="countdown-timer_item">
+            <p class="countdown-timer__item__seconds h2 mt0 mb0">0</p>
+          </div>
+        </countdown-timer>
+      </div>
+    </div>
+    {%- endif -%}
+    {%- when "description" -%}
+    {%- if product.description == blank -%}
+    {%- continue -%}
+    {%- endif -%}
+
+    {%- capture content -%}
+      {%- assign icon_name = block.settings.icon_name -%}
+      {%- if icon_name != blank or block.settings.heading_text != blank -%}
+      <div class="product-tab__heading">
+        <div class="product-tab__heading__text">
+          {%- if icon_name != blank -%}
+          {%- render "icons-list" icon_name: icon_name -%}
+          {%- endif -%}
+          <{{ block.settings.heading_size }} class="mt0 mb0">{{ block.settings.heading_text }}</{{ block.settings.heading_size }}>
+        </div>
+        {%- if block.settings.description_property contains "tab" -%}
+        <div class="plusminus"></div>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      <div class="product-tab__content mt--first-child-0 body2">
+        {{ product.description }}
+      </div>
+
+    {%- endcapture -%}
+
+    {%- liquid 
+        if request.design_mode and block.settings.show_all_text_in_admin
+        assign show_in_admin = true
+        else
+        assign show_in_admin = false
+        endif
+    -%}
+
+    {%- if block.settings.description_property contains "tab-accordion" -%}
+    <product-tab class="product-tab product-tab--accordion{% if block.settings.description_property contains "opened" or show_in_admin %} opened{% endif %}" {{ block.shopify_attributes }}>{{ content }}</product-tab>
+    {%- elsif block.settings.description_property contains "tab" -%}
+    <product-tab class="product-tab{% if block.settings.description_property contains "opened" or show_in_admin %} opened{% endif %}" {{ block.shopify_attributes }}>{{ content }}</product-tab>
+    {%- else -%}
+    <div class="product-tab" {{ block.shopify_attributes }}>{{ content }}</div>
+    {%- endif -%}
+
+    {%- when "collapsible_tab" -%}
+    {%- if block.settings.content == blank and block.settings.page.content == blank -%}
+    {%- continue -%}
+    {%- endif -%}
+
+    {%- capture content -%}
+      {%- assign icon_name = block.settings.icon_name -%}
+      {%- if icon_name != blank or block.settings.heading_text != blank -%}
+      <div class="product-tab__heading">
+        <div class="product-tab__heading__text">
+          
+          {%- if icon_name != blank -%}
+          {%- render "icons-list" icon_name: icon_name -%}
+          {%- endif -%}
+          <{{ block.settings.heading_size }} class="mt0 mb0">{{ block.settings.heading_text }}</{{ block.settings.heading_size }}>
+        </div>
+        {%- if block.settings.description_property contains "tab" -%}
+        <div class="plusminus"></div>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      <div class="product-tab__content mt--first-child-0 body2">
+        {{ block.settings.content }}
+        {{ block.settings.page.content }}
+      </div>
+
+    {%- endcapture -%}
+
+    {%- liquid 
+        if request.design_mode and block.settings.show_all_text_in_admin
+        assign show_in_admin = true
+        else
+        assign show_in_admin = false
+        endif
+    -%}
+
+    {%- if block.settings.description_property contains "tab-accordion" -%}
+    <product-tab class="product-tab-secondary product-tab product-tab--accordion{% if block.settings.description_property contains "opened" or show_in_admin %} opened{% endif %}" {{ block.shopify_attributes }}>{{ content }}</product-tab>
+    {%- elsif block.settings.description_property contains "tab" -%}
+    <product-tab class="product-tab-secondary product-tab{% if block.settings.description_property contains "opened" or show_in_admin %} opened{% endif %}" {{ block.shopify_attributes }}>{{ content }}</product-tab>
+    {%- else -%}
+    <div class="product-tab-secondary product-tab" {{ block.shopify_attributes }}>{{ content }}</div>
+    {%- endif -%}
+
+    {%- when "blurb" -%}
+    {%- capture content -%}
+    {%- for i in (1..3) -%}
+
+    {%- assign _show_icon     = 'show_icon_' | append: i %}
+    {%- assign _image         = 'image_' | append: i %}
+    {%- assign _icon          = 'icon_name_' | append: i %}
+    {%- assign _block_heading = 'block_heading_' | append: i %}
+    {%- assign _block_text    = 'block_text_' | append: i %}
+    {%- assign _button_name   = 'button_name_' | append: i %}
+    {%- assign _url           = 'url_' | append: i %}
+    {%- assign _show_icon = block.settings[_show_icon] -%}
+    {%- assign _image = block.settings[_image] -%}
+    {%- assign _icon = block.settings[_icon] -%}
+    {%- assign _block_heading = block.settings[_block_heading] -%}
+    {%- assign _block_text = block.settings[_block_text] -%}
+    {%- assign _button_name = block.settings[_button_name] -%}
+    {%- assign _url = block.settings[_url] -%}
+    {%- capture item_html -%}
+    {%- capture _content -%}
+    {%- capture icon_content -%}
+    {%- render "component-image-icon",
+        show_icon: _show_icon,
+        image: _image,
+        icon: _icon,
+        image_custom_width: block.settings.icon_width,
+    -%}
+    {%- endcapture -%}
+    {%- if icon_content != blank -%}
+      <div class="section-text-with-icons-type-1__icon mb10 display-flex{% if block.settings.text_align == "text-center" %} justify-content-center{% endif %}">
+        <div class="display-inline-flex{% if block.settings.show_icon_box %} section-text-with-icons-type-1__icon__bg{% endif %}">
+          {{ icon_content }}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if _block_heading != blank -%}
+      {%- if _url != blank -%}
+      <{{ block.settings.heading_size }} class="mt0">
+        <a href="{{ _url }}" class="clear-underline heading-color-block-hover{% if block.settings.hover_underline %} animation-underline{% endif %}">{{ _block_heading }}</a>
+      </{{ block.settings.heading_size }}>
+      {%- else -%}<{{ block.settings.heading_size }} class="mt0 heading-color-block-main">{{ _block_heading }}</{{ block.settings.heading_size }}>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if _block_text != blank -%}<div class="mt10 body2 section__richtext__editor">{{ _block_text }}</div>{%- endif -%}
+    {%- endcapture -%}
+    {%- if _content != blank -%}
+    <div class="section-text-with-icons-type-1__block mt--first-child-0 mb--last-child-0">
+    {{ _content }}
+    </div>
+    {%- endif -%}
+    {%- if _button_name != blank -%}
+    <div class="section-text-with-icons-type-1__button mt16 display-inline-flex">
+      <a{% if _url != blank %} href="{{ _url }}"{% endif %}
+         class="link link-hover-span body3"
+         {% if _url == blank %} aria-disabled="true"{% endif %}
+        >
+        <span>{{ _button_name }}</span>
+        {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </a>
+    </div>
+    {%- endif -%}
+    {%- endcapture -%}
+    {%- if item_html != blank -%}
+    <div class="section-text-with-icons-type-1 mt--first-child-0 {{ block.settings.text_align }}">{{ item_html }}</div>
+    {%- endif -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    <div {{ block.shopify_attributes }}>
+      <style>
+        #theme-block-{{ block.id }} .section-text-with-icons-type-1{
+          padding:20px;
+          border-radius:var(--radius);
+          border:1px solid var(--color-lines);
+          display:flex;
+          position: relative;
+          flex-direction:column;
+          justify-content: space-between;
+          color:var(--section-text-color, var(--color-base-section, var(--color-base)));
+          background: var(--color-box-background-block, var(--color-body-background));
+        }
+        #theme-block-{{ block.id }}{
+          --icon-image-width: {{ block.settings.icon_width }}px;
+        }
+        #theme-block-{{ block.id }} .section-text-with-icons-type-1__icon svg{
+          width: {{ block.settings.icon_width }}px;
+          height: {{ block.settings.icon_width }}px;
+        }
+        #theme-block-{{ block.id }} .section-text-with-icons-type-1__icon__bg{
+          padding:15px;
+          border-radius:{{ block.settings.icon_box_roundness }}px;
+          background:var(--color-secondary-background-block, var(--color-secondary-background));
+        }
+        swiper-slider .section-text-with-icons-type-1{
+          height:100%;
+        }
+        .text-center .section-text-with-icons-type-1__button{
+          justify-content: center;
+        }
+      </style>
+      <div id="theme-block-{{ block.id }}" class="product__blurbs__container">
+        {{ content }}
+      </div>
+    </div>
+    {%- when 'gallery' -%}
+    <div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading_text != blank -%}
+      <{{ block.settings.heading_size }} class="mt0 mb16">{{ block.settings.heading_text }}</{{ block.settings.heading_size }}>
+      {%- endif -%}
+      <div class="gallery__block-container page-grid-st-5 {{ block.settings.grid }}"{% if block.settings.roundness_type != "default" %} style="--radius:{{ block.settings.roundness }}px;"{% endif %}>
+        {%- for i in (1..18) -%}
+        {%- assign block_image = "image_" | append: i -%}
+        {%- assign block_image = block.settings[block_image] -%}
+        {%- assign block_url = "url_" | append: i -%}
+        {%- assign block_url = block.settings[block_url] -%}
+        {%- assign block_tooltip = "text_" | append: i -%}
+        {%- assign block_tooltip = block.settings[block_tooltip] -%}
+        {%- if block_image != blank -%}
+        <div class="gallery__block-item global__tooltip--hover {{ block.settings.image_fit }} {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}">
+          {%- if block_url != blank -%}
+          {%- assign html_tag_open = '<a' | append: ' href="' | append: block_url | append:'" ' | append: 'aria-label="' | append:block.settings.heading_text | append:'"' -%}
+          {%- assign html_tag_close = '</a>' -%}
+          {%- else -%}
+          {%- assign html_tag_open = '<div' -%}
+          {%- assign html_tag_close = '</div>' -%}
+          {%- endif -%}
+          {%- liquid
+              if page_width == "page-width"
+              assign page_is_wide = false
+              else
+              assign page_is_wide = true
+              endif
+              capture image_ratio
+              if block.settings.image_ratio == 'auto'
+              echo block_image.aspect_ratio
+              else
+              echo block.settings.image_ratio
+              endif
+              endcapture
+              assign image_ratio_string = image_ratio | append: ""
+          -%}
+          {{ html_tag_open }} class="image-hover-box{% if image_ratio_string == '1.00' %} image-hover-box--circle{% endif %}">
+            <div style="--aspect-ratio: {{image_ratio}};">
+              {%- assign image = block_image -%}
+              {%- capture sizes -%}
+              {%- liquid
+                  assign width_part = settings.page_width | divided_by: 2
+              -%}
+              (min-width: 1300px) {% if page_is_wide %}calc(100vw / {{ desktop_grid }}){% else %}calc(({{ width_part }}px - max({{ settings.page_width }}px + 80px - 100vw, 0px)) / {{ desktop_grid }}){% endif %},(min-width: 993px) calc((100vw - 140px) / 2),(min-width: 577px) calc((100vw - 40px - {{ settings.spacing_grid_horizontal }}px) / 2),(max-width: 576px) 100vw
+              {%- endcapture -%}
+              {%- capture image_class -%}{% if settings.animate_image_show %}image-show--fadein{% endif %}{%- endcapture -%}            
+              {%- capture animate_image_show -%}{% if settings.animate_image_show %}this.classList.add('image-loaded');{% endif %}{%- endcapture -%}
+              {{
+                image
+                | image_url: width: image.width
+                | image_tag:
+                  loading: 'lazy',
+                  width: image.width,
+                  height: image.height,
+                  class: image_class,
+                  sizes: sizes,
+                  widths: '360, 533, 720, 940, 1066, 2132',
+                  onload: animate_image_show
+              }}
+            </div>
+          {{ html_tag_close }}
+          {%- if block_tooltip != blank -%}<global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ block_tooltip }}</div></global-tooltip>{%- endif -%}
+        </div>
+        {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- when 'complementary' -%}
+    <complementary-products
+      class="complementary-products display-block{% if block.settings.swipe %} complementary-products--border{% endif %}"
+      data-url="{{ routes.product_recommendations_url }}?limit={{ block.settings.product_limit }}&intent=complementary"
+      data-section-id="{{ section.id }}"
+      data-product-id="{{ product.id }}"
+    >
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      {%- assign icon_name = block.settings.icon_name -%}
+      {%- if icon_name != blank or block.settings.heading_text != blank -%}
+      <div class="product-tab__heading mb16">
+        <div class="product-tab__heading__text">
+          {%- if icon_name != blank -%}
+          {%- render "icons-list" icon_name: icon_name -%}
+          {%- endif -%}
+          <{{ block.settings.heading_size }} class="mt0 mb0">{{ block.settings.heading_text }}</{{ block.settings.heading_size }}>
+        </div>
+      </div>
+      {%- endif -%}
+      {%- if block.settings.swipe -%}
+      <div class="mt0 mt--first-child-0 productcard-complementary">
+        <swiper-slider class="swiper swiper__custom-mask"
+                      data-swiper-desktop-grid="1"
+                      data-swiper-desktop-lg-grid="1"
+                      data-swiper-desktop-md-grid="1"
+                      data-swiper-tablet-grid="1"
+                      data-swiper-mobile-grid="1"
+                      data-gutter="{{ settings.spacing_grid_horizontal }}"
+                      data-gutter-mobile="15"
+                      data-grid="1,1,1,1,1"
+                      {% if block.settings.autoplay_enabled and request.design_mode == false %} data-autoplay-delay="{{ block.settings.autoplay_time | times: 1000 }}"{% endif %}
+                      data-autoplay="{%- if block.settings.autoplay_enabled and request.design_mode == false -%}true{%- else -%}false{%- endif -%}"
+                      data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+          >
+          <div class="swiper-wrapper swiper-wrapper--max-height">
+            {%- for product in recommendations.products -%}
+            <div class="swiper-slide" lazy="true">
+            {%- render "product-card-complementary",
+                section: section,
+                block: block,
+                product: product,
+                page_width: page_width
+            -%}
+            </div>
+            {%- endfor -%}
+          </div>
+        </swiper-slider>
+        <div class="swiper-control-container">
+          <div class="custom-swiper-button-prev{% unless block.settings.desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+          <div class="swiper-pagination{% unless block.settings.desktop_navigation contains "dots" %} hide-desktop{% endunless %}{% unless block.settings.mobile_navigation contains "dots" %} hide-mobile-xl-st{% endunless %}"></div>
+          <div class="custom-swiper-button-next{% unless block.settings.desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+        </div>
+      </div>
+      {%- else -%}
+      <div class="mt0 mt--first-child-0 productcard-complementary">
+        <div class="vertical-container">
+          {%- for product in recommendations.products -%}
+          {%- render "product-card-complementary",
+              section: section,
+              block: block,
+              product: product,
+              page_width: page_width
+          -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+      {%- endif -%}
+    </complementary-products>
+    {%- when 'people_counter' -%}
+    <div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+      <div class="people-counter h6">
+        <div class="people-counter__icon">
+		  {{- 'icon-eye' | append: settings.system_icon_thickness | inline_asset_content -}}
+          <random-counter class="people-counter__icon__text"
+                          data-min="{{ block.settings.min }}"
+                          data-max="{{ block.settings.max }}"
+                          data-delay="{{ block.settings.delay }}"></random-counter>
+        </div>
+        <div class="people-counter__text">{{ 'sections.product_page.fake_people_counter' | t }}</div>
+      </div>
+    </div>
+    {%- when 'cart_counter' -%}
+    <div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+      <div class="cart-counter h6">
+        <div class="display-flex animation-pulse">{{- 'icon-lightning' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+        {%- assign count = '<random-counter class="people-counter__icon__text" data-min="' | append: block.settings.min | append: '" data-max="' | append: block.settings.max | append: '" data-delay="' | append: block.settings.delay | append: '"></random-counter>' -%}
+        <div class="cart-counter__text">{{ 'sections.product_page.fake_cart_counter_html' | t: count: count }}</div>
+      </div>
+    </div>
+    {%- when 'review' -%}
+    {%- if settings.enable_rating -%}
+    {%- render 'review-stars', show_number_rating:block.settings.show_number_rating, _product:product -%}
+    {%- endif -%}
+    {%- when 'horizontal_tabs' -%}
+    {%- liquid
+        assign block_available = false
+        assign check_content = ""
+        for i in (1..5)
+        assign content = 'content_' | append: i
+        assign content = block.settings[content]
+        assign page = 'page_' | append: i
+        assign page = block.settings[page]
+        if content == blank and page == blank
+        assign check_content = check_content | append: 'false' | append: ','
+        else
+        assign check_content = check_content | append: 'true' | append: ','
+        assign block_available = true
+        endif
+        endfor
+        assign check_content = check_content | split: ','
+    -%}
+    {%- if block_available -%}
+    <div {{ block.shopify_attributes }} class="horizontal_tabs__block">
+      <featured-tabs class="featured-tabs featured-tabs--tablet-inline{% if block.settings.show_line %} featured-tabs--horizontal-line{% endif %}">
+          <div class="featured-tabs__container">
+              <div class="featured-tabs__container__content">
+              {%- assign active = false -%}
+              {%- for i in (1..5) -%}
+              {%- if check_content[forloop.index0] == 'true' -%}
+              {%- assign icon_name = 'icon_name_' | append: i -%}
+              {%- assign icon_name = block.settings[icon_name] -%}
+              {%- assign heading_text = 'heading_text_' | append: i -%}
+              {%- assign heading_text = block.settings[heading_text] -%}
+              <div class="featured-tabs__item btn btn--tabs{% if active == false %} active{% assign active = true %}{% endif %} btn__transition-text" data-index="{{ forloop.index }}" tabindex="0" role="tab">
+                  <div class="btn__texts">
+                      <span class="btn__top-text is-visible">{%- if icon_name != blank -%}{%- render "icons-list" icon_name: icon_name -%}{%- endif -%}{{ heading_text }}</span>
+                      <span class="btn__bottom-text is-hidden">{%- if icon_name != blank -%}{%- render "icons-list" icon_name: icon_name -%}{%- endif -%}{{ heading_text }}</span>
+                  </div>
+              </div>
+              {%- endif -%}
+              {%- endfor -%}
+              </div>
+          </div>
+      </featured-tabs>
+      <featured-tabs-content class="display-block">
+          {%- assign active = false -%}
+          {%- for i in (1..5) -%}
+          {%- if check_content[forloop.index0] == 'true' -%}
+          {%- assign content = 'content_' | append: i -%}
+          {%- assign content = block.settings[content] -%}
+          {%- assign page = 'page_' | append: i -%}
+          {%- assign page = block.settings[page] -%}
+          <div class="featured-tab-products{% if active == false %} active{% assign active = true %}{% endif %}" data-index="{{ forloop.index }}" role="tabpanel">
+              <div class="body2 section__richtext__editor mt--first-child-0">
+                  {{ content }}
+                  {{ page.content }}
+              </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+      </featured-tabs-content>
+    </div>
+    {%- endif -%}
+    {%- else -%}
+  {%- endcase -%}
+
+  {%- assign nexttype = section.blocks[forloop.index].type -%}
+  {%- if buttons -%}
+  {%- unless 'message,popup,link,share' contains nexttype -%}
+  {%- assign buttons = false -%}
+  </div>
+  {%- endunless -%}
+  {%- endif -%}
+
+{%- endfor -%}

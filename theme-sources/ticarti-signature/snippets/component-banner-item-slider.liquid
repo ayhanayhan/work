@@ -1,0 +1,202 @@
+{%- assign button_name_2 = block.settings.button_name_2 | default: "", allow_false: true -%}
+{%- assign button_link_1 = block.settings.button_link_1 | default: "", allow_false: true -%}
+{%- assign button_link_2 = block.settings.button_link_2 | default: "", allow_false: true -%}
+{%- if image_hover -%}
+{%- assign item_image_hover = image_hover -%}
+{%- else -%}
+{%- assign item_image_hover = section.settings.image_hover -%}
+{%- endif -%}
+<div class="section-media-buttons-parent banner__block-item a--no-hover-color banner__block-item-with-text {% if item_image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ item_image_hover }}{% endif %}{% if image_ratio_value == '1.00' %} image-aspratio-round--desktop{% endif %}{% if image_ratio_mobile_value == '1.00' %} image-aspratio-round--mobile{% endif %}">
+  {%- if block.settings.url != blank -%}
+  <a href="{{ block.settings.url }}" class="banner__block-item__link" aria-label="{{ block.settings.heading_text }}"></a>
+  {%- endif -%}
+  {%- assign main_image_source = block.settings.image -%}
+  {%- capture video_html -%}
+  {%- if block.settings.video != blank and block.settings.content_type == "video" -%}
+  <video-js class="section__video-media__box"
+            data-type="video"
+            data-autoplay="{% if block.settings.video_slide_mode contains "autoplay" %}true{% else %}false{% endif %}"
+            data-buttons="{% unless block.settings.video_slide_mode contains "autoplay" %}true{% else %}false{% endunless %}">
+    <video class="slide-video slide-media" playsinline=""{% if block.settings.video_slide_mode contains "muted" %} muted=""{% endif %} preload="metadata" loop="">
+        {%- assign sources = block.settings.video.sources | last -%}
+        <source src="{{ sources.url }}"/>
+    </video>
+  </video-js>
+  {%- liquid
+      if main_image_source == blank
+      assign main_image_source = block.settings.video.preview_image
+      endif
+  -%}
+  {%- elsif block.settings.video_url != blank and block.settings.content_type == "video" -%}
+  <video-youtube-js class="section__video-media__box section__video-media__youtube"
+                    data-type="youtube"
+                    data-mute="{% if block.settings.video_slide_mode contains "muted" %}true{% else %}false{% endif %}"
+                    data-autoplay="{% if block.settings.video_slide_mode contains "autoplay" %}true{% else %}false{% endif %}"
+                    data-buttons="{% unless block.settings.video_slide_mode contains "autoplay" %}true{% else %}false{% endunless %}">
+    <div id="{{ block.settings.video_url.id }}_____{{ section.id }}{{ forloop.index }}" class="embed-player"></div>
+  </video-youtube-js>
+  {%- endif -%}
+  {%- endcapture -%}
+
+  {%- render "component-image",
+      image_ratio_value: image_ratio_value,
+      image_ratio_mobile_value: image_ratio_mobile_value,
+      image_source: main_image_source,
+      image_mobile_source: block.settings.image_mobile,
+      load_priority_low: load_priority_low,
+      section_index: section.index,
+      video_html:video_html,
+      placeholder_icon: placeholder_icon,
+      parallax:section.settings.parallax
+  -%}
+
+  {%- capture content -%}
+
+  {%- if block.settings.show_countdown -%}
+  <countdown-timer class="mt0 slider-countdown-timer" data-end-date="{{ block.settings.year }},{{ block.settings.month | minus:1 }},{{ block.settings.day }},{{ block.settings.hours }},{{ block.settings.minutes }},{{ block.settings.seconds }}">
+    <style class="hide">
+        .slider-countdown-timer{
+            display:grid;
+            --column:minmax(40px, 90px);
+            --colgap:8px;
+            grid-template-columns: var(--column) var(--colgap) var(--column) var(--colgap) var(--column) var(--colgap) var(--column);
+        }
+        .slider-countdown-timer > *{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .text-center .slider-countdown-timer{
+            justify-content:center;
+        }
+        .text-right .slider-countdown-timer{
+            justify-content:flex-end;
+        }
+        .slider-countdown-timer_item .h2{
+            font-size:48px;
+        }
+        .slider-countdown-timer_item [class*="countdown-timer__item__"]{
+            color:var(--color-counter, var(--color-base-section, var(--color-heading-main)));
+        }
+        .slider-countdown-timer_item_colon svg path{
+            fill:var(--color-counter, var(--color-base-section, var(--color-base)));
+        }
+        @media (min-width:577px) and (max-width:1024px){
+            .slider-countdown-timer_item .h2{
+                font-size:40px;
+            }
+        }
+        @media (max-width:576px){
+            .slider-countdown-timer_item .h2{
+                font-size:36px;
+            }
+        }
+    </style>
+    <div class="slider-countdown-timer_item">
+        <p class="countdown-timer__item__days h2 mt0 mb0">0</p>
+    </div>
+    <div class="slider-countdown-timer_item_colon">
+		{{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+    <div class="slider-countdown-timer_item">
+        <p class="countdown-timer__item__hours h2 mt0 mb0">0</p>
+    </div>
+    <div class="slider-countdown-timer_item_colon">
+        {{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+    <div class="slider-countdown-timer_item">
+        <p class="countdown-timer__item__minutes h2 mt0 mb0">0</p>
+    </div>
+    <div class="slider-countdown-timer_item_colon">
+        {{- 'icon-colon' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+    <div class="slider-countdown-timer_item">
+        <p class="countdown-timer__item__seconds h2 mt0 mb0">0</p>
+    </div></countdown-timer>
+  {%- endif -%}
+  {%- assign heading_after_description = block.settings.heading_after_description | default: false, allow_false: true -%}
+  {%- if block.settings.heading_text != blank and heading_after_description == false -%}
+  <div class="mt10 section-slider__heading__box">
+    {%- if block.settings.url != blank -%}<a href="{{ block.settings.url }}" class="clear-underline" aria-label="{{ block.settings.heading_text }}">{%- endif -%}
+    <{{ block.settings.heading_tag }} class="mt0 mb0 section-slider__heading heading-color-block-hover{% if block.settings.hover_underline %} animation-underline{% endif %}">{{ block.settings.heading_text }}</{{ block.settings.heading_tag }}>
+    {%- if block.settings.url != blank -%}</a>{%- endif -%}
+  </div>
+  {%- endif -%}
+    
+  {%- if block.settings.desc != blank -%}<div class="mt10 body2 section-slider__texts section__richtext__editor section__richtext__editor--mt10">{{ block.settings.desc }}</div>{%- endif -%}
+
+  {%- if block.settings.heading_text != blank and heading_after_description == true -%}
+  <div class="mt10 section-slider__heading__box">
+    {%- if block.settings.url != blank -%}<a href="{{ block.settings.url }}" class="clear-underline" aria-label="{{ block.settings.heading_text }}">{%- endif -%}
+    <{{ block.settings.heading_tag }} class="mt0 mb0 section-slider__heading heading-color-block-hover{% if block.settings.hover_underline %} animation-underline{% endif %}">{{ block.settings.heading_text }}</{{ block.settings.heading_tag }}>
+    {%- if block.settings.url != blank -%}</a>{%- endif -%}
+  </div>
+  {%- endif -%}
+
+  {%- if block.settings.button_name != blank -%}
+  <div class="mt16 section-slider__btn banner__block-buttons{% if block.settings.text_align == "text-center" %} justify-content-center{% elsif block.settings.text_align == "text-right" %} justify-content-end{% endif %}">
+    {% assign customize_button_size = block.settings.customize_button_size | default: "default", allow_false: true %}
+    {%- if block.settings.button_name != blank -%}
+    {%- liquid
+        if button_link_1 == blank
+        assign link = block.settings.url
+        else
+        assign link = button_link_1
+        endif
+    -%}
+    <{% if link == blank %}div{% else %}a href="{{ link }}"{% endif %} class="btn banner__btn__1 btn__transition-text native-hover btn-wide2"
+      {% if customize_button_size == "custom" %} style="--button-height:{{ block.settings.btn_min_height }}px;--button-height-mob:{{ block.settings.btn_min_height_mobile }}px;--button-width-wide:{{ block.settings.btn_wide_width }}px;--radius-button:{{ block.settings.roundness_button }}px"{% endif %}
+      {% if link == blank %} aria-disabled="true"{% endif %}>
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ block.settings.button_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ block.settings.button_name }}</span>
+      </div>
+    </{% if link == blank %}div{% else %}a{% endif %}>
+    {%- endif -%}
+    {%- if button_name_2 != blank -%}
+    <{% if button_link_2 == blank %}div{% else %}a href="{{ button_link_2 }}"{% endif %} class="btn banner__btn__2 btn__transition-text native-hover btn-wide2"
+      {% if customize_button_size == "custom" %} style="--button-height:{{ block.settings.btn_min_height }}px;--button-height-mob:{{ block.settings.btn_min_height_mobile }}px;--button-width-wide:{{ block.settings.btn_wide_width }}px;--radius-button:{{ block.settings.roundness_button }}px"{% endif %}
+      {% if button_link_2 == blank %} aria-disabled="true"{% endif %}>
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ button_name_2 }}</span>
+        <span class="btn__bottom-text is-hidden">{{ button_name_2 }}</span>
+      </div>
+    </{% if button_link_2 == blank %}div{% else %}a{% endif %}>
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+  {%- endcapture -%}
+  {%- if content != blank -%}
+  {% if block.settings.desktop_boxed %}
+  <div class="banner__block-item__content {{ block.settings.text_align }} banner__block-boxed{% if block.settings.show_background %} banner__block-boxed-bg{% endif %}">
+    <div class="position-relative w-full banner__block-boxed__content">
+        <div class="banner__block-item__content__items mt-first-0{% if block.settings.show_background %} banner__background-box{% endif %}">
+            {{ content }}
+        </div>
+    </div>
+  </div>
+  {%- else -%}
+  <div class="banner__block-item__content">
+    <div class="banner__block-item__content__items mt-first-0 {{ block.settings.text_align }}{% if block.settings.show_background %} banner__background-box{% endif %}">
+      {{ content }}
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endif -%}
+  {%- unless block.settings.video_slide_mode contains "autoplay" -%}
+  {%- liquid
+      assign enable_buttons = false
+      if block.settings.video != blank and block.settings.content_type == "video"
+      assign enable_buttons = true
+      elsif block.settings.video_url != blank and block.settings.content_type == "video"
+      assign enable_buttons = true
+      endif
+      -%}
+  {%- if enable_buttons -%}
+  <div class="section__video-media__ctrl section__video-media-ctrl--mobile section__video-media__ctrl--js">
+    <div class="icon-play">{{- 'icon-play' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    <div class="icon-pause">{{- 'icon-pause' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+</div>

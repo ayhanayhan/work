@@ -1,0 +1,33 @@
+{% assign size = font_size | default: "body2" %}
+<div class="submenu-design__simple">
+  <ul class="unstyle-ul">
+    {%- for childlink in link.links -%}
+    {%- if childlink.links != blank -%}
+    <li class="submenu-container">
+      <a href="{{ childlink.url }}" class="submenu__item {{ size }}">
+        <span><span class="submenu__item_text">{{ childlink.title | escape }}</span>{%- render "menu-badge" item_name:childlink.title, show_inline:true -%}</span>
+        {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </a>
+
+      <div class="submenu-design__simple">
+        <ul class="unstyle-ul">
+          {%- for grandchildlink in childlink.links -%}
+          <li>
+            <a href="{{ grandchildlink.url }}" class="submenu__item {{ size }}">
+              <span><span class="submenu__item_text">{{ grandchildlink.title | escape }}</span>{%- render "menu-badge" item_name:grandchildlink.title, show_inline:true -%}</span>
+            </a>
+          </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </li>
+    {%- else -%}
+    <li>
+      <a href="{{ childlink.url }}" class="submenu__item {{ size }}">
+        <span><span class="submenu__item_text">{{ childlink.title | escape }}</span>{%- render "menu-badge" item_name:childlink.title, show_inline:true -%}</span>
+      </a>
+    </li>
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>

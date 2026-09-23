@@ -1,0 +1,177 @@
+.section-header .submenu--megamenu:hover > .tiles-menu-item::before,
+.section-header .submenu--megamenu:has(+ .megamenu-container:hover) > .tiles-menu-item::before{
+  height: 400%;
+}
+.tiles-menu{
+  display: grid;
+  grid-template-columns: repeat(var(--items-grid-count), 1fr);
+  grid-auto-rows: 1fr;
+  gap: 10px;
+  width: 100%;
+  word-break: break-word;
+}
+.tiles-menu-item{
+  --background: var(--color-button_tiles, var(--color-secondary-background));
+  --color:var(--color-button-text_tiles, var(--color-base-section, var(--color-base)));
+  --border:var(--color-button-border_tiles);
+  --background-hover: var(--color-button-hover_tiles, var(--color-accent-section, var(--color-accent)));
+  --color-hover:var(--color-button-text-hover_tiles, var(--color-accent-section, var(--color-accent)));
+  --border-hover:var(--color-button-border-hover_tiles);
+  --border-width:var(--border-button-width_tiles);
+  --border-width-hover:var(--border-button-width-hover_tiles);
+  --icon:var(--color-button-icon_tiles, var(--color-base-section, var(--color-base)));
+  --icon-hover:var(--color-button-icon-hover_tiles, var(--color-accent-section, var(--color-accent)));
+  --button-opacity-hover:var(--color-button-opacity-hover_tiles);
+  --shadow-button-current:var(--shadow-button_tiles);
+  --shadow-button-current-hover:var(--shadow-button-hover_tiles);
+  --self-border-width:var(--border-button-width-value_tiles);
+  font-family: var(--font-mainmenu-family,var(--font-body-family));
+  font-style: var(--font-mainmenu-style,var(--font-body-style));
+  font-weight: var(--font-mainmenu-weight,var(--font-body-weight-bold-value, var(--font-body-weight)));
+  font-size: calc(14px * var(--font-mainmenu_scale, var(--font-body-scale)));
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position: relative;
+  gap:8px;
+  padding:20px 15px;
+  border-radius:var(--radius-button);
+  color:var(--color);
+  background: transparent;
+  text-align:center;
+  width: 100%;
+  height: 100%;
+  box-shadow:var(--shadow-button-current);  
+  transition: color var(--duration-medium) var(--animation-bezier),
+              background var(--duration-medium) var(--animation-bezier),
+              box-shadow var(--duration-medium) var(--animation-bezier),
+              z-index var(--duration-medium) var(--animation-bezier);
+}
+.tiles-menu-item .tiles-menu-item__bg{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.tiles-menu-item .tiles-menu-item__bg~*{
+  z-index: 1;
+}
+.tiles-menu-item .tiles-menu-item__bg:before,
+.tiles-menu-item .tiles-menu-item__bg:after{
+  content:"";
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  border-radius: var(--radius-button);
+  background: var(--background-hover);
+  z-index:0;
+  opacity:0;
+  transition: all var(--duration-medium) var(--animation-bezier);
+  border: var(--border-width) solid var(--border);
+}
+.tiles-menu-item .tiles-menu-item__bg:after{
+  border: var(--border-width-hover) solid var(--border-hover);
+}
+.tiles-menu-item .tiles-menu-item__bg:before{
+  background: var(--background);
+  opacity:1;
+  transition: none;
+}
+
+.tiles-menu-item svg path{
+  fill:var(--icon);
+  transition: fill var(--duration-medium) ease;
+}
+.tiles-menu-item:before {
+  --column-gap:10px;
+  --row-gap:10px;
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: calc(var(--column-gap) / -2);
+  width: calc(100% + var(--column-gap));
+  height: calc(100% + var(--row-gap));
+}
+.tiles-menu .tiles-menu-item>*{
+  pointer-events: none;
+}
+.tiles-menu .tiles-menu-item svg{
+  width: var(--max-width);
+  height: var(--max-height);
+}
+.tiles-menu .menu-icon-image{
+  width: auto;
+  height: auto;
+}
+@media (hover:hover) {
+  .submenu-container:hover>.tiles-menu-item,
+  .submenu-container:has(+.megamenu-container:hover)>.tiles-menu-item,
+  .admin-select-menu-item.submenu-container>.tiles-menu-item,
+  .tiles-menu-item:hover{
+    color:var(--color-hover);
+    box-shadow:var(--shadow-button-current-hover);
+    z-index: 2;
+  }
+  .submenu-container:hover>.tiles-menu-item svg path,
+  .submenu-container:has(+.megamenu-container:hover)>.tiles-menu-item svg path,
+  .admin-select-menu-item.submenu-container>.tiles-menu-item svg path,
+  .tiles-menu-item:hover svg path{
+    fill:var(--icon-hover);
+  }
+  .submenu-container:hover>.tiles-menu-item .tiles-menu-item__bg:before,
+  .submenu-container:has(+.megamenu-container:hover)>.tiles-menu-item .tiles-menu-item__bg:before,
+  .admin-select-menu-item.submenu-container>.tiles-menu-item .tiles-menu-item__bg:before,
+  .tiles-menu-item:hover .tiles-menu-item__bg:before{
+    opacity:0;
+    transition: all var(--duration-medium) 100ms var(--animation-bezier);
+  }
+  .submenu-container:hover>.tiles-menu-item .tiles-menu-item__bg:after,
+  .submenu-container:has(+.megamenu-container:hover)>.tiles-menu-item .tiles-menu-item__bg:after,
+  .admin-select-menu-item.submenu-container>.tiles-menu-item .tiles-menu-item__bg:after,
+  .tiles-menu-item:hover .tiles-menu-item__bg:after{
+    opacity:1;
+  }
+}
+@media (min-width:1025px) and (max-width:1200px){
+  .tiles-menu{
+    grid-template-columns: repeat(var(--items-grid-count--mobile), 1fr);
+  }
+}
+.tiles-menu > .submenu--to-left--js > .submenu-design__simple{
+  left: auto !important;
+  right: 0;
+}
+.tiles-menu > .submenu--to-left--js .submenu-container [class*="submenu-design__"],
+.tiles-menu > .submenu--to-left--js .submenu-container [class*="submenu-design__"] .submenu-container [class*="submenu-design__"]{
+  left: -200px;
+}
+.tiles-menu > .submenu--to-left--js .submenu-container:hover [class*="submenu-design__"],
+.tiles-menu > .submenu--to-left--js .submenu-container [class*="submenu-design__"] .submenu-container:hover [class*="submenu-design__"]{
+  left: calc(-200px - 5px);
+}
+.tiles-menu-item+.submenu-design__simple{
+  min-width: 200px;
+  width:100%;
+}
+.tiles-menu [class*=submenu-design__]{
+  border-radius:var(--radius-menu);
+}
+.tiles-menu .submenu-design__megamenu{
+  border-radius:0;
+}
+.header__section-background__boxed .tiles-menu .submenu-design__megamenu{
+  border-radius:var(--radius);
+}
+sticky-header~header .header-tiles-container{
+  transition: padding var(--duration-medium) var(--animation-bezier);
+}
+.sticky-activated~header .header-tiles-container{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

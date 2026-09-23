@@ -1,0 +1,120 @@
+.footer__block-item{
+  position:relative;
+}
+.footer__link{
+  display:flex;
+}
+.footer__link__logo{
+  width:max-content;
+  max-width:100%;
+}
+.footer-logo--svg{
+  display:flex;
+  max-width:100%;
+}
+.footer-logo--svg svg {
+  width: var(--max-width);
+  height: auto;
+}
+.footer-logo{
+  height:auto;
+}
+.list-payment{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.footer__content-bottom{
+  display:flex;
+  gap:16px;
+  flex-direction:row;
+  width: 100%;
+  justify-content: space-between;
+  padding:10px 0 13px;
+}
+.footer__content-bottom.footer__content-bottom--center{
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.footer__content-bottom--left{
+  --padding:8px;
+  margin-top:calc(var(--padding) * -1 + 3px);
+}
+.footer__content-bottom--left>*{
+  display:inline;
+}
+.footer__content-bottom--left>*:not(.policies):not(.footer__separate-line){
+  margin-top:var(--padding);
+}
+.footer__content-bottom--left>localization-form{
+  display:inline-flex;
+}
+.policies>li{
+  display:inline-flex;
+  margin-top:var(--padding);
+}
+.footer__content-bottom--left>*:not(:last-child),
+.policies>li:not(:last-child){
+  margin-right:16px;
+}
+.footer__separate-line{
+  display:inline-flex;
+  align-items:center;
+  position:relative;
+  width:1px;
+  vertical-align: middle;
+}
+.footer__separate-line:before{
+  content:"";
+  display:block;
+  position:absolute;
+  background:var(--color-lines);
+  width:1px;
+  height:20px;
+}
+.footer__separate-line:first-child{
+  display:none;
+}
+.link-list__block-heading{
+  color:var(--color-heading-block, var(--color-base-section, var(--color-heading-main)));
+}
+.footer__block-heading:empty{
+  display:none;
+}
+.policies{
+  display: inline-flex;
+  flex-wrap: wrap;
+  --animation-underline-thin:1px;
+}
+@media (min-width:577px){
+  .footer__content-bottom--right{
+    flex:0 0 calc(25% - 16px / 2);
+  }
+  .list-payment{
+    justify-content: flex-end;
+  }
+}
+@media (max-width:1024px){
+  .footer__content-bottom--left{
+    --padding:15px;
+  }
+  .footer__content-bottom{
+    padding:15px 0;
+  }
+}
+@media (max-width:576px){
+  .footer__content-bottom{
+    flex-direction:column;
+  }
+  .footer__separate-line__hide_mobile{
+    display:none;
+  }
+  .footer__content-bottom--left>*:not(.footer__separate-line):not(localization-form){
+    display:block;
+  }
+  footer-accordion:not(.footer__accordion){
+    padding-bottom:40px;
+  }
+}

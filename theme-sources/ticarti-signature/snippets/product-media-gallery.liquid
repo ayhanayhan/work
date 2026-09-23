@@ -1,0 +1,36 @@
+{% comment %}
+  Renders a product media gallery. Should be used with 'media-gallery.js'
+  Also see 'product-media-modal'
+
+  Accepts:
+  - section: {Object} Section liquid object
+  - product: {Object} Product liquid object
+  - variant_images: {Array} Product images associated with a variant
+  - limit: {Number} (optional) When passed, limits the number of media items to render
+
+  Usage:
+  {% render 'product-media-gallery' %}
+{% endcomment %}
+
+{%- assign colors_array = product.metafields.ticarti.grouped_gallery | downcase -%}
+
+{%- if colors_array and colors_array != blank -%}
+{%- assign colors_array = product.metafields.ticarti.grouped_gallery | split: ',' -%}
+
+{%- for media in product.media -%}
+<div class="product-media__item" data-current-color="{{ colors_array[forloop.index0] | downcase }}">
+  {%- render 'loader', position: "absolute" -%}
+  {%- render 'product-media', section:section, media: media, loop: section.settings.enable_video_looping, variant_image: variant_image -%}
+</div>
+{%- endfor -%}
+  
+{%- else -%}
+
+{%- for media in product.media -%}
+<div class="product-media__item">
+  {%- render 'loader', position: "absolute" -%}
+  {%- render 'product-media', section:section, media: media, loop: section.settings.enable_video_looping, variant_image: variant_image -%}
+</div>
+{%- endfor -%}
+ 
+{%- endif -%}

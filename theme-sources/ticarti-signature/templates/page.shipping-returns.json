@@ -1,0 +1,204 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_heading": true,
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false
+      }
+    },
+    "text_columns_with_icons_type_1_YBNJ33": {
+      "type": "text-columns-with-icons-type-1",
+      "blocks": {
+        "item_M7gbY9": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "box",
+            "block_heading": "Free Shipping on Orders Over $50",
+            "block_text": "<p>Enjoy free standard shipping when you spend $50 or more. No hidden fees — just more value with every order.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_DxJBcQ": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Truck_1",
+            "block_heading": "Standard Delivery within 2–5 Business Days",
+            "block_text": "<p>We process and ship your order quickly so you can start enjoying your purchase without delay. Most orders arrive within 2 to 5 business days.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_3CAw9m": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Return",
+            "block_heading": "Easy 30-day Returns",
+            "block_text": "<p>Changed your mind? No problem. You have 30 days to return your item, no questions asked.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        },
+        "item_KQETnA": {
+          "type": "item",
+          "settings": {
+            "show_icon": "svg",
+            "icon_name": "Piggy-bank",
+            "block_heading": "Return Items in Original Condition for a Full Refund",
+            "block_text": "<p>To receive a full refund, simply return your item unused and in its original packaging.</p>",
+            "button_name": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_M7gbY9",
+        "item_DxJBcQ",
+        "item_3CAw9m",
+        "item_KQETnA"
+      ],
+      "name": "t:names.text_with_icons_type_1",
+      "settings": {
+        "main_subheading": "",
+        "main_heading": "",
+        "main_desc": "",
+        "heading_aligment": "text-center",
+        "top_spacing": "normal",
+        "width": "default",
+        "grid": "page-grid-4",
+        "grid_tablet": "page-grid-st-4",
+        "text_align": "text-left",
+        "heading_size": "h5",
+        "icon_width": 30,
+        "show_icon_box": true,
+        "icon_box_roundness": 10,
+        "hover_underline": true,
+        "swipe": false,
+        "desktop_navigation": "dots_arrows",
+        "mobile_navigation": "dots",
+        "autoplay_enabled": false,
+        "autoplay_time": 5,
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "color_text_icons": "rgba(0,0,0,0)",
+        "color_text_icons_bg": "rgba(0,0,0,0)",
+        "color_link": "rgba(0,0,0,0)",
+        "color_link_icon": "rgba(0,0,0,0)",
+        "color_link_hover": "rgba(0,0,0,0)",
+        "color_link_icon_hover": "rgba(0,0,0,0)",
+        "color_background_box": "rgba(0,0,0,0)",
+        "color_media_arrows": "rgba(0,0,0,0)",
+        "color_media_dots": "rgba(0,0,0,0)"
+      }
+    },
+    "text_kTNEQg": {
+      "type": "text",
+      "blocks": {
+        "richtext_nWzjw9": {
+          "type": "richtext",
+          "settings": {
+            "text": "<h5>We are committed to providing a smooth and hassle-free shopping experience from start to finish. If you have any questions or need assistance, our customer support team is always ready to help.</h5>"
+          }
+        },
+        "button_w4G4Kq": {
+          "type": "button",
+          "settings": {
+            "button_name": "Start Shopping"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_nWzjw9",
+        "button_w4G4Kq"
+      ],
+      "name": "t:names.text",
+      "settings": {
+        "heading_position": "normal",
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "grid": "page-width-eight",
+        "text_align": "text-center",
+        "hover_underline": true,
+        "url": "",
+        "show_lines": false,
+        "lines_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "image_overlay_opacity": 0,
+        "image_overlay_color": "rgba(0,0,0,0)",
+        "image_overlay_opacity_mobile": 0,
+        "image_overlay_color_mobile": "rgba(0,0,0,0)",
+        "show_parallax": false,
+        "imagealign": "center",
+        "imagesize": "cover",
+        "background_width": "fullwidth",
+        "background_spacing": "normal",
+        "remove_bottom_spacing": false,
+        "color_base": "rgba(0,0,0,0)",
+        "color_accent": "rgba(0,0,0,0)",
+        "color_lines": "rgba(0,0,0,0)",
+        "color_text_link": "rgba(0,0,0,0)",
+        "color_text_link_hover": "rgba(0,0,0,0)",
+        "color_desc": "rgba(0,0,0,0)",
+        "show_button_bg": true,
+        "color_button": "rgba(0,0,0,0)",
+        "color_button_gradient": "",
+        "color_button_border": "rgba(0,0,0,0)",
+        "color_button_text": "rgba(0,0,0,0)",
+        "show_button_bg_hover": true,
+        "color_button_hover": "rgba(0,0,0,0)",
+        "color_button_gradient_hover": "",
+        "color_button_border_hover": "rgba(0,0,0,0)",
+        "color_button_text_hover": "rgba(0,0,0,0)",
+        "show_shadow_button": true,
+        "color_shadow_button": "rgba(0,0,0,0)",
+        "color_shadow_hover_button": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "text_columns_with_icons_type_1_YBNJ33",
+    "text_kTNEQg"
+  ]
+}

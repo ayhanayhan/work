@@ -1,0 +1,126 @@
+{% comment %}
+  Accepts:
+  - product: {Object} Product liquid object
+  - variant_images: {Array} Product images associated with a variant
+
+  Usage:
+  {% render 'product-media-lightbox' %}
+{% endcomment %}
+
+<theme-lightbox id="lightbox-{{ section.id }}" class="theme-lightbox theme-lightbox">
+  <div
+    class="theme-lightbox__dialog"
+    role="dialog"
+    aria-label="{{ 'products.modal.label' | t }}"
+    aria-modal="true"
+    tabindex="-1"
+  >
+    <button
+      id="ModalClose-{{ section.id }}"
+      type="button"
+      class="theme-lightbox__toggle modal-close-animation"
+      aria-label="{{ 'accessibility.close' | t }}"
+    >
+	  {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </button>
+
+    <div
+      class="theme-lightbox__content h-full"
+      role="document"
+      aria-label="{{ 'products.modal.label' | t }}"
+      tabindex="0"
+    >
+
+      <swiper-slider class="swiper swiper__no-padding-bottom swiper-no-mask-mobile h-full"
+                     data-swiper-desktop-grid="1"
+                     data-swiper-desktop-lg-grid="1"
+                     data-swiper-desktop-md-grid="1"
+                     data-swiper-tablet-grid="1"
+                     data-swiper-mobile-grid="1"
+                     data-gutter="{{ settings.spacing_grid_horizontal }}"
+                     data-gutter-mobile="15"
+                     data-grid="1,1,1,1,1"
+                     data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+        >
+        <div class="swiper-wrapper">
+          {%- for media in product.media -%}
+
+            {%- if media.media_type == "external_video" or media.media_type == "video" -%}
+            {%- break -%}
+            {%- endif -%}
+
+          <div class="swiper-slide" lazy="true">
+
+            {%- if media.media_type == 'image' -%}
+              <div class="theme-lightbox__image__box">
+                <img
+                  class="theme-lightbox__image border__radius{% if media.preview_image.width > media.preview_image.height %} theme-lightbox__image--wide{% endif %}"
+                  src="{{ media.preview_image | image_url: width: 2048 }}"
+                  alt="{{ media.alt | escape }}"
+                  width="{{ media.preview_image.width }}"
+                  height="{{ media.preview_image.width | divided_by: media.preview_image.aspect_ratio | ceil }}"
+                  data-media-id="{{ media.id }}"
+                >
+              </div>
+            {%- else -%}
+              {%- if media.media_type == 'model' -%}
+                <div class="theme-modal__model" data-media-id="{{ media.id }}">
+                  <product-model class="deferred-media media" style="padding-top: min(calc(100vh - 12rem), 100%)">
+            
+                <button id="Deferred-Poster-Modal-{{ media.id }}" class="deferred-media__poster{% if media.media_type == 'model' %} deferred-media__poster-model{% endif %}" type="button">
+                  <span class="deferred-media__poster-button">
+                    {%- if media.media_type == 'model' -%}
+					  {{- 'icon-3d-model' | append: settings.system_icon_thickness | inline_asset_content -}}
+                    {%- else -%}
+					  {{- 'icon-play' | append: settings.system_icon_thickness | inline_asset_content -}}
+                    {%- endif -%}
+                  </span>
+                  <img
+                    srcset="{% if media.preview_image.width >= 288 %}{{ media.preview_image | image_url: width: 288 }} 288w,{% endif %}
+                            {% if media.preview_image.width >= 576 %}{{ media.preview_image | image_url: width: 576 }} 576w,{% endif %}
+                            {% if media.preview_image.width >= 550 %}{{ media.preview_image | image_url: width: 550 }} 550w,{% endif %}
+                            {% if media.preview_image.width >= 1100 %}{{ media.preview_image | image_url: width: 1100 }} 1100w,{% endif %}
+                            {{ media.preview_image | image_url }} {{ media.preview_image.width }}w"
+                    src="{{ media | image_url: width: 550, height: 550 }}"
+                    sizes="(min-width: 1200px) calc((1200px - 10rem) / 2), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw - 4rem)"
+                    loading="lazy"
+                    width="576"
+                    height="{{ 576 | divided_by: media.preview_image.aspect_ratio }}"
+                    alt="{{ media.preview_image.alt | escape }}"
+                  >
+                </button>
+                <template>
+                    {{ media | media_tag: image_size: "2048x", toggleable: true }}
+                </template>
+            
+                  </product-model>
+                  <button
+                    class="btn btn__transition-text btn-media-3d product__xr-button"
+                    type="button"
+                    aria-label="{{ 'products.product.xr_button_label' | t }}"
+                    data-shopify-xr
+                    data-shopify-model3d-id="{{ media.id }}"
+                    data-shopify-title="title"
+                    data-shopify-xr-hidden
+                    >
+                  <div class="btn__texts">
+                    <span class="btn__top-text is-visible">{{- 'icon-3d-model' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'products.product.xr_button' | t }}</span>
+                    <span class="btn__bottom-text is-hidden">{{- 'icon-3d-model' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'products.product.xr_button' | t }}</span>
+                  </div>
+                  </button>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+          {%- endfor -%}
+        </div>
+      </swiper-slider>
+      <div class="swiper-control-container justify-content-center">
+        <div class="custom-swiper-button-prev">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+        <div class="swiper-pagination"></div>
+        <div class="custom-swiper-button-next">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+      </div>
+    </div>
+    
+  </div>
+</theme-lightbox>

@@ -1,0 +1,201 @@
+{%- layout none -%}
+{%- assign options = collection.sort_by -%}
+{%- assign grid						= options | split:"___grid||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign grid_tablet				= options | split:"___grid_tablet||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign mobile_grid				= options | split:"___mobile_grid||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign desktop_navigation		= options | split:"___desktop_navigation||" | last | split: "___" | first -%}
+{%- assign mobile_navigation		= options | split:"___mobile_navigation||" | last | split: "___" | first -%}
+{%- assign autoplay_enabled			= options | split:"___autoplay_enabled||" | last | split: "___" | first -%}
+{%- assign autoplay_time			= options | split:"___autoplay_time||" | last | split: "___" | first -%}
+{%- assign link_name				= options | split:"___link_name||" | last | split: "___" | first -%}
+{%- assign image_hover				= options | split:"___image_hover||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign image_ratio				= options | split:"___image_ratio||" | last | split: "___" | first | replace: "--", " " -%}
+{%- assign product_limit			= options | split:"___product_limit||" | last | split: "___" | first | plus:0 -%}
+{%- assign text_align				= options | split:"___text_align||" | last | split: "___" | first -%}
+{%- assign image_action				= options | split:"___image_action||" | last | split: "___" | first -%}
+{%- assign hover_underline			= options | split:"___hover_underline||" | last | split: "___" | first -%}
+{%- assign show_badge_on_sale		= options | split:"___show_badge_on_sale||" | last | split: "___" | first -%}
+{%- assign show_badge_sold_out		= options | split:"___show_badge_sold_out||" | last | split: "___" | first -%}
+{%- assign show_badge_feature		= options | split:"___show_badge_feature||" | last | split: "___" | first -%}
+{%- assign show_countdown			= options | split:"___show_countdown||" | last | split: "___" | first -%}
+{%- assign show_vendor				= options | split:"___show_vendor||" | last | split: "___" | first -%}
+{%- assign show_type				= options | split:"___show_type||" | last | split: "___" | first -%}
+{%- assign show_price				= options | split:"___show_price||" | last | split: "___" | first -%}
+{%- assign show_description			= options | split:"___show_description||" | last | split: "___" | first -%}
+{%- assign truncate_product_name	= options | split:"___truncate_product_name||" | last | split: "___" | first -%}
+{%- assign show_quantity			= options | split:"___show_quantity||" | last | split: "___" | first -%}
+{%- assign button_type_product		= options | split:"___button_type_product||" | last | split: "___" | first -%}
+{%- assign button_type_product_mobile= options | split:"___button_type_product_mobile||" | last | split: "___" | first -%}
+{%- assign show_wishlist			= options | split:"___show_wishlist||" | last | split: "___" | first -%}
+{%- assign show_compare				= options | split:"___show_compare||" | last | split: "___" | first -%}
+{%- assign show_quick_view			= options | split:"___show_quick_view||" | last | split: "___" | first -%}
+{%- assign show_wishlist_mobile 	= options | split:"___show_wishlist_mobile||" | last | split: "___" | first -%}
+{%- assign show_compare_mobile		= options | split:"___show_compare_mobile||" | last | split: "___" | first -%}
+{%- assign show_quick_view_mobile	= options | split:"___show_quick_view_mobile||" | last | split: "___" | first -%}
+{%- assign placeholder				= options | split:"___placeholder||" | last | split: "___" | first -%}
+{%- assign swipe					= options | split:"___swipe||" | last | split: "___" | first -%}
+{%- assign custom_link				= options | split:"___custom_link||" | last | split: "___" | first -%}
+{%- assign heading_aligment			= options | split:"___heading_aligment||" | last | split: "___" | first -%}
+{%- assign customize			    = options | split:"___customize||" | last | split: "___" | first -%}
+{%- assign enable_rating_product_card= options| split:"___enable_rating_product_card||" | last | split: "___" | first -%}
+{%- assign swipe_edges				= options | split:"___swipe_edges||" | last | split: "___" | first -%}
+{%- assign swipe_edges_long			= options | split:"___swipe_edges_long||" | last | split: "___" | first -%}
+{%- if swipe					== "true" -%}{%- assign swipe = true -%}{%- else -%}{%- assign swipe = false -%}{%- endif -%}
+{%- if swipe_edges				== "true" -%}{%- assign swipe_edges = true -%}{%- else -%}{%- assign swipe_edges = false -%}{%- endif -%}
+{%- if swipe_edges_long		    == "true" -%}{%- assign swipe_edges_long = true -%}{%- else -%}{%- assign swipe_edges_long = false -%}{%- endif -%}
+{%- if autoplay_enabled			== "true" -%}{%- assign autoplay_enabled = true -%}{%- else -%}{%- assign autoplay_enabled = false -%}{%- endif -%}
+{%- if hover_underline 			== "true" -%}{%- assign hover_underline = true -%}{%- else -%}{%- assign hover_underline = false -%}{%- endif -%}
+{%- if show_badge_on_sale		== "true" -%}{%- assign show_badge_on_sale = true -%}{%- else -%}{%- assign show_badge_on_sale = false -%}{%- endif -%}
+{%- if show_badge_sold_out		== "true" -%}{%- assign show_badge_sold_out = true -%}{%- else -%}{%- assign show_badge_sold_out = false -%}{%- endif -%}
+{%- if show_badge_feature		== "true" -%}{%- assign show_badge_feature = true -%}{%- else -%}{%- assign show_badge_feature = false -%}{%- endif -%}
+{%- if show_countdown			== "true" -%}{%- assign show_countdown = true -%}{%- else -%}{%- assign show_countdown = false -%}{%- endif -%}
+{%- if show_vendor				== "true" -%}{%- assign show_vendor = true -%}{%- else -%}{%- assign show_vendor = false -%}{%- endif -%}
+{%- if show_type				== "true" -%}{%- assign show_type = true -%}{%- else -%}{%- assign show_type = false -%}{%- endif -%}
+{%- if show_price				== "true" -%}{%- assign show_price = true -%}{%- else -%}{%- assign show_price = false -%}{%- endif -%}
+{%- if show_description			== "true" -%}{%- assign show_description = true -%}{%- else -%}{%- assign show_description = false -%}{%- endif -%}
+{%- if truncate_product_name	== "true" -%}{%- assign truncate_product_name = true -%}{%- else -%}{%- assign truncate_product_name = false -%}{%- endif -%}
+{%- if show_quantity			== "true" -%}{%- assign show_quantity = true -%}{%- else -%}{%- assign show_quantity = false -%}{%- endif -%}
+{%- if show_wishlist			== "true" -%}{%- assign show_wishlist = true -%}{%- else -%}{%- assign show_wishlist = false -%}{%- endif -%}
+{%- if show_compare				== "true" -%}{%- assign show_compare = true -%}{%- else -%}{%- assign show_compare = false -%}{%- endif -%}
+{%- if show_quick_view			== "true" -%}{%- assign show_quick_view = true -%}{%- else -%}{%- assign show_quick_view = false -%}{%- endif -%}
+{%- if show_wishlist_mobile 	== "true" -%}{%- assign show_wishlist_mobile = true -%}{%- else -%}{%- assign show_wishlist_mobile = false -%}{%- endif -%}
+{%- if show_compare_mobile		== "true" -%}{%- assign show_compare_mobile = true -%}{%- else -%}{%- assign show_compare_mobile = false -%}{%- endif -%}
+{%- if show_quick_view_mobile	== "true" -%}{%- assign show_quick_view_mobile = true -%}{%- else -%}{%- assign show_quick_view_mobile = false -%}{%- endif -%}
+{%- if placeholder				== "true" -%}{%- assign placeholder = true -%}{%- else -%}{%- assign placeholder = false -%}{%- endif -%}
+{%- if customize				== "true" -%}{%- assign customize = true -%}{%- else -%}{%- assign customize = false -%}{%- endif -%}
+{%- if enable_rating_product_card == "true" -%}{%- assign enable_rating_product_card = true -%}{%- else -%}{%- assign enable_rating_product_card = false -%}{%- endif -%}
+{%- assign __collection = collection -%}
+{%- capture content -%}
+    {%- if placeholder == false -%}
+    {%- for product in __collection.products limit: product_limit -%}
+    {%- if swipe -%}<div class="swiper-slide">{%- endif -%}
+    {%- render 'product-card',
+        customize: customize,
+        product_card_product: product,
+        product_collection:__collection,
+        image_ratio_value: image_ratio,
+        image_hover_type: image_hover,
+        show_secondary_image: image_action,
+        show_price:show_price,
+        show_vendor:show_vendor,
+        show_type:show_type,
+        hover_underline:hover_underline,
+        button_type_product: button_type_product,
+        show_quantity: show_quantity,
+        show_badge_sold_out:show_badge_sold_out,
+        show_badge_on_sale:show_badge_on_sale,
+        show_badge_feature:show_badge_feature,
+        show_countdown:show_countdown,
+        truncate_product_name:truncate_product_name,
+        show_wishlist: show_wishlist,
+        show_compare: show_compare,
+        show_quick_view: show_quick_view,
+        show_wishlist_mobile: show_wishlist_mobile,
+        show_compare_mobile: show_compare_mobile,
+        show_quick_view_mobile: show_quick_view_mobile,
+        text_aligment: text_align,
+        show_description: show_description,
+        enable_rating_product_card:enable_rating_product_card
+    -%}
+    {%- if swipe -%}</div>{%- endif -%}
+    {%- endfor -%}
+    {%- else -%}
+
+    {%- for i in (1..product_limit) -%}
+    {%- if swipe -%}<div class="swiper-slide" lazy="true">{%- endif -%}
+    {%- capture placeholder_icon -%}
+    {%- cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4' -%}
+    {%- endcapture -%}
+    {%- render 'product-card-placeholder',
+        customize: customize,
+        image_ratio_value: image_ratio,
+        image_hover_type: image_hover,
+        show_secondary_image: image_action,
+        show_price:show_price,
+        show_vendor:show_vendor,
+        show_type:show_type,
+        hover_underline:hover_underline,
+        button_type_product: button_type_product,
+        show_quantity: show_quantity,
+        show_badge_sold_out:show_badge_sold_out,
+        show_badge_on_sale:show_badge_on_sale,
+        show_badge_feature:show_badge_feature,
+        show_countdown:show_countdown,
+        truncate_product_name:truncate_product_name,
+        show_wishlist: show_wishlist,
+        show_compare: show_compare,
+        show_quick_view: show_quick_view,
+        show_wishlist_mobile: show_wishlist_mobile,
+        show_compare_mobile: show_compare_mobile,
+        show_quick_view_mobile: show_quick_view_mobile,
+        text_aligment: text_align,
+        placeholder_icon:placeholder_icon,
+        show_description: show_description
+    -%}
+    {%- if swipe -%}</div>{%- endif -%}
+    {%- endfor -%}
+
+    {%- endif -%}
+{%- endcapture -%}
+
+{%- if swipe -%}
+{%- assign data_grid_xl = grid | split: "page-grid-" | last -%}
+{%- assign data_grid_lg = grid | split: "page-grid-lg-" | last | split: " " | first -%}
+{%- assign data_grid_md = grid | split: "page-grid-md-" | last | split: " " | first -%}
+<div class="page-grid-1 no-row-gap swiper-no-mask-mobile{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    {%- assign data_tablet_grid_lg = grid_tablet | split: "page-grid-st-" | last -%}
+    {%- assign data_grid = mobile_grid | append: "," | append: data_tablet_grid_lg | append: "," | append:data_grid_md | append: "," | append:data_grid_lg | append: "," | append:data_grid_xl -%}
+    <swiper-slider class="swiper{% if swipe_edges == false %} swiper__custom-mask{% else %}{% if swipe_edges_long %} swiper-no-mask{% else %} swiper-no-mask__left_side{% endif %}{% endif %}"
+                    data-swiper-desktop-grid="{{ data_grid_xl }}"
+                    data-swiper-desktop-lg-grid="{{ data_grid_lg }}"
+                    data-swiper-desktop-md-grid="{{ data_grid_md }}"
+                    data-swiper-tablet-grid="{{ data_tablet_grid_lg }}"
+                    data-swiper-mobile-grid="{{ mobile_grid }}"
+                    data-gutter="{{ settings.spacing_grid_horizontal }}"
+                    data-gutter-mobile="15"
+                    data-grid="{{ data_grid }}"
+                    {% if autoplay_enabled and request.design_mode == false %} data-autoplay-delay="{{ autoplay_time | times: 1000 }}"{% endif %}
+                    data-autoplay="{%- if autoplay_enabled and request.design_mode == false -%}true{%- else -%}false{%- endif -%}"
+                    data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+    >
+    <div class="swiper-wrapper swiper-wrapper--max-height">
+        {{ content }}
+    </div>
+    </swiper-slider>
+    <div class="swiper-control-container{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    <div class="custom-swiper-button-prev{% unless desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    <div class="swiper-pagination{% unless desktop_navigation contains "dots" %} hide-desktop{% endunless %}{% unless mobile_navigation contains "dots" %} hide-mobile-xl-st{% endunless %}"></div>
+    <div class="custom-swiper-button-next{% unless desktop_navigation contains "arrows" %} hide-desktop{% endunless %}">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+    </div>
+</div>
+{%- else -%}
+<div class="page-grid-sp-{{ mobile_grid }} {{ grid_tablet }} {{ grid }} page-vertical-gap-40{% if heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    {{ content }}
+</div>
+{%- endif -%} 
+
+{%- if link_name != blank and placeholder == true -%}
+<div class="mt40 page-grid-1 {{ heading_aligment }}">
+    <div>
+    <div class="btn btn--border btn__transition-text btn-wide">
+        <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ link_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ link_name }}</span>
+        </div>
+    </div>
+    </div>
+</div>
+{%- elsif link_name != blank -%}
+{%- if __collection.products.size > product_limit or custom_link != blank -%}
+<div class="mt40 page-grid-1 {{ heading_aligment }}">
+    <div>
+    <a href="{% if custom_link != blank %}{{ custom_link }}{% else %}{{ __collection.url }}{% endif %}" class="btn btn--border btn__transition-text btn-wide">
+        <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ link_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ link_name }}</span>
+        </div>
+    </a>
+    </div>
+</div>
+{%- endif -%}
+{%- endif -%}

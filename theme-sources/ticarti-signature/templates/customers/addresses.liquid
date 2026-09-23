@@ -1,0 +1,381 @@
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'component-inputs.css' | asset_url }}" media="print" onload="this.media='all'">
+<script src="{{ 'customer.js' | asset_url }}" defer></script>
+
+<div class="top-spacing-normal {{ settings.page_width_main }}" data-customer-addresses>
+  <div class="page-grid-1 page-width-half addresses page-vertical-gap-40">
+    <h1 class="mt0 mb0 text-center">{{ 'customer.addresses.title' | t }}</h1>
+    <div class="display-flex justify-content-center">
+      <a href="{{ routes.account_url }}" class="link">
+        {{- 'icon-arrow-left-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+        <span>{{ 'customer.account.return' | t }}</span>
+      </a>
+    </div>
+  </div>
+  {%- paginate customer.addresses by 5 -%}
+  <div class="page-grid-1 page-width-half addresses mt40 page-vertical-gap-40">
+    <div data-address>
+      <button type="button"
+              aria-expanded="false"
+              aria-controls="AddAddress"
+              class="btn btn__transition-text w-full"
+              >
+        <div class="btn__texts">
+          <span class="btn__top-text is-visible">{{ 'customer.addresses.add_new' | t }}</span>
+          <span class="btn__bottom-text is-hidden">{{ 'customer.addresses.add_new' | t }}</span>
+        </div>
+      </button>
+      <div id="AddAddress">
+        <h4 class="mt0 mb20">{{ 'customer.addresses.add_new' | t }}</h4>
+        {%- form 'customer_address', customer.new_address, aria-labelledBy: 'AddressNewHeading' -%}
+          <div class="{% if settings.border_width > 0 %}field__sticky-edges{% endif %}">
+            <div class="field">
+              <input class="field__input"
+                     autocomplete="given-name"
+                     type="text"
+                     id="AddressFirstNameNew"
+                     name="address[first_name]"
+                     value="{{ form.first_name }}"
+                     placeholder="{{ 'customer.addresses.first_name' | t }}"
+                     >
+              <label class="field__label" for="AddressFirstNameNew">{{ 'customer.addresses.first_name' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="family-name"
+                     type="text"
+                     id="AddressLastNameNew"
+                     name="address[last_name]"
+                     value="{{ form.last_name }}"
+                     placeholder="{{ 'customer.addresses.last_name' | t }}"
+                     >
+              <label class="field__label" for="AddressLastNameNew">{{ 'customer.addresses.last_name' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="organization"
+                     type="text"
+                     id="AddressCompanyNew"
+                     name="address[company]"
+                     value="{{ form.company }}"
+                     placeholder="{{ 'customer.addresses.company' | t }}"
+                     >
+              <label class="field__label" for="AddressCompanyNew">{{ 'customer.addresses.company' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="address-line1"
+                     type="text"
+                     id="AddressAddress1New"
+                     name="address[address1]"
+                     value="{{ form.address1 }}"
+                     placeholder="{{ 'customer.addresses.address1' | t }}"
+                     >
+              <label class="field__label" for="AddressAddress1New">{{ 'customer.addresses.address1' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="address-line2"
+                     type="text"
+                     id="AddressAddress2New"
+                     name="address[address2]"
+                     value="{{ form.address2 }}"
+                     placeholder="{{ 'customer.addresses.address2' | t }}"
+                     >
+              <label class="field__label" for="AddressAddress2New">{{ 'customer.addresses.address2' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="address-level2"
+                     type="text"
+                     id="AddressCityNew"
+                     name="address[city]"
+                     value="{{ form.city }}"
+                     placeholder="{{ 'customer.addresses.city' | t }}"
+                     >
+              <label class="field__label" for="AddressCityNew">{{ 'customer.addresses.city' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <select class="field__input"
+                      id="AddressCountryNew"
+                      name="address[country]"
+                      data-default="{{ form.country }}"
+                      autocomplete="country"
+                      >
+                {{ all_country_option_tags }}
+              </select>
+              <div class="field__icon field__icon--select">
+                {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </div>
+              <label class="field__label" for="AddressCountryNew">{{ 'customer.addresses.country' | t }}</label>
+            </div>
+            <div id="AddressProvinceContainerNew" class="field form-inputs-top-spacing" style="display: none">
+              <select class="field__input"
+                      id="AddressProvinceNew"
+                      name="address[province]"
+                      data-default="{{ form.province }}"
+                      autocomplete="address-level1"
+                      >
+              </select>
+              <label class="field__label" for="AddressProvinceNew">{{ 'customer.addresses.province' | t }}</label>
+              <div class="field__icon field__icon--select">
+                {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </div>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocapitalize="characters"
+                     autocomplete="postal-code"
+                     type="text"
+                     id="AddressZipNew"
+                     name="address[zip]"
+                     value="{{ form.zip }}"
+                     placeholder="{{ 'customer.addresses.zip' | t }}"
+                     >
+              <label class="field__label" for="AddressZipNew">{{ 'customer.addresses.zip' | t }}</label>
+            </div>
+            <div class="field form-inputs-top-spacing">
+              <input class="field__input"
+                     autocomplete="tel"
+                     type="tel"
+                     id="AddressPhoneNew"
+                     name="address[phone]"
+                     value="{{ form.phone }}"
+                     placeholder="{{ 'customer.addresses.phone' | t }}"
+                     >
+              <label class="field__label" for="AddressPhoneNew">{{ 'customer.addresses.phone' | t }}</label>
+            </div>
+          </div>
+          <div class="form-inputs-top-spacing">
+            <label for="address_default_address_new" class="checkbox-input">
+              {{ form.set_as_default_checkbox }}
+              <div class="checkbox-input__checkmark">
+                <div class="checkbox-input__flip">
+                  <div class="checkbox-input__front"></div>
+                  <div class="checkbox-input__back">
+                    {{- 'icon-checkmark' | append: settings.system_icon_thickness | inline_asset_content -}}
+                  </div>
+                </div>
+              </div>
+              <span>{{ 'customer.addresses.set_default' | t }}</span>
+            </label>
+          </div>
+          <button class="btn btn__transition-text w-full form-inputs-top-spacing-button">
+            <div class="btn__texts">
+              <span class="btn__top-text is-visible">{{ 'customer.addresses.add' | t }}</span>
+              <span class="btn__bottom-text is-hidden">{{ 'customer.addresses.add' | t }}</span>
+            </div>
+          </button>
+          <div class="form-inputs-top-spacing text-center">
+            <button class="link" type="reset"><span>{{ 'customer.addresses.cancel' | t }}</span></button>
+          </div>
+        {%- endform -%}
+      </div>
+    </div>
+  
+    {%- for address in customer.addresses -%}
+    <div>
+      {%- if address == customer.default_address -%}
+      <h4 class="mt0 mb20">{{ 'customer.addresses.default' | t }}</h4>
+      {%- endif -%}
+                
+      <div class="address__item address__background" data-address>
+        {{ address | format_address }}
+        <div class="btns__container">
+          <button class="icon-button address__item__edit"
+                  type="button"
+                  id="EditFormButton_{{ address.id }}"
+                  aria-label="{{ 'customer.addresses.edit_address' | t }} {{ forloop.index }}"
+                  aria-controls="EditAddress_{{ address.id }}"
+                  aria-expanded="false"
+                  data-address-id="{{ address.id }}"
+                  >
+            {{- 'icon-pencil' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </button>
+          <button class="icon-button address__item__remove"
+                  type="button"
+                  aria-label="{{ 'customer.addresses.delete' | t }} {{ forloop.index }}"
+                  data-target="{{ address.url }}"
+                  data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}"
+                  >
+            {{- 'icon-remove' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </button>
+          <div id="EditAddress_{{ address.id }}">
+            <h4 class="mt20 mb20">{{ 'customer.addresses.edit_address' | t }}</h4>
+            {%- form 'customer_address', address -%}
+            <div class="{% if settings.border_width > 0 %}field__sticky-edges{% endif %}">
+              <div class="field">
+                <input class="field__input"
+                       autocomplete="given-name"
+                       type="text"
+                       id="AddressFirstName_{{ form.id }}"
+                       name="address[first_name]"
+                       value="{{ form.first_name }}"
+                       placeholder="{{ 'customer.addresses.first_name' | t }}"
+                       >
+                <label class="field__label" for="AddressFirstName_{{ form.id }}">{{ 'customer.addresses.first_name' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="family-name"
+                       type="text"
+                       id="AddressLastName_{{ form.id }}"
+                       name="address[last_name]"
+                       value="{{ form.last_name }}"
+                       placeholder="{{ 'customer.addresses.last_name' | t }}"
+                       >
+                <label class="field__label" for="AddressLastName_{{ form.id }}">{{ 'customer.addresses.last_name' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="organization"
+                       type="text"
+                       id="AddressCompany_{{ form.id }}"
+                       name="address[company]"
+                       value="{{ form.company }}"
+                       placeholder="{{ 'customer.addresses.company' | t }}"
+                       >
+                <label class="field__label" for="AddressCompany_{{ form.id }}">{{ 'customer.addresses.company' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="address-line1"
+                       type="text"
+                       id="AddressAddress1_{{ form.id }}"
+                       name="address[address1]"
+                       value="{{ form.address1 }}"
+                       placeholder="{{ 'customer.addresses.address1' | t }}"
+                       >
+                <label class="field__label" for="AddressAddress1_{{ form.id }}">{{ 'customer.addresses.address1' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="address-line2"
+                       type="text"
+                       id="AddressAddress2_{{ form.id }}"
+                       name="address[address2]"
+                       value="{{ form.address2 }}"
+                       placeholder="{{ 'customer.addresses.address2' | t }}"
+                       >
+                <label class="field__label" for="AddressAddress2_{{ form.id }}">{{ 'customer.addresses.address2' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="address-level2"
+                       type="text"
+                       id="AddressCity_{{ form.id }}"
+                       name="address[city]"
+                       value="{{ form.city }}"
+                       placeholder="{{ 'customer.addresses.city' | t }}"
+                       >
+                <label class="field__label" for="AddressCity_{{ form.id }}">{{ 'customer.addresses.city' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <select class="field__input"
+                        id="AddressCountry_{{ form.id }}"
+                        name="address[country]"
+                        data-address-country-select
+                        data-default="{{ form.country }}"
+                        data-form-id="{{ form.id }}"
+                        autocomplete="country"
+                        >
+                  {{ all_country_option_tags }}
+                </select>
+                <div class="field__icon field__icon--select">
+                  {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </div>
+                <label class="field__label" for="AddressCountry_{{ form.id }}">{{ 'customer.addresses.country' | t }}</label>
+              </div>
+              <div id="AddressProvinceContainer_{{ form.id }}" class="field form-inputs-top-spacing" style="display:none;">
+                <select class="field__input"
+                        id="AddressProvince_{{ form.id }}"
+                        name="address[province]"
+                        data-default="{{ form.province }}"
+                        autocomplete="address-level1"
+                        >
+                </select>
+                <div class="field__icon field__icon--select">
+                  {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </div>
+                <label class="field__label" for="AddressProvince_{{ form.id }}">{{ 'customer.addresses.province' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocapitalize="characters"
+                       autocomplete="postal-code"
+                       type="text"
+                       id="AddressZip_{{ form.id }}"
+                       name="address[zip]"
+                       value="{{ form.zip }}"
+                       placeholder="{{ 'customer.addresses.zip' | t }}"
+                       >
+                <label class="field__label" for="AddressZip_{{ form.id }}">{{ 'customer.addresses.zip' | t }}</label>
+              </div>
+              <div class="field form-inputs-top-spacing">
+                <input class="field__input"
+                       autocomplete="tel"
+                       type="tel"
+                       id="AddressPhone_{{ form.id }}"
+                       name="address[phone]"
+                       value="{{ form.phone }}"
+                       placeholder="{{ 'customer.addresses.phone' | t }}"
+                       >
+                <label class="field__label" for="AddressPhone_{{ form.id }}">{{ 'customer.addresses.phone' | t }}</label>
+              </div>
+            </div>
+            <div class="form-inputs-top-spacing">
+              <label for="address_default_address_{{ form.id }}" class="checkbox-input">
+                {{ form.set_as_default_checkbox }}
+                <div class="checkbox-input__checkmark">
+                  <div class="checkbox-input__flip">
+                    <div class="checkbox-input__front"></div>
+                    <div class="checkbox-input__back">
+                      {{- 'icon-checkmark' | append: settings.system_icon_thickness | inline_asset_content -}}
+                    </div>
+                  </div>
+                </div>
+                <span>{{ 'customer.addresses.set_default' | t }}</span>
+              </label>
+            </div>
+            <button class="btn btn__transition-text w-full form-inputs-top-spacing-button" type="submit">
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{ 'customer.addresses.update' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{{ 'customer.addresses.update' | t }}</span>
+              </div>
+            </button>
+            <div class="form-inputs-top-spacing text-center">
+              <button class="link" type="reset"><span>{{ 'customer.addresses.cancel' | t }}</span></button>
+            </div>
+            {%- endform -%}
+          </div>
+      </div>
+    </div>
+  </div>
+  {%- endfor -%}
+  </div>
+  {%- if paginate.pages > 1 -%}
+  <div class="page-grid-1 page-width-half addresses mt20">
+    {% render 'pagination', paginate: paginate, aligment: "text-left" %}
+  </div>
+  {%- endif -%}
+                
+{%- endpaginate -%}
+</div>
+
+<script>
+  window.onload = () => {
+	window.onload = null;
+    typeof CustomerAddresses !== 'undefined' && new CustomerAddresses();
+    document.querySelectorAll(".address__item__edit").forEach((button) => {
+      button.addEventListener('click', (event) => {
+        var classList = event.target.closest('.address__item').classList;
+        if(classList.contains("address__item__opened")){
+          classList.remove('address__item__opened');
+        }
+        else{
+          classList.add('address__item__opened');
+        }
+      });
+    });
+  }
+</script>

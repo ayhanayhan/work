@@ -1,0 +1,338 @@
+{%- layout none -%}
+{%- liquid
+    assign options_string = collection.sort_by | split: '||' | last
+    assign options = options_string | split: "___"
+    assign handles = collection.sort_by | replace: options_string, "" | remove_last: '||' | split: '||'
+    assign image_hover = options[0]
+    assign image_ratio = options[1]
+    assign hover_underline = options[2]
+    assign show_badge_on_sale = options[3]
+    assign show_badge_sold_out = options[4]
+    assign show_badge_feature = options[5]
+    assign show_sku = options[6]
+    assign show_vendor = options[7]
+    assign show_type = options[8]
+    assign show_price = options[9]
+    assign show_inventory = options[10]
+    assign inventory_count = options[11] | plus:0
+    assign truncate_product_name = options[12]
+    assign button_type_product = options[13]
+    assign show_wishlist = options[14]
+    assign enable_rating_product_card = options[15]
+    
+    if hover_underline == "true"
+    assign hover_underline = true
+    else
+    assign hover_underline = false
+    endif
+    
+    if show_badge_on_sale == "true"
+    assign show_badge_on_sale = true
+    else
+    assign show_badge_on_sale = false
+    endif
+    
+    if show_badge_sold_out == "true"
+    assign show_badge_sold_out = true
+    else
+    assign show_badge_sold_out = false
+    endif
+    
+    if show_badge_feature == "true"
+    assign show_badge_feature = true
+    else
+    assign show_badge_feature = false
+    endif
+       
+    if show_vendor == "true"
+    assign show_vendor = true
+    else
+    assign show_vendor = false
+    endif
+    
+    if show_type == "true"
+    assign show_type = true
+    else
+    assign show_type = false
+    endif
+    
+    if show_price == "true"
+    assign show_price = true
+    else
+    assign show_price = false
+    endif
+    
+    if show_inventory == "true"
+    assign show_inventory = true
+    else
+    assign show_inventory = false
+    endif
+    
+    if truncate_product_name == "true"
+    assign truncate_product_name = true
+    else
+    assign truncate_product_name = false
+    endif
+    
+    if show_wishlist == "true"
+    assign show_wishlist = true
+    else
+    assign show_wishlist = false
+    endif
+
+    if show_sku == "true"
+    assign show_sku = true
+    else
+    assign show_sku = false
+    endif
+
+    if button_type_product == "true"
+    assign button_type_product = 'show'
+    else
+    assign button_type_product = 'hide'
+    endif
+
+    if enable_rating_product_card == "true"
+    assign enable_rating_product_card = true
+    else
+    assign enable_rating_product_card = false
+    endif 
+
+    assign options_product = ""
+    assign options_variants = ""
+-%}
+{%- liquid
+    for value in handles
+    assign handle = value | split: "___" | first
+    assign product = all_products[handle]
+    assign variant_id_to_find = value | split: "___" | last | plus:0
+    assign variant = product.variants | where: "id", variant_id_to_find | first
+    if product.options[0] != "Title"
+    for option in product.options
+    assign options_product = options_product | append:option | append:'|||'
+    assign options_variants = options_variants | append:option | append:'___' | append:variant.options[forloop.index0] | append:'\\//'
+    endfor
+    assign options_variants = options_variants | append:'%%%'
+    else
+    assign options_variants = options_variants | append:'variantemptyvalue' | append:'%%%'
+    endif
+    endfor
+    assign options_names = options_product | remove_last: '|||' | split:'|||' | uniq
+    assign variant_names = options_variants | split:'%%%'
+-%}
+
+<slider-slide>
+  <div class="ticarti-compare">
+    <div class="ticarti-compare__heading strong">
+      <div class="ticarti-compare__heading__content">
+        <div class="ticarti-compare__count"><span class="ticarti-compare__count__number">{{ handles.size }}</span> {{ 'compare.count_text' | t }}</div>
+        <div class="ticarti-compare__buttons">
+          <div class="prev-btn">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+          <div class="next-btn">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="ticarti-compare__container">
+      {%- for value in handles -%}
+      {%- liquid
+          assign handle = value | split: "___" | first
+          assign product = all_products[handle]
+          assign variant_id_to_find = value | split: "___" | last | plus:0
+          assign variant = product.variants | where: "id", variant_id_to_find | first
+       -%}
+
+      {%- capture badges -%}
+      {%- if variant.available == false and show_badge_sold_out -%}
+      <span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif variant.compare_at_price > variant.price and variant.available and show_badge_on_sale -%}
+      <span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+      {%- endif -%}
+      {%- if product.metafields.ticarti.featured_badge != blank and show_badge_feature -%}
+      <span class="badges-item__medium badges-item__main">{{ product.metafields.ticarti.featured_badge }}</span>
+      {%- endif -%}
+      {%- endcapture -%}
+        
+      <div class="ticarti-compare__item mt-first-0" data-item="variant-{{ variant.id }}">
+        {%- if product.featured_media != blank -%}
+        {%- liquid
+            if variant.featured_media != blank
+            assign image = variant.featured_media
+            else
+            assign image = product.featured_media != blank
+            endif
+        -%}
+        <a href="{{ variant.url }}" class="product-card__image__url {% if image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover }}{% endif %}">
+          <div class="image-hover-box__container{% if image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+            {%- render "component-image-product-card",
+                image_ratio_value: image_ratio,
+                image_source: image
+            -%}
+          </div>
+        </a>
+        {%- endif -%}
+
+        <div class="mt10 ticarti-compare__item__content mt-first-0">
+          <div class="mt-first-0">
+            {%- if badges != blank -%}
+            <div class="badges__container">{{- badges -}}</div>
+            {%- endif -%}
+            
+            {%- if variant.sku != blank and show_sku -%}<p class="mt0 compare-item__sku body3 text-uppercase">{{ variant.sku }}</p>{%- endif -%}
+            {%- if product.type != blank and show_type -%}
+            <a href="{{ routes.collections_url }}/all?filter.p.product_type={{ product.type | escape }}"
+               class="link link__base-to_accent-color text-uppercase">{{ product.type }}</a>
+            {%- endif -%}
+            {%- if product.vendor != blank and show_vendor -%}
+            <a href="{{ routes.collections_url }}/all?filter.p.vendor={{ product.vendor | escape }}"
+               class="link link__base-to_accent-color text-uppercase{% if hover_underline == false %} link--no-underline{% endif %}">{{ product.vendor }}</a>
+            {%- endif -%}
+            <div class="body2 mt3">
+              <a href="{{ variant.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %}">
+                {%- if truncate_product_name -%}
+                {%- assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t -%}
+                {{ product.title | escape | truncate: 48,last_characters }}
+                {%- else -%}
+                {{ product.title | escape }}
+                {%- endif -%}
+              </a>
+            </div>
+
+            {%- if settings.enable_rating and settings.cart_type != "catalog_mode" -%}{%- if enable_rating_product_card -%}
+            {%- render 'review-stars' _product: product -%}
+            {%- endif -%}{%- endif -%}
+            {%- if show_price and settings.cart_type != "catalog_mode" -%}{%- render 'price', product: variant -%}{%- endif -%}
+
+            {%- if show_inventory -%}
+            {%- capture invertory -%}
+            {%- if variant.available -%}
+            {%- if variant.inventory_management == "shopify" and variant.inventory_policy != "continue" and variant.inventory_quantity <= inventory_count -%}
+            <span class="inventory-block__hot body3 strong">{{ 'products.product.inventory.hot' | t: quantity: variant.inventory_quantity }}</span>
+            {%- else -%}
+            <span class="inventory-block__normal body3 strong">{{ 'products.product.inventory.normal' | t }}</span>
+            {%- endif -%}
+            {%- endif -%}
+            {%- endcapture -%}
+            <div class="inventory-block mt8">{{ invertory }}</div>
+            {%- endif -%}
+          </div>
+          <div class="display-flex ticarti-compare__item__content_buttons product-card__media-buttons__inline">
+            {%- if button_type_product != 'hide' -%}
+            <product-form class="compare__product-button">
+            {%- form 'product', product, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-compare' -%}
+            <input type="hidden" name="id" value="{{ variant.id }}">
+            <button type="submit"
+                    name="add"
+                    class="quick-add__submit btn btn__transition-text only-child"
+                    {% if variant.available == false %}
+                    disabled
+                    aria-disabled="true"
+                    {% endif %}
+                    >
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">
+                {%- render "icon-cart" -%}
+                </span>
+                <span class="btn__bottom-text is-hidden">
+                {%- render "icon-cart" -%}
+                </span>
+              </div>
+              <div class="loading-overlay__spinner hidden">
+                <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                </svg>
+              </div>
+            </button>
+            {%- endform -%}
+            </product-form>
+            {%- endif -%}
+            {%- if settings.enable_wishlist and show_wishlist -%}
+            <wishlist-button
+               class="product-card__media-buttons__item"
+               data-text="{{ 'wishlist.product.wishlist' | t }}"
+               data-text-active="{{ 'wishlist.product.wishlist-remove' | t }}"
+               data-id="{{ product.id }}"
+               data-product-handle="{{ product.handle }}"
+              >
+              {%- render "icon-wishlist" icon_type:"normal" -%}
+              {%- render "icon-wishlist" icon_type:"added" -%}
+            </wishlist-button>
+            {%- endif -%}
+            <compare-button
+             class="product-card__media-buttons__item delete-item-button"
+             data-text="{{ 'compare.product.compare-remove' | t }}"
+             data-text-active="{{ 'compare.product.compare-remove' | t }}"
+             data-id="{{ variant.id }}"
+            >
+			  {{- 'icon-remove' | append: settings.system_icon_thickness | inline_asset_content -}}
+            </compare-button>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+
+    {%- liquid
+        assign metacount = 0
+        for value in handles
+        assign handle = handles[forloop.index0] | split: "___" | first
+        assign product = all_products[handle]
+        if product.metafields.ticarti.small_description != blank
+        assign metacount = metacount | plus:1
+        endif
+        endfor
+    -%}
+    {%- if metacount > 0 -%}
+    <div class="ticarti-compare__heading strong">
+      <div class="ticarti-compare__heading__content">{{ "compare.title_description" | t }}</div>
+    </div>
+    <div class="ticarti-compare__container">
+    {%- for value in handles -%}
+      {%- liquid
+          assign handle = handles[forloop.index0] | split: "___" | first
+          assign product = all_products[handle]
+          assign variant_id_to_find = handles[forloop.index0] | split: "___" | last | plus:0
+          assign variant = product.variants | where: "id", variant_id_to_find | first
+      -%}
+      <div class="ticarti-compare__item body2" data-item="variant-{{ variant.id }}">
+        {%- liquid
+            if product.metafields.ticarti.small_description != blank
+            echo product.metafields.ticarti.small_description
+            else
+            echo '-'
+            endif
+        -%}
+      </div>
+    {%- endfor -%}
+    </div>
+    {%- endif -%}
+    
+    {%- for value in options_names -%}
+    <div class="ticarti-compare__heading strong">
+      <div class="ticarti-compare__heading__content">{{ value }}</div>
+    </div>
+    <div class="ticarti-compare__container">
+      {%- for vn in variant_names -%}
+      {%- liquid
+          assign handle = handles[forloop.index0] | split: "___" | first
+          assign product = all_products[handle]
+          assign variant_id_to_find = handles[forloop.index0] | split: "___" | last | plus:0
+          assign variant = product.variants | where: "id", variant_id_to_find | first
+       -%}
+      <div class="ticarti-compare__item body2" data-item="variant-{{ variant.id }}">
+        {%- liquid
+            if vn contains value
+            assign key = value | append: '___'
+            echo vn | split: key | last | split: '\\//' | first
+            else
+            echo '-'
+            endif
+        -%}
+      </div>
+      {%- endfor -%}
+    </div>
+    {%- endfor -%}
+  </div>
+</slider-slide>
+
+
+

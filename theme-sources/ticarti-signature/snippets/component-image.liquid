@@ -1,0 +1,155 @@
+{% comment %}
+  Code to display article content
+
+  Accepts:
+  - image_ratio_value: Number
+  - image_ratio_mobile_value: Number
+  - image_source: {Object} Image paramatres object
+  - image_ratio_mobile_value: {Object} Image paramatres object
+  - load_priority_low: String, default empty
+  - section_index: Number Needs for image load priority
+  - video_html: liquid code
+  - placeholder_icon: String
+  - parallax: {Boolean}
+  - animate_image_show_enabled: {Boolean} by default animation enabled
+  - alt: {String}
+
+  Usage:
+  {%- render "component-image",
+      image_ratio_value: image_ratio,
+      image_ratio_mobile_value: image_ratio_mobile_value,
+      image_source: block.settings.image,
+      image_mobile_source: block.settings.image_mobile,
+      load_priority_low: is_slider,
+      section_index: section.index,
+      video_html:video_html
+  -%}
+{% endcomment %}
+{%- assign parallax = parallax | default: false -%}
+{%- assign alt = alt | default: "" -%}
+{%- assign animate_image_show_enabled = animate_image_show_enabled | default: true, allow_false: boolean -%}
+<div class="image-hover-box">
+  {%- if image_source == blank -%}
+  {%- liquid
+      capture image_ratio
+      if image_ratio_value == 'auto'
+      echo "var(--default-svg-placeholder-aspect-ratio)"
+      else
+      echo image_ratio_value
+      endif
+      endcapture
+
+      if image_ratio_mobile_value
+      if image_ratio_mobile_value == 'auto'
+      assign image_ratio_mobile = '--aspect-ratio-mobile:' | append: 'var(--default-svg-placeholder-aspect-ratio)' | append: ';'
+      else
+      assign image_ratio_mobile = '--aspect-ratio-mobile:' | append: image_ratio_mobile_value | append: ';'
+      endif
+      endif
+  -%}
+  <div class="placeholder__svg--bg" style="--aspect-ratio:{{ image_ratio }};{{ image_ratio_mobile }}">
+    {% if placeholder_icon == blank %}{%- assign placeholder_icon = "hero-apparel-1" -%}{% endif %}
+    {{ placeholder_icon | placeholder_svg_tag: 'placeholder-svg' }}
+  </div>
+  {%- else -%}
+  {%- liquid
+      capture image_ratio
+      if image_ratio_value == 'auto'
+      echo image_source.aspect_ratio
+      else
+      echo image_ratio_value
+      endif
+      endcapture
+
+      if image_ratio_mobile_value
+      if image_ratio_mobile_value == 'auto'
+      if image_mobile_source != blank 
+      assign image_ratio_mobile = '--aspect-ratio-mobile:' | append: image_mobile_source.aspect_ratio | append: ';'
+      else
+      assign image_ratio_mobile = '--aspect-ratio-mobile:' | append: image_source.aspect_ratio | append: ';'
+      endif
+      else
+      assign image_ratio_mobile = '--aspect-ratio-mobile:' | append: image_ratio_mobile_value | append: ';'
+      endif
+      endif
+  -%}
+  <div class="bg-preloader" style="--aspect-ratio: {{image_ratio}};{{ image_ratio_mobile }}">
+    
+    {%- liquid
+        assign image = image_source
+       
+        capture image_class
+        if settings.animate_image_show and animate_image_show_enabled
+        echo 'image-show--fadein'
+        endif
+        endcapture
+       
+        if section_index > 2 or load_priority_low == 'true'
+          assign loading = "eager"
+        else
+          assign loading = "eager"
+        endif
+
+        assign fetch_priority = 'auto'
+        if section_index <= 1 and load_priority_low != 'true' and section.location == "template"
+          assign fetch_priority = 'high'
+        endif
+    -%}
+    <tag-image>
+      {%- if section_index <= 1 and load_priority_low != 'true' and section.location == "template" -%}
+        <img
+          src="{{ image | image_url: width: image.width }}"
+          loading="eager"
+          fetchpriority="high"
+          alt="{% if alt == '' %}{{ image.alt }}{% else %}{{ alt }}{% endif %}"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          {% if image_class != blank or parallax %}class="{% if parallax %} section-background__elements__item{% endif %}"{% endif %}
+          {% if parallax %}data-scale="0"{% endif %}
+        >
+      {%- else -%}
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+        data-main="{{ image | image_url: width: '50' }}"
+        loading="{{ loading }}"
+        fetchpriority="{{ fetch_priority }}"
+        alt="{% if alt == '' %}{{ image.alt }}{% else %}{{ alt }}{% endif %}"
+        width="{{ image.width }}"
+        height="{{ image.height }}"
+        {% if image_class != blank or parallax %}class="{{ image_class }}{% if parallax %} section-background__elements__item{% endif %}"{% endif %}
+        {% if parallax %}data-scale="0"{% endif %}
+      >
+      {%- endif -%}
+    </tag-image>
+    {%- if image_mobile_source != blank -%}
+    <tag-image>
+      {%- if section_index <= 1 and load_priority_low != 'true' and section.location == "template" -%}
+        <img
+          src="{{ image_mobile_source | image_url: width: 419 }}"
+          loading="eager"
+          fetchpriority="high"
+          alt="{% if alt == '' %}{{ image_mobile_source.alt }}{% else %}{{ alt }}{% endif %}"
+          width="{{ image_mobile_source.width }}"
+          height="{{ image_mobile_source.height }}"
+          {% if image_class != blank or parallax %}class="{% if parallax %} section-background__elements__item{% endif %}"{% endif %}
+          {% if parallax %}data-scale="0"{% endif %}
+        >
+      {%- else -%}
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+        data-main="{{ image_mobile_source | image_url: width: '50' }}"
+        loading="{{ loading }}"
+        fetchpriority="{{ fetch_priority }}"
+        alt="{% if alt == '' %}{{ image_mobile_source.alt }}{% else %}{{ alt }}{% endif %}"
+        width="{{ image_mobile_source.width }}"
+        height="{{ image_mobile_source.height }}"
+        {% if image_class != blank or parallax %}class="{{ image_class }}{% if parallax %} section-background__elements__item{% endif %}"{% endif %}
+        {% if parallax %}data-scale="0"{% endif %}
+      >
+      {%- endif -%}
+    </tag-image>
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+  {{ video_html }}
+</div>

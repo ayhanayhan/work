@@ -1,0 +1,702 @@
+{
+  "format": "ticarti-skin-catalog@1",
+  "version": "1.0.1",
+  "themeSlug": "ticarti-signature-complete",
+  "defaultSkin": "demo-1",
+  "groups": [
+    {
+      "slug": "main-demos",
+      "name": "Ana Demolar",
+      "sortOrder": 10
+    },
+    {
+      "slug": "classic-skins",
+      "name": "Klasik Skinler",
+      "sortOrder": 20
+    },
+    {
+      "slug": "new-skins",
+      "name": "Yeni Skinler",
+      "sortOrder": 30
+    }
+  ],
+  "skins": [
+    {
+      "slug": "demo-1",
+      "name": "Home Demo 1",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 1,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-2",
+      "name": "Home Demo 2",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 2,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-3",
+      "name": "Home Demo 3",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 3,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-4",
+      "name": "Home Demo 4",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 4,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-5",
+      "name": "Home Demo 5",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 5,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-6",
+      "name": "Home Demo 6",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 6,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-7",
+      "name": "Home Demo 7",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 7,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-8",
+      "name": "Home Demo 8",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 8,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-9",
+      "name": "Home Demo 9",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 9,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-10",
+      "name": "Home Demo 10",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 10,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-11",
+      "name": "Home Demo 11",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 11,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-12",
+      "name": "Home Demo 12",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 12,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-13",
+      "name": "Home Demo 13",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 13,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-14",
+      "name": "Home Demo 14",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 14,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-15",
+      "name": "Home Demo 15",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 15,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-16",
+      "name": "Home Demo 16",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 16,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-17",
+      "name": "Home Demo 17",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 17,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-18",
+      "name": "Home Demo 18",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 18,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-19",
+      "name": "Home Demo 19",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 19,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-20",
+      "name": "Home Demo 20",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 20,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-21",
+      "name": "Home Demo 21",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 21,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "demo-22",
+      "name": "Home Demo 22",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 22,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "american-gear-football-store",
+      "name": "American Gear Football Store",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 201,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "baby-care-store",
+      "name": "Baby Care Store",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 202,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "baseball-gear-store",
+      "name": "Baseball Gear Store",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 203,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "basketball-gear-store",
+      "name": "Basketball Gear Store",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 204,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "beers-store",
+      "name": "Beers Store",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 205,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "bicycle-store-1",
+      "name": "Bicycle Store #1",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 206,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "bicycle-store-2",
+      "name": "Bicycle Store #2",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 207,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "books-store-1",
+      "name": "Books Store #1",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 208,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "books-store-2",
+      "name": "Books Store #2",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 209,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "cakes-and-pastries-store-catalog",
+      "name": "Cakes & Pastries Store (Catalog)",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 210,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "cars-store",
+      "name": "Cars Store",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 211,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "christmas-store",
+      "name": "Christmas Store",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 212,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "clothes-store",
+      "name": "Clothes Store",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 213,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "coffee-store",
+      "name": "Coffee Store",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 214,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "comic-books-store",
+      "name": "Comic Books Store",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 215,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "cookware-store",
+      "name": "Cookware Store",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 216,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "cosmetics-store",
+      "name": "Cosmetics Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 217,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "drones-store",
+      "name": "Drones Store",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 218,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "eco-food-store",
+      "name": "Eco Food Store",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 219,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "electronics-store-1",
+      "name": "Electronics Store #1",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 220,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "flowers-store",
+      "name": "Flowers Store",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 221,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "food-delivery-store-restaurant",
+      "name": "Food Delivery Store (Restaurant)",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 222,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "furniture-store-1",
+      "name": "Furniture Store #1",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 223,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "furniture-store-2",
+      "name": "Furniture Store #2",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 224,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "glasses-store",
+      "name": "Glasses Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 225,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "gothic-and-rock-clothing",
+      "name": "Gothic and Rock Clothing",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 226,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "handmade-store-sculptor",
+      "name": "Handmade Store (Sculptor)",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 227,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "jewelry-store",
+      "name": "Jewelry Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 228,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "kids-clothes-store",
+      "name": "Kids Clothes Store",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 229,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "kids-toys-store",
+      "name": "Kids Toys Store",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 230,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "lifestyle-store",
+      "name": "LifeStyle Store",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 231,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "lingerie-store",
+      "name": "Lingerie Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 232,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "medical-store",
+      "name": "Medical Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 233,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "olives-store",
+      "name": "Olives Store",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 234,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "phone-cases-store",
+      "name": "Phone Cases Store",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 235,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "phones-store",
+      "name": "Phones Store",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 236,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "plants-store",
+      "name": "Plants Store",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 237,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "single-product-store-1",
+      "name": "Single Product Store #1",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 238,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "single-product-store-2",
+      "name": "Single Product Store #2",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 239,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "single-product-store-3",
+      "name": "Single Product Store #3",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 240,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "skin-care-store",
+      "name": "Skin Care Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 241,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "snowboards-store",
+      "name": "Snowboards Store",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 242,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "t-shirt-store",
+      "name": "T-Shirt Store",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 243,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "tea-store",
+      "name": "Tea Store",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 244,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "tools-store-1",
+      "name": "Tools Store #1",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 245,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "tools-store-2",
+      "name": "Tools Store #2",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 246,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "wallets-store",
+      "name": "Wallets Store",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 247,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "watches-store",
+      "name": "Watches Store",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 248,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "weapons-store",
+      "name": "Weapons Store",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 249,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "yoga-gear-store",
+      "name": "Yoga Gear Store",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 250,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "antiques-store",
+      "name": "Antique Store",
+      "group": "new-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 401,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "electronics-store-2",
+      "name": "Electronics Store #2",
+      "group": "new-skins",
+      "category": "Elektronik",
+      "sortOrder": 402,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "food-and-drinks-store",
+      "name": "Food & Drinks Store",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 403,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "food-delivery-store",
+      "name": "Food Delivery Store",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 404,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "hookah-store",
+      "name": "Hookah Store",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 405,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "organic-store",
+      "name": "Organic",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 406,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "pets-supplies-1",
+      "name": "Pets Supplies #1",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 407,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "pets-supplies-2",
+      "name": "Pets Supplies #2",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 408,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "shoes-store",
+      "name": "Shoes Store",
+      "group": "new-skins",
+      "category": "Moda",
+      "sortOrder": 409,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "sport-nutrition-store",
+      "name": "Sport Nutrition Store",
+      "group": "new-skins",
+      "category": "Spor",
+      "sortOrder": 410,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "start-up-store",
+      "name": "Start Up Store",
+      "group": "new-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 411,
+      "version": "1.0.0"
+    },
+    {
+      "slug": "tattoo-store",
+      "name": "Tattoo Salon",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 412,
+      "version": "1.0.0"
+    }
+  ],
+  "planFeature": {
+    "key": "themeSkins",
+    "semantics": "Only listed skin slugs are visible to merchants. A missing key falls back to demo-1; an empty array intentionally hides all skins."
+  },
+  "catalogGroup": "Ticarti Temaları"
+}

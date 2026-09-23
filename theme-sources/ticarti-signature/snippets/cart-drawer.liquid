@@ -1,0 +1,499 @@
+{%- render 'style-loader',
+array:'
+component-cart-drawer.css,
+component-price.css,
+component-product-card.css,
+section-grid-of-products.css,
+component-inputs.css,
+component-visual-display.css,
+component-visual-display-card.css,
+component-toggle.css,
+component-cart-items.css,
+swiper-bundle.min.css,
+component-swiper-slider.css
+' -%}
+{%- assign popups = section.blocks | where: "type", "complementary" -%}
+{%- for block in popups -%}
+{%- render 'style-loader', array:'component-cart-drawer-recom.css' -%}
+{%- endfor -%}
+
+<script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+<cart-drawer class="popup-modal popup-modal__right cart-drawer-container{% if cart == empty %} is-empty{% endif %}">
+  <div class="popup-modal__overlay" onclick="this.closest('.popup-modal').close()"></div>
+  <div id="CartDrawer" class="cart-drawer popup-modal__content popup-modal__content__f-height">
+    <button class="popup-modal__toggle modal-close-animation" type="button" onclick="this.closest('.popup-modal').close()" aria-label="{{ 'accessibility.close' | t }}">
+	  {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </button>
+    <drawer-inner class="drawer__inner popup-modal__content__data custom__scrollbar" role="dialog" aria-modal="true" aria-label="{{ 'sections.cart.title' | t }}" tabindex="-1">
+      {%- if cart == empty -%}
+      <div class="drawer__inner-empty">
+        <div class="cart__warnings text-center">
+          <div class="cart-drawer__empty-content">
+            <div class="cart__warnings__icon">
+              {%- render "icon-cart" -%}
+            </div>
+            <h4 class="mb0">{{ 'sections.cart.empty' | t }}</h4>
+
+            <button class="mt40 btn btn__transition-text w-full"
+                    type="button"
+                    onclick="this.closest('cart-drawer').close()"
+                    aria-label="{{ 'accessibility.close' | t }}"
+                    >
+              <div class="btn__texts">
+                <span class="btn__top-text is-visible">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+                <span class="btn__bottom-text is-hidden">{{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'general.continue_shopping' | t }}</span>
+              </div>
+            </button>
+
+            {%- if shop.customer_accounts_enabled and customer == nil -%}
+              <p class="h5 mt40">{{ 'sections.cart.login.title' | t }}</p>
+              <p class="mt16 body2">
+                {{ 'sections.cart.login.paragraph_html' | t: link: routes.account_login_url }}
+              </p>
+            {%- endif -%}
+      
+          </div>
+        </div>
+
+        {%- if settings.cart_drawer_collection != blank -%}
+        <div class="cart-drawer__collection-products mt40">
+          <h6 class="mt0 mb0">{{ "general.cart.drawer_collection_heading" | t }}</h6>
+          <div class="mt16 swiper-no-mask-mobile">
+            {%- assign data_grid = "2,2,2,2,3" -%}
+            <swiper-slider class="swiper"
+                           data-swiper-desktop-grid="3"
+                           data-swiper-tablet-grid="2"
+                           data-gutter="15"
+                           data-gutter-mobile="15"
+                           data-grid="{{ data_grid }}"
+                           data-autoplay="false"
+                           data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+              >
+              <div class="swiper-wrapper swiper-wrapper--max-height">
+                {%- for product in settings.cart_drawer_collection.products limit:4 -%}
+                <div class="swiper-slide" lazy="true">
+                  {%- render 'product-card',
+                    customize: true,
+                    product_card_product: product,
+                    product_collection:settings.cart_drawer_collection,
+                    image_ratio_value: settings.cart_drawer_image_ratio,
+                    image_hover_type: 'default',
+                    show_secondary_image: 'normal',
+                    show_price:true,
+                    show_sku:false,
+                    show_vendor:settings.show_vendor,
+                    show_type:false,
+                    hover_underline:false,
+                    button_type_product: "hide",
+                    show_quantity: false,
+                    show_badge_sold_out:true,
+                    show_badge_on_sale:true,
+                    show_badge_feature:true,
+                    show_countdown:true,
+                    truncate_product_name:true,
+                    small_radius:true,
+                    enable_rating_product_card: settings.enable_rating_drawer
+                -%}
+                </div>
+                {%- endfor -%}
+              </div>
+            </swiper-slider>
+            <div class="swiper-control-container">
+              <div class="custom-swiper-button-prev">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+              <div class="swiper-pagination"></div>
+              <div class="custom-swiper-button-next">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+            </div>
+          </div>
+        </div>
+        {%- endif -%}
+
+      </div>        
+      {%- endif -%}
+      <div class="drawer__footer">
+        <div class="drawer__footer-content">
+          <h4 class="drawer__heading mt0 mb0">{{ 'sections.cart.title' | t }}</h4>
+          {%- if settings.show_free_delivery -%}
+          <div id="cart-page-free-delivery" class="free-delivery-bar">
+            {%- render "free-delivery-bar" -%}
+            <div class="free-delivery-bar__end hide"></div>
+          </div>
+          {%- endif -%}
+
+          <cart-drawer-items{% if cart == empty %} class="is-empty"{% endif %}>
+            <form action="{{ routes.cart_url }}" id="CartDrawer-Form" method="post">
+            </form>
+            <div class="cart__contents cart-drawer__form">
+              <div id="CartDrawer-CartItems" class="drawer__contents js-contents">
+  
+                {%- if cart != empty -%}
+                
+                <div class="drawer__cart-items-wrapper">
+                  {%- assign ids = "" -%}
+                  {%- for item in cart.items -%}
+                  <div class="drawer__cart-item" id="CartDrawer-Item-{{ item.index | plus: 1 }}">
+                    <div class="drawer__cart-item__content">
+                      {% if item.image %}
+                      <div class="drawer__cart-item__media {{ settings.image_hover }}">
+                        <a href="{{ item.url }}" class="image-hover-box__container{% if settings.cart_drawer_image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+                          <div class="image-hover-box image-hover-box__small-radius">
+                            {%- liquid
+                            if settings.cart_drawer_image_ratio != 'auto'
+                            assign image_ratio = settings.cart_drawer_image_ratio
+                            else
+                            assign image_ratio = item.image.aspect_ratio
+                            if item.image.aspect_ratio == nil
+                            assign image_ratio = 1
+                            endif
+                            endif 
+                            -%}
+        
+                            <div style="--aspect-ratio: {{image_ratio}};">
+                              <img srcset="{{ item.image | image_url: width: 500 }} 1x, {{ item.image | image_url: width: 1000 }} 2x"
+                                   src="{{ item.image | image_url: width: 500 }}"
+                                   loading="lazy"
+                                   width="{{ item.image.width }}"
+                                   height="{{ item.image.height }}"
+                                   alt="{{ item.image.alt | escape }}"
+                                   >
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      {% endif %}
+                      <div class="drawer__cart-item__details">
+                        <div class="drawer__cart-item__details__items body3 mt--first-child-0">
+                          {%- if settings.show_vendor -%}
+                          <p>
+                            <a class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover"
+                               href="{{ routes.collections_url }}/all?filter.p.vendor={{ item.product.vendor | escape }}">{{ item.product.vendor }}</a>
+                          </p>
+                          {%- endif -%}
+        
+                          <a href="{{ item.url }}" class="mt10 h6 cart-item__heading animation-underline">{{ item.product.title | escape }}</a>
+
+                          <div class="mt10">{{ item.original_price | money }}</div>
+                          {%- if item.product.has_only_default_variant == false or item.properties.size != 0 or item.selling_plan_allocation != nil -%}
+                          <dl class="mt3">
+                            {%- if item.product.has_only_default_variant == false -%}
+                            {%- for option in item.options_with_values -%}
+                            <div class="product-option">
+                              <dt>{{ option.name }}: </dt>
+                              <dd>{{ option.value }}</dd>
+                            </div>
+                            {%- endfor -%}
+                            {%- endif -%}
+        
+                            {%- for property in item.properties -%}
+                            {%- assign property_first_char = property.first | slice: 0 -%}
+                            {%- if property.last != blank and property_first_char != '_' -%}
+                            <div class="product-option">
+                              <dt>{{ property.first }}: </dt>
+                              <dd>
+                                {%- if property.last contains '/uploads/' -%}
+                                <a href="{{ property.last }}" target="_blank">
+                                  {{ property.last | split: '/' | last }}
+                                </a>
+                                {%- else -%}
+                                {{ property.last }}
+                                {%- endif -%}
+                              </dd>
+                            </div>
+                            {%- endif -%}
+                            {%- endfor -%}
+                          </dl>
+        
+                          <p class="product-option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                          {%- endif -%}
+
+                          {%- capture _content -%}
+                          {%- for discount in item.discounts -%}
+                          <li class="discounts__discount cart-item-message__content">
+							              {{- 'icon-discount' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            <span class="cart-item-message__content__text">{{ discount.title }}</span>
+                          </li>
+                          {%- endfor -%}
+                          {%- endcapture -%}
+                          <ul class="mt10 discounts cart-item-message unstyle-ul" role="list" aria-label="{{ 'customer.order.discount' | t }}">{{ _content }}</ul>
+
+                          <div class="cart-item__error cart-item-message__content" id="CartDrawer-LineItemError-{{ item.index | plus: 1 }}" role="alert">
+                            <span class="cart-item__error-text cart-item-message__content__text"></span>
+							              {{- 'icon-info' | append: settings.system_icon_thickness | inline_asset_content -}}
+                          </div>
+                        </div>
+                        <div class="cart-item__quantity mt20">
+                          <label class="visually-hidden" for="Drawer-quantity-{{ item.index | plus: 1 }}">
+                            {{ 'products.product.quantity.label' | t }}
+                          </label>
+                          <quantity-input class="field quantity">
+                            {%- assign inv_man = item.variant.inventory_management -%}{%- assign inv_qua = item.variant.inventory_quantity | plus: 0 -%}{%- unless inv_man -%}{%- assign inv_qua = 100000 -%}{%- endunless -%}{%- if item.variant.inventory_policy == "continue" -%}{%- assign inv_qua = 100000 -%}{%- endif -%}
+                            <button class="quantity__button"
+                                    name="minus"
+                                    type="button"{% if item.quantity == 1 %}
+                                    style="display: none;"{% endif %}
+                                    form="CartDrawer-Form">
+                              <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t: product: item.product.title | escape }}</span>
+							                 {{- 'icon-minus' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            </button>
+                            <input id="Drawer-quantity-{{ item.index | plus: 1 }}"
+                                   class="field__input quantity__input"
+                                   type="number"
+                                   name="updates[]"
+                                   value="{{ item.quantity }}"
+                                   data-quantity-variant-id="{{ item.variant.id }}"
+                                   {% # theme-check-disable %}
+                                   data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                                   min="0"
+                                   max="{{ inv_qua }}"
+                                   step="1"
+                                   {% # theme-check-enable %}
+                                   aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
+                                   data-index="{{ item.index | plus: 1 }}"
+                                   {% if inv_qua == 1 %}disabled{% endif %}
+                                   form="CartDrawer-Form"
+                                   >
+                            <button class="quantity__button"
+                                    name="plus"
+                                    type="button"{% if item.quantity == inv_qua %}
+                                    style="display: none;"{% endif %}
+                                    form="CartDrawer-Form">
+                              <span class="visually-hidden">{{ 'products.product.quantity.increase' | t: product: item.product.title | escape }}</span>
+							                {{- 'icon-plus' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            </button>
+                          </quantity-input>
+      
+                          <cart-remove-button id="CartDrawer-Remove-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}">
+                            <a href="{{ item.url_to_remove }}" class="cart-item__remove-button transition-up" aria-label="{{ 'sections.cart.remove_title' | t: title: item.title }}">
+							                {{- 'icon-remove' | append: settings.system_icon_thickness | inline_asset_content -}}
+                            </a>
+                          </cart-remove-button>
+                        </div>
+                        <div class="cart-item__totals mt20">
+                          <div class="loading-overlay hidden">
+                            <div class="loading-overlay__spinner">
+                              <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                              </svg>
+                            </div>
+                          </div>
+                          {%- if item.original_line_price != item.final_line_price -%}
+                          <div class="cart-item__discounted-prices">
+                            <div class="visually-hidden">
+                              {{ 'products.product.price.regular_price' | t }}
+                            </div>
+                            <div>                     
+                              <div class="price price__regular body3">
+                                {{ item.original_line_price | money }}
+                              </div>
+                            </div>
+                            <div class="visually-hidden">
+                              {{ 'products.product.price.sale_price' | t }}
+                            </div>
+                            <div class="h5 price__sale mt3">
+                              {{ item.final_line_price | money }}
+                            </div>
+                          </div>
+                          {%- else -%}
+                          <span class="h5 price__main">
+                            {{ item.original_line_price | money }}
+                          </span>
+                          {%- endif -%}
+        
+                          {%- if item.variant.available and item.unit_price_measurement -%}
+                          <div class="mt3 unit-price body3">
+                            <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+                            {{ item.variant.unit_price | money }}
+                            <span aria-hidden="true">/</span>
+                            <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+                            {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+                            {{- item.variant.unit_price_measurement.reference_value -}}
+                            {%- endif -%}
+                            {{ item.variant.unit_price_measurement.reference_unit }}
+                          </div>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+        
+                  {% assign popups = section.blocks | where: "type", "complementary" %}
+                  {%- for block in popups -%}
+                  {%- assign limit = block.settings.desk_count | at_least: block.settings.mobile_count -%}
+                  {%- unless ids contains item.product_id -%}
+                  <div class="drawer__footer-content__left dcomp__mobile hide">
+                    <div class="drawer__footer-content__left__content custom__scrollbar" role="dialog" tabindex="-1" data-product-id-js="dcomp-{{ item.product_id }}">
+                      <h6 class="mt0 drawer__footer-content__left__heading">{{ "general.cart.complementary_products" | t: product_name: item.product.title }}</h6>
+                      <complementary-products
+                        class="complementary-products complementary-products-drawer display-block"
+                        data-url="{{ routes.product_recommendations_url }}?intent=complementary"
+                        data-section-id="{{ section.id }}"
+                        data-product-id="{{ item.product_id }}"
+                      >{%- if recommendations.performed and recommendations.products_count > 0 -%}
+                        {%- for product in recommendations.products limit:limit -%}
+                        {%- render "product-card-complementary",
+                            section: section,
+                            block: block,
+                            product: product,
+                            show_variant_picker: true,
+                            show_immediately: true,
+                            price_size:'normal'
+                        -%}
+                        {%- endfor -%}
+                        {%- endif -%}</complementary-products>
+                    </div>
+                  </div>
+                  {%- endunless -%}
+                  {%- endfor -%}
+                  {%- assign ids = ids | append: item.product_id -%}
+
+                  {%- endfor -%}
+
+                </div>
+                {%- endif -%}
+          
+                <p id="CartDrawer-LiveRegionText" class="visually-hidden" role="status"></p>
+                <p id="CartDrawer-LineItemStatus" class="visually-hidden" aria-hidden="true" role="status">{{ 'accessibility.loading' | t }}</p>
+              </div>
+              <div id="CartDrawer-CartErrors" role="alert"></div>
+            </div>
+          </cart-drawer-items>
+        </div>
+        <div class="drawer__footer-footer">
+          {%- if settings.show_cart_note -%}
+          <toggle-component class="cart-drawer__toggle chm-toggle--accordion mt40">
+            <details class="chm-toggle">
+              <summary>
+                <div class="chm-toggle__button">
+                  <h6 class="mt0 mb0">{{ "general.cart.drawer_note_heading" | t }}</h6>
+                  <div class="plusminus"></div>
+                </div>
+              </summary>
+              <div class="chm-toggle__content section__richtext__editor">
+                <cart-note class="field field--text-area">
+                  <textarea class="text-area field__input"
+                            id="CartDrawer-Note"
+                            name="note"
+                            placeholder="{{ 'sections.cart.note' | t }}"
+                            >{{ cart.note }}</textarea>         
+                  <label class="field__label" for="CartDrawer-Note">{{ 'sections.cart.note' | t }}</label>
+                </cart-note>
+              </div>
+            </details>
+          </toggle-component>
+          {%- endif -%}
+
+          {%- if settings.show_add_discount_code -%}
+          {%- capture html -%}
+          {%- render "cart-discount", section_id:section.id -%}
+          {%- endcapture -%}
+          <toggle-component class="cart-drawer__toggle chm-toggle--accordion mt40">
+            <details class="chm-toggle{% if html contains 'cart-discount__pill' %} toggle-opening toggle-opening-auto{% endif %}"{% if html contains 'cart-discount__pill' %} open{% endif %}>
+              <summary>
+                <div class="chm-toggle__button">
+                  <h6 class="mt0 mb0">{{ "general.cart.drawer_discount_heading" | t }}</h6>
+                  <div class="plusminus"></div>
+                </div>
+              </summary>
+              <div class="chm-toggle__content section__richtext__editor">{{- html -}}</div>
+            </details>
+          </toggle-component>
+          {%- endif -%}
+
+          <div class="cart__footer__information">
+            <div class="cart__footer__content js-contents body3" {{ block.shopify_attributes }}>
+              <div class="totals">
+                <h4 class="mt0 mb0 totals__subtotal">{{ 'sections.cart.subtotal' | t }}</h4>&nbsp;
+                <p class="mt0 h4 totals__subtotal-value">{{ cart.total_price | money_with_currency }}</p>
+              </div>
+  
+              {% if settings.show_installments %}
+                <span class="cart__summary-item cart__installments display-block body2 mt10">{% form 'cart', cart %}{{ form | payment_terms }}{% endform %}</span>
+              {% endif %}
+              {%- if cart.cart_level_discount_applications.size > 0 -%}
+              <div class="mt10">
+                <ul class="discounts unstyle-ul body3" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                  {%- for discount in cart.cart_level_discount_applications -%}
+                  <li class="discounts__discount cart-item-message__content">
+					          {{- 'icon-discount' | append: settings.system_icon_thickness | inline_asset_content -}}
+                    <span class="cart-item-message__content__text">{{ discount.title }}(-{{ discount.total_allocated_amount | money }})</span>
+                  </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+              {%- endif -%}
+
+              {%- capture _content -%}
+              {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+              {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+              {%- elsif cart.taxes_included -%}
+              {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+              {%- elsif shop.shipping_policy.body != blank -%}
+              {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+              {%- else -%}
+              {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+              {%- endif -%}
+              {%- endcapture -%}
+              {%- if _content != blank -%}
+              <div class="tax-note mt10">{{ _content }}</div>
+              {%- endif -%}
+            </div>
+  
+            {%- if settings.terms_and_condition_checkbox -%}
+            <terms_and_condition-checkbox class="mt20 display-block">
+              <label for="product-terms_and_condition_checkbox-{{ section.id }}" class="checkbox-input body2">
+                <input id="product-terms_and_condition_checkbox-{{ section.id }}"
+                       type="checkbox">
+                <div class="checkbox-input__checkmark">
+                  <div class="checkbox-input__flip">
+                    <div class="checkbox-input__front"></div>
+                    <div class="checkbox-input__back">
+					            {{- 'icon-checkmark' | append: settings.system_icon_thickness | inline_asset_content -}}
+                    </div>
+                  </div>
+                </div>
+                <span>{{ 'general.accept_terms_checkbox_html' | t }}</span>
+              </label>
+            </terms_and_condition-checkbox>
+            {%- endif -%}
+            {%- if settings.show_checkout_button -%}
+            <div class="mt20">
+              <button type="submit"
+                      id="CartDrawer-Checkout"
+                      class="btn btn--checkout btn__transition-text w-full"
+                      name="checkout"
+                      form="CartDrawer-Form"{% if cart == empty %} disabled{% endif %}
+                      >
+                <div class="btn__texts">
+                  <span class="btn__top-text is-visible">{{- 'icon-check' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'sections.cart.checkout' | t }}</span>
+                  <span class="btn__bottom-text is-hidden">{{- 'icon-check' | append: settings.system_icon_thickness | inline_asset_content -}}{{ 'sections.cart.checkout' | t }}</span>
+                </div>
+              </button>
+            </div>
+            {%- endif -%}
+            {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+            <div class="cart__dynamic-checkout-buttons additional-checkout-buttons additional-checkout-buttons--vertical mt10">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+
+            <div class="mt40 drawer__inner__links">
+              <button class="link link-hover-span btn-font{% if settings.buttons_font_weight == 'strong' %} strong{% endif %}{% if settings.buttons_uppercase %} text-uppercase{% endif %}" type="button" onclick="this.closest('.popup-modal').close()" aria-label="{{ 'accessibility.close' | t }}">
+                {{- 'icon-arrow-left-2' | append: settings.system_icon_thickness | inline_asset_content -}}
+                <span>{{ 'general.continue_shopping' | t }}</span>
+              </button>
+              <a href="{{ routes.cart_url }}" class="link link-hover-span btn-font{% if settings.buttons_font_weight == 'strong' %} strong{% endif %}{% if settings.buttons_uppercase %} text-uppercase{% endif %}">
+                <span>{{- 'general.cart.view_empty_cart' | t -}}</span>
+                {{- 'icon-arrow-right-2' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </a>
+            </div>
+          </div>            
+          
+        </div>
+      </div>
+    </drawer-inner>
+    {%- assign popups = section.blocks | where: "type", "complementary" -%}
+    {%- for block in popups -%}
+    <div class="drawer__footer-content__left dcomp__desk dcomp__desk-js">
+      <div class="drawer__footer-content__left__content custom__scrollbar" role="dialog" tabindex="-1"></div>
+    </div>
+    {%- endfor -%}
+  </div>
+</cart-drawer>

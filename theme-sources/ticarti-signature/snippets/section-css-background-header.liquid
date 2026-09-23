@@ -1,0 +1,105 @@
+{%- capture section_styles -%}
+{%- if block_topbar_object.settings.background != 'hide' -%}
+{%- liquid
+	capture color
+	if block_topbar_object.settings.background == 'color'
+    echo block_topbar_object.settings.color_background
+    else
+    echo block_topbar_object.settings.gradient
+    endif
+    endcapture
+-%}
+{%- if color != "rgba(0,0,0,0)" and color != blank and block_topbar_object.settings.background != 'image' -%}
+#theme-block-{{ block_topbar_object.id }}.header__top-bar{
+  --color-section-background-custom: {{ color }};
+}
+{%- endif -%}
+{%- assign image = block_topbar_object.settings.background_image -%}
+{%- if block_topbar_object.settings.background == 'image' -%}
+#theme-block-{{ block_topbar_object.id }}.header__top-bar.section-background,
+#theme-block-{{ block_topbar_object.id }}.header__top-bar .section-background{
+  --color-section-background-custom:transparent;
+}
+{%- endif -%}
+{%- if block_topbar_object.settings.background == 'image' and image != blank -%}
+#theme-block-{{ block_topbar_object.id }}.header__top-bar.section-background,
+#theme-block-{{ block_topbar_object.id }}.header__top-bar .section-background{
+  {%- assign opacity = block_topbar_object.settings.image_overlay_opacity | divided_by: 100.00 -%}
+  {%- if block_topbar_object.settings.image_overlay_color != "rgba(0,0,0,0)" -%}
+  --color-image-overlay:{{ block_topbar_object.settings.image_overlay_color.red }}, {{ block_topbar_object.settings.image_overlay_color.green }}, {{ block_topbar_object.settings.image_overlay_color.blue }};
+  {%- endif -%}
+  background-image:linear-gradient(rgba(var(--color-image-overlay), {{ opacity }}),rgba(var(--color-image-overlay), {{ opacity }})), url("{{ image | image_url: width: image.width }}");
+  background-position: {{ block_topbar_object.settings.imagealign }};
+  background-repeat: no-repeat;
+  background-size: {{ block_topbar_object.settings.imagesize }};
+}
+{%- endif -%}
+{%- endif -%}
+{%- if section.settings.background != 'hide' -%}
+{%- liquid
+	capture color
+	if section.settings.background == 'color'
+    echo section.settings.color_background
+    else
+    echo section.settings.gradient
+    endif
+    endcapture
+-%}
+#theme-section-{{ section.id }} .header__main.section-background,
+#theme-section-{{ section.id }} .header__main .section-background{
+  {%- if color != "rgba(0,0,0,0)" and color != blank and section.settings.background != 'image' -%}
+  --color-section-background: {{ color }};
+	{%- if section.settings.background == 'color' -%}
+  --matte-effect-bg:rgb(from {{ color }} r g b / {{ settings.matte_effect_opacity | divided_by: 100.00 }});
+  {%- else -%}
+  {%- assign opacity = settings.matte_effect_opacity | divided_by: 100.00 -%}
+  {%- assign opacity = opacity | append: ')' -%}
+  --matte-effect-bg:{{ color | replace: "1)", opacity }};
+  {%- endif -%}
+  {%- else -%}
+  --color-section-background: var(--color-body-background);
+  {%- endif -%}
+}
+{%- assign image = section.settings.background_image -%}
+{%- if section.settings.background == 'image' and image != blank -%}
+#theme-section-{{ section.id }} .header__main.section-background,
+#theme-section-{{ section.id }} .header__main .section-background{
+  {%- assign opacity = section.settings.image_overlay_opacity | divided_by: 100.00 -%}
+  {%- if section.settings.image_overlay_color != "rgba(0,0,0,0)" -%}
+  --color-image-overlay:{{ section.settings.image_overlay_color.red }}, {{ section.settings.image_overlay_color.green }}, {{ section.settings.image_overlay_color.blue }};
+  {%- endif -%}
+  background-image:linear-gradient(rgba(var(--color-image-overlay), {{ opacity }}),rgba(var(--color-image-overlay), {{ opacity }})), url("{{ image | image_url: width: image.width }}");
+  background-position: {{ section.settings.imagealign }};
+  background-repeat: no-repeat;
+  background-size: {{ section.settings.imagesize }};
+}
+{%- endif -%}
+{%- endif -%}
+#theme-section-{{ section.id }}:has(.header__top-bar .section-background):has(.header__main .section-background) .header__top-bar .section-background.border__radius{
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+#theme-section-{{ section.id }}:has(.header__top-bar .section-background):has(.header__main .section-background) .header__main .section-background.border__radius{
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+} 
+{%- endcapture -%}
+{%- if section_styles != blank or settings.color_background_header_mobile != "rgba(0,0,0,0)" -%}
+<style>
+{%- if section_styles != blank -%}
+@media (min-width:1025px){
+  {{ section_styles }};
+}
+{%- endif -%}
+@media (max-width:1024px){
+  #theme-section-{{ section.id }} .section-background:not(:has(.header__mobile__shadow)){
+    {%- if settings.color_background_header_mobile != "rgba(0,0,0,0)" -%}
+    background:{{ settings.color_background_header_mobile }};
+    --matte-effect-bg:rgb(from {{ settings.color_background_header_mobile }} r g b / {{ settings.matte_effect_opacity | divided_by: 100.00 }});
+    {%- else -%}
+    background:unset;
+    {%- endif -%}
+  }
+}
+</style>
+{%- endif -%}

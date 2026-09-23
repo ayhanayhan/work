@@ -1,0 +1,33 @@
+{%- if block.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+<localization-form>
+  {%- form 'localization', id: 'HeaderCountryForm', class: 'disclosure-form' -%}
+    <div class="disclosure-form-field">
+      <button type="button" class="disclosure-selector body3" aria-expanded="false" aria-controls="HeaderCountryList" aria-describedby="HeaderCountryLabel">
+        <span class="disclosure-form-field__text">
+          {% if block.settings.enable_country_selector_flag %}
+          <span class="disclosure-form-field__flag" style="background-image: url({{- localization.country | image_url: width: 40 }});"></span>
+          {% endif %}
+          {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})
+        </span>
+        <div class="disclosure-form-field__icon">
+          {{- 'icon-arrow-down-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+        </div>
+      </button>
+      <div id="HeaderCountryList" class="disclosure_element disclosure__list tobottom toright" hidden>
+        <div class="disclosure__list__content custom__scrollbar">
+          <ul role="list" class="unstyle-ul">
+            {%- for country in localization.available_countries -%}
+            <li tabindex="-1">
+              <a class="disclosure__link link link-hover-span link__base-to_accent-color body3{% if country.iso_code == localization.country.iso_code %} link-active{% endif %}" href="#"{% if country.iso_code == localization.country.iso_code %} aria-current="true"{% endif %} data-value="{{ country.iso_code }}">
+                <span>{{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})</span>
+              </a>
+            </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+      <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
+    </div>
+  {%- endform -%}
+</localization-form>
+{%- endif -%}

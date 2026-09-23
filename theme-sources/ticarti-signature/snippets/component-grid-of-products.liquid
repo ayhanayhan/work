@@ -1,0 +1,142 @@
+{%- liquid
+    assign product_limit = block.settings.product_limit
+    assign show_vendor = block.settings.show_vendor
+    assign hover_underline = block.settings.hover_underline
+    assign truncate_product_name = block.settings.truncate_product_name
+    assign show_price = block.settings.show_price
+    assign last_characters = 'general.abbreviation_of_text_in_a_section.last_characters' | t
+    if block.settings.show_secondary_image
+    assign show_secondary_image = "show_secondary_image"
+    else
+    assign show_secondary_image = false
+    endif
+-%}
+<div class="vertical-container vertical-container--{{ block.settings.grid }} vertical-container--st-{{ block.settings.grid_tablet }} dynamic-component__grid-of-products">
+  {%- assign __collection = block.settings.collection -%}
+  {%- if __collection != blank -%}
+  {%- for product in __collection.products limit: product_limit -%}
+  <div class="product-card-small hover-area {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}{% if block.settings.align_content == "center" %} align-items-center{% endif %}">
+    {%- if product.featured_media != blank -%}
+    <a href="{{ product.url }}" class="product-card-small__image-container product-card__image-container">
+      {%- liquid
+          assign image_ratio_value = block.settings.image_ratio
+          if forloop.index > 4
+          assign load_priority_low = 'true'
+          endif
+      -%}
+      <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+        {%- render "component-image-product-card",
+            image_ratio_value: image_ratio_value,
+            image_source: product.featured_media,
+            image_source2: product.media[1],
+            show_image_source2: show_secondary_image,
+            load_priority_low: load_priority_low,
+            section_index: 10
+        -%}
+      </div>
+    </a>
+    {%- endif -%}
+    <div class="product-card-small__content mt--first-child-0">
+      {%- capture badges -%}
+      {%- if product.available == false and block.settings.show_badge_sold_out -%}
+      <span class="badges-item__medium badges-item__sold-out">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif product.compare_at_price > product.price and product.available and block.settings.show_badge_on_sale -%}
+      <span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+      {%- endif -%}
+      {%- if product.metafields.softali.featured_badge != blank and block.settings.show_badge_feature -%}
+      <span class="badges-item__medium badges-item__main">{{ product.metafields.softali.featured_badge }}</span>
+      {%- endif -%}
+      {%- endcapture -%}
+      
+      {%- if badges != blank -%}
+      <div class="badges__container">{{- badges -}}</div>
+      {%- endif -%}
+      
+      {%- if show_vendor and product.vendor != blank -%}
+      <div class="body3 mt10">
+        <a class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}"
+           href="{{ routes.collections_url }}/{% if __collection == blank %}all{% else %}{{ __collection.handle }}{% endif %}?filter.p.vendor={{ product.vendor | escape }}">{{ product.vendor }}</a>
+      </div>
+      {%- endif -%}
+      <div class="body2 mt3">
+        <a href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+          {%- if truncate_product_name -%}
+          {{ product.title | escape | truncate: 48,last_characters }}
+          {%- else -%}
+          {{ product.title | escape }}
+          {%- endif -%}
+        </a>
+      </div>
+      {%- if show_price and settings.cart_type != "catalog_mode" -%}
+      {%- render 'price', product: product -%}
+      {%- endif -%}
+      {%- if settings.enable_rating and settings.cart_type != "catalog_mode" -%}{%- if block.settings.enable_rating_product_card -%}
+      {%- render 'review-stars' _product: product -%}
+      {%- endif -%}{%- endif -%}
+    </div>
+  </div>
+  {%- endfor -%}
+  {%- else -%}
+  {%- for i in (1..block.settings.product_limit) -%}
+
+  <div class="product-card-small hover-area {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}{% if block.settings.align_content == "center" %} align-items-center{% endif %}">
+    <div class="product-card-small__image-container product-card__image-container">
+      {%- liquid
+          assign image_ratio_value = block.settings.image_ratio
+          capture placeholder_icon
+          cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4'
+          endcapture
+      -%}
+      <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+        {%- render "component-image-product-card",
+            image_ratio_value: image_ratio_value,
+            image_source: "",
+            image_source2: "",
+            show_image_source2: show_secondary_image,
+            load_priority_low: load_priority_low,
+            section_index: 10,
+            placeholder_icon:placeholder_icon
+        -%}
+      </div>
+    </div>
+    <div class="product-card-small__content mt--first-child-0">
+      {%- if show_vendor -%}
+      <div class="body3 mt3">
+        <div class="mt0 product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">
+          VENDOR
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="body2 mt3">
+        <div href="{{ product.url }}" class="product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">
+          {{ "Product name" | escape }}
+        </div>
+      </div>
+      {%- if show_price -%}
+      <div class="price mt3">
+        <div class="price__regular body3">$12.18{% if settings.currency_code_enabled %} USD{% endif %}</div>
+        <div class="price__sale h5 mt3">From $8.66{% if settings.currency_code_enabled %} USD{% endif %}</div>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+    
+  {%- endfor -%}
+  {%- endif -%}
+</div>
+{%- if block.settings.link_name != blank and block.settings.collection.products.size > block.settings.product_limit -%}
+<div class="mt16 display-inline-flex">
+  <a href="{{ block.settings.collection.url }}" class="link link-hover-span body3">
+    <span>{{ block.settings.link_name }}</span>
+    {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+  </a>
+</div>
+{%- elsif __collection == blank -%}
+<div class="mt16 display-inline-flex">
+  <div class="link link-hover-span body3">
+    <span>{{ block.settings.link_name }}</span>
+    {{- 'icon-arrow-right-small' | append: settings.system_icon_thickness | inline_asset_content -}}
+  </div>
+</div>
+{%- endif -%}
+

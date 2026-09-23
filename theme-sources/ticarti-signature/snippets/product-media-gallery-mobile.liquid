@@ -1,0 +1,108 @@
+{% comment %}
+  Renders a product media gallery. Should be used with 'media-gallery.js'
+  Also see 'product-media-modal'
+
+  Accepts:
+  - section: {Object} Section liquid object
+  - product: {Object} Product liquid object
+  - variant_images: {Array} Product images associated with a variant
+  - limit: {Number} (optional) When passed, limits the number of media items to render
+
+  Usage:
+  {% render 'product-media-gallery-main' %}
+{% endcomment %}
+{%- liquid
+    assign media_id = product.selected_or_first_available_variant.featured_media.id
+    assign colors_array = product.metafields.ticarti.grouped_gallery | downcase
+    if colors_array and colors_array != blank
+    assign colors_array = product.metafields.ticarti.grouped_gallery | split: ','
+    endif
+-%}
+<swiper-slider-container class="swiper-slider__product-page__radius swiper-slider__container swiper-thumb__horizontal swiper-slider__product-page__mobile" data-current-media-id="{{ media_id }}">
+  <swiper-slider class="swiper swiper__no-padding-bottom swiper__animated-arrows swiper-no-pad swiper-no-marg swiper-slide__with-bg"
+                 data-swiper-desktop-grid="1"
+                 data-swiper-desktop-lg-grid="1"
+                 data-swiper-desktop-md-grid="1"
+                 data-swiper-tablet-grid="1"
+                 data-swiper-mobile-grid="1"
+                 data-gutter="0"
+                 data-gutter-mobile="0"
+                 data-grid="1,1,1,1,1"
+                 data-autoplay="false"
+                 
+                 data-autoheight="true"
+                 
+                 data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+    >
+    <div class="swiper-wrapper">
+      {%- for media in product.media -%}
+      <div class="swiper-slide"
+           {% if colors_array != blank %}data-current-color="{{ colors_array[forloop.index0] | downcase }}"{% endif %}
+           lazy="true">
+        <div class="product-media__item">
+          {%- render 'loader', position: "absolute" -%}
+          {%- render 'product-media', section:section, media: media, loop: section.settings.enable_video_looping, variant_image: variant_image -%}
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+    <div class="internal-swiper-button-prev">
+      {{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+    <div class="internal-swiper-button-next">
+      {{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+  </swiper-slider>
+  {%- if section.settings.media_type_mobile == "dots" -%}
+  <div class="swiper-control-container{% if section.settings.heading_aligment == "text-center" %} justify-content-center{% endif %}">
+    <div class="swiper-pagination"></div>
+  </div>
+  {%- endif -%}
+  {%- if product.media.size > 1 and section.settings.media_type_mobile == "thumbnails_horizontal" -%}
+  <div class="swiper-thumb__container__padding">
+    <div class="swiper-thumb__container custom__scrollbar swiper-thumb__container--horizontal custom__scrollbar--horizontal">
+      {%- for media in product.media -%}
+      <div class="swiper-thumb{% if forloop.first %} active{% endif %} {{ settings.image_hover }}"
+           {% if colors_array != blank %}data-current-color="{{ colors_array[forloop.index0] | downcase }}"{% endif %}
+           data-media-id="{{ media.id }}"
+        >
+        {%- liquid
+            capture image_ratio
+            if section.settings.image_ratio == 'auto'
+            echo media.preview_image.aspect_ratio
+            else
+            echo section.settings.image_ratio
+            endif
+            endcapture
+         -%}
+        <div class="product__media__thumb">
+          <div class="image-hover-box image-hover-box__small-radius">
+            <div class="product__media" style="--aspect-ratio: {{ image_ratio }};">
+              <img
+                srcset="{{ media.preview_image | image_url: width: 160 }} 1x,  {{ media.preview_image | image_url: width: 320 }} 2x"
+                src="{{ media.preview_image | image_url: width: 160 }}"
+                alt="{{ media.alt | escape }}"
+                loading="lazy"
+                width="160"
+                height="{{ 160 | divided_by: media.preview_image.aspect_ratio | ceil }}"
+                data-media-id="{{ media.id }}"
+              >
+            </div>
+          </div>
+          {%- if media.media_type == 'external_video' or media.media_type == 'video' -%}
+          <div class="product__media__thumb__icon">
+			{{- 'icon-play' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+          {%- endif -%}
+          {%- if media.media_type == 'model' -%}
+          <div class="product__media__thumb__icon">
+			{{- 'icon-3d-model' | append: settings.system_icon_thickness | inline_asset_content -}}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endif -%}
+</swiper-slider-container>

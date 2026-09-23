@@ -1,0 +1,12 @@
+runConfig:
+  minInstances: 1
+  maxInstances: 50
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: API_ORIGIN
+    value: "https://commerce-api-612520357246.europe-west1.run.app"
+  - variable: NEXT_PUBLIC_API_URL
+    value: "/api/v1"

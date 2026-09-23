@@ -1,0 +1,18 @@
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import Redis from 'ioredis';
+
+@Injectable()
+export class CacheService implements OnModuleDestroy {
+  private redis: Redis;
+  constructor(){ this.redis=new Redis(process.env.REDIS_URL || 'redis://localhost:6379',{lazyConnect:true,maxRetriesPerRequest:1}); }
+  private async ready(){ if(this.redis.status==='wait') await this.redis.connect(); }
+  key(tenantId:string,scope:string,id:string){ return `tenant:${tenantId}:${scope}:${id}`; }
+  async getJson<T>(key:string):Promise<T|null>{ try{await this.ready();const v=await this.redis.get(key);return v?JSON.parse(v):null}catch{return null} }
+  async setJson(key:string,value:any,ttl=300){ try{await this.ready();await this.redis.set(key,JSON.stringify(value),'EX',Math.max(1,ttl));}catch{} }
+  async del(...keys:string[]){ if(!keys.length)return;try{await this.ready();await this.redis.del(...keys)}catch{} }
+  async delPattern(pattern:string){ try{await this.ready();let cursor='0';do{const [next,keys]=await this.redis.scan(cursor,'MATCH',pattern,'COUNT',200);cursor=next;if(keys.length)await this.redis.del(...keys)}while(cursor!=='0')}catch{} }
+  async purgeTenant(tenantId:string){ return this.delPattern(`tenant:${tenantId}:*`); }
+  async incrementWindow(key:string,windowSeconds:number):Promise<number|null>{ try{await this.ready();const count=await this.redis.incr(key);if(count===1)await this.redis.expire(key,Math.max(1,windowSeconds));return count}catch{return null} }
+  async stats(){ try{await this.ready();const info=await this.redis.info('stats');const memory=await this.redis.info('memory');return {connected:true,info,memory};}catch{return {connected:false}} }
+  async onModuleDestroy(){ try{await this.redis.quit()}catch{} }
+}

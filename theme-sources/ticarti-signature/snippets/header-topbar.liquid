@@ -1,0 +1,71 @@
+{% comment %}
+  Header top bar
+
+  Accepts:
+  - block_topbar: {Number}
+  - block_topbar_object: {Object} Block paramatres object
+  - topbar_settings_background: {Boolean}
+  - page_width: {String} page width
+  - secondary_menu: {Html} Menu html code
+  - social_media: {Html} Icons html code
+  - country_selector: {Html} Country html code
+  - language_selector: {Html} Language html code
+
+  Usage:
+  {%- render "header-topbar",
+      block_topbar:block_topbar,
+      block_topbar_object:block_topbar_object,
+      topbar_settings_background:topbar_settings_background,
+      page_width:page_width,
+      secondary_menu:secondary_menu,
+      social_media:social_media,
+      country_selector:country_selector,
+      language_selector:language_selector
+  -%}
+{% endcomment %}
+{%- assign topbar_fullwidth = true -%}
+{% if section.settings.background_width != "fullwidth" and section.settings.background_width != blank %}
+{%- assign topbar_fullwidth = false -%}
+{% endif %}
+{%- if block_topbar.size > 0 -%}
+<div id="theme-block-{{ block_topbar_object.id }}"
+     class="header__top-bar align-items-center{% if block_topbar_object.settings.background != 'hide' and topbar_fullwidth %} section-background{% endif %}">
+  <div class="{{ page_width }}{% if topbar_settings_background == false %} header__top-bar__content{% endif %}">
+    {%- if topbar_settings_background -%}<div class="section-background header__section-background__boxed header__top-bar__content border__radius">{%- endif -%}
+    {%- if secondary_menu != blank -%}
+    <div class="header__secondary-menu">
+      {{ secondary_menu }}
+    </div>
+    {%- elsif social_media != blank -%}
+    <div class="header__selectors">
+      {{ country_selector | replace: "toright", "" }}
+      {{ language_selector | replace: "toright", "" }}
+    </div>
+    {%- else -%}
+    <div></div>
+    {%- endif -%}
+    {%- if social_media != blank or country_selector != blank or language_selector != blank -%}
+    <div class="header__top-bar__user">
+      {%- if secondary_menu != blank -%}
+      {{ country_selector }}
+      {{ language_selector }}
+      {%- elsif secondary_menu == blank and social_media == blank -%}
+      {{ country_selector }}
+      {{ language_selector }}
+      {%- endif -%}
+      {%- if social_media != blank -%}
+      {%- if secondary_menu != blank -%}
+      {%- if country_selector != blank or language_selector != blank -%}
+      <div class="header__separate-line"></div>
+      {%- endif -%}
+      {%- endif -%}
+      <ul class="unstyle-ul ticarti-social__icons header-social-icons">
+        {{ social_media }}
+      </ul>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+    {%- if topbar_settings_background -%}</div>{%- endif -%}
+  </div>
+</div>
+{%- endif -%}

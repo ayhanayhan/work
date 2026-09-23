@@ -1,0 +1,7 @@
+export const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
+export async function api(path:string,options:any={}){const isForm=typeof FormData!=='undefined'&&options.body instanceof FormData;const r=await fetch(API+path,{credentials:'include',...options,headers:{...(isForm?{}:{'content-type':'application/json'}),...(options.headers||{})}});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(Array.isArray(j.message)?j.message.join(', '):j.message||'İşlem başarısız');return j;}
+export function money(n:any,currency='TRY',locale?:string){return new Intl.NumberFormat(locale||undefined,{style:'currency',currency}).format(Number(n||0))}
+export function getCartToken(){if(typeof window==='undefined')return '';return localStorage.getItem('commerce-cart')||''}
+export function getLocale(){if(typeof window==='undefined')return 'tr-TR';return localStorage.getItem('commerce-locale')||'tr-TR'}
+export function mediaUrl(url:any,size='card',format='webp'){const raw=String(url||'');if(!raw)return '';if(!/\/v1\/media\/[^/?#]+\/content/.test(raw))return raw;try{const base=typeof window!=='undefined'?window.location.origin:'https://checkout.ticarti.com';const u=new URL(raw,base);u.searchParams.set('size',size);u.searchParams.set('format',format);return u.toString()}catch{return raw}}
+export function track(event:string,detail:any={}){if(typeof window==='undefined')return;window.dispatchEvent(new CustomEvent('ticarti-analytics',{detail:{event,...detail}}))}

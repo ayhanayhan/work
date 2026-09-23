@@ -1,0 +1,20 @@
+{
+  "name": "commerce-saas-firebase-test",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace @commerce/api run start:dev",
+    "dev:admin": "npm --workspace @commerce/admin run dev",
+    "dev:storefront": "npm --workspace @commerce/storefront run dev",
+    "dev:superadmin": "npm --workspace @commerce/superadmin run dev",
+    "prisma:generate": "npm --workspace @commerce/api run prisma:generate",
+    "prisma:migrate": "npm --workspace @commerce/api run prisma:migrate",
+    "prisma:seed": "npm --workspace @commerce/api run prisma:seed",
+    "build": "npm -ws run build --if-present",
+    "smoke": "node scripts/smoke-test.mjs",
+    "prisma:push": "npm --workspace @commerce/api run prisma:push"
+  }
+}

@@ -1,0 +1,2091 @@
+{%- render "component-header-style", section:section -%}
+<style>
+  .header>.search-container{
+    min-width:260px;
+  }
+
+  .header-modal-mainmenu__button{
+    padding:0;
+    margin:0;
+    background:transparent;
+  }
+  @media (min-width: 1025px) {
+    .header-modal-mainmenu .popup-modal__content {
+      width: 100%;
+      height: 100%;
+    }
+    {%- if section.settings.color_modal_bg != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .popup-modal__content,
+    menumodal-dialog [class*="submenu-design__"]{
+      background:{{ section.settings.color_modal_bg }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_overlay != "rgba(0,0,0,0)" -%}
+    menumodal-dialog{
+      --color-popup-modal-overlay-rgb:{{ section.settings.color_modal_overlay.red }}, {{ section.settings.color_modal_overlay.green }}, {{ section.settings.color_modal_overlay.blue }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_search_close  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .popup-modal__toggle{--color-text-icons-block:{{ section.settings.color_search_close }};}
+    {%- endif -%}
+    {%- if section.settings.color_modal_heading  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .menu-item{
+      --color-heading-block:{{ section.settings.color_modal_heading }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_heading_hover  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .menu-item{
+      --color-menu-link-hover:{{ section.settings.color_modal_heading_hover }};
+      --color-text-link-hover-block:{{ section.settings.color_modal_heading_hover }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_item  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .menu-item__submenu{
+      --color-text-icons-block:{{ section.settings.color_modal_item }};
+      --color-submenu-text-block:{{ section.settings.color_modal_item }};
+    }
+    menumodal-dialog .submenu__item{
+      --color-submenu-text-block:{{ section.settings.color_modal_item }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_item_hover  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .menu-item__submenu{
+      --color-text-link-hover-block:{{ section.settings.color_modal_item_hover }};
+      --color-menu-link-hover:{{ section.settings.color_modal_item_hover }};
+    }
+    menumodal-dialog .submenu__item{
+      --color-submenu-text-block-hover:{{ section.settings.color_modal_item_hover }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_submenu_shadow     != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .submenu-design__simple{
+      box-shadow: 4px 8px 20px 0px {{ section.settings.color_modal_submenu_shadow | color_modify: 'alpha', 0.15 }};
+    }
+    {%- endif -%}
+    {%- if section.settings.color_modal_item  != "rgba(0,0,0,0)" -%}
+    menumodal-dialog .custom__scrollbar::-webkit-scrollbar-thumb {background: {{ section.settings.color_modal_item | color_modify: 'alpha', 0.3 }};}
+    menumodal-dialog .custom__scrollbar::-webkit-scrollbar-thumb:hover {background:{{ section.settings.color_modal_item }};}
+    {%- endif -%}
+  }
+</style>
+{{ 'component-closed-menu.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.enable__sticky_header != "none" and template.name != 'product' and template.name != 'collection' -%}
+<sticky-header class="display-flex sticky-header{% if section.settings.sticky_type == "scroll" %} sticky-header-scroll{% endif %} enable-on__{{ section.settings.enable__sticky_header }}"></sticky-header>
+{%- endif -%}
+{%- render "section-header-4", section:section -%}
+{%- render "component-header-search-modal", section:section -%}
+{%- render "component-header-interface", section:section -%}
+
+<menumodal-dialog id="header-modal-mainmenu" class="popup-modal popup-modal__center-desktop header-modal-mainmenu{% if request.design_mode and section.settings.admin_open_menu %} active animate{% endif %}">
+  <div class="popup-modal__overlay" onclick="this.closest('.popup-modal').close()"></div>
+  <div class="popup-modal__content">
+    <button class="popup-modal__toggle modal-close-animation" type="button" onclick="this.closest('.popup-modal').close()" aria-label="{{ 'accessibility.close' | t }}">
+      {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </button>
+    <div class="popup-modal__content__data custom__scrollbar" role="dialog" aria-modal="true" tabindex="-1">
+      {%- render "menu-closed",
+          section:section,
+          linklist:section.settings.menu.links
+      -%}
+    </div>
+  </div>
+</menumodal-dialog>
+
+{% schema %}
+{
+  "name": "t:header.header_closed",
+  "limit": 1,
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    },
+	{
+      "type": "select",
+      "id": "enable__sticky_header",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "mobile",
+          "label": "Mobile"
+        },
+        {
+          "value": "desktop",
+          "label": "Desktop"
+        },
+        {
+          "value": "mobile__desktop",
+          "label": "All screens"
+        }
+      ],
+      "default": "mobile__desktop",
+      "label": "Enable sticky header"
+    },
+	{
+      "type": "select",
+      "id": "sticky_type",
+      "visible_if": "{{ section.settings.enable__sticky_header != 'none' }}",
+      "options": [
+        {
+          "value": "scroll",
+          "label": "On scroll up"
+        },
+        {
+          "value": "always",
+          "label": "Always"
+        }
+      ],
+      "default": "scroll",
+      "label": "Sticky header"
+    },
+    {
+      "type": "header",
+      "content": "Desktop logo"
+    },
+    {
+      "type": "paragraph",
+      "content": "If you are using a transparent header, the logo for the transparent type is located in the general theme settings, in the \"Header\" and \"Header mobile\" tabs."
+    },
+    {
+      "type": "checkbox",
+      "id": "logo_zoom_out",
+      "default": true,
+      "label": "Zoom out on hover"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+	    "label": "Image"
+    },
+    {
+      "type": "html",
+      "id": "logo_svg",
+      "label": "Svg code",
+	    "info": "Use instead of an image. SVG should have width and height attributes."
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 40,
+      "max": 250,
+      "step": 10,
+      "default": 100,
+      "unit": "px",
+      "label": "Logo width"
+    },
+    {
+      "type": "header",
+      "content": "Mobile logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_mobile",
+      "label": "Image"
+    },
+    {
+      "type": "html",
+      "id": "logo_svg_mobile",
+      "label": "Svg code",
+	    "info": "Use instead of an image. SVG should have width and height attributes."
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width_mobile",
+      "min": 30,
+      "max": 150,
+      "step": 10,
+      "default": 100,
+      "unit": "px",
+      "label": "Logo width"
+    },
+    {
+      "type": "header",
+      "content": "Desktop header design"
+    },
+    {
+      "type": "checkbox",
+      "id": "admin_open_menu",
+      "default": false,
+      "label": "Open menu",
+      "info": "It only works in the admin panel for better editing of the menu content."
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "options": [
+        {
+          "value": "logo-to-left",
+          "label": "Left"
+        },
+        {
+          "value": "logo-to-center",
+          "label": "Center"
+        }
+      ],
+      "default": "logo-to-left",
+      "label": "Logo position"
+    },
+    {
+      "type": "select",
+      "id": "show_search",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "opened",
+          "label": "Opened"
+        },
+        {
+          "value": "closed",
+          "label": "Closed"
+        }
+      ],
+      "default": "opened",
+      "label": "Search"
+    },
+    {
+      "type": "select",
+      "id": "icons_text",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "show",
+          "label": "Show"
+        },
+        {
+          "value": "show_only_text",
+          "label": "Only text"
+        },
+        {
+          "value": "tooltip",
+          "label": "Tooltip"
+        }
+      ],
+      "default": "show",
+      "label": "Text for icons"
+    },
+    {
+      "type": "select",
+      "id": "grid",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        },
+        {
+          "value": "5",
+          "label": "5"
+        },
+        {
+          "value": "6",
+          "label": "6"
+        },
+        {
+          "value": "7",
+          "label": "7"
+        },
+        {
+          "value": "8",
+          "label": "8"
+        }
+      ],
+      "default": "4",
+      "label": "Grid for menus"
+    },
+    {
+      "type": "select",
+      "id": "submenu_size",
+      "options": [
+        {
+          "value": "default",
+          "label": "Big, small"
+        },
+        {
+          "value": "big",
+          "label": "Small, big"
+        }
+      ],
+      "default": "default",
+      "label": "Menu font size",
+      "info": "Heading link size. Submenu links size."
+    },
+    {
+      "type": "select",
+      "id": "menu_text_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left",
+      "label": "Menu text aligment"
+    },
+    {
+      "type": "header",
+      "content": "Mobile header design"
+    },
+    {
+      "type": "select",
+      "id": "icons_text_mobile",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "show_only_text",
+          "label": "Only text"
+        }
+      ],
+      "default": "hide",
+      "label": "Text for icons"
+    },
+    {
+      "type": "header",
+      "content": "Bottom line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_line",
+      "default": false,
+      "label": "Show top line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_line",
+      "default": false,
+      "label": "Show bottom line"
+    },
+    {
+      "type": "select",
+      "id": "width_line",
+      "options": [
+        {
+          "value": "default",
+          "label": "Fulwidth"
+        },
+        {
+          "value": "content",
+          "label": "Content width"
+        }
+      ],
+      "default": "default",
+      "label": "Width"
+    },
+    {
+      "type": "header",
+      "content": "General background"
+    },
+    {
+      "type": "select",
+      "id": "background_width",
+      "options": [
+        {
+          "value": "fullwidth",
+          "label": "Fullwidth"
+        },
+        {
+          "value": "content_width",
+          "label": "Content width"
+        }
+      ],
+      "default": "fullwidth",
+      "label": "Width"
+    },
+    {
+      "type": "header",
+      "content": "Main header background"
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "options": [
+        {
+          "value": "hide",
+          "label": "Hide"
+        },
+        {
+          "value": "color",
+          "label": "Color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        }
+      ],
+      "default": "hide",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "default": "rgba(0,0,0,0)",
+      "label": "Color",
+      "visible_if": "{{ section.settings.background == 'color' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient",
+      "label": "Gradient",
+      "visible_if": "{{ section.settings.background == 'gradient' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Image",
+      "visible_if": "{{ section.settings.background == 'image' }}"
+    },
+    {
+      "type": "select",
+      "id": "imagealign",
+      "label": "Image position",
+      "default": "center",
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "imagesize",
+      "label": "Image size",
+      "visible_if": "{{ section.settings.background == 'image' }}",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Full background size"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 0,
+      "visible_if": "{{ section.settings.background == 'image' }}"
+    },
+    {
+      "type": "color",
+      "id": "image_overlay_color",
+      "default":"rgba(0,0,0,0)",
+      "label": "Image overlay color",
+      "visible_if": "{{ section.settings.background == 'image' }}"
+    },
+    {
+      "type": "header",
+      "content": "Colors desktop"
+    },
+    {
+      "type": "color",
+      "id": "color_base",
+      "default":"rgba(0,0,0,0)",
+      "label": "Base"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "default":"rgba(0,0,0,0)",
+      "label": "Accent"
+    },
+    {
+      "type": "color",
+      "id": "color_lines",
+      "default":"rgba(0,0,0,0)",
+      "label": "Lines"
+    },
+    {
+      "type": "header",
+      "content": "Menu modal"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_heading",
+      "default":"rgba(0,0,0,0)",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_heading_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Heading hover"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_item",
+      "default":"rgba(0,0,0,0)",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_item_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Link hover"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_bg",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_overlay",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background overlay"
+    },      
+    {
+      "type": "color",
+      "id": "color_search_close",
+      "default": "rgba(0,0,0,0)",
+      "label": "Close button"
+    },
+    {
+      "type": "color",
+      "id": "color_modal_submenu_shadow",
+      "default": "rgba(0,0,0,0)",
+      "label": "Submenu shadow"
+    },
+    {
+      "type": "header",
+      "content": "User icons"
+    },
+    {
+      "type": "color",
+      "id": "color_icons",
+      "default":"rgba(0,0,0,0)",
+      "label": "Icon"
+    },
+    {
+      "type": "color",
+      "id": "color_icons_text",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "color_icons_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Icon hover"
+    },
+    {
+      "type": "color",
+      "id": "color_icons_text_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text hover"
+    },
+    {
+      "type": "color",
+      "id": "color_counter",
+      "default":"rgba(0,0,0,0)",
+      "label": "Counter"
+    },
+    {
+      "type": "color",
+      "id": "color_counter_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Counter hover"
+    },
+    {
+      "type": "color",
+      "id": "color_counter_text",
+      "default":"rgba(0,0,0,0)",
+      "label": "Counter text"
+    },
+    {
+      "type": "color",
+      "id": "color_counter_text_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Counter text hover"
+    },
+    {
+      "type": "header",
+      "content": "Opened search"
+    },
+    {
+      "type": "color",
+      "id": "color_input_background",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "color_input_border",
+      "default": "rgba(0,0,0,0)",
+      "label": "Border"
+    },
+    {
+      "type": "color",
+      "id": "color_input_text",
+      "default": "rgba(0,0,0,0)",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "color_input_icon",
+      "default": "rgba(0,0,0,0)",
+      "label": "icon"
+    },
+    {
+      "type": "color",
+      "id": "color_input_background_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background hover"
+    },
+    {
+      "type": "color",
+      "id": "color_input_border_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Border hover"
+    },
+    {
+      "type": "color",
+      "id": "color_input_outline_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Outline hover"
+    },
+    {
+      "type": "color",
+      "id": "color_input_text_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Text hover"
+    },
+    {
+      "type": "color",
+      "id": "color_input_icon_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Icon hover"
+    },
+    {
+      "type": "header",
+      "content": "Predictive search"
+    },
+    {
+      "type": "color",
+      "id": "color_search_heading",
+      "default": "rgba(0,0,0,0)",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "color_search_link",
+      "default": "rgba(0,0,0,0)",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "color_search_link_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Link hover"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_vendor",
+      "default": "rgba(0,0,0,0)",
+      "label": "Product vendor"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_name",
+      "default": "rgba(0,0,0,0)",
+      "label": "Product name"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_name_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Product name hover"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_price",
+      "default": "rgba(0,0,0,0)",
+      "label": "Price"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_price_sale",
+      "default": "rgba(0,0,0,0)",
+      "label": "Sale price"
+    },
+    {
+      "type": "color",
+      "id": "color_search_product_price_old",
+      "default": "rgba(0,0,0,0)",
+      "label": "Old price"
+    },
+    {
+      "type": "color",
+      "id": "color_search_show_all",
+      "default": "rgba(0,0,0,0)",
+      "label": "Show all"
+    },
+    {
+      "type": "color",
+      "id": "color_search_show_all_hover",
+      "default": "rgba(0,0,0,0)",
+      "label": "Show hover"
+    },
+    {
+      "type": "color",
+      "id": "color_search_lines",
+      "default": "rgba(0,0,0,0)",
+      "label": "Lines"
+    },
+    {
+      "type": "color",
+      "id": "color_search_background",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "color_search_shadow",
+      "default": "rgba(0,0,0,0)",
+      "label": "Shadow"
+    },
+    {
+      "type": "header",
+      "content": "Account dropdown"
+    },
+    {
+      "type": "color",
+      "id": "color_account_heading",
+      "default": "rgba(0,0,0,0)",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "color_account_background",
+      "default": "rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "color_account_shadow",
+      "default": "rgba(0,0,0,0)",
+      "label": "Shadow"
+    },
+    {
+      "type": "paragraph",
+      "content": "SIGN IN BUTTON"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_bg",
+      "default": true,
+      "label": "Show background"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg == true }}",
+      "type": "color",
+      "id": "color_button",
+      "default":"rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg == true }}",
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_button_border",
+      "default":"rgba(0,0,0,0)",
+      "label": "Border"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_bg_hover",
+      "default": true,
+      "label": "Show background on hover"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg_hover == true }}",
+      "type": "color",
+      "id": "color_button_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Background hover"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg_hover == true }}",
+      "type": "color_background",
+      "id": "color_button_gradient_hover",
+      "label": "Background gradient hover"
+    },
+    {
+      "type": "color",
+      "id": "color_button_border_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Border hover"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text_hover",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shadow_button",
+      "default": true,
+      "label": "Enable shadow"
+    },
+    {
+      "visible_if": "{{ section.settings.show_shadow_button == true }}",
+      "type": "color",
+      "id": "color_shadow_button",
+      "default":"rgba(0,0,0,0)",
+      "label": "Shadow"
+    },
+    {
+      "visible_if": "{{ section.settings.show_shadow_button == true }}",
+      "type": "color",
+      "id": "color_shadow_hover_button",
+      "default":"rgba(0,0,0,0)",
+      "label": "Shadow hover"
+    },
+    {
+      "type": "paragraph",
+      "content": "ORDER BUTTONS"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_bg2",
+      "default": true,
+      "label": "Show background"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg2 == true }}",
+      "type": "color",
+      "id": "color_button2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Background"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg2 == true }}",
+      "type": "color_background",
+      "id": "color_button_gradient2",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_button_border2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Border"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_bg_hover2",
+      "default": true,
+      "label": "Show background on hover"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg_hover2 == true }}",
+      "type": "color",
+      "id": "color_button_hover2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Background hover"
+    },
+    {
+      "visible_if": "{{ section.settings.show_button_bg_hover2 == true }}",
+      "type": "color_background",
+      "id": "color_button_gradient_hover2",
+      "label": "Background gradient hover"
+    },
+    {
+      "type": "color",
+      "id": "color_button_border_hover2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Border hover"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text_hover2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Text hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shadow_button2",
+      "default": true,
+      "label": "Enable shadow"
+    },
+    {
+      "visible_if": "{{ section.settings.show_shadow_button2 == true }}",
+      "type": "color",
+      "id": "color_shadow_button2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Shadow"
+    },
+    {
+      "visible_if": "{{ section.settings.show_shadow_button2 == true }}",
+      "type": "color",
+      "id": "color_shadow_hover_button2",
+      "default":"rgba(0,0,0,0)",
+      "label": "Shadow hover"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "topbar",
+      "limit": 1,
+      "name": "Top bar",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Menu"
+        },
+        {
+          "type": "link_list",
+          "id": "secondary_menu",
+          "default": "main-menu",
+          "label": "Secondary menu"
+        },
+        {
+          "type": "header",
+          "content": "Social media icons"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social",
+          "default": false,
+          "label": "Show social media icons",
+          "info": "To display your social media accounts, link them in your theme settings."
+        },
+        {
+          "type": "header",
+          "content": "Country\/region selector",
+          "info": "To add a country\/region, go to your [market settings.](\/admin\/settings\/markets)"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_country_selector",
+          "default": true,
+          "label": "Enable country/region selector"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_country_selector_flag",
+          "label": "Enable flag",
+          "default": true,
+          "visible_if": "{{ block.settings.enable_country_selector }}"
+        },
+        {
+          "type": "header",
+          "content": "Language selector",
+          "info": "To add a language, go to your [language settings.](\/admin\/settings\/languages)"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_language_selector",
+          "default": true,
+          "label": "Enable language selector"
+        },
+        {
+          "type": "header",
+          "content": "Background"
+        },
+        {
+          "type": "select",
+          "id": "background",
+          "options": [
+            {
+              "value": "hide",
+              "label": "Hide"
+            },
+            {
+              "value": "color",
+              "label": "Color"
+            },
+            {
+              "value": "gradient",
+              "label": "Gradient"
+            },
+            {
+              "value": "image",
+              "label": "Image"
+            }
+          ],
+          "default": "color",
+          "label": "Background"
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'color' }}",
+          "type": "color",
+          "id": "color_background",
+          "default": "rgba(0,0,0,0)",
+          "label": "Color"
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'gradient' }}",
+          "type": "color_background",
+          "id": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'image' }}",
+          "type": "image_picker",
+          "id": "background_image",
+          "label": "Image"
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'image' }}",
+          "type": "select",
+          "id": "imagealign",
+          "label": "Image position",
+          "info": "Works for all screens",
+          "default": "center",
+          "options": [
+            {
+              "value": "top",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'image' }}",
+          "type": "select",
+          "id": "imagesize",
+          "label": "Image size",
+          "info": "Works for all screens",
+          "default": "cover",
+          "options": [
+            {
+              "value": "cover",
+              "label": "Full background size"
+            },
+            {
+              "value": "contain",
+              "label": "Contain"
+            }
+          ]
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'image' }}",
+          "type": "range",
+          "id": "image_overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 10,
+          "unit": "%",
+          "label": "Image overlay opacity",
+          "default": 0
+        },
+        {
+          "visible_if": "{{ block.settings.background == 'image' }}",
+          "type": "color",
+          "id": "image_overlay_color",
+          "default":"rgba(0,0,0,0)",
+          "label": "Image overlay color"
+        },
+        {
+          "type": "header",
+          "content": "Color"
+        },
+        {
+          "type": "color",
+          "id": "color_menu",
+          "default": "rgba(0,0,0,0)",
+          "label": "Menu item"
+        },
+        {
+          "type": "color",
+          "id": "color_menu_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Menu item hover"
+        },
+        {
+          "type": "color",
+          "id": "color_curr_lang",
+          "default": "rgba(0,0,0,0)",
+          "label": "Currency, language"
+        },
+        {
+          "type": "color",
+          "id": "color_lines",
+          "default": "rgba(0,0,0,0)",
+          "label": "Lines"
+        },
+        {
+          "type": "color",
+          "id": "color_social",
+          "default": "rgba(0,0,0,0)",
+          "label": "Social"
+        },
+        {
+          "type": "color",
+          "id": "color_social_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Social hover"
+        },
+        {
+          "type": "header",
+          "content": "Submenu color"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_text",
+          "default": "rgba(0,0,0,0)",
+          "label": "Link"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_text_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Link hover"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_bg",
+          "default": "rgba(0,0,0,0)",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_shadow",
+          "default": "rgba(0,0,0,0)",
+          "label": "Shadow"
+        }
+      ]
+    },
+    {
+      "type": "phone",
+      "name": "Contact information",
+      "settings": [
+        {
+          "type": "select",
+          "id": "open_on",
+          "options": [
+            {
+              "value": "hover",
+              "label": "Hover"
+            },
+            {
+              "value": "click",
+              "label": "Click"
+            }
+          ],
+          "default": "hover",
+          "label": "Open on"
+        },
+        {
+          "type": "header",
+          "content": "Main heading"
+        },
+        {
+          "type": "text",
+          "id": "phone_icon__0",
+          "default": "phone",
+          "label": "SVG icon"
+        },
+        {
+          "type": "text",
+          "id": "phone__0",
+          "default": "(555) 555-1232",
+          "label": "Phone",
+          "info": "Primarily designed for a phone number. You may put any text here."
+        },
+        {
+          "type": "textarea",
+          "id": "text__0",
+          "default": "Available daily from 08:00 to 19:00",
+          "label": "Text"
+        },
+        {
+          "type": "checkbox",
+          "id": "phone_as_link__0",
+          "default": true,
+          "label": "Make the \"Phone\" field a link as a phone number"
+        },
+        {
+          "type": "checkbox",
+          "id": "main__0",
+          "default": true,
+          "label": "Hide main heading on mobile"
+        },
+        {
+          "type": "header",
+          "content": "Phones area #1"
+        },
+        {
+          "type": "text",
+          "id": "heading__1",
+          "default": "Phone numbers",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon__1",
+          "default": true,
+          "label": "Show icon"
+        },
+        {
+          "type": "text",
+          "id": "phone_1__1",
+          "default": "(555) 555-1232",
+          "label": "Phone 1"
+        },
+        {
+          "type": "text",
+          "id": "phone_2__1",
+          "default": "(555) 555-1232",
+          "label": "Phone 2"
+        },
+        {
+          "type": "text",
+          "id": "phone_3__1",
+          "default": "(555) 555-1232",
+          "label": "Phone 3"
+        },
+        {
+          "type": "text",
+          "id": "phone_4__1",
+          "default": "(555) 555-1232",
+          "label": "Phone 4"
+        },
+        {
+          "type": "checkbox",
+          "id": "phone_as_link__1",
+          "default": true,
+          "label": "Primarily designed for a phone number. You may put any text here."
+        },
+        {
+          "type": "textarea",
+          "id": "info__1",
+          "default": "Available daily from 08:00 to 19:00",
+          "label": "Info"
+        },
+        {
+          "type": "header",
+          "content": "Phones area #2"
+        },
+        {
+          "type": "text",
+          "id": "heading__2",
+          "default": "Phone numbers",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon__2",
+          "default": true,
+          "label": "Show icon"
+        },
+        {
+          "type": "text",
+          "id": "phone_1__2",
+          "default": "(555) 555-1232",
+          "label": "Phone 1"
+        },
+        {
+          "type": "text",
+          "id": "phone_2__2",
+          "default": "(555) 555-1232",
+          "label": "Phone 2"
+        },
+        {
+          "type": "text",
+          "id": "phone_3__2",
+          "default": "(555) 555-1232",
+          "label": "Phone 3"
+        },
+        {
+          "type": "text",
+          "id": "phone_4__2",
+          "default": "(555) 555-1232",
+          "label": "Phone 4"
+        },
+        {
+          "type": "checkbox",
+          "id": "phone_as_link__2",
+          "default": true,
+          "label": "Primarily designed for a phone number. You may put any text here."
+        },
+        {
+          "type": "textarea",
+          "id": "info__2",
+          "default": "Available daily from 08:00 to 19:00",
+          "label": "Info"
+        },
+        {
+          "type": "header",
+          "content": "Support chat link"
+        },
+        {
+          "type": "select",
+          "id": "show_icon__3",
+          "options": [
+            {
+              "value": "none",
+              "label": "Hide"
+            },
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "svg",
+              "label": "Preset icon"
+            }
+          ],
+          "default": "svg",
+          "label": "Show icon"
+        },
+        {
+          "visible_if": "{{ block.settings.show_icon__3 == 'image' }}",
+          "type": "image_picker",
+          "id": "image__3",
+          "label": "Image",
+          "info": "60x60px recommended"
+        },
+        {
+          "visible_if": "{{ block.settings.show_icon__3 == 'svg' }}",
+          "type": "text",
+          "id": "icon_name__3",
+          "default": "check",
+          "label": "Preset icon name"
+        },
+        {
+          "type": "text",
+          "id": "block_heading__3",
+          "default": "Support on WhatsApp",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "block_text__3",
+          "default": "Chat with a consultant",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url__3",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Socials and contacts"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social__4",
+          "default": true,
+          "label": "Show social media icons",
+          "info": "To display your social media accounts, link them in your theme settings."
+        },
+        {
+          "type": "text",
+          "id": "block_heading_1__4",
+          "default": "Email:",
+          "label": "Heading 1"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "block_text_1__4",
+          "default": "info@mydomain.com",
+          "label": "Text 1"
+        },
+        {
+          "type": "text",
+          "id": "block_heading_2__4",
+          "default": "Address:",
+          "label": "Heading 2"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "block_text_2__4",
+          "default": "123 Madison Avenue, Suite 456, New York, NY 10010, USA",
+          "label": "Text 2"
+        },
+        {
+          "type": "header",
+          "content": "Main heading"
+        },
+        {
+          "type": "color",
+          "id": "color_icon_main",
+          "default": "rgba(0,0,0,0)",
+          "label": "Icon"
+        },
+        {
+          "type": "color",
+          "id": "color_text_main",
+          "default": "rgba(0,0,0,0)",
+          "label": "Text"
+        },
+        {
+          "type": "color",
+          "id": "color_slogan_main",
+          "default": "rgba(0,0,0,0)",
+          "label": "Slogan"
+        },
+        {
+          "type": "header",
+          "content": "Submenu"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_lines",
+          "default": "rgba(0,0,0,0)",
+          "label": "Lines"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_bg",
+          "default": "rgba(0,0,0,0)",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_shadow",
+          "default": "rgba(0,0,0,0)",
+          "label": "Shadow"
+        },
+        {
+          "type": "header",
+          "content": "Submenu content"
+        },
+        {
+          "type": "color",
+          "id": "color_heading_sub",
+          "default": "rgba(0,0,0,0)",
+          "label": "Heading"
+        },
+        {
+          "type": "color",
+          "id": "color_icon_sub",
+          "default": "rgba(0,0,0,0)",
+          "label": "Icon"
+        },
+        {
+          "type": "color",
+          "id": "color_text_sub",
+          "default": "rgba(0,0,0,0)",
+          "label": "Phone"
+        },
+        {
+          "type": "color",
+          "id": "color_slogan_sub",
+          "default": "rgba(0,0,0,0)",
+          "label": "Text"
+        },
+        {
+          "type": "color",
+          "id": "color_social_sub",
+          "default": "rgba(0,0,0,0)",
+          "label": "Social main"
+        },
+        {
+          "type": "color",
+          "id": "color_social_sub_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Social hover"
+        },
+        {
+          "type": "header",
+          "content": "Submenu support chat link"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_supp_icon",
+          "default": "rgba(0,0,0,0)",
+          "label": "Icon"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_supp_icon_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Icon hover"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_supp_heading",
+          "default": "rgba(0,0,0,0)",
+          "label": "Heading"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_supp_heading_hover",
+          "default": "rgba(0,0,0,0)",
+          "label": "Heading hover"
+        },
+        {
+          "type": "color",
+          "id": "color_submenu_supp_text",
+          "default": "rgba(0,0,0,0)",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "badges",
+	  "limit": 1,
+	  "name": "Badges",
+      "settings": [
+        {
+          "type": "header",
+          "content": "#1"
+        },
+        {
+          "type": "text",
+          "id": "badge_items_1",
+          "label": "Menu items names",
+		  "info": "Write a list of menu items separated by commas"
+        },
+        {
+          "type": "text",
+          "id": "badge_text_1",
+          "label": "Text",
+          "default": "Sale"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_bg_1",
+		  "label": "Background",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_1",
+		  "label": "Text",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "header",
+          "content": "#2"
+        },
+        {
+          "type": "text",
+          "id": "badge_items_2",
+          "label": "Menu items names",
+		  "info": "Write a list of menu items separated by commas"
+        },
+        {
+          "type": "text",
+          "id": "badge_text_2",
+          "label": "Text",
+          "default": "Popular"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_bg_2",
+		  "label": "Background",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_2",
+		  "label": "Text",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "header",
+          "content": "#3"
+        },
+        {
+          "type": "text",
+          "id": "badge_items_3",
+          "label": "Menu items names",
+		  "info": "Write a list of menu items separated by commas"
+        },
+        {
+          "type": "text",
+          "id": "badge_text_3",
+          "label": "Text",
+          "default": "New"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_bg_3",
+		  "label": "Background",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_3",
+		  "label": "Text",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "header",
+          "content": "#4"
+        },
+        {
+          "type": "text",
+          "id": "badge_items_4",
+          "label": "Menu items names",
+		  "info": "Write a list of menu items separated by commas"
+        },
+        {
+          "type": "text",
+          "id": "badge_text_4",
+          "label": "Text",
+          "default": "Bestseller"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_bg_4",
+		  "label": "Background",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_4",
+		  "label": "Text",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "header",
+          "content": "#5"
+        },
+        {
+          "type": "text",
+          "id": "badge_items_5",
+          "label": "Menu items names",
+		  "info": "Write a list of menu items separated by commas"
+        },
+        {
+          "type": "text",
+          "id": "badge_text_5",
+          "label": "Text",
+          "default": "Hot"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_bg_5",
+		  "label": "Background",
+          "default": "rgba(0,0,0,0)"
+        },
+        {
+          "type": "color",
+          "id": "badge_color_5",
+		  "label": "Text",
+          "default": "rgba(0,0,0,0)"
+        }
+      ]
+    },
+    {
+      "type": "images",
+      "name": "Menu images",
+      "limit":1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "image_hover",
+          "options": [
+            {
+              "value": "default",
+              "label": "Basic theme settings"
+            },
+            {
+              "value": "image-hover-none",
+              "label": "Disable"
+            },
+            {
+              "value": "image-hover01",
+              "label": "Zoom in #1"
+            },
+            {
+              "value": "image-hover01 image-hover01-rotate",
+              "label": "Zoom in and rotate"
+            },
+            {
+              "value": "image-hover02",
+              "label": "Zoom in #2"
+            },
+            {
+              "value": "image-hover03",
+              "label": "Zoom out #1"
+            },
+            {
+              "value": "image-hover04",
+              "label": "Zoom out #2"
+            },
+            {
+              "value": "image-hover05",
+              "label": "Slide"
+            },
+            {
+              "value": "image-hover06",
+              "label": "Shine"
+            }
+          ],
+          "default": "default",
+          "label": "Image hover effect"
+        },
+        {
+          "type": "select",
+          "id": "image_ratio",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Auto"
+            },
+            {
+              "value": "0.75",
+              "label": "Portrait (3:4)"
+            },
+            {
+              "value": "1.333333",
+              "label": "Landscape (4:3)"
+            },
+            {
+              "value": "1",
+              "label": "Square (1:1)"
+            },
+            {
+              "value": "1.00",
+              "label": "Round (1:1)"
+            },
+            {
+              "value": "0.5625",
+              "label": "Social story (9:16)"
+            },
+            {
+              "value": "1.777777",
+              "label": "Widescreen (16:9)"
+            }
+          ],
+          "default": "auto",
+          "label": "Image ratio"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #1"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image1",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #2"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image2",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #3"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image3",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #4"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image4",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #5"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image5",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #6"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image6",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #7"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image7",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #8"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image8",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #9"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image9",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #10"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image10",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #11"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image11",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #12"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image12",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #13"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image13",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #14"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image14",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #15"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image15",
+		  "label": "Image"
+        },
+        {
+          "type": "header",
+		  "content": "For menu item #16"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image16",
+		  "label": "Image"
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "presets": [
+    {
+      "name": "t:header.header_closed",
+      "category": "t:categories.header_design",
+      "settings": {
+        "menu": "main-menu",
+        "width": "default",
+        "enable__sticky_header": "mobile",
+        "sticky_type": "scroll",
+        "logo_max_width": 130,
+        "logo_max_width_mobile": 100,
+        "admin_open_menu": false,
+        "logo_position": "logo-to-left",
+        "show_search": "opened",
+        "icons_text": "tooltip",
+        "grid": "4",
+        "submenu_size": "default",
+        "menu_text_position": "left",
+        "show_top_line": false,
+        "show_bottom_line": false,
+        "width_line": "default",
+        "background_width": "fullwidth",
+        "background": "hide",
+        "color_background": "rgba(0,0,0,0)",
+        "gradient": "",
+        "imagealign": "center",
+        "imagesize": "cover",
+        "image_overlay_opacity": 0
+      },
+      "blocks": {
+        "images_rBif3H": {
+          "type": "images",
+          "settings": {
+            "image_hover": "default",
+            "image_ratio": "auto"
+          }
+        },
+        "topbar_68nKgk": {
+          "type": "topbar",
+          "settings": {
+            "secondary_menu": "main-menu",
+            "show_social": true,
+            "enable_country_selector": true,
+            "enable_country_selector_flag": true,
+            "enable_language_selector": true,
+            "background": "color",
+            "color_background": "rgba(0,0,0,0)",
+            "gradient": "",
+            "imagealign": "center",
+            "imagesize": "cover",
+            "image_overlay_opacity": 0
+          }
+        },
+        "phone_6yHagW": {
+          "type": "phone",
+          "settings": {
+            "open_on": "hover",
+            "phone_icon__0": "phone",
+            "phone__0": "(555) 555-1000",
+            "text__0": "Open daily from 9:00 AM – 7:00 PM",
+            "phone_as_link__0": true,
+            "main__0": true,
+            "heading__1": "Online Store Consultants",
+            "show_icon__1": true,
+            "phone_1__1": "(555) 555-1000",
+            "phone_2__1": "(555) 555-1001",
+            "phone_3__1": "",
+            "phone_4__1": "",
+            "phone_as_link__1": true,
+            "info__1": "Open daily from 9:00 AM – 7:00 PM",
+            "heading__2": "Order Pickup Point",
+            "show_icon__2": true,
+            "phone_1__2": "(555) 555-1002",
+            "phone_2__2": "",
+            "phone_3__2": "",
+            "phone_4__2": "",
+            "phone_as_link__2": true,
+            "info__2": "Open daily from 9:00 AM – 7:00 PM",
+            "show_icon__3": "svg",
+            "icon_name__3": "whatsapp",
+            "block_heading__3": "Support on WhatsApp",
+            "block_text__3": "Chat with a consultant",
+            "url__3": "#",
+            "show_social__4": true,
+            "block_heading_1__4": "Email:",
+            "block_text_1__4": "<a href=\"#\">support@yourstore.com<\/a>",
+            "block_heading_2__4": "Address:",
+            "block_text_2__4": "123 Madison Avenue, Suite 456, New York, NY 10010, USA"
+          }
+        }
+      },
+      "block_order": [
+        "images_rBif3H",
+        "topbar_68nKgk",
+        "phone_6yHagW"
+      ]
+    }
+  ]
+}
+{% endschema %}

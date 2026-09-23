@@ -1,0 +1,237 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-card.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.image_action == "gallery" -%}
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+{{ 'component-swiper-slider.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- capture section_styles -%}
+{%- capture __css -%}
+{%- if section.settings.color_base   != "rgba(0,0,0,0)" -%}
+--color-base-section:{{ section.settings.color_base }};
+--color-lines:{{ section.settings.color_base }};
+color:{{ section.settings.color_base }};
+{%- endif -%}
+{%- if section.settings.color_accent != "rgba(0,0,0,0)" -%}--color-accent-section:{{ section.settings.color_accent }};{%- endif -%}
+{%- if block.settings.color_meta_products != "rgba(0,0,0,0)" -%}--color-meta-products-block:{{ block.settings.color_meta_products }};{%- endif -%}
+{%- if block.settings.color_meta_products_hover != "rgba(0,0,0,0)" -%}--color-meta-products-block-hover:{{ block.settings.color_meta_products_hover }};{%- endif -%}
+{%- if block.settings.color_product_name != "rgba(0,0,0,0)" -%}--color-product-name-block:{{ block.settings.color_product_name }};{%- endif -%}
+{%- if block.settings.color_product_name_hover != "rgba(0,0,0,0)" -%}--color-product-name-block-hover:{{ block.settings.color_product_name_hover }};{%- endif -%}
+{%- if block.settings.color_price != "rgba(0,0,0,0)" -%}--color-price-main-block:{{ block.settings.color_price }};{%- endif -%}
+{%- if block.settings.color_save_price != "rgba(0,0,0,0)" -%}--color-save-price-block:{{ block.settings.color_save_price }};{%- endif -%}
+{%- if block.settings.color_old_price != "rgba(0,0,0,0)" -%}--color-old-price-main-block:{{ block.settings.color_old_price }};{%- endif -%}
+{%- if block.settings.color_interface_button != "rgba(0,0,0,0)" -%}--color-interface-button-block:{{ block.settings.color_interface_button }};{%- endif -%}
+{%- if block.settings.color_interface_button_text != "rgba(0,0,0,0)" -%}--color-interface-button-text-main-block:{{ block.settings.color_interface_button_text }};{%- endif -%}
+{%- if block.settings.color_interface_button_hover != "rgba(0,0,0,0)" -%}--color-interface-button-hover-main-block:{{ block.settings.color_interface_button_hover }};{%- endif -%}
+{%- if block.settings.color_interface_button_text_hover != "rgba(0,0,0,0)" -%}--color-interface-button-text-hover-block:{{ block.settings.color_interface_button_text_hover }};{%- endif -%}
+{%- if block.settings.color_active_rating   != "rgba(0,0,0,0)" -%}--color-rating-active:{{ block.settings.color_active_rating }};{%- endif -%}
+{%- if block.settings.color_base_rating   != "rgba(0,0,0,0)" -%}--color-rating-base:{{ block.settings.color_base_rating }};{%- endif -%}
+{%- endcapture -%}
+{%- if __css != blank -%}
+#theme-block-{{ block.id }}{
+{{ __css }}
+}
+{%- endif -%}
+{%- endcapture -%}
+{%- if section_styles != blank -%}
+<style>
+  {{ section_styles }}
+</style>
+{%- endif -%}
+
+<div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.main_heading != blank -%}
+  <div class="mb20 {{ section.settings.heading_aligment_block }}">
+    <h4 class="mt0">{{ block.settings.main_heading }}</h4>
+  </div>
+  {%- endif -%}
+  {%- assign __collection = block.settings.collection -%}
+  {%- capture content -%}
+  {%- if __collection != blank -%}
+  {%- for product in __collection.products limit: section.settings.product_limit -%}
+    {%- render 'product-card',
+        customize:true,
+        product_card_product: product,
+        product_collection:__collection,
+        image_ratio_value: section.settings.image_ratio_product,
+        image_hover_type: section.settings.image_hover,
+        show_secondary_image: section.settings.image_action,
+        show_price:section.settings.show_price,
+        show_vendor:section.settings.show_vendor,
+        show_type:false,
+        hover_underline:section.settings.hover_underline,
+        button_type_product: 'hide',
+        show_quantity: false,
+        show_badge_sold_out:section.settings.show_badge_sold_out,
+        show_badge_on_sale:section.settings.show_badge_on_sale,
+        show_badge_feature:section.settings.show_badge_feature,
+        show_countdown:section.settings.show_countdown,
+        truncate_product_name:section.settings.truncate_product_name,
+        show_wishlist: false,
+        show_compare: false,
+        show_quick_view: false,
+        show_wishlist_mobile: false,
+        show_compare_mobile: false,
+        show_quick_view_mobile: false,
+        text_aligment: section.settings.text_align,
+        show_description: false,
+        enable_rating_product_card:section.settings.enable_rating_product_card,
+        pr_name_size:"1"
+      -%}
+  {%- endfor -%}
+  {%- else -%}
+  {%- for i in (1..section.settings.product_limit) -%}
+  {%- capture placeholder_icon -%}
+  {%- cycle 'product-apparel-1', 'product-apparel-2', 'product-apparel-3', 'product-apparel-4' -%}
+  {%- endcapture -%}
+  {%- render 'product-card-placeholder',
+      image_ratio_value: section.settings.image_ratio_product,
+      image_hover_type: section.settings.image_hover,
+      show_secondary_image: section.settings.image_action,
+      show_price:section.settings.show_price,
+      show_vendor:section.settings.show_vendor,
+      show_type:false,
+      hover_underline:section.settings.hover_underline,
+      button_type_product: 'hide',
+      show_quantity: false,
+      show_badge_sold_out:section.settings.show_badge_sold_out,
+      show_badge_on_sale:section.settings.show_badge_on_sale,
+      show_badge_feature:section.settings.show_badge_feature,
+      show_countdown:section.settings.show_countdown,
+      truncate_product_name:section.settings.truncate_product_name,
+      show_wishlist:false,
+      show_compare:false,
+      show_quick_view:false,
+      show_wishlist_mobile:false,
+      show_compare_mobile:false,
+      show_quick_view_mobile:false,
+      text_aligment: section.settings.text_align,
+      placeholder_icon:placeholder_icon,
+      show_description: false,
+      pr_name_size:"1"
+    -%}
+  {%- endfor -%}
+  {%- endif -%}
+  {%- endcapture -%}
+  <div class="page-grid-sp-1 {{ section.settings.grid_tablet_products }} {{ section.settings.grid_products }}{% if section.settings.heading_aligment_block == "text-center-desktop" %} justify-content-center-desktop{% endif %} change-to__small-radius">
+    {{ content }}
+  </div>
+</div>
+  
+{% schema %}
+  {
+    "name": "Products",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "textarea",
+        "id": "main_heading",
+        "default": "Products",
+        "label": "Heading"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_meta_products",
+        "default": "rgba(0,0,0,0)",
+        "label": "Vendor"
+      },
+      {
+        "type": "color",
+        "id": "color_meta_products_hover",
+        "default": "rgba(0,0,0,0)",
+        "label": "Vendor hover"
+      },
+      {
+        "type": "color",
+        "id": "color_product_name",
+        "default": "rgba(0,0,0,0)",
+        "label": "Product name"
+      },
+      {
+        "type": "color",
+        "id": "color_product_name_hover",
+        "default": "rgba(0,0,0,0)",
+        "label": "Product name hover"
+      },
+      {
+        "type": "color",
+        "id": "color_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Regular Price"
+      },
+      {
+        "type": "color",
+        "id": "color_save_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Sale Price"
+      },
+      {
+        "type": "color",
+        "id": "color_old_price",
+        "default": "rgba(0,0,0,0)",
+        "label": "Old price"
+      },
+      {
+        "type": "header",
+        "content": "Interface buttons",
+        "info": "Slider buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_interface_button",
+        "default": "rgba(0,0,0,0)",
+        "label": "Interface button background"
+      },
+      {
+        "type": "color",
+        "id": "color_interface_button_text",
+        "default": "rgba(0,0,0,0)",
+        "label": "Interface button icon"
+      },
+      {
+        "type": "color",
+        "id": "color_interface_button_hover",
+        "default": "rgba(0,0,0,0)",
+        "label": "Interface button background hover"
+      },
+      {
+        "type": "color",
+        "id": "color_interface_button_text_hover",
+        "default": "rgba(0,0,0,0)",
+        "label": "Interface button icon hover"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "header",
+        "content": "Review stars"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "color",
+        "id": "color_active_rating",
+        "default": "rgba(0,0,0,0)",
+        "label": "Stars active"
+      },
+      {
+        "visible_if": "{{ settings.enable_rating == true }}",
+        "type": "color",
+        "id": "color_base_rating",
+        "default": "rgba(0,0,0,0)",
+        "label": "Stars base"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Products"
+      }
+    ]
+  }
+{% endschema %}

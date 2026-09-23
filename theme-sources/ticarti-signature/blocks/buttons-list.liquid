@@ -1,0 +1,192 @@
+{%- capture block_styles -%}
+{%- capture __css -%}
+{%- if section.settings.color_base   != "rgba(0,0,0,0)" -%}--color-base-section:{{ section.settings.color_base }};color:{{ section.settings.color_base }};{%- endif -%}
+{%- if section.settings.color_accent != "rgba(0,0,0,0)" -%}--color-accent-section:{{ section.settings.color_accent }};{%- endif -%}
+{%- if block.settings.color_button_border      != "rgba(0,0,0,0)" -%}
+  --color-button-border_secondary-block:{{ block.settings.color_button_border }};
+  --border-button-width_secondary:{{ block.settings.button_border_width_main }}px;
+{%- endif -%}
+{%- if block.settings.color_button_border_hover!= "rgba(0,0,0,0)" -%}
+  --color-button-border-hover_secondary:{{ block.settings.color_button_border_hover }};
+  --border-button-width-hover_secondary:{{ block.settings.button_border_width_main }}px;
+{%- endif -%}
+{%- if block.settings.color_button_text        != "rgba(0,0,0,0)" -%}
+  --color-button-text_secondary:{{ block.settings.color_button_text }};
+  --color-button-icon_secondary:{{ block.settings.color_button_text }};
+{%- endif -%}
+{%- if block.settings.color_button_text_hover  != "rgba(0,0,0,0)" -%}
+  --color-button-text-hover_secondary:{{ block.settings.color_button_text_hover }};
+  --color-button-icon-hover_secondary:{{ block.settings.color_button_text_hover }};
+{%- endif -%}
+{%- if block.settings.show_button_bg -%}
+{%- if block.settings.color_button_gradient != blank or block.settings.color_button != "rgba(0,0,0,0)" -%}
+--color-button-block:{%- if block.settings.color_button_gradient == blank -%}{{ block.settings.color_button }}{%- else -%}{{ block.settings.color_button_gradient }}{%- endif -%};
+{%- endif -%}
+{%- else -%}
+--color-button-block:rgba(0,0,0,0);
+{%- endif -%}
+{%- if block.settings.show_button_bg_hover -%}
+{%- if block.settings.color_button_gradient_hover != blank or block.settings.color_button_hover != "rgba(0,0,0,0)" -%}  
+--color-button-hover-block:{%- if block.settings.color_button_gradient_hover == blank -%}{{ block.settings.color_button_hover }}{%- else -%}{{ block.settings.color_button_gradient_hover }}{%- endif -%};
+{%- endif -%}
+{%- else -%}
+--color-button-hover-block:rgba(0,0,0,0);
+{%- endif -%}
+{%- if block.settings.show_button_bg_hover == false -%}
+--color-button-opacity-hover_main:0;
+{%- endif -%}
+{%- endcapture -%}
+{%- if __css != blank -%}
+#theme-block-{{ block.id }}{
+  {{ __css }}
+}
+{%- endif -%}
+{%- endcapture -%}
+<style>
+  .btn--plate{
+    --background: var(--color-button-block, var(--color-secondary-background));
+    --color:var(--color-button-text_secondary, var(--color-base-section, var(--color-base)));
+    --border:var(--color-button-border_secondary-block);
+    --background-hover: var(--color-button-hover-block, var(--color-accent-section, var(--color-accent)));
+    --color-hover:var(--color-button-text-hover_secondary);
+    --border-hover:var(--color-button-border-hover_secondary);
+    --border-width:var(--border-button-width_secondary);
+    --border-width-hover:var(--border-button-width-hover_secondary);
+    --icon:var(--color-button-text_secondary, var(--color-base-section, var(--color-base)));
+    --icon-hover:var(--color-button-text-hover_secondary);
+    --button-opacity-hover:0;
+    --shadow-button-current:unset;
+    --shadow-button-current-hover:unset;
+    text-align:left;
+  }
+  {{ block_styles }}
+</style>
+
+<div id="theme-block-{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.main_heading != blank -%}
+  <div class="mb20 {{ section.settings.heading_aligment_block }}">
+    <h4 class="mt0">{{ block.settings.main_heading }}</h4>
+  </div>
+  {%- endif -%}
+  <div class="page-grid-sp-1 page-grid-st-2 page-grid-4 popup-search__btn__grid{% if section.settings.heading_aligment_block == "text-center-desktop" %} justify-content-center-desktop{% endif %}">
+    {%- for link in block.settings.menu.links -%}
+    <div>
+      <a href="{{ link.url }}" class="btn btn--plate popup-search__btn btn__transition-text w-full">
+        <div class="btn__texts w-full">
+          <span class="btn__top-text is-visible w-full">{{ link.title }}{% if block.settings.show_icon %}{{- 'icon-arrow-right-2' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}</span>
+          <span class="btn__bottom-text is-hidden w-full">{{ link.title }}{% if block.settings.show_icon %}{{- 'icon-arrow-right-2' | append: settings.system_icon_thickness | inline_asset_content -}}{% endif %}</span>
+        </div>
+      </a>
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Navigation links",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "main_heading",
+        "default": "Navigation links",
+        "label": "Heading"
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "default": "main-menu",
+        "label": "Navigation links"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_icon",
+        "default": true,
+        "label": "Show icon"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "range",
+        "id": "button_border_width_main",
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "unit": "px",
+        "label": "Border",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "show_button_bg",
+        "default": true,
+        "label": "Show background"
+      },
+      {
+        "visible_if": "{{ block.settings.show_button_bg == true }}",
+        "type": "color",
+        "id": "color_button",
+        "default":"rgba(0,0,0,0)",
+        "label": "Background"
+      },
+      {
+        "visible_if": "{{ block.settings.show_button_bg == true }}",
+        "type": "color_background",
+        "id": "color_button_gradient",
+        "label": "Background gradient"
+      },
+      {
+        "visible_if": "{{ block.settings.button_border_width_main > 0 }}",
+        "type": "color",
+        "id": "color_button_border",
+        "default":"rgba(0,0,0,0)",
+        "label": "Border"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text",
+        "default":"rgba(0,0,0,0)",
+        "label": "Text"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_button_bg_hover",
+        "default": true,
+        "label": "Show background on hover"
+      },
+      {
+        "visible_if": "{{ block.settings.show_button_bg_hover == true }}",
+        "type": "color",
+        "id": "color_button_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Background hover"
+      },
+      {
+        "visible_if": "{{ block.settings.show_button_bg_hover == true }}",
+        "type": "color_background",
+        "id": "color_button_gradient_hover",
+        "label": "Background gradient hover"
+      },
+      {
+        "visible_if": "{{ block.settings.button_border_width_main > 0 }}",
+        "type": "color",
+        "id": "color_button_border_hover",
+        "default":"rgba(0,0,0,0)",
+        "label": "Border hover"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text_hover",
+        "default":"#ffffff",
+        "label": "Text hover"
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Navigation links"
+      }
+    ]
+  }
+{% endschema %}

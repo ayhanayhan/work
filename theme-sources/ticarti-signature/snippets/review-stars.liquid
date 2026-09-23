@@ -1,0 +1,65 @@
+{%- comment -%}
+Displays reviews from parent product
+An app is required for product ratings.
+https://help.shopify.com/manual/apps
+
+{% liquid
+  assign show_number_rating = show_number_rating | default: settings.show_number_rating, allow_false: true
+  assign product = closest.product
+  assign rating = 4.5
+  assign rating_count = 4
+-%}
+
+{%- endcomment -%}
+
+{% liquid
+    assign show_number_rating = show_number_rating | default: settings.show_number_rating, allow_false: true
+    assign product = _product
+    assign rating = product.metafields.reviews.rating.value.rating
+    assign rating_count = product.metafields.reviews.rating_count
+    if rating == blank and settings.show_empty_rating == true
+    assign rating = 0
+    assign rating_count = 0
+    endif
+-%}
+{%- if rating != blank or settings.show_empty_rating == true -%}
+  <div class="rating-wrapper display-flex{% if settings.stars_style_rating != 'single' %} rating-wrapper--big-mt{% else %} rating-wrapper__single{% endif %}" style="visibility:hidden;" data-rating-count="{{ rating }}">
+    <div class="rating_icons" role="img" aria-label="{{ 'general.reviews.accessibility' | t: rating: rating }}">
+      {% if settings.stars_style_rating == 'single' %}
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.23841 0.579125C8.47813 -0.193043 9.52187 -0.193041 9.76159 0.579126L11.3372 5.65455C11.4444 5.99987 11.7519 6.23367 12.0988 6.23367H17.1977C17.9734 6.23367 18.296 7.27262 17.6684 7.74984L13.5433 10.8866C13.2626 11.1 13.1452 11.4783 13.2524 11.8237L14.828 16.8991C15.0678 17.6713 14.2233 18.3134 13.5958 17.8361L9.47069 14.6994C9.19002 14.4859 8.80998 14.4859 8.52931 14.6994L4.40424 17.8361C3.77666 18.3134 2.93225 17.6713 3.17197 16.8991L4.7476 11.8237C4.85481 11.4783 4.73737 11.1 4.4567 10.8866L0.331628 7.74984C-0.295955 7.27262 0.0265812 6.23367 0.802317 6.23367H5.90119C6.24811 6.23367 6.55557 5.99987 6.66277 5.65455L8.23841 0.579125Z" fill="#FEC107"/>
+        </svg>
+      {% else %}
+        <div class="ticarti-rating__active" style="width:calc({{ rating }} * 100% / 5);">
+            {%- for star in (1..5) -%}
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.49227 0.386083C5.65208 -0.128695 6.34791 -0.128694 6.50773 0.386084L7.55815 3.7697C7.62962 3.99991 7.8346 4.15578 8.06588 4.15578H11.4651C11.9823 4.15578 12.1973 4.84841 11.7789 5.16656L9.02886 7.25775C8.84176 7.40003 8.76346 7.65223 8.83493 7.88245L9.88536 11.2661C10.0452 11.7808 9.48223 12.2089 9.06384 11.8908L6.31379 9.79957C6.12668 9.65729 5.87332 9.65729 5.68621 9.79957L2.93616 11.8908C2.51777 12.2089 1.95483 11.7808 2.11464 11.2661L3.16507 7.88245C3.23654 7.65223 3.15824 7.40003 2.97113 7.25775L0.221086 5.16656C-0.197303 4.84841 0.0177208 4.15578 0.534878 4.15578H3.93412C4.1654 4.15578 4.37038 3.99991 4.44185 3.7697L5.49227 0.386083Z" fill="#FEC107"/>
+            </svg>
+            {%- endfor -%}
+        </div>
+        <div class="ticarti-rating__main" style="clip-path: inset(0 0 0 calc({{ rating }} * 100% / 5 - 1px));">
+            {%- for star in (1..5) -%}
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.49227 0.386083C5.65208 -0.128695 6.34791 -0.128694 6.50773 0.386084L7.55815 3.7697C7.62962 3.99991 7.8346 4.15578 8.06588 4.15578H11.4651C11.9823 4.15578 12.1973 4.84841 11.7789 5.16656L9.02886 7.25775C8.84176 7.40003 8.76346 7.65223 8.83493 7.88245L9.88536 11.2661C10.0452 11.7808 9.48223 12.2089 9.06384 11.8908L6.31379 9.79957C6.12668 9.65729 5.87332 9.65729 5.68621 9.79957L2.93616 11.8908C2.51777 12.2089 1.95483 11.7808 2.11464 11.2661L3.16507 7.88245C3.23654 7.65223 3.15824 7.40003 2.97113 7.25775L0.221086 5.16656C-0.197303 4.84841 0.0177208 4.15578 0.534878 4.15578H3.93412C4.1654 4.15578 4.37038 3.99991 4.44185 3.7697L5.49227 0.386083Z" fill="#FEC107"/>
+            </svg>
+            {%- endfor -%}
+        </div>
+      {% endif %}
+    </div>
+ 
+    {%- if show_number_rating or settings.stars_style_rating == 'single' -%}
+      <p class="rating-count mt0 body3">
+        {%- if settings.stars_style_rating == 'single' -%}
+          <span aria-hidden="true">{{- rating | round: 1 }}</span>
+        {%- endif -%}
+        {%- if settings.stars_style_rating == 'single' and show_number_rating -%}
+          <span class="rating-count-separator">|</span>
+        {%- endif -%}
+        {%- if show_number_rating -%}
+          {{- rating_count }}
+          {{ 'general.reviews.text' | t }}
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+{%- endif -%}

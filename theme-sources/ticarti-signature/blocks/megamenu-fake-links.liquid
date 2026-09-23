@@ -1,0 +1,45 @@
+<div style="{% if block.settings.enable_dynamic_grid == true %}--width-desktop:{{ block.settings.grid_width_desktop }}%;{% endif %}--column-count:{{ block.settings.column }};"></div>
+{% schema %}
+  {
+    "name": "Fake navigation links",
+    "class": "fake-links",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "This empty block is needed to organize the elements. The navigation links block duplicates the real block with links from the mega menu for sorting blocks."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dynamic_grid",
+        "default": false,
+        "label": "t:options.header.dynamic_width_desktop"
+      },
+      {
+        "visible_if": "{{ block.settings.enable_dynamic_grid == true }}",
+        "type": "range",
+        "id": "grid_width_desktop",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 25,
+        "unit": "%",
+        "label": "t:options.header.width_desktop"
+      },
+      {
+        "type": "range",
+        "id": "column",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "label": "Columns",
+        "default": 1,
+        "info": "Doesn't work for grouped first level links. Doesn't work for closed header."
+      }
+    ],
+    "presets": [
+      {
+      	"name": "Fake navigation links"
+      }
+    ]
+  }
+{% endschema %}

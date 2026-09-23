@@ -1,0 +1,79 @@
+{% comment %}
+  Renders a visual display element, currently just a swatch. If wrapped in "visual-display-parent" and "visual-display-parent--swatch" classes, this will receive hover and focus states.
+
+  Add a class of "active" or "disabled" to the parent element to change the state of the visual display.
+
+  Accepts:
+  - value_active: {Boolean}
+  - value: {Object} Will be an array of color drops, or image drop, depending on the "type"
+  - presentation: {String} Can only be "swatch"
+  - enable_products_count: {Boolean}
+
+  Usage:
+  {% render 'visual-display', value: value, presentation: filter.presentation, enable_products_count:true %}
+{% endcomment %}
+{%- capture text_label = -%}{{- value.label | escape }}{% if enable_products_count %} ({{ value.count }}){% endif %}{%- endcapture -%}
+<div class="visual-display{% unless value.swatch.color or value.image != blank %} visual-display--button btn__transition-text{% endunless %}">
+    {%- if value.swatch.color -%}
+    {% capture main_bg_color %}{{ settings.color_background }}{%- endcapture -%}
+    {%- assign main_bg_color = main_bg_color | downcase -%}
+    {%- assign swatch_color = value.swatch.color -%}
+    {%- assign var_bg_color = swatch_color | downcase -%}
+    <div class="visual-display__color gallery__block-item global__tooltip--hover{% if main_bg_color == var_bg_color %} visual-display__color-background{% endif %}" style="--color-swatch-background:{{ swatch_color }};">
+      {%- if text_label != blank -%}
+      <span class="hidden">{{- text_label -}}</span>
+      {%- if settings.filter_color_text == "tooltip" -%}
+      <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ text_label }}</div></global-tooltip>
+      {%- endif -%}
+      {%- endif -%}
+      {%- liquid
+        assign accent_brightness = swatch_color | color_extract: 'lightness'
+        if accent_brightness < 50
+        assign color_style = '#ffffff'
+        else
+        assign accent_brightness = settings.color_base | color_extract: 'lightness'
+        if accent_brightness < 50
+        assign color_style = settings.color_base
+        else
+        assign color_style = '#000000'
+        endif
+        endif
+      -%}
+      <div class="product-form__item__disabled-line--vertical" style="--color-base:{{ color_style }};"></div>
+      <div class="product-form__item__disabled-line--vertical product-form__item__disabled-line--flip" style="--color-base:{{ color_style }};"></div>
+    </div>
+    {%- elsif value.image != blank -%}
+    {%- liquid
+        if settings.filter_image_ratio == 'auto'
+        assign image_ratio = value.image.aspect_ratio
+        else
+        assign image_ratio = settings.filter_image_ratio
+        endif
+        -%}
+    <div class="visual-display__image global__tooltip--hover{% if value.active == false  %} {{ settings.image_hover_facet }}{% endif %}">
+      <div class="visual-display-swatch__image{% if image_ratio == '1.00' %} visual-display-swatch__image__circle{% endif %}">
+        <div class="image-hover-box{% if image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+          <div style="--aspect-ratio:{{ image_ratio }}">
+            {{
+              value.image
+              | image_url: width: 300
+              | image_tag: class: 'visual-display-swatch__image-child ', alt: value.image.alt
+            }}
+          </div>
+        </div>
+      </div>
+      {%- if text_label != blank -%}
+        <span class="visual-display__text {% if settings.filter_image == "show-center" %}text-center{% endif %}{% unless settings.filter_image contains "show" %}hidden{% endunless %}">{{ text_label }}</span>
+        {%- if settings.filter_image == "tooltip" -%}
+        <global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ text_label }}</div></global-tooltip>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+    {%- else -%}
+    <span class="facet__btn__text">{{ text_label }}</span>
+    <div class="btn__texts">
+      <span class="btn__top-text is-visible">{{ text_label }}</span>
+      <span class="btn__bottom-text is-hidden">{{ text_label }}</span>
+    </div>
+  {%- endif -%}
+</div>

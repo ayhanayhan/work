@@ -1,0 +1,24 @@
+{%- comment -%}
+    Header search with closed state
+
+    Accepts:
+    - section: {Object} Section paramatres object
+
+    Usage:
+    {%- render "header-search-closed", section:section -%}
+{%- endcomment -%}
+<div class="search-container">
+  <modal-opener class="display-flex popup-modal__opener" data-modal="#header-modal-search">
+    <a href="{{routes.search_url}}" class="header__button unstyled{% if section.settings.icons_text != 'show_only_text' %} move-icon-up{% endif %} global__tooltip--hover" aria-haspopup="dialog">
+      {%- if section.settings.icons_text != 'show_only_text' -%}
+      {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+      {%- endif -%}
+      <span class="body2 header__button__bubble__text">{{ 'sections.header.icon_search' | t }}</span>
+      {%- if section.settings.icons_text == 'tooltip' -%}
+      <global-tooltip class="global__tooltip global__tooltip__static">
+        <div class="global__tooltip__content">{{ 'sections.header.icon_search' | t }}</div>
+      </global-tooltip>
+      {%- endif -%}
+    </a>
+  </modal-opener>
+</div>

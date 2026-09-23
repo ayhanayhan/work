@@ -1,0 +1,22 @@
+<modal-dialog id="PopupModal-quickview" class="popup-modal popup-modal__right">
+    <div class="popup-modal__overlay" onclick="this.closest('.popup-modal').close()"></div>
+    <div class="popup-modal__content popup-modal__content__f-height">
+    <button class="popup-modal__toggle modal-close-animation" type="button" onclick="this.closest('.popup-modal').close()" aria-label="{{ 'accessibility.close' | t }}">
+		{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </button>
+    {%- render "loader" -%}
+    <style>
+    #PopupModal-quickview .popup-modal__content__content{
+        opacity:1;
+        transition: opacity var(--duration-medium) var(--duration-medium) var(--animation-bezier);
+    }
+    #PopupModal-quickview .popup-modal__content__content.opacity0{
+        opacity:0;
+    }
+    </style>
+    <div class="popup-modal__content__data custom__scrollbar product-page-template" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="popup-modal__content__content popup-modal__content__content--padding mt--first-child-0 opacity0">
+        </div>
+    </div>
+    </div>
+</modal-dialog>

@@ -1,0 +1,296 @@
+{% comment %}
+  Mobile menu
+  
+  Accepts:
+  - section: {Object}
+  - page_width: page width
+  - secondary_menu_links: {Object} Secondary menu links
+  - social_media: {String} html social media icons
+  - country_selector: {String} html country selector
+  - language_selector: {String} html language selector
+  - svg_icons: {Object} with icons
+
+  Usage:
+  {%- render "header-mobile",
+      section: section,
+      page_width:page_width,
+      social_media: social_media,
+      country_selector: country_selector,
+      language_selector:language_selector
+  -%}
+{% endcomment %}
+
+<style>
+  .header__mobile__grid{
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    row-gap: 20px;
+    min-height:50px;
+  }
+  .header__mobile__grid>* {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+  }
+</style>
+{%- capture logo -%}
+{%- if request.page_type == 'index' -%}
+<h4 class="header__heading">
+{%- else -%}
+<div>
+{%- endif -%}
+  <a href="{{ routes.root_url }}" class="header__heading-link clear-underline" aria-label="{{ shop.name }}">
+    {%- assign logo_svg_mobile = section.settings.logo_svg_mobile -%}
+    {%- assign image_src = section.settings.logo_mobile -%}
+    {%- assign logo_max_width = section.settings.logo_max_width_mobile -%}
+    {%- if logo_svg_mobile != blank -%}
+    {%- assign width = logo_svg_mobile | split: 'width="' | last | split: '"' | first | times: 1.0 -%}
+    {%- assign height = logo_svg_mobile | split: 'height="' | last | split: '"' | first | plus: 0 -%}
+    {%- assign aspect_ratio = height | divided_by: width -%}
+    <div class="header__heading-logo--svg" style="--max-width: {{ logo_max_width }}px; --max-height: {{ logo_max_width | times: aspect_ratio }}px;">
+      {{ logo_svg_mobile }}
+    </div>
+    {%- elsif image_src -%}
+    {%- assign image_size_2x = logo_max_width | times: 2 | at_most: 5760 -%}
+    <img srcset="{{ image_src | image_url: width: logo_max_width }} 1x, {{ image_src | image_url: width: image_size_2x }} 2x"
+         src="{{ image_src | image_url: width: logo_max_width }}"
+         class="header__heading-logo"
+         alt="{{ image_src.alt | default: shop.name | escape }}"
+         style="max-width: {{ logo_max_width }}px"
+         width="{{ logo_max_width }}"
+         height="{{ logo_max_width | divided_by: image_src.aspect_ratio }}"
+         loading="lazy"
+         >
+    {%- else -%}
+    <span class="h5">{{ shop.name }}</span>
+    {%- endif -%}
+  </a>
+  {%- if template.name == "index" and settings.fixed_header_on_index_mobile -%}
+  <a href="{{ routes.root_url }}" class="header__heading-link__transparent header__heading-link clear-underline" aria-label="{{ shop.name }}">
+    {%- assign logo_svg_mobile = settings.logo_svg_transparent_mobile -%}
+    {%- assign image_src = settings.logo_transparent_mobile -%}
+    {%- assign logo_max_width = settings.logo_max_width_transparent_mobile -%}
+    {%- if logo_svg_mobile != blank -%}
+    {%- assign width = logo_svg_mobile | split: 'width="' | last | split: '"' | first | times: 1.0 -%}
+    {%- assign height = logo_svg_mobile | split: 'height="' | last | split: '"' | first | plus: 0 -%}
+    {%- assign aspect_ratio = height | divided_by: width -%}
+    <div class="header__heading-logo--svg" style="--max-width: {{ logo_max_width }}px; --max-height: {{ logo_max_width | times: aspect_ratio }}px;">
+      {{ logo_svg_mobile }}
+    </div>
+    {%- elsif image_src -%}
+    {%- assign image_size_2x = logo_max_width | times: 2 | at_most: 5760 -%}
+    <img srcset="{{ image_src | image_url: width: logo_max_width }} 1x, {{ image_src | image_url: width: image_size_2x }} 2x"
+         src="{{ image_src | image_url: width: logo_max_width }}"
+         class="header__heading-logo"
+         alt="{{ image_src.alt | default: shop.name | escape }}"
+         style="max-width: {{ logo_max_width }}px"
+         width="{{ logo_max_width }}"
+         height="{{ logo_max_width | divided_by: image_src.aspect_ratio }}"
+         loading="lazy"
+         >
+    {%- else -%}
+    <span class="h5">{{ shop.name }}</span>
+    {%- endif -%}
+  </a>
+  {%- endif -%}
+{%- if request.page_type != 'index' -%}  
+</div>
+{%- else -%}
+</h4>
+{%- endif -%}
+{%- endcapture -%}
+{%- capture user_icons -%}
+{%- if shop.customer_accounts_enabled -%}
+<p class="mt0 drawer-customer-accounts__modal__header">
+  <span class="drawer-customer-accounts__modal__title h5">
+    {% if customer and customer.first_name != blank %}
+      {{ 'customer.account_title_personalized' | t: first_name: customer.first_name }}
+    {% else %}
+      {{ 'customer.account_title' | t }}
+    {% endif %}
+  </span>
+  {% if customer %}
+  <span class="mt5 display-block drawer-customer-accounts__modal__email body2">
+    {% if customer.email %}
+      {{ customer.email }}
+    {% elsif customer.phone %}
+      {{ customer.phone }}
+    {% endif %}
+  </span>
+  {% endif %}
+</p>
+{%- endif -%}
+{%- if settings.enable_compare -%}
+<a href="{{ settings.page_compare.url }}" class="header__button body2">
+  {%- if section.settings.icons_text_mobile == 'show_only_text' -%} 
+  <span>{{ 'compare.header.icon_compare' | t }}: <compare-bubble><span class="menu-drawer__bubble-count">0</span></compare-bubble></span>
+  {%- else -%}
+  {{- 'icon-compare' | append: settings.system_icon_thickness | inline_asset_content -}}
+  <span>{{ 'compare.header.icon_compare' | t }}</span>
+  <compare-bubble class="menu-drawer__button-bubble">
+    <span class="menu-drawer__bubble-count"></span>
+  </compare-bubble>
+  {%- endif -%}
+</a>
+{%- endif -%}
+{%- if settings.enable_wishlist -%}
+<a href="{{ settings.page_wishlist.url }}" class="header__button body2">
+  {%- if section.settings.icons_text_mobile == 'show_only_text' -%} 
+  <span>{{ 'wishlist.header.icon_wishlist' | t }}: <wishlist-bubble><span class="menu-drawer__bubble-count">0</span></wishlist-bubble></span>
+  {%- else -%}
+  {%- render 'icon-wishlist', icon_type:"normal" -%}
+  <span>{{ 'wishlist.header.icon_wishlist' | t }}</span>
+  <wishlist-bubble class="menu-drawer__button-bubble">
+    <span class="menu-drawer__bubble-count"></span>
+  </wishlist-bubble>
+  {%- endif -%}
+</a>
+{%- endif -%}
+{%- if shop.customer_accounts_enabled -%}
+{%- if routes.account_login_url contains "/account/login" -%}
+<a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__button body2">
+  {%- if section.settings.icons_text_mobile != 'show_only_text' -%}{{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+  <span>
+    {%- liquid
+      if customer
+        echo 'customer.account_fallback' | t
+      else
+        echo 'customer.log_in' | t
+      endif
+    -%}
+  </span>
+</a>
+{%- else -%}
+<a href="{{ routes.account_url }}" class="header__button body2">{%- if section.settings.icons_text_mobile != 'show_only_text' -%}{{- 'icon-account-orders' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}{{ 'customer.account_orders' | t }}</a>
+<a href="{{ routes.account_addresses_url }}" class="header__button body2">{%- if section.settings.icons_text_mobile != 'show_only_text' -%}{{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}{{ 'customer.account_profile' | t }}</a>
+{% unless customer %}
+<a href="{% if request.design_mode %}{{ routes.account_url }}{% else %}{{ routes.storefront_login_url }}{% endif %}" class="header__button body2">
+  {%- if section.settings.icons_text_mobile != 'show_only_text' -%}{{- 'icon-account-sign-in' | append: settings.system_icon_thickness | inline_asset_content -}}{%- endif -%}
+  <span class="account-actions__sign-in-text">{{ 'customer.sign_in_options' | t }}</span>
+  <span class="account-actions__fallback-text">{{ 'customer.log_in' | t }}</span>
+</a>
+<script src="{{ 'account-login-actions.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<account-login-actions class="account-actions__shop-login">{{ shop | login_button }}</account-login-actions>
+{%- endunless -%}
+{%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+
+<div class="{{ page_width }}{% if settings.show_shadow_header_mobile %} header__mobile__shadow{% endif %}">
+  {%- if section_settings_background -%}<div class="section-background border__radius">{%- endif -%}
+  <div class="header__mobile__grid{% if section.settings.icons_text_mobile == 'show_only_text' %} header__icons--text{% endif %}">
+    <div class="menu-drawer">
+      <menu-drawer>
+        <details class="disclosure-has-popup">
+          <summary>
+            <div class="menu-drawer__button header__button">
+              {%- if section.settings.icons_text_mobile == 'show_only_text' -%}
+              <span class="body3 header__button__bubble__text">{{ 'sections.header.main_menu' | t }}</span>
+              {%- else -%}      
+              {{- 'icon-hamburger' | append: settings.system_icon_thickness | inline_asset_content -}}
+              {%- endif -%}
+            </div>
+          </summary>
+          <div class="popup-modal popup-modal__left">
+            <div class="popup-modal__overlay" onclick="this.closest('menu-drawer').closeMenuDrawer('custom')"></div>
+            <div class="popup-modal__content popup-modal__content__f-height">
+              <button class="popup-modal__toggle" type="button" aria-label="{{ 'accessibility.close' | t }}">
+				      {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+              </button>
+              <div class="popup-modal__content__data custom__scrollbar" role="dialog" aria-modal="true" tabindex="-1">
+                {%- render "menu-drawer", linklist:section.settings.menu.links, show_icon:true, type:"main-menu", svg_icons:svg_icons -%}
+                {%- render "menu-drawer", linklist:secondary_menu_links, show_icon:false, type:"secondary-menu" -%}
+                {%- if user_icons != blank -%}
+                <div class="menu-drawer__account-icons">
+                  {{ user_icons | replace: "body2", '' }}
+                </div>
+                {%- endif -%}
+                {%- if social_media != blank -%}
+                <div class="menu-drawer__social">
+                  <ul class="unstyle-ul ticarti-social__icons header-social-icons">
+                    {{ social_media | replace: "body2", '' }}
+                  </ul>
+                </div>
+                {%- endif -%}
+
+                {%- if country_selector != blank or language_selector != blank -%}
+                <div class="menu-drawer__selectors">
+                  {{ country_selector | replace:"toright", "" }}{{ language_selector | replace:'<div class="header__separate-line"></div>', '' }}
+                </div>
+                {%- endif -%}
+
+                {% assign phone = section.blocks | where: "type", "phone" %}
+                {%- for block in phone -%}
+                {%- capture phone_content_button -%}
+                {%- if block.settings.main__0 == false -%}
+                <div class="header-phone-number__desktop">
+                  {%- if block.settings.text__0 != blank or block.settings.phone_icon__0 != blank -%}
+                    {%- if block.settings.phone_as_link__0 -%}
+                    <a href="tel:{{ block.settings.phone | replace:" ", "" }}" class="mt0 h4 clear-underline header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</a>
+                    {%- else -%}
+                    <p class="mt0 h4 header-phone-number__icon">{%- render 'icons-list' icon_name: block.settings.phone_icon__0 -%}{{ block.settings.phone__0 }}</p>
+                    {%- endif -%}
+                  {%- endif -%}
+                  {%- if block.settings.text__0 != blank -%}<p class="mt0 body3 phone-slogan">{{ block.settings.text__0 }}</p>{%- endif -%}
+                </div>
+                {%- endif -%}
+                {%- endcapture -%}
+
+                {%- liquid
+                    assign hide_social_value = false
+                    if social_media != blank
+                    assign hide_social_value = "true"
+                    endif
+                    capture phone_content
+                    render "header-contacts", block:block, hide_social:hide_social_value
+                    endcapture
+                -%}
+                {%- if phone_content_button != blank or phone_content != blank -%}
+                <div class="menu-drawer__phones">
+                  {{ phone_content_button }}
+                  {{ phone_content }}
+                </div>
+                {%- endif -%}
+                {%- endfor -%}
+
+              </div>
+            </div>
+          </div>
+        </details>
+      </menu-drawer>
+    </div>
+
+    {{ logo }}
+    
+    {%- assign show_search = section.settings.show_search | default: true -%}
+    <div class="header__icons">
+      {%- if show_search != 'hide' -%}
+      <div class="search-container">
+        <modal-opener class="display-flex popup-modal__opener" data-modal="#header-modal-search">
+          <a href="{{routes.search_url}}" class="header__button unstyled" aria-haspopup="dialog">
+            {%- if section.settings.icons_text_mobile == 'show_only_text' -%}
+            <span class="body3-st header__button__bubble__text">{{ 'sections.header.icon_search' | t }}</span>
+            {%- else -%}      
+		        {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+            {%- endif -%}
+          </a>
+        </modal-opener>
+      </div>
+      {%- endif -%}
+      {%- if settings.cart_type != "catalog_mode" -%}
+      {%- if section.settings.icons_text_mobile == 'show_only_text' -%}
+      <a href="{{ routes.cart_url }}" class="header__button" id="cart-icon-bubble--mobile-short">
+        {%- render 'cart-icon-bubble-short' -%}
+      </a>
+      {%- else -%}
+      <a href="{{ routes.cart_url }}" class="header__button" id="cart-icon-bubble--mobile">
+        {%- render 'cart-icon-bubble' -%}
+      </a>
+      {%- endif -%}
+      {%- endif -%}
+    </div>
+
+  </div>
+  {%- if section_settings_background -%}</div>{%- endif -%}
+</div>

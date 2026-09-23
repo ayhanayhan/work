@@ -1,0 +1,59 @@
+{% layout none %}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{%- if current_variant.image != blank -%}
+<div id="image">
+  <div class="product-card__image-main">
+    <img src="{{ current_variant.image.src | image_url: width: 600  }}"
+         data-ratio="{{ current_variant.image.aspect_ratio }}"
+         data-src="{{ current_variant.image.src }}"
+         alt="">
+  </div>
+</div>
+{%- endif -%}
+
+{%- assign inv_man = current_variant.inventory_management -%}{%- assign inv_qua = current_variant.inventory_quantity | plus: 0 -%}{%- unless inv_man -%}{%- assign inv_qua = 100000 -%}{%- endunless -%}{%- if current_variant.inventory_policy == "continue" -%}{%- assign inv_qua = 100000 -%}{%- endif -%}
+<div id="max" max="{{ inv_qua }}"></div>
+<div id="price">
+{%- render 'price', product: product, size:settings.product_card_price_size -%}
+</div>
+<input name="id" value="{{ current_variant.id }}">
+<button id="button" {% if current_variant.available == false %}disabled{% endif %}>
+<div class="type0">
+  {%- render "icon-cart" -%}
+</div>
+{%- capture add_to_cart_text -%}
+{%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'continue' and current_variant.inventory_quantity <= 0 -%}
+{{ "products.product.preorder" | t }}
+{%- else -%}
+{{ 'products.product.add_to_cart' | t }}
+{%- endif -%}
+{%- endcapture -%}
+<div class="type1">
+  {%- if current_variant.available -%}
+  {%- render "icon-cart" -%}
+  {%- else -%}
+  {{ 'products.product.sold_out' | t }}
+  {%- endif -%}
+</div>
+<div class="type2">
+  {%- if current_variant.available -%}
+  {{ add_to_cart_text }}
+  {%- else -%}
+  {{ 'products.product.sold_out' | t }}
+  {%- endif -%}
+</div>
+<div class="type3">
+  {%- if current_variant.available -%}
+  {%- render "icon-cart" -%}
+  {{ add_to_cart_text }}
+  {%- else -%}
+  {{ 'products.product.sold_out' | t }}
+  {%- endif -%}
+</div>
+</button>
+{%- if current_variant.compare_at_price > current_variant.price and product.available -%}
+<span class="badges-item__medium badges-item__sale">{{ 'products.product.on_sale' | t }}</span>
+{%- capture percent -%}{%- render 'badge-sale-percent', target:current_variant -%}{%- endcapture -%}
+<span class="badges-item__medium badges-item__sale badges-item__sale__counter">{{ 'products.product.on_sale_html' | t: percent_text: percent }}</span>
+{%- endif -%}

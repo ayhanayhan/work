@@ -1,0 +1,27 @@
+{
+  "sections": {
+    "cart-items": {
+      "type": "main-cart-items",
+      "settings": {
+        "heading_aligment": "text-center",
+        "top_spacing": "small",
+        "width": "default",
+        "image_ratio": "auto",
+        "show_vendor": true
+      }
+    },
+    "cart-footer": {
+      "type": "main-cart-footer",
+      "settings": {
+        "heading_aligment": "text-center",
+        "top_spacing": "medium",
+        "width": "default",
+        "show_lines": true
+      }
+    }
+  },
+  "order": [
+    "cart-items",
+    "cart-footer"
+  ]
+}

@@ -1,0 +1,313 @@
+{%- case component_name -%}
+{%- when 'media_with_text' -%}
+<div class="media-with-text__block-item mt-first-0 {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}{% if desktop_grid <= 2 %} media-with-text__block-item--two{% endif %}">
+  {%- if block.settings.show_image == "show" -%}
+  {%- if block.settings.url != blank -%}
+  {%- assign html_tag_open = '<a' | append: ' href="' | append: block.settings.url | append:'" ' | append: 'aria-label="' | append:block.settings.heading_text | append:'"' -%}
+  {%- assign html_tag_close = '</a>' -%}
+  {%- else -%}
+  {%- assign html_tag_open = '<div' -%}
+  {%- assign html_tag_close = '</div>' -%}
+  {%- endif -%}
+  {{ html_tag_open }} class="display-block">
+      {%- assign logo_svg = block.settings.logo_svg -%}
+      {%- assign image_src = block.settings.image -%}
+      {%- assign image_src_ratio = block.settings.image_ratio -%}
+      {%- if image_src or logo_svg == blank -%}
+      <div class="image-hover-box__container{% if block.settings.image_ratio == '1.00' %} image-hover-box--circle{% endif %}">
+        {%- render "component-image",
+            image_ratio_value: image_src_ratio,
+            image_source: image_src
+        -%}
+      </div>
+      {%- elsif logo_svg != blank -%}
+      <div class="display-flex w-full">
+        <div class="media-with-text__block-item__svg w-full" style="--max-width: {{ block.settings.logo_max_width }}px; --max-height: auto;">
+          {{ logo_svg }}
+        </div>
+      </div>
+      {%- endif -%}
+  {{ html_tag_close }}
+  {%- endif -%}
+  
+  {%- capture content -%}
+  {%- for i in (1..5) -%}
+  {%- assign icon_name = 'icon_name_' | append: i -%}
+  {%- assign icon_name = block.settings[icon_name] -%}
+  {%- assign desc = 'description_' | append: i -%}
+  {%- assign desc = block.settings[desc] -%}
+  {%- if icon_name != blank or desc != blank -%}
+  <div class="media-with-text__block-item__content{% if block.settings.align_content == "center" %} align-items-center{% endif %}"
+       {% if icon_name != blank %}data-icon="true"{% endif %}>
+  {%- render 'icons-list' icon_name: icon_name -%}
+  <div class="section__richtext__editor body2">{{ desc }}</div>
+  </div>
+  {%- endif -%}
+  {%- endfor -%}
+  {%- endcapture -%}
+  {%- if content != blank or block.settings.button_name != blank -%}
+  <div class="media-with-text__block-item__container">
+    {{ content }}
+    {%- if block.settings.button_name != blank -%}
+    <a href="{{ block.settings.url }}" class="btn btn__transition-text w-full mt16"
+      {% if block.settings.url == blank %} aria-disabled="true"{% endif %}>
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ block.settings.button_name }}</span>
+        <span class="btn__bottom-text is-hidden">{{ block.settings.button_name }}</span>
+      </div>
+    </a>
+  {%- endif -%}
+  </div>
+  {%- endif -%}
+</div>
+{%- when 'banner' -%}
+{%- render "component-banner-item",
+    section:section,
+    block:block,
+    desktop_grid:desktop_grid,
+    image_ratio_value: block.settings.image_ratio,
+    image_ratio_mobile_value: block.settings.image_ratio_mobile,
+    page_width: page_width
+-%}
+{%- when 'banner-text-outside' -%}
+{%- render "component-banner-item-text-outside",
+    section:section,
+    block:block,
+    desktop_grid:desktop_grid,
+    image_ratio_value: block.settings.image_ratio,
+    image_ratio_mobile_value: block.settings.image_ratio_mobile,
+    page_width: page_width
+-%}
+{%- when "recent-post" -%}
+<div class="article-card__container article-card__container--{{ block.settings.grid }} article-card__container--st-{{ block.settings.grid_tablet }}">
+  {%- for article in block.settings.blog.articles limit: block.settings.post_limit -%}
+  {%- render "article-card-sidebar",
+      section:section,
+      block:block,
+      article:article,
+      desktop_grid:desktop_grid,
+      image_ratio_value: block.settings.image_ratio,
+      page_width: page_width
+  -%}
+  {%- endfor -%}
+</div>
+{%- when 'tags' -%}
+<div class="tags__block-container">
+  {%- for i in (1..18) -%}
+  {%- assign block_text = "text_" | append: i -%}
+  {%- assign block_text = block.settings[block_text] -%}
+  {%- assign block_url = "url_" | append: i -%}
+  {%- assign block_url = block.settings[block_url] -%}
+  {%- if block_text != blank -%}
+  <a href="{{ block_url }}" class="btn btn__transition-text"
+    {% if block_url == blank %} aria-disabled="true"{% endif %}>
+    <div class="btn__texts">
+      <span class="btn__top-text is-visible">{{ block_text }}</span>
+      <span class="btn__bottom-text is-hidden">{{ block_text }}</span>
+    </div>
+  </a>
+  {%- endif -%}
+  {%- endfor -%}
+</div>  
+{%- when 'gallery' -%}
+<div class="gallery__block-container {{ block.settings.grid }}"{% if block.settings.roundness_type != "default" %} style="--radius:{{ block.settings.roundness }}px;"{% endif %}>
+  {%- for i in (1..18) -%}
+  {%- assign block_image = "image_" | append: i -%}
+  {%- assign block_image = block.settings[block_image] -%}
+  {%- assign block_url = "url_" | append: i -%}
+  {%- assign block_url = block.settings[block_url] -%}
+  {%- assign block_tooltip = "text_" | append: i -%}
+  {%- assign block_tooltip = block.settings[block_tooltip] -%}
+  {%- if block_image != blank -%}
+  <div class="gallery__block-item global__tooltip--hover {% if section.settings.image_hover == "default" %}{{ settings.image_hover }}{% else %}{{ section.settings.image_hover }}{% endif %}">
+    {%- if block_url != blank -%}
+    {%- assign html_tag_open = '<a' | append: ' href="' | append: block_url | append:'" ' | append: 'aria-label="' | append:block.settings.heading_text | append:'"' -%}
+    {%- assign html_tag_close = '</a>' -%}
+    {%- else -%}
+    {%- assign html_tag_open = '<div' -%}
+    {%- assign html_tag_close = '</div>' -%}
+    {%- endif -%}
+    {%- liquid
+        if page_width == "page-width"
+        assign page_is_wide = false
+        else
+        assign page_is_wide = true
+        endif
+        capture image_ratio
+        if block.settings.image_ratio == 'auto'
+        echo block_image.aspect_ratio
+        else
+        echo block.settings.image_ratio
+        endif
+        endcapture
+        assign image_ratio_string = image_ratio | append: ""
+    -%}
+    {{ html_tag_open }} class="image-hover-box{% if image_ratio_string == '1.00' %} image-hover-box--circle{% endif %}">
+      <div style="--aspect-ratio: {{image_ratio}};">
+        {%- assign image = block_image -%}
+        {%- capture sizes -%}
+        {%- liquid
+            assign width_part = desktop_grid | minus: 1 | times: settings.spacing_grid_horizontal | at_least: 0
+            assign width_part = settings.page_width | minus: width_part
+        -%}
+        (min-width: 1300px) {% if page_is_wide %}calc(100vw / {{ desktop_grid }}){% else %}calc(({{ width_part }}px - max({{ settings.page_width }}px + 80px - 100vw, 0px)) / {{ desktop_grid }}){% endif %},(min-width: 993px) calc((100vw - 140px) / 2),(min-width: 577px) calc((100vw - 40px - {{ settings.spacing_grid_horizontal }}px) / 2),(max-width: 576px) 100vw
+        {%- endcapture -%}
+        {%- capture image_class -%}{% if settings.animate_image_show %}image-show--fadein{% endif %}{%- endcapture -%}            
+        {%- capture animate_image_show -%}{% if settings.animate_image_show %}this.classList.add('image-loaded');{% endif %}{%- endcapture -%}
+        {{
+          image
+          | image_url: width: image.width
+          | image_tag:
+            loading: 'lazy',
+            width: image.width,
+            height: image.height,
+            class: image_class,
+            sizes: sizes,
+            widths: '360, 533, 720, 940, 1066, 2132',
+            onload: animate_image_show
+        }}
+      </div>
+    {{ html_tag_close }}
+    {%- if block_tooltip != blank -%}<global-tooltip class="global__tooltip"><div class="global__tooltip__content">{{ block_tooltip }}</div></global-tooltip>{%- endif -%}
+  </div>
+  {%- endif -%}
+  {%- endfor -%}
+</div>
+{%- liquid
+    assign btn_1 = false
+    assign i_n_1 = block.settings.icon_name
+    if block.settings.link_name != blank or i_n_1 != blank
+    assign btn_1 = true
+    endif
+-%}
+{%- if btn_1 -%}
+<div class="secondary-btn__container mt20">
+  <a href="{{ block.settings.url }}" class="btn btn--border btn__transition-text btn-wide-mob"{% if block.settings.url == blank %} aria-disabled="true"{% endif %}>
+    <div class="btn__texts">
+      <span class="btn__top-text is-visible">{%- if i_n_1 != blank -%}{%- render "icons-list" icon_name: i_n_1 -%}{%- endif -%}{{ block.settings.link_name }}</span>
+      <span class="btn__bottom-text is-hidden">{%- if i_n_1 != blank -%}{%- render "icons-list" icon_name: i_n_1 -%}{%- endif -%}{{ block.settings.link_name }}</span>
+    </div>
+  </a>
+</div>
+{%- endif -%}
+
+{%- when 'social' -%}
+{%- if block.settings.heading_text != blank or block.settings.desc != blank or block.settings.show_newsletter -%}
+<div class="social__block-newsletter">
+  {%- if block.settings.heading_text != blank %}<h2 class="mt0 {{ block.settings.heading_size }}">{{ block.settings.heading_text }}</h2>{%- endif -%}
+  {%- if block.settings.desc != blank %}
+  <div class="body2 section__richtext__editor">{{ block.settings.desc }}</div>
+  {%- endif -%}
+
+  {%- if block.settings.show_newsletter -%}
+  {%- form 'customer', class: 'newsletter-form' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  <div class="field field-with-icon">
+    <input class="field__input"
+           autocomplete="email"
+           type="email"
+           id="NewsletterForm--{{ section.id }}"
+           name="contact[email]"
+           value="{{ form.email }}"
+           aria-required="true"
+           autocorrect="off"
+           autocapitalize="off"
+           {% if form.errors %}
+           autofocus
+           aria-invalid="true"
+           aria-describedby="Newsletter-error--{{ section.id }}"
+           {% elsif form.posted_successfully? %}
+           aria-describedby="Newsletter-success--{{ section.id }}"
+           {% endif %}
+           placeholder="{{ 'newsletter.label' | t }}"
+           required
+           >
+    {%- if form.errors contains 'email' -%}
+    <label class="field__label field__label--error" for="Newsletter-error--{{ section.id }}">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</label>
+    {%- else -%}
+    <label class="field__label" for="NewsletterForm--{{ section.id }}">{{ 'newsletter.label' | t }}</label>
+    {%- endif -%}
+    <div class="field__icon">
+	  {{- 'icon-mail' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </div>
+
+    <button type="submit" class="field__button btn__transition-text" name="commit" aria-label="{{ 'newsletter.button_label' | t }}">
+      <span class="btn__top-text is-visible">{{- 'icon-arrow-right-2' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+      <span class="btn__bottom-text is-hidden">{{- 'icon-arrow-right-2' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+    </button>
+  </div>
+  {%- if block.settings.newsletter_terms != blank -%}<div class="body2 newsletter-terms section__richtext__editor mt--first-child-0">{{ block.settings.newsletter_terms }}</div>{%- endif -%}
+  {%- if form.posted_successfully? -%}
+  <p class="form__message mt16 body2" id="Newsletter-success--{{ section.id }}" tabindex="-1" autofocus>{{ 'newsletter.success' | t }}</p>
+  {%- endif -%}
+  {%- endform -%}
+
+  {%- if block.settings.desc2 != blank %}
+  <div class="body3 section__richtext__editor">{{ block.settings.desc2 }}</div>
+  {%- endif -%}
+  {%- endif -%}
+</div>
+{%- endif -%}
+
+{%- capture social_media -%}
+{%- if block.settings.show_social -%}
+{%- for i in (1..10) -%}
+{%- assign value = 'social_media_' | append: i -%}
+{%- assign value = settings[value] -%}
+{%- if value != blank -%}
+{%- assign icon_name = value | split: '//' | last | replace: 'www.', '' | split: '.' -%}
+{%- for value in icon_name -%}
+{%- if settings.social_media_roundness -%}
+{%- assign new_name = value | append:'_r' -%}
+{%- else -%}
+{%- assign new_name = value -%}
+{%- endif -%}
+{%- capture icon -%}{%- render "icons-list-social" icon_name:new_name -%}{%- endcapture -%}
+{%- if icon != blank -%}{%- break -%}{%- endif -%}
+{%- endfor -%}
+<li><a href="{{ value }}">
+  {{ icon }}
+  <span class="visually-hidden">{{ icon_name }}</span>
+  </a>
+</li>
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- assign show_pay_button = false -%}
+{%- if shop.features.follow_on_shop? and block.settings.enable_follow_on_shop -%}
+{%- assign show_pay_button = true -%}
+{%- endif -%}
+{%- if social_media != blank or show_pay_button -%}
+<div class="footer__block-social-icons">
+  {%- if social_media != blank -%}
+  <ul class="unstyle-ul social-ticarti-social__icons">
+    {{ social_media }}
+  </ul>
+  {%- endif -%}
+  {%- if show_pay_button -%}
+    <div class="footer__follow-on-shop mt30">
+      {% # theme-check-disable %}
+      {{ shop | login_button: action: 'follow' }}
+      {% # theme-check-enable %}
+    </div>
+  {%- endif -%}
+</div>
+{%- endif -%}
+{%- when 'grid-of-products' -%}
+{%- render "component-grid-of-products",
+    section:section,
+    block:block,
+    desktop_grid:desktop_grid,
+    image_ratio_value: block.settings.image_ratio,
+    page_width: page_width
+-%}
+{%- when 'featured-collection' -%}
+{%- render "component-featured-collection",
+    section:section,
+    block:block,
+    desktop_grid:desktop_grid,
+    image_ratio_value: block.settings.image_ratio,
+    page_width: page_width
+-%}  
+{%- endcase -%}

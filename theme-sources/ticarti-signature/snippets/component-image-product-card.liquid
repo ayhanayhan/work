@@ -1,0 +1,116 @@
+{% comment %}
+  Code to display article content
+
+  Accepts:
+  - image_ratio_value: Number
+  - image_ratio_mobile_value: Number
+  - image_source: {Object} Image paramatres object
+  - image_source2: {Object} Image paramatres object for secondary image
+  - show_image_source2: {Boolean} Show secondary image
+  - image_ratio_mobile_value: {Object} Image paramatres object
+  - load_priority_low: String, default empty
+  - section_index: Number Needs for image load priority
+  - video_html: liquid code
+  - placeholder_icon: String
+  - small_radius: {Boolean} Default false
+  - obj_product: {Object} product
+
+  Usage:
+  {%- render "component-image",
+      image_ratio_value: image_ratio,
+      image_ratio_mobile_value: image_ratio_mobile_value,
+      image_source: block.settings.image,
+      image_source2: product.media[1],
+      show_image_source2: section.settings.show_secondary_image,
+      load_priority_low: is_slider,
+      section_index: section.index,
+      video_html:video_html
+  -%}
+{% endcomment %}
+{%- assign show_immediately = show_immediately | default: false, allow_false: true -%}
+{%- assign first_video = obj_product.media | where: "media_type", "video" | first -%}
+<div class="image-hover-box{% if first_video != blank and show_image_source2 == 'show_secondary_image_video' %} section-media-buttons-parent video_on_hover{% endif %}{% if small_radius %} image-hover-box__small-radius{% endif %}">
+  {%- if image_source == blank -%}
+  {%- liquid
+      capture image_ratio
+      if image_ratio_value == 'auto'
+      echo "var(--default-svg-placeholder-aspect-ratio-square)"
+      else
+      echo image_ratio_value
+      endif
+      endcapture
+  -%}
+  <div class="placeholder__svg--bg" style="--aspect-ratio:{{ image_ratio }};">
+    {% if placeholder_icon == blank %}{%- assign placeholder_icon = "product-apparel-1" -%}{% endif %}
+    {{ placeholder_icon | placeholder_svg_tag: 'placeholder-svg' }}
+  </div>
+  {%- else -%}
+  {%- liquid
+      capture image_ratio
+      if image_ratio_value == 'auto'
+      echo image_source.aspect_ratio
+      else
+      echo image_ratio_value
+      endif
+      endcapture
+  -%}
+  <div class="bg-preloader" style="--aspect-ratio: {{image_ratio}};">
+    {%- liquid
+        if section_index > 2 or load_priority_low == 'true'
+          assign loading = "eager"
+        else
+          assign loading = "eager"
+        endif
+
+        assign fetch_priority = 'auto'
+        if section_index <= 2 and load_priority_low != 'true'
+          assign fetch_priority = 'high'
+        endif
+
+        capture image_class
+        if settings.animate_image_show and show_immediately == false
+        echo 'image-show--fadein'
+        endif
+        endcapture
+    -%}
+    <tag-image class="product-card__image-main">
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+        data-main="{{ image_source | image_url: width: '50' }}"
+        loading="{{ loading }}"
+        fetchpriority="{{ fetch_priority }}"
+        alt="{% if image_source.alt != blank %}{{ image_source.alt }}{% else %}{{ obj_product.title }}{% endif %}"
+        width="{{ image_source.width }}"
+        height="{{ image_source.height }}"
+        {% if image_class != blank %}class="{{ image_class }}"{% endif %}
+      >
+    </tag-image>
+    {%- if image_source2 != blank and show_image_source2 contains 'show_secondary_image' -%}
+      {%- if first_video != blank and show_image_source2 == 'show_secondary_image_video' -%}
+      <video-js class="section__video-media__box product-card__image-secondary {{ settings.product_card_video_resize }}"
+                data-type="video"
+                data-autoplay="false"
+                data-buttons="false">
+        <video class="slide-video slide-media" playsinline="" preload="none" loop="" muted="true" poster="{{ first_video.preview_image | image_url: width: '500' }}">
+          {%- assign sources = first_video.sources | last -%}
+          <source src="{{ sources.url }}" type="video/mp4"/>
+        </video>
+      </video-js>
+      {%- else -%}
+      <tag-image class="product-card__image-secondary">
+        <img
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+          data-main="{{ image_source2 | image_url: width: '50' }}"
+          loading="{{ loading }}"
+          fetchpriority="{{ fetch_priority }}"
+          alt="{% if image_source2.alt != blank %}{{ image_source2.alt }}{% else %}{{ obj_product.title }}{% endif %}"
+          width="{{ image_source2.width }}"
+          height="{{ image_source2.height }}"
+          {% if image_class != blank %}class="{{ image_class }}"{% endif %}
+        >
+      </tag-image>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+</div>

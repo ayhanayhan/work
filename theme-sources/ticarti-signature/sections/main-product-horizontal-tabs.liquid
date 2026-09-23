@@ -1,0 +1,183 @@
+{{ 'component-featured-tabs.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+    assign check_content = ""
+    for block in section.blocks
+    if block.settings.content == blank and block.settings.page == blank
+    assign check_content = check_content | append: 'false' | append: ','
+    else
+    assign check_content = check_content | append: 'true' | append: ','
+    endif
+    endfor
+    assign check_content = check_content | split: ','
+    -%}
+
+{%- capture page_width -%}{%- if section.settings.width != "default" %}{{ section.settings.width }}{%- else -%}{{ settings.page_width_main }}{%- endif -%}{%- endcapture -%}
+<div id="theme-section-{{ section.id }}"
+     class="top-spacing-{{ section.settings.top_spacing }}"
+     data-section-name="main-product-horizontal-tabs">
+  <div class="{{ page_width }}">
+    <featured-tabs class="page-grid-1 featured-tabs{% if section.settings.show_line %} featured-tabs--horizontal-line{% endif %}{% if section.settings.heading_aligment == "text-center" %} featured-tabs--center{% endif %}">
+        <div class="featured-tabs__container">
+            <div class="featured-tabs__container__content">
+            {%- assign active = false -%}
+            {%- for block in section.blocks -%}
+            {%- if check_content[forloop.index0] == 'true' -%}
+            <div class="featured-tabs__item btn btn--tabs{% if active == false %} active{% assign active = true %}{% endif %} btn__transition-text" data-index="{{ forloop.index }}" tabindex="0" role="tab">
+                <div class="btn__texts">
+                    <span class="btn__top-text is-visible">{%- if block.settings.icon_name != blank -%}{%- render "icons-list" icon_name: block.settings.icon_name -%}{%- endif -%}{{ block.settings.heading_text }}</span>
+                    <span class="btn__bottom-text is-hidden">{%- if block.settings.icon_name != blank -%}{%- render "icons-list" icon_name: block.settings.icon_name -%}{%- endif -%}{{ block.settings.heading_text }}</span>
+                </div>
+            </div>
+            {%- endif -%}
+            {%- endfor -%}
+            </div>
+        </div>
+    </featured-tabs>
+    <featured-tabs-content class="display-block">
+        {%- assign active = false -%}
+        {%- for block in section.blocks -%}
+        {%- if check_content[forloop.index0] == 'true' -%}
+        <div class="featured-tab-products{% if active == false %} active{% assign active = true %}{% endif %}" data-index="{{ forloop.index }}" role="tabpanel">
+            <div class="body2 section__richtext__editor mt--first-child-0">
+                {{ block.settings.content }}
+                {{ block.settings.page.content }}
+            </div>
+        </div>
+        {%- endif -%}
+        {%- endfor -%}
+    </featured-tabs-content>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Horizontal tabs",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "heading_aligment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        }
+      ],
+      "default": "text-center",
+      "label": "Tabs alignment"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "top_spacing",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal",
+      "label": "Top spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "page-width",
+          "label": "Boxed"
+        },
+        {
+          "value": "page-wide",
+          "label": "Wide"
+        }
+      ],
+      "default": "default",
+      "label": "Width",
+      "info": "The Wide option works for screens with 1440px width and more."
+    },
+    {
+        "type": "checkbox",
+        "id": "show_line",
+        "default": true,
+        "label": "Show divider line"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+            "type": "text",
+            "id": "heading_text",
+            "default": "Tab name",
+            "label": "Tab heading"
+        },
+        {
+            "type": "text",
+            "id": "icon_name",
+            "label": "Icon",
+            "info": "Example: info"
+        },
+        {
+            "type": "richtext",
+            "id": "content",
+            "label": "Content",
+            "default": "<p>Add an additional description to your products. You may set the same content for all products. <\/p><p>Ex: Shipping and return policies, size guides, and other common questions.<\/p><p>Or you may link a dynamic source to show product fields like vendor or custom product meta fields.<\/p><p>Ex: Ingredients, nutritional info, additional features and other unique per-product data.<\/p>"
+        },
+        {
+            "type": "page",
+            "id": "page",
+            "label": "Content from page"
+        }
+      ]
+    }
+  ],
+  "templates": ["product"],
+  "presets": [
+    {
+      "name": "Horizontal tabs",
+      "blocks": [
+        {
+            "type": "tab",
+            "settings": {
+                "heading_text": "Description",
+                "content": "{{ product.description }}"
+            }
+        },
+        {
+            "type": "tab"
+        },
+        {
+            "type": "tab"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

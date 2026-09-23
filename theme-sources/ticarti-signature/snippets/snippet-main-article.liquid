@@ -1,0 +1,294 @@
+{% comment %}
+  Code to display article content
+
+  Accepts:
+  - section: {Object} Section paramatres object
+
+  Usage:
+  {% render 'snippet-main-article' section:section %}
+{% endcomment %}
+
+<div class="article-heading">
+  <h1 class="mt0 mb0 article__heading {{ section.settings.heading_aligment }}" itemprop="headline">{{ article.title | escape }}</h1>
+  
+  {%- liquid
+  if section.settings.showtags and article.tags.size > 0
+  assign tags = true
+  else
+  assign tags = false
+  endif
+  -%}
+  {%- if tags or section.settings.show_date or section.settings.show_author -%}
+  <ul class="unstyle-ul blog-posts__meta body3">
+    {%- if section.settings.show_date -%}
+    <li class="author-toolbar__item" itemprop="dateCreated pubdate datePublished">
+      {{- 'icon-calendar' | append: settings.system_icon_thickness | inline_asset_content -}}<span>{{- article.published_at | time_tag: format: "month_day_year" -}}</span>
+    </li>
+    {%- endif -%}            
+    {%- if section.settings.show_author -%}
+    <li class="author-toolbar__item" itemprop="author" itemscope itemtype="http://schema.org/Person">
+      {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}<span itemprop="name">{{ article.author -}}</span>
+    </li>
+    {%- endif -%}
+    {%- if tags -%}
+    <li class="author-toolbar__item">
+	  {{- 'icon-discount-2' | append: settings.system_icon_thickness | inline_asset_content -}}
+      <span>
+        {% for tag in article.tags %}
+        {%- assign tag_html = "<span>" | append: tag | append: "</span>" -%}
+        {{ tag_html | link_to_tag: tag | replace: '<a', '<a class="link link__base-to_accent-color"' }}{% unless forloop.last %}, {% endunless %}
+        {% endfor %}
+      </span>
+    </li>
+    {%- endif -%}
+  </ul>
+  {%- endif -%}
+</div>
+
+{%- if article.image != blank and section.settings.show_featured_image -%}
+<div class="article-featured-image image--radius" style="--aspect-ratio:{{article.image.aspect_ratio}};">
+  {% assign imagesize = article.image.width | append: 'x' %}
+  <img srcset="{{ article.image | img_url: imagesize }} 1x, {{ article.image | img_url: imagesize, scale: 2 }} 2x"
+       src="{{ article.image | img_url: imagesize }}"
+       loading="lazy"
+       class="post__featured-image"
+       width="{{ article.image.width }}"
+       height="{{ article.image.height }}"
+       alt="{{ article.image.alt | escape }}"
+       >
+</div>
+{%- endif -%}
+
+<div class="article-container page-content__mockup section__richtext__editor" itemprop="articleBody">
+  {%- if article.content != '' -%}
+  {{ article.content }}
+  {%- else -%}
+  {{ article.excerpt_or_content }}
+  {%- endif -%}
+</div>
+
+{%- if section.settings.share_label != "" -%}
+<div class="article-template__social-sharing">
+  <share-button class="share-button">
+    <button class="btn btn__transition-text share-button__button hidden">
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{{ section.settings.share_label | escape }}</span>
+        <span class="btn__bottom-text is-hidden">{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{{ section.settings.share_label | escape }}</span>
+      </div>
+    </button>
+    <details id="Details-{{ block.id }}-{{ section.id }}">
+      <summary class="share-button__button">
+        <div class="btn btn__transition-text share-button__button">
+          <div class="btn__texts">
+            <span class="btn__top-text is-visible">{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{{ section.settings.share_label | escape }}</span>
+            <span class="btn__bottom-text is-hidden">{{- 'icon-share' | append: settings.system_icon_thickness | inline_asset_content -}}{{ section.settings.share_label | escape }}</span>
+          </div>
+        </div>
+      </summary>
+      <div id="Article-share-{{ section.id }}" class="share-button__fallback">
+        <div class="field mt20">
+          <input type="text"
+                 class="field__input"
+                 id="url"
+                 value="{{ request.origin | append: article.url }}"
+                 placeholder="{{ 'general.share.share_url' | t }}"
+                 onclick="this.select();"
+                 readonly
+                 >
+          <label class="field__label" for="url">{{ 'general.share.share_url' | t }}</label>
+          <button class="field__button btn__transition-text share-button__close hidden no-js-hidden">
+            <span class="btn__top-text is-visible">{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+            <span class="btn__bottom-text is-hidden">{{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+            <span class="visually-hidden">{{ 'general.share.close' | t }}</span>
+          </button>
+          <button class="field__button btn__transition-text share-button__copy no-js-hidden">
+            <span class="btn__top-text is-visible">{{- 'icon-clipboard' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+            <span class="btn__bottom-text is-hidden">{{- 'icon-clipboard' | append: settings.system_icon_thickness | inline_asset_content -}}</span>
+            <span class="visually-hidden">{{ 'general.share.copy_to_clipboard' | t }}</span>
+          </button>
+        </div>
+        <div id="ShareMessage-{{ section.id }}" class="share-button__message hidden body2 mt16" role="status"></div>
+      </div>
+    </details>
+  </share-button>
+  <script src="{{ 'share.js' | asset_url }}" defer="defer"></script>
+</div>
+{%- endif -%}
+
+{%- if blog.comments_enabled? -%}
+<div class="separate-line top-spacing-normal"></div>
+<div class="top-spacing-normal article-template__comment-wrapper">
+
+  {% form 'new_comment', article %}
+  {%- liquid
+    assign post_message = 'blogs.article.success'
+    if blog.moderated? and comment.status == 'unapproved'
+      assign post_message = 'blogs.article.success_moderated'
+    endif
+  -%}
+  <h3 id="addcomment" class="mt0 mb0 {{ section.settings.heading_aligment }}">{{ 'blogs.article.comment_form_title' | t }}</h3>
+
+  {%- if form.errors -%}
+  <div class="errors-container" role="alert">
+    <h6 class="mt0 mb0" autofocus>
+      {{ 'templates.contact.form.error_heading' | t }}
+    </h6>
+    <div class="errors">
+      <ul>
+        {%- for field in form.errors -%}
+        <li>
+          <a href="#CommentForm-{{ field }}" class="body2">
+            {%- if form.errors.translated_fields[field] contains 'author' -%}
+            {{ 'blogs.article.name' | t }}
+            {%- elsif form.errors.translated_fields[field] contains 'body'-%}
+            {{ 'blogs.article.message' | t }}
+            {%- else -%}
+            {{ form.errors.translated_fields[field] }}
+            {%- endif -%}
+            {{ form.errors.messages[field] }}
+          </a>
+        </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+  {%- endif -%}
+   
+  <div class="page-grid-sp-1 page-grid-2 mt40">
+    <div class="field field-with-icon w-full">
+      <input class="field__input"
+             type="text"
+             name="comment[author]"
+             id="CommentForm-author"
+             autocomplete="name"
+             value="{{ form.author }}"
+             aria-required="true"
+             {% if form.errors contains 'author' %}
+             aria-invalid="true"
+             aria-describedby="CommentForm-author-error"
+             {% endif %}
+             placeholder="{{ 'blogs.article.name' | t }}"
+             required
+             >
+      {%- if form.errors contains 'author' -%}
+      <label class="field__label" for="CommentForm-author-error">{{ form.errors.messages['author'] }}.</label>
+      {%- else -%}
+      <label class="field__label" for="CommentForm-author">{{ 'blogs.article.name' | t }}</label>
+      {%- endif -%}
+      <div class="field__icon">
+        {{- 'icon-account' | append: settings.system_icon_thickness | inline_asset_content -}}		
+      </div>
+    </div>
+
+    <div class="field field-with-icon w-full">
+      <input class="field__input"
+             type="string"
+             id="CommentForm-email"
+             name="comment[email]"
+             autocomplete="email"
+             value="{{ form.email }}"
+             autocorrect="off"
+             autocapitalize="off"
+             aria-required="true"
+             {% if form.errors contains 'email' %}
+             aria-invalid="true"
+             aria-describedby="CommentForm-email-error"
+             {% endif %}
+             placeholder="{{ 'blogs.article.email' | t }}"
+             required
+             >
+      {%- if form.errors contains 'email' -%}
+      <label class="field__label field__label--error" for="CommentForm-email">{{ form.errors.messages['email'] }}.</label>
+      {%- else -%}
+      <label class="field__label" for="CommentForm-email-error">{{ 'blogs.article.email' | t }}</label>
+      {%- endif -%}
+      <div class="field__icon">
+		{{- 'icon-mail' | append: settings.system_icon_thickness | inline_asset_content -}}
+      </div>
+    </div>
+  </div>
+
+  <div class="field field--text-area form-inputs-top-spacing">
+    <textarea rows="5"
+              id="CommentForm-body"
+              class="text-area field__input"
+              name="comment[body]"
+              placeholder="{{ 'blogs.article.message' | t }}"
+              aria-required="true"
+              {% if form.errors contains 'body' %}
+              aria-invalid="true"
+              aria-describedby="CommentForm-body-error"
+              {% endif %}
+              required
+              >{{- form.body -}}</textarea>
+    {%- if form.errors contains 'body' -%}
+    <label class="field__label" for="CommentForm-body-error">{{ form.errors.messages['body'] }}.</label>
+    {%- else -%}
+    <label class="field__label" for="ContactForm-body">{{ 'blogs.article.message' | t }}</label>
+    {%- endif -%}
+  </div>
+  {%- if blog.moderated? -%}
+  <p class="mt30 body3 article-template__comment-warning {{ section.settings.heading_aligment }}">{{ 'blogs.article.moderated' | t }}</p>
+  {%- endif -%}
+  <div class="form-inputs-top-spacing-button {{ section.settings.heading_aligment }}">
+    <button type="submit" class="btn btn__transition-text btn-wide">
+      <div class="btn__texts">
+        <span class="btn__top-text is-visible">{{ 'blogs.article.post' | t }}</span>
+        <span class="btn__bottom-text is-hidden">{{ 'blogs.article.post' | t }}</span>
+      </div>
+    </button>
+  </div>
+  {%- if form.posted_successfully? -%}
+  <p class="form__message body2 mt16 {{ section.settings.heading_aligment }}" tabindex="-1" autofocus role="status">{{ post_message | t }}</p>
+  {%- endif -%}
+{%- endform -%}
+</div>
+
+{%- if article.comments_count > 0 -%}
+<div id="comments" class="top-spacing-normal">
+{%- assign anchorId = '#Comments-' | append: article.id -%}
+
+<h3 id="Comments-{{ article.id }}" class="mt0 comments__heading {{ section.settings.heading_aligment }}">{{ 'blogs.article.comments' | t: count: article.comments_count }}</h3>
+{% paginate article.comments by 10 %}
+  <div class="article-template__comments mt40">
+    {%- if comment.status == 'pending' and comment.content -%}
+      <article id="{{ comment.id }}" class="article-template__comments-comment body2">
+        <strong class="article-template__comments-comment__meta">{{ comment.author }}</strong>
+        <div class="article-template__comments-comment__container">{{ comment.content }}</div>
+      </article>
+    {%- endif -%}
+    {%- for comment in article.comments -%}
+      <article id="{{ comment.id }}" class="article-template__comments-comment">
+        <div class="article-template__comments-comment__meta body2">
+          <strong>{{ comment.author }}</strong> {{ 'blogs.article.on' | t }} <strong>{{ comment.created_at | date: '%Y,%m,%d' }}</strong>
+        </div>
+        <div class="article-template__comments-comment__container">{{ comment.content }}</div>
+      </article>
+    {%- endfor -%}
+    {% render 'pagination', paginate: paginate, anchor: anchorId, aligment: section.settings.heading_aligment %}
+  </div>
+{% endpaginate %}
+</div>
+{%- endif -%}
+
+{%- endif -%}
+
+<div class="separate-line top-spacing-normal"></div>
+<div class="{{ section.settings.heading_aligment }} top-spacing-normal">
+<a href="{{ blog.url }}" class="btn btn--border btn__transition-text btn-wide">
+  <div class="btn__texts">
+    <span class="btn__top-text is-visible">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}} {{ 'blogs.article.back_to_blog' | t: title: blog.title }}</span>
+    <span class="btn__bottom-text is-hidden">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}} {{ 'blogs.article.back_to_blog' | t: title: blog.title }}</span>
+  </div>
+</a>
+</div>
+
+{%- for block in section.blocks -%}
+{%- case block.type -%}
+{%- when '@app' -%}
+<div class="separate-line top-spacing-normal"></div>
+<div class="top-spacing-normal">
+{% render block %}
+</div>
+{%- endcase -%}
+{%- endfor -%}

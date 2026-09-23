@@ -1,0 +1,133 @@
+{%- comment -%}
+    Renders a product card
+
+    Accepts:
+    - product_card_product: {Object}
+    - image_ratio_value: {String} Size of the product image card. Values are "auto", "portrait", "landscape", "square" and "round". Default is "auto" (optional)
+    - show_secondary_image: {Boolean} Show the secondary image on hover. Default: false (optional)
+    - show_vendor: {Boolean} Show the product vendor. Default: false
+    - hover_underline: {Boolean} The product name hover underline. Default: false (optional)
+    - show_price: {Boolean} Show the product price. Default: true
+    - button_type_product: {String} Size of the product image card. Values are "hide", "show", "show only text" and "show only icon". Default is "show"
+    - image_hover_type: {String}
+    - text_aligment: {String}
+
+    Usage:
+    {%- render 'lookbook-product-card-placeholder',
+       image_hover_type: section.settings.image_hover,
+       show_price:section.settings.show_price,
+       show_vendor:section.settings.show_vendor
+    -%}
+{%- endcomment -%}
+<div id="product-{{ id_code }}" class="lookbook__product-card product-card {{ text_aligment }} {%- if show_secondary_image != "gallery" -%}{% if image_hover_type == "default" %}{{ settings.image_hover }}{% else %}{{ image_hover_type }}{% endif %}-personal{% endif %}{% if settings.product_card_image_resize == "contain" %} product-card-image--contain{% endif %}">
+    <div class="product-card__image__container image-hover-personal-element">
+        <div class="product-card__image">
+            <a href="{{ product_card_product.url }}" class="product-card__image__url{% if show_secondary_image == "gallery" %} product-card__image__url__slider-mask{% endif %}">
+                {%- if show_secondary_image != "gallery" -%}
+                <div class="image-hover-box__container{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}">
+                {%- render "component-image-product-card",
+                    image_ratio_value: image_ratio_value,
+                    load_priority_low: 'true',
+                    section_index: section.index,
+                    small_radius: small_radius,
+                    placeholder_icon: placeholder_icon
+                -%}
+                </div>
+                {%- else -%}
+                <swiper-slider class="swiper swiper__no-padding-bottom swiper-nested swiper__animated-arrows swiper-no-pad swiper-no-marg swiper-slide__with-bg{% if image_ratio_value == '1.00' %} image-hover-box--circle{% endif %}"
+                            data-swiper-desktop-grid="1"
+                            data-swiper-desktop-lg-grid="1"
+                            data-swiper-desktop-md-grid="1"
+                            data-swiper-tablet-grid="1"
+                            data-swiper-mobile-grid="1"
+                            data-gutter="0"
+                            data-gutter-mobile="0"
+                            data-grid="1,1,1,1,1"
+                            data-autoplay="false"
+                            data-autoheight="true"
+                            data-script="{{ 'swiper-bundle.min.js' | asset_url }}"
+                >
+                    <div class="swiper-wrapper">
+                        {%- for i in (1..4) -%}
+                        <div class="swiper-slide" lazy="true">
+                        <div class="image-hover-box__container">
+                            {%- render "component-image-product-card",
+                                image_ratio_value: image_ratio_value,
+                                load_priority_low: 'true',
+                                section_index: section.index,
+                                small_radius: small_radius,
+                                placeholder_icon: placeholder_icon
+                            -%}
+                        </div>
+                        </div>
+                        {%- endfor -%}
+                    </div>
+                </swiper-slider>
+                <div class="swiper-control-container swiper-control-container__absolute">
+                <div class="internal-swiper-button-prev">{{- 'icon-arrow-left' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+                <div class="swiper-pagination hide-desktop"></div>
+                <div class="internal-swiper-button-next">{{- 'icon-arrow-right' | append: settings.system_icon_thickness | inline_asset_content -}}</div>
+                </div>
+                {%- endif -%}
+            </a>
+        </div>
+    </div>
+
+    <product-form class="lookbook__product-card__content">
+        {%- assign product_card_product_id = section.id | append: product_card_product.id -%}
+        <div class="form">
+        <div class="lookbook__product-card__content__main">
+            {%- if show_vendor -%}
+            <div class="body3 mt3">
+                <div class="mt0 lookbook__product-card-small__meta link link__base-to_accent-color text-uppercase a--no-hover-color native-hover{% if hover_underline == false %} link--no-underline{% endif %}">VENDOR</div>
+            </div>
+            {%- endif -%}
+
+            <div class="body2 mt3 lookbook__product-card__heading">
+            <div class="product-card-name-size lookbook__product-card-small__heading heading-color-block-hover a--no-hover-color clear-underline{% if hover_underline %} animation-underline{% endif %} native-hover">Product name</div>
+            </div>
+
+            {%- if show_price and settings.cart_type != "catalog_mode" -%}
+            <div>
+                <div class="price__container">
+                <div class="price">
+                    <div class="price__regular body3">
+                    €19,95 USD
+                    </div>
+                    <div class="price__sale h5 mt3">€15,95 EUR</div>
+                </div>
+                </div>
+            </div>
+            {%- endif -%}
+        </div>
+
+        {%- if button_type_product != "hide" and settings.cart_type != "catalog_mode" -%}
+        <div class="lookbook__product-card__interface">
+            <div id="form-testdata"
+                class="lookbook__product-card__form"
+                >
+                <button type="submit"
+                        name="add"
+                        class="lookbook__product-card__button quick-add__submit btn btn__transition-text w-full"
+                        >
+                    <div class="btn__texts">
+                        <span class="btn__top-text is-visible">
+                            {%- render "icon-cart" -%}
+                            <span class="btn__texts__text">
+                            {{ 'products.product.add_to_cart' | t }}
+                            </span>
+                        </span>
+                        <span class="btn__bottom-text is-hidden">
+                            {%- render "icon-cart" -%}
+                            <span class="btn__texts__text">
+                            {{ 'products.product.add_to_cart' | t }}
+                            </span>
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+        {%- endif -%}
+        </div>
+    </product-form>
+</div>

@@ -1,0 +1,33 @@
+{%- comment -%}
+  Code to display article content
+
+  Accepts:
+  - section: {Object} Section paramatres object
+  - custom_class: {String}
+  - button_html: {String} optional
+
+  Usage:
+  {%- render "section-heading" section:section -%}
+{%- endcomment -%}
+{%- assign button_html = button_html | default: '', allow_false: true -%}
+{%- capture content -%}
+{%- if section.settings.main_subheading != blank -%}<p class="mt0 h5 subheading">{{ section.settings.main_subheading }}</p>{%- endif -%}
+{%- if section.settings.main_heading != blank -%}<h2 class="mt0 section-heading-text">{{ section.settings.main_heading }}</h2>{%- endif -%}
+{%- if section.settings.main_desc != blank -%}<p class="mt0 body2 section-heading-desc-text">{{ section.settings.main_desc }}</p>{%- endif -%}
+{%- endcapture -%}
+{%- if content != blank or button_html != '' -%}
+{%- if section.settings.width == "page-fullwidth" -%}
+<div class="page-wide section-heading-container section-heading-elements">
+  <div class="page-grid-1 {{ section.settings.heading_aligment }} {{ custom_class }}">
+    {{ content }}
+  </div>
+</div>
+{%- else -%}
+<div class="page-grid-1 section-heading-container {{ section.settings.heading_aligment }} {{ custom_class }}">
+  <div class="section-heading-elements">
+    {{ content }}
+  </div>
+  {%- if button_html != '' -%}{{ button_html }}{%- endif -%}
+</div>
+{%- endif -%}
+{%- endif -%}

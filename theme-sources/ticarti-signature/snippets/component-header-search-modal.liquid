@@ -1,0 +1,69 @@
+{%- if section.settings.show_search != "hide" -%}
+<modal-dialog id="header-modal-search" class="popup-modal popup-modal__center-desktop popup-modal__right header-modal-search search-parent-js">
+  <div class="popup-modal__overlay" onclick="this.closest('.popup-modal').close()"></div>
+  <div class="popup-modal__content">
+    <button class="popup-modal__toggle modal-close-animation" type="button" onclick="this.closest('.popup-modal').close()" aria-label="{{ 'accessibility.close' | t }}">
+      {{- 'icon-close' | append: settings.system_icon_thickness | inline_asset_content -}}
+    </button>
+    <div class="popup-modal__search" role="dialog" aria-modal="true">
+      <div class="popup-modal__search__heading">
+        <h4 class="mt0">{{ 'general.search.modal_heading' | t }}</h4>
+      </div>
+      <div class="popup-modal__search__form">
+        {%- if settings.predictive_search_enabled -%}
+        <predictive-search class="header-short-search static" data-loading-text="{{ 'accessibility.loading' | t }}">
+        {%- endif -%}
+          <form action="{{ routes.search_url }}" method="get" role="search" class="search header__icons__only-space w-full">
+            <div class="field">
+              <input class="field__input static"
+                     id="Search-In-Modal"
+                     type="search"
+                     name="q"
+                     placeholder="{{ 'general.search.search' | t }}"
+                     {%- if settings.predictive_search_enabled -%}
+                     role="combobox"
+                     aria-expanded="false"
+                     aria-owns="predictive-search-results-list"
+                     aria-controls="predictive-search-results-list"
+                     aria-haspopup="listbox"
+                     aria-autocomplete="list"
+                     autocorrect="off"
+                     autocomplete="off"
+                     autocapitalize="off"
+                     spellcheck="false"
+                     {%- endif -%}
+                     >
+              <label class="field__label" for="Search-In-Modal">{{ 'general.search.search' | t }}</label>
+              <input type="hidden" name="options[prefix]" value="last">
+              
+              <button type="submit" class="search__button field__button btn__transition-text" aria-label="{{ 'general.search.search' | t }}">
+                <span class="btn__top-text is-visible">
+				  {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </span>
+                <span class="btn__bottom-text is-hidden">
+				  {{- 'icon-search' | append: settings.system_icon_thickness | inline_asset_content -}}
+                </span>
+              </button>
+            </div>
+          </form>
+        {%- if settings.predictive_search_enabled -%}
+        </predictive-search>
+        {%- endif -%}
+      </div>
+      {%- if settings.predictive_search_enabled -%}
+      <div class="popup__predictive-search-container custom__scrollbar">
+        <div class="popup__predictive-search" tabindex="-1" data-predictive-search>
+          <div class="predictive-search__loading-state hide">
+            <svg aria-hidden="true" focusable="false" role="presentation" class="loading-overlay__spinner spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+              <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+      {%- endif -%}
+      <div class="header-modal-search__external-content custom__scrollbar"></div>
+    </div>
+  </div>
+</modal-dialog>
+{%- endif -%}
