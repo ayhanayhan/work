@@ -16,6 +16,9 @@ async function proxy(req:NextRequest,ctx:{params:Promise<{path?:string[]}>}){
 
   const headers=new Headers(req.headers);
   headers.delete('host');
+  headers.delete('authorization');
+  headers.delete('proxy-authorization');
+  headers.delete('x-serverless-authorization');
   headers.delete('x-forwarded-host');
   headers.delete('x-forwarded-proto');
   headers.delete('content-length');
