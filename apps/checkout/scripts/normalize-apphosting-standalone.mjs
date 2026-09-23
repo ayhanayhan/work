@@ -1,81 +1,68 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const appRoot = process.cwd();
-const standalone = path.join(appRoot, '.next', 'standalone');
-const expected = path.join(standalone, '.next', 'routes-manifest.json');
+const appRoot=path.resolve(process.cwd());
+const nextRoot=path.join(appRoot,'.next');
+const standaloneRoot=path.join(nextRoot,'standalone');
+const nestedApp=path.join(standaloneRoot,'apps','checkout');
 
-function walk(dir, found = []) {
-  if (!fs.existsSync(dir)) return found;
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      walk(full, found);
-    } else if (
-      entry.isFile() &&
-      entry.name === 'routes-manifest.json' &&
-      path.basename(path.dirname(full)) === '.next'
-    ) {
-      found.push(full);
+function exists(p){
+  try{return fs.existsSync(p)}catch{return false}
+}
+
+function copyDir(src,dst){
+  if(!exists(src))return;
+  fs.mkdirSync(dst,{recursive:true});
+  fs.cpSync(src,dst,{recursive:true,force:true});
+}
+
+if(exists(nestedApp)){
+  console.log(`[apphosting] Standalone monorepo ciktisi normalize ediliyor: ${nestedApp}`);
+
+  for(const entry of fs.readdirSync(nestedApp)){
+    const src=path.join(nestedApp,entry);
+    const dst=path.join(standaloneRoot,entry);
+
+    if(entry==='node_modules'){
+      copyDir(src,dst);
+      continue;
+    }
+
+    if(fs.statSync(src).isDirectory()){
+      copyDir(src,dst);
+    }else{
+      fs.copyFileSync(src,dst);
     }
   }
-  return found;
 }
 
-if (!fs.existsSync(standalone)) {
-  console.error('[apphosting] .next/standalone bulunamadi.');
-  process.exit(1);
+const staticSrc=path.join(nextRoot,'static');
+const staticDst=path.join(standaloneRoot,'.next','static');
+
+if(!exists(staticSrc)){
+  throw new Error(`[apphosting] .next/static bulunamadi: ${staticSrc}`);
 }
 
-if (!fs.existsSync(expected)) {
-  const candidates = walk(standalone).filter((file) => file !== expected);
+copyDir(staticSrc,staticDst);
 
-  if (!candidates.length) {
-    console.error('[apphosting] routes-manifest.json standalone altinda bulunamadi.');
-    process.exit(1);
+const publicSrc=path.join(appRoot,'public');
+const publicDst=path.join(standaloneRoot,'public');
+
+if(exists(publicSrc)){
+  copyDir(publicSrc,publicDst);
+}
+
+const serverFile=path.join(standaloneRoot,'server.js');
+const manifestFile=path.join(standaloneRoot,'.next','routes-manifest.json');
+const nextPackage=path.join(standaloneRoot,'node_modules','next','package.json');
+
+for(const required of [serverFile,manifestFile,nextPackage,staticDst]){
+  if(!exists(required)){
+    throw new Error(`[apphosting] Eksik standalone runtime dosyasi: ${required}`);
   }
-
-  // Pick the shallowest nested application output.
-  candidates.sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
-  const manifest = candidates[0];
-  const nestedNext = path.dirname(manifest);
-  const nestedAppRoot = path.dirname(nestedNext);
-
-  if (path.resolve(nestedAppRoot) === path.resolve(standalone)) {
-    console.error('[apphosting] Standalone manifest beklenen konuma normalize edilemedi.');
-    process.exit(1);
-  }
-
-  console.log(`[apphosting] Standalone monorepo ciktisi normalize ediliyor: ${nestedAppRoot}`);
-
-  for (const name of fs.readdirSync(nestedAppRoot)) {
-    const src = path.join(nestedAppRoot, name);
-    const dst = path.join(standalone, name);
-
-    if (path.resolve(src) === path.resolve(dst)) continue;
-
-    fs.cpSync(src, dst, {
-      recursive: true,
-      force: true,
-      errorOnExist: false,
-    });
-  }
-}
-
-if (!fs.existsSync(expected)) {
-  console.error(`[apphosting] Eksik: ${expected}`);
-  process.exit(1);
-}
-
-const serverCandidates = [
-  path.join(standalone, 'server.js'),
-  path.join(standalone, 'server.mjs'),
-];
-
-if (!serverCandidates.some((file) => fs.existsSync(file))) {
-  console.error('[apphosting] Standalone server.js/server.mjs bulunamadi.');
-  process.exit(1);
 }
 
 console.log('[apphosting] Standalone cikti hazir.');
-console.log(`[apphosting] Manifest: ${expected}`);
+console.log(`[apphosting] Manifest: ${manifestFile}`);
+console.log(`[apphosting] Static: ${staticDst}`);
+console.log(`[apphosting] Public: ${publicDst}`);
