@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev -p 3004",
     "build": "next build",
-    "start": "next start -p 3000"
+    "start": "next start -p 3000",
+    "postbuild": "node scripts/normalize-apphosting-standalone.mjs"
   },
   "dependencies": {
     "next": "^15.0.0",

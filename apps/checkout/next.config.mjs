@@ -1,20 +1,18 @@
-import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const apiOrigin=(process.env.API_ORIGIN||'http://localhost:4000').replace(/\/$/,'');
-const checkoutRoot=fileURLToPath(new URL('.',import.meta.url));
+const workspaceRoot=path.resolve(process.cwd(),'../..');
 
 /** @type {import('next').NextConfig} */
 const nextConfig={
   poweredByHeader:false,
   output:'standalone',
-  outputFileTracingRoot:checkoutRoot,
+  outputFileTracingRoot:workspaceRoot,
   async rewrites(){
-    return [
-      {
-        source:'/api/:path*',
-        destination:`${apiOrigin}/:path*`
-      }
-    ];
+    return [{
+      source:'/api/:path*',
+      destination:`${apiOrigin}/:path*`
+    }];
   },
   async headers(){
     return [{

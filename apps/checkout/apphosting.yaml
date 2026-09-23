@@ -12,5 +12,5 @@ env:
     value: "/api/v1"
 
 scripts:
-  buildCommand: npm run build
-  runCommand: node .next/standalone/server.js
+  buildCommand: npm run build --workspace=@commerce/checkout
+  runCommand: node apps/checkout/.next/standalone/server.js
