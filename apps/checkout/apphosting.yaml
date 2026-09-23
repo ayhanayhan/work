@@ -1,3 +1,7 @@
+scripts:
+  buildCommand: npm run build --workspace=@commerce/checkout
+  runCommand: node apps/checkout/.next/standalone/apps/checkout/server.js
+
 runConfig:
   minInstances: 1
   maxInstances: 50
