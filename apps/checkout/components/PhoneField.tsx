@@ -178,8 +178,8 @@ export default function PhoneField({
       {showError&&(
         <small className="phone-field-error">
           {value.trim()
-            ? '{uiText('checkout.errors.phoneInvalid',currentUiLocale())}'
-            : 'Telefon numarası zorunludur.'}
+            ? uiText('checkout.errors.phoneInvalid',currentUiLocale())
+            : uiText('checkout.errors.phoneRequired',currentUiLocale())}
         </small>
       )}
     </label>

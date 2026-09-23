@@ -9,8 +9,8 @@ type Geo={id:string;name:string;code?:string|null;source?:string};
 type CheckoutAccessMode='REQUIRED'|'SUGGESTED'|'GUEST';
 type Step=1|2|3;
 
-export default function Checkout({
-  const tt=(key:string)=>uiText(key,locale||getLocale());sessionId,storeOrigin,sessionStore,locale}:{sessionId?:string;storeOrigin?:string;sessionStore?:any;locale?:string}){
+export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{sessionId?:string;storeOrigin?:string;sessionStore?:any;locale?:string}){
+  const tt=(key:string)=>uiText(key,locale||getLocale());
   const storeUrl=(href:string)=>{if(!storeOrigin)return href;try{return new URL(href,storeOrigin).toString()}catch{return href}};
   const goStore=(href:string)=>{if(typeof window!=='undefined')window.location.assign(storeUrl(href))};
   const formRef=useRef<HTMLFormElement|null>(null);
