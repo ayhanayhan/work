@@ -53,6 +53,7 @@ export function middleware(req:NextRequest){
   // hostunu secer; yalniz origin dogrudan acildiginda bu redirect calisir.
   if(host.endsWith('.hosted.app')) return NextResponse.redirect(new URL('https://ticarti.com/'),308);
 
+  if(host===`checkout.${PLATFORM_DOMAIN}`) return internal(req,'/ticarti-checkout-proxy','checkout');
   if(host===`superadmin.${PLATFORM_DOMAIN}`) return internal(req,'/ticarti-superadmin-proxy','superadmin');
   if(host===`dev.${PLATFORM_DOMAIN}`) return internal(req,'/__proxy-api');
 
