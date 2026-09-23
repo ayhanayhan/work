@@ -5,7 +5,6 @@ const workspaceRoot=path.resolve(process.cwd(),'../..');
 const nextConfig={
   poweredByHeader:false,
   output:'standalone',
-  outputFileTracingRoot:workspaceRoot,
   async rewrites(){return [{source:'/api/:path*',destination:`${apiOrigin}/:path*`}];},
   async headers(){return [{source:'/:path*',headers:[
     {key:'X-Content-Type-Options',value:'nosniff'},
