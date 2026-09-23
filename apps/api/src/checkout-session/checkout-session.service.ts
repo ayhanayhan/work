@@ -89,7 +89,23 @@ export class CheckoutSessionService {
       throw new GoneException('Checkout session expired');
     }
 
-    const cart = await this.prisma.cart.findFirst({ where: { id: session.cartId, storeId: session.storeId }, select: { token: true, status: true } });
+    const cart = await this.prisma.cart.findFirst({
+      where: { id: session.cartId, storeId: session.storeId },
+      select: {
+        token: true,
+        status: true,
+        store: {
+          select: {
+            id: true,
+            name: true,
+            publicSlug: true,
+            domain: true,
+            locale: true,
+            currency: true
+          }
+        }
+      }
+    });
     if (!cart) throw new NotFoundException('Cart not found');
     if (cart.status !== 'active') throw new GoneException('Cart is no longer active');
 
@@ -105,6 +121,14 @@ export class CheckoutSessionService {
         expiresAt: session.expiresAt,
       },
       cartToken: cart.token,
+      store: {
+        id: cart.store.id,
+        name: cart.store.name,
+        publicSlug: cart.store.publicSlug,
+        domain: cart.store.domain,
+        locale: cart.store.locale,
+        currency: cart.store.currency,
+      },
     };
   }
 }
