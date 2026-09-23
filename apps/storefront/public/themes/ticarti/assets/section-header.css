@@ -12,24 +12,24 @@
   gap:40px;
   align-items: center;
 }
-.wokiee-social__icons{
+.Theme-social__icons{
   display: inline-flex;
   flex-wrap: wrap;
   gap:7px;
 }
-.wokiee-social__icons li{
+.Theme-social__icons li{
   display: inline-flex;
   flex-wrap: wrap;
 }
-.wokiee-social__icons li a{
+.Theme-social__icons li a{
   display: flex;
   align-items:center;
   gap:10px;
 }
-.wokiee-social__icons li a svg path{
+.Theme-social__icons li a svg path{
   fill:var(--color-social-icons-block, var(--color-base-section, var(--color-base)));
 }
-.wokiee-social__icons svg{
+.Theme-social__icons svg{
   width:20px;
   height:20px;
 }
@@ -71,14 +71,14 @@
   .logo-zoom-in:hover>*{
     transform: scale(0.75);
   }
-  .wokiee-social__icons li a>*{
+  .Theme-social__icons li a>*{
     position:relative;
     transition: all 0.20s ease-out;
   }
-  .wokiee-social__icons li a:hover>*{
+  .Theme-social__icons li a:hover>*{
     transform: translateY(-5px);
   }
-  .wokiee-social__icons li a:hover svg path{
+  .Theme-social__icons li a:hover svg path{
     fill:var(--color-social-icons-block-hover, var(--color-accent-section, var(--color-accent)));
   }
 }

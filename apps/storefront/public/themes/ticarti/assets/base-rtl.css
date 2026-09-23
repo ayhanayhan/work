@@ -327,7 +327,7 @@ html {
     margin-left: inherit;
     margin-right: auto;
 }
-[dir="rtl"] .wokiee-review__item__review__active{
+[dir="rtl"] .Theme-review__item__review__active{
   left:inherit;
   right:0;
 }
@@ -532,16 +532,16 @@ html {
     right: 0;    
 }
 @media (max-width: 576px) {
-    [dir="rtl"] .wokiee-compare__container .wokiee-compare__item:first-child {
+    [dir="rtl"] .Theme-compare__container .Theme-compare__item:first-child {
         margin-left: inherit;
         margin-right: var(--page-padding-phone);
     }
-    [dir="rtl"] .wokiee-compare {
+    [dir="rtl"] .Theme-compare {
         margin-left: inherit;
         margin-right: calc(var(--page-padding-phone) * -1);
     }
 }
-[dir="rtl"] .wokiee-compare__heading { 
+[dir="rtl"] .Theme-compare__heading { 
     left: unset;    
     right: 0;
 }

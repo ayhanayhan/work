@@ -1,9 +1,9 @@
-document.addEventListener('shopify:section:load', shopify_load_event);
-document.addEventListener('shopify:section:select', shopify_load_event);
-document.addEventListener('shopify:section:deselect', shopify_deselect_event);
-document.addEventListener('shopify:section:unload', shopify_unload_event);
+document.addEventListener('Ticarti:section:load', Ticarti_load_event);
+document.addEventListener('Ticarti:section:select', Ticarti_load_event);
+document.addEventListener('Ticarti:section:deselect', Ticarti_deselect_event);
+document.addEventListener('Ticarti:section:unload', Ticarti_unload_event);
 
-function shopify_load_event(event) {
+function Ticarti_load_event(event) {
   var item = event.target.querySelector('[data-section-name="popup-search-modules"]');
   if(item){
     if (item.getAttribute('data-section-name') === 'popup-search-modules') {
@@ -17,7 +17,7 @@ function shopify_load_event(event) {
     window.dispatchEvent(new Event('reinit_megamenu', { bubbles: true }));
   }
 }
-function shopify_deselect_event(event) {
+function Ticarti_deselect_event(event) {
   var item = event.target.querySelector('[data-section-name="popup-search-modules"]');
   if(item){
     if (item.getAttribute('data-section-name') === 'popup-search-modules') {
@@ -25,7 +25,7 @@ function shopify_deselect_event(event) {
     }
   };
 }
-function shopify_unload_event(event) {
+function Ticarti_unload_event(event) {
   var item = event.target.querySelector('[data-section-name="popup-search-modules"]');
   if(item){
     if (item.getAttribute('data-section-name') === 'popup-search-modules' ) {

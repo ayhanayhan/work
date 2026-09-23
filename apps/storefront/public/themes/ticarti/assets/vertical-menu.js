@@ -4,10 +4,10 @@ class headerMenuHandler extends HTMLElement {
     this.menuholder = this.querySelector('.vertical-menu__items');
     this.button = this.querySelector('.vertical-menu__show-more');
     this.extra_height = Number(this.getAttribute("data-extra-height"));
-    Shopify.designMode?setTimeout(this.resizeMenu.bind(this), 400):false;
+    Ticarti.designMode?setTimeout(this.resizeMenu.bind(this), 400):false;
     this.createEvents();
     var _this = this;
-    if(!Shopify.designMode){
+    if(!Ticarti.designMode){
       document.addEventListener("DOMContentLoaded", (event) => {
         setTimeout(_this.resizeMenu.bind(_this), 200);
         setTimeout(_this.resizeMenu.bind(_this), 1000);

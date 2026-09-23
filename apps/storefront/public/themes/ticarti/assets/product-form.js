@@ -109,7 +109,7 @@ class stickyCartModal extends HTMLElement {
   update(){
     const sectionId = this.dataset.section;
     const buttonContainer = document.getElementById(`product-form-${sectionId}`);
-    const sect = this.closest('.shopify-section, .popup-modal__content__data');
+    const sect = this.closest('.Ticarti-section, .popup-modal__content__data');
     const hasSelectOption = sect?.querySelector('select-option-js');
     const customAddButton = buttonContainer?.querySelector('.select-options-button');
     const addButton = (hasSelectOption && customAddButton) ? customAddButton : buttonContainer?.querySelector('[name="add"]');

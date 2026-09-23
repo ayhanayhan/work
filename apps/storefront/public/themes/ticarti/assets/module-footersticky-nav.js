@@ -8,7 +8,7 @@ class Nav{
     this.init();
   }
   init() {
-    if(Shopify.designMode){
+    if(Ticarti.designMode){
       this.handleFirstActivity();
     }
     else{

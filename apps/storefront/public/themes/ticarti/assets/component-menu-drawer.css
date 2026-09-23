@@ -205,7 +205,7 @@ details.details-opened>.menu-drawer__submenu {
     padding-left:30px;
     padding-right:30px;
   }
-  .menu-drawer .social-wokiee-social__icons+.mt15{
+  .menu-drawer .social-Theme-social__icons+.mt15{
     margin-top:calc(40px - 6px);
   }
   .menu-drawer .header-phone-number__item:has(.header-social-icons){

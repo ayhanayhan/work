@@ -38,7 +38,7 @@ class ProductRecommendations extends HTMLElement {
     this.#fetchCachedRecommendations(productId, sectionId, intent)
       .then((result) => {
         if (!result.success) {
-          if (!Shopify.designMode) {
+          if (!Ticarti.designMode) {
             this.#handleError(new Error(`Server returned ${result.status}`));
           }
           return;

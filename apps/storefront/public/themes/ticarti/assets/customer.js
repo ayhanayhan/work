@@ -35,15 +35,15 @@ class CustomerAddresses {
   }
 
   _setupCountries() {
-    if (Shopify && Shopify.CountryProvinceSelector) {
+    if (Ticarti && Ticarti.CountryProvinceSelector) {
       // eslint-disable-next-line no-new
-      new Shopify.CountryProvinceSelector('AddressCountryNew', 'AddressProvinceNew', {
+      new Ticarti.CountryProvinceSelector('AddressCountryNew', 'AddressProvinceNew', {
         hideElement: 'AddressProvinceContainerNew',
       });
       this.elements.countrySelects.forEach((select) => {
         const formId = select.dataset.formId;
         // eslint-disable-next-line no-new
-        new Shopify.CountryProvinceSelector(`AddressCountry_${formId}`, `AddressProvince_${formId}`, {
+        new Ticarti.CountryProvinceSelector(`AddressCountry_${formId}`, `AddressProvince_${formId}`, {
           hideElement: `AddressProvinceContainer_${formId}`,
         });
       });
@@ -77,35 +77,35 @@ class CustomerAddresses {
   _handleDeleteButtonClick = ({ currentTarget }) => {
     // eslint-disable-next-line no-alert
     if (confirm(currentTarget.getAttribute(attributes.confirmMessage))) {
-      Shopify.postLink(currentTarget.dataset.target, {
+      Ticarti.postLink(currentTarget.dataset.target, {
         parameters: { _method: 'delete' },
       });
     }
   };
 }
 
-Shopify.CountryProvinceSelector = function (country_domid, province_domid, options) {
+Ticarti.CountryProvinceSelector = function (country_domid, province_domid, options) {
   this.countryEl = document.getElementById(country_domid);
   this.provinceEl = document.getElementById(province_domid);
   this.provinceContainer = document.getElementById(options['hideElement'] || province_domid);
 
-  Shopify.addListener(this.countryEl, 'change', Shopify.bind(this.countryHandler, this));
+  Ticarti.addListener(this.countryEl, 'change', Ticarti.bind(this.countryHandler, this));
 
   this.initCountry();
   this.initProvince();
 };
 
-Shopify.CountryProvinceSelector.prototype = {
+Ticarti.CountryProvinceSelector.prototype = {
   initCountry: function () {
     var value = this.countryEl.getAttribute('data-default');
-    Shopify.setSelectorByValue(this.countryEl, value);
+    Ticarti.setSelectorByValue(this.countryEl, value);
     this.countryHandler();
   },
 
   initProvince: function () {
     var value = this.provinceEl.getAttribute('data-default');
     if (value && this.provinceEl.options.length > 0) {
-      Shopify.setSelectorByValue(this.provinceEl, value);
+      Ticarti.setSelectorByValue(this.provinceEl, value);
     }
   },
 

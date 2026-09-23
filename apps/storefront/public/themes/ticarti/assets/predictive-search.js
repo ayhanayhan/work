@@ -175,7 +175,7 @@ class PredictiveSearch extends HTMLElement {
         return response.text();
       })
       .then((text) => {
-        const resultsMarkup = new DOMParser().parseFromString(text, 'text/html').querySelector('#shopify-section-predictive-search').innerHTML;
+        const resultsMarkup = new DOMParser().parseFromString(text, 'text/html').querySelector('#Ticarti-section-predictive-search').innerHTML;
         this.allPredictiveSearchInstances.forEach(
           (predictiveSearchInstance) => {
             predictiveSearchInstance.cachedResults[queryKey] = resultsMarkup;

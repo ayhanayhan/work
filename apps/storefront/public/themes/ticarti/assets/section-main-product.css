@@ -155,7 +155,7 @@ select-option-js.active~* .variants-label__value{
 }
 
 /* Dynamic checkout */
-.shopify-payment-button__button {
+.Ticarti-payment-button__button {
   margin-top: 0;
   font-family: var(--font-button-family, var(--font-body-family));
   font-style: var(--font-button-style, var(--font-body-style));
@@ -164,22 +164,22 @@ select-option-js.active~* .variants-label__value{
   line-height: var(--font-body2-line-height);
   min-height:var(--button-height-big);
 }
-.shopify-payment-button{
+.Ticarti-payment-button{
   margin-top:var(--product-page-blocks-mt, 40px);
 }
-terms_and_condition-checkbox~.shopify-payment-button{
+terms_and_condition-checkbox~.Ticarti-payment-button{
   margin-top:10px;
 }
-.shopify-payment-button__button [role="button"].focused{
+.Ticarti-payment-button__button [role="button"].focused{
   background: var(--color-base);
 }
-.shopify-payment-button__button [role="button"]:focus:not(:focus-visible) {
+.Ticarti-payment-button__button [role="button"]:focus:not(:focus-visible) {
   background: var(--color-base);
 }
-.shopify-payment-button__button [role="button"]:focus-visible {
+.Ticarti-payment-button__button [role="button"]:focus-visible {
   background: var(--color-base);
 }
-.shopify-payment-button__button--unbranded {
+.Ticarti-payment-button__button--unbranded {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,15 +190,15 @@ terms_and_condition-checkbox~.shopify-payment-button{
   position: relative;
   transition: color var(--duration-medium) var(--animation-bezier), background var(--duration-medium) var(--animation-bezier);
 }
-.shopify-payment-button__button--unbranded::selection {
+.Ticarti-payment-button__button--unbranded::selection {
   background: var(--color-button-dynamic-section, var(--color-button-dynamic, var(--color-base)));
 }
-.shopify-payment-button__button--unbranded:hover,
-.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+.Ticarti-payment-button__button--unbranded:hover,
+.Ticarti-payment-button__button--unbranded:hover:not([disabled]) {
   background: var(--color-button-dynamic-section-hover, var(--color-button-dynamic-hover, var(--color-accent)));
   color: var(--color-button-text-dynamic-section-hover, var(--color-button-text-dynamic-hover));
 }
-.shopify-payment-button__more-options {
+.Ticarti-payment-button__more-options {
   display: inline-flex;
   font-family: var(--font-body-family);
   font-style: var(--font-body-style);
@@ -213,10 +213,10 @@ terms_and_condition-checkbox~.shopify-payment-button{
   padding: 0;
   text-decoration:none;
 }
-.shopify-payment-button__more-options:hover:not([disabled]) {
+.Ticarti-payment-button__more-options:hover:not([disabled]) {
   text-decoration: none;
 }
-.shopify-payment-button__more-options:before{
+.Ticarti-payment-button__more-options:before{
   content: "";
   pointer-events: none;
   position: absolute;
@@ -228,11 +228,11 @@ terms_and_condition-checkbox~.shopify-payment-button{
   transition: width var(--duration-medium) var(--animation-bezier);
 }
 @media (min-width:1025px){
-  .shopify-payment-button__more-options:hover:before{
+  .Ticarti-payment-button__more-options:hover:before{
     width: 0%;
   }
 }
-.shopify-payment-button__button--hidden {
+.Ticarti-payment-button__button--hidden {
   display: none;
 }
 .product-form__error-message-wrapper:not([hidden]){  
@@ -276,13 +276,13 @@ terms_and_condition-checkbox~.shopify-payment-button{
   display: none;
 }
 .product-form__submit[disabled],
-.shopify-payment-button__button[disabled],
-.shopify-payment-button__more-options[disabled] {
+.Ticarti-payment-button__button[disabled],
+.Ticarti-payment-button__more-options[disabled] {
   opacity: 0.3;
   cursor: default;
   pointer-events: none;
 }
-.shopify-payment-button__button {
+.Ticarti-payment-button__button {
   border-radius: var(--radius-button-product-page);
   transition: background 0.2s ease-in-out;
 }
@@ -963,8 +963,8 @@ animated-badge svg{
   }
 }
 .product-form__buttons{
-  --shopify-accelerated-checkout-button-block-size:40px;
-  --shopify-accelerated-checkout-button-border-radius:var(--radius-button);
+  --Ticarti-accelerated-checkout-button-block-size:40px;
+  --Ticarti-accelerated-checkout-button-border-radius:var(--radius-button);
 }
 .product__column pickup-availability,
 .product__column terms_and_condition-checkbox{

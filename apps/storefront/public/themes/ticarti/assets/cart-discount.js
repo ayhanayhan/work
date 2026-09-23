@@ -51,7 +51,7 @@ class CartDiscount extends HTMLElement {
 
             const newHtml = data.sections[this.dataset.sectionId];
             const parsedHtml = new DOMParser().parseFromString(newHtml, 'text/html');
-            const section = parsedHtml.getElementById(`shopify-section-${this.dataset.sectionId}`);
+            const section = parsedHtml.getElementById(`Ticarti-section-${this.dataset.sectionId}`);
             const discountCodes = section?.querySelectorAll('.cart-discount__pill') || [];
             if (section) {
                 const codes = Array.from(discountCodes)
@@ -121,7 +121,7 @@ class CartDiscount extends HTMLElement {
             if(cart_page){
                 const newHtml = data.sections[this.dataset.sectionId];
                 const parsedHtml = new DOMParser().parseFromString(newHtml, 'text/html');
-                const section = parsedHtml.getElementById(`shopify-section-${this.dataset.sectionId}`);
+                const section = parsedHtml.getElementById(`Ticarti-section-${this.dataset.sectionId}`);
                 cart_page.querySelector('cart-items').onCartUpdate();
                 var _el = this.closest('[id="main-cart-footer"]').querySelector('.js-contents');
                 _el.innerHTML = section.querySelector('.js-contents').innerHTML;

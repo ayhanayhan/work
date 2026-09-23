@@ -48,7 +48,7 @@ if (!customElements.get(elementName)) {
       swiper__thumb__container.style.setProperty('--thumb-width', `${item_w}px`);
     }
     slideInitedCustom(){
-      var sect = this.closest('.shopify-section')||this.closest('.popup-modal__content__data');
+      var sect = this.closest('.Ticarti-section')||this.closest('.popup-modal__content__data');
       if(sect.querySelector('select-option-js.active')){
         return false;
       }

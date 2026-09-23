@@ -107,37 +107,37 @@
   flex-direction:column;
   gap:var(--main-text-section-top-offset);
 }
-.social-wokiee-social__icons{
+.social-Theme-social__icons{
   display: inline-flex;
   flex-wrap: wrap;
   gap:10px;
 }
-.social-wokiee-social__icons li{
+.social-Theme-social__icons li{
   display: inline-flex;
   flex-wrap: wrap;
 }
-.social-wokiee-social__icons li a{
+.social-Theme-social__icons li a{
   display: flex;
   background:transparent;
 }
-.social-wokiee-social__icons li a path{
+.social-Theme-social__icons li a path{
   fill:var(--color-social-icons-block, var(--color-base-section, var(--color-social-icons-main)));
   transition: fill var(--duration-medium) var(--animation-bezier);
 }
 @media(min-width: 1025px){
-  .social-wokiee-social__icons li a>*{
+  .social-Theme-social__icons li a>*{
     position:relative;
     transition: all 0.20s ease-out;
   }
-  .social-wokiee-social__icons li a:hover>*{
+  .social-Theme-social__icons li a:hover>*{
     transform: translateY(-5px);
   }
-  .social-wokiee-social__icons li a:hover path{
+  .social-Theme-social__icons li a:hover path{
     fill:var(--color-social-icons-hover-block, var(--color-accent-section, var(--color-social-icons-hover-main)));
   }
 }
 @media(max-width: 1024px){
-  .social-wokiee-social__icons{
+  .social-Theme-social__icons{
     gap:14px;
   }
 }

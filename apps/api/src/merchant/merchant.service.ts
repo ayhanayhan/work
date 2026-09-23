@@ -8,12 +8,35 @@ import { CacheService } from '../cache/cache.service';
 import { IntegrationsService } from '../integrations/integrations.service';
 import { evaluatePromotions } from '../storefront/promotion-engine';
 import { GoogleAuth } from 'google-auth-library';
-import { ticartiSourceDesignForSkin, ticartiSourceHomePreset, ticartiSkinCatalog, normalizeTicartiSkinSlug, TICARTI_DEFAULT_SKIN } from '../theme-presets/ticarti-source-preset';
+import { ticartiSourceDesignForSkin, ticartiSourceHomePreset, ticartiSkinCatalog, normalizeTicartiSkinSlug, TICARTI_DEFAULT_SKIN, resolveTicartiDesign, resolveTicartiSections, diffTicartiDesign, diffTicartiSections, compactThemeValue } from '../theme-presets/ticarti-source-preset';
 
 @Injectable()
 export class MerchantService {
   private readonly appHostingAuth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
   constructor(private prisma: PrismaService, private cache: CacheService, private integrations: IntegrationsService) {}
+
+  private readonly themeStateLimits={maxBytes:1024*1024,maxDepth:12,maxSections:150,maxMenuItems:300,maxStringLength:100000};
+  private validateThemeStatePayload(value:any){
+    const limits=this.themeStateLimits;
+    const seen=new WeakSet<object>();
+    let menuItems=0;
+    const walk=(node:any,depth:number,path:string)=>{
+      if(depth>limits.maxDepth)throw new BadRequestException(`Tema verisi çok derin: ${path}`);
+      if(typeof node==='string'&&node.length>limits.maxStringLength)throw new BadRequestException(`Tema metni çok uzun: ${path}`);
+      if(!node||typeof node!=='object')return;
+      if(seen.has(node))throw new BadRequestException(`Tema verisinde döngüsel yapı var: ${path}`);
+      seen.add(node);
+      if(Array.isArray(node)){for(let i=0;i<node.length;i++)walk(node[i],depth+1,`${path}[${i}]`);return;}
+      for(const [key,child] of Object.entries(node))walk(child,depth+1,`${path}.${key}`);
+    };
+    if(Array.isArray(value?.sections)&&value.sections.length>limits.maxSections)throw new BadRequestException(`En fazla ${limits.maxSections} tema bölümü kaydedilebilir`);
+    for(const menu of Array.isArray(value?.menus)?value.menus:[])menuItems+=Array.isArray(menu?.items)?menu.items.length:0;
+    if(menuItems>limits.maxMenuItems)throw new BadRequestException(`Menülerde toplam en fazla ${limits.maxMenuItems} öğe kaydedilebilir`);
+    walk(value,0,'themeState');
+    const bytes=Buffer.byteLength(JSON.stringify(value),'utf8');
+    if(bytes>limits.maxBytes)throw new BadRequestException(`Tema verisi çok büyük (${Math.ceil(bytes/1024)} KB). Maksimum ${Math.floor(limits.maxBytes/1024)} KB.`);
+    return bytes;
+  }
 
   private slugify(value: unknown) {
     return String(value || '')
@@ -248,11 +271,15 @@ export class MerchantService {
 
   async products(tenantId: string, storeId: string, q?: string) {
     await this.assertStore(tenantId, storeId);
-    return this.prisma.product.findMany({
+    const rows=await this.prisma.product.findMany({
       where: { storeId, ...(q ? { OR: [{ title: { contains: q, mode: 'insensitive' } }, { variants: { some: { sku: { contains: q, mode: 'insensitive' } } } }] } : {}) },
       include: { brand: true, images: { orderBy: { sortOrder: 'asc' } }, categories: { include: { category: true } }, variants: { include: { inventory: true } } },
       orderBy: { createdAt: 'desc' },
-    }).then(async rows=>{const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'product',entityId:{in:rows.map(x=>x.id)}}}):[];return rows.map(x=>({...x,translations:trs.filter(t=>t.entityId===x.id).map(t=>({locale:t.locale,fields:t.fields}))}));});
+      take: 500,
+    });
+    const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'product',entityId:{in:rows.map(x=>x.id)}}}):[];
+    const byEntity=new Map<string,any[]>();for(const t of trs){const list=byEntity.get(t.entityId)||[];list.push({locale:t.locale,fields:t.fields});byEntity.set(t.entityId,list);}
+    return rows.map(x=>({...x,translations:byEntity.get(x.id)||[]}));
   }
 
   async product(tenantId:string,storeId:string,id:string){
@@ -367,14 +394,14 @@ export class MerchantService {
     await this.prisma.tenant.update({where:{id:storeId},data:{settings:{...settings,catalogDefinitions:clean}}});await this.cache.purgeTenant(tenantId);return this.catalogDefinitions(tenantId,storeId);
   }
 
-  async categories(tenantId:string,storeId:string){await this.assertStore(tenantId,storeId);const rows=await this.prisma.category.findMany({where:{storeId},orderBy:[{sortOrder:'asc'},{name:'asc'}]});const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'category',entityId:{in:rows.map(x=>x.id)}}}):[];return rows.map(x=>({...x,translations:trs.filter(t=>t.entityId===x.id).map(t=>({locale:t.locale,fields:t.fields}))}));}
+  async categories(tenantId:string,storeId:string){await this.assertStore(tenantId,storeId);const rows=await this.prisma.category.findMany({where:{storeId},orderBy:[{sortOrder:'asc'},{name:'asc'}],take:1000});const trs=rows.length?await this.prisma.contentTranslation.findMany({where:{storeId,entityType:'category',entityId:{in:rows.map(x=>x.id)}}}):[];const byEntity=new Map<string,any[]>();for(const t of trs){const list=byEntity.get(t.entityId)||[];list.push({locale:t.locale,fields:t.fields});byEntity.set(t.entityId,list);}return rows.map(x=>({...x,translations:byEntity.get(x.id)||[]}));}
   async createCategory(tenantId:string,storeId:string,body:any){await this.assertStore(tenantId,storeId);if(body.parentId){const parent=await this.prisma.category.findFirst({where:{id:body.parentId,storeId}});if(!parent)throw new BadRequestException('Parent category does not belong to store');}return this.prisma.$transaction(async tx=>{const row=await tx.category.create({data:{storeId,parentId:body.parentId||null,name:body.name,slug:this.slugify(body.slug||body.name),description:body.description,imageUrl:body.imageUrl,seoTitle:body.seoTitle,seoDescription:body.seoDescription,sortOrder:body.sortOrder||0,isActive:body.isActive??true}});await this.saveEntityTranslations(tx,storeId,'category',row.id,body);return row;});}
   async updateCategory(tenantId:string,storeId:string,id:string,body:any){await this.assertStore(tenantId,storeId);const x=await this.prisma.category.findFirst({where:{id,storeId}});if(!x)throw new NotFoundException();if(body.parentId){const parent=await this.prisma.category.findFirst({where:{id:body.parentId,storeId}});if(!parent)throw new BadRequestException('Parent category does not belong to store');}const allowed=['parentId','name','slug','description','imageUrl','seoTitle','seoDescription','sortOrder','isActive'];const data:any=Object.fromEntries(Object.entries(body).filter(([k])=>allowed.includes(k)));if(body.slug!==undefined||body.name!==undefined)data.slug=this.slugify(body.slug||body.name||x.slug);return this.prisma.$transaction(async tx=>{const row=await tx.category.update({where:{id},data});await this.saveEntityTranslations(tx,storeId,'category',id,body);return row;});}
 
   async brands(tenantId: string, storeId: string) { await this.assertStore(tenantId, storeId); return this.prisma.brand.findMany({ where: { storeId }, orderBy: { name: 'asc' } }); }
   async createBrand(tenantId: string, storeId: string, body: any) { await this.assertStore(tenantId, storeId); return this.prisma.brand.create({ data: { storeId, name: body.name, slug: this.slugify(body.slug || body.name), logoUrl: body.logoUrl, description: body.description, seoTitle: body.seoTitle, seoDescription: body.seoDescription } }); }
 
-  async customers(tenantId: string, storeId: string, q?: string) { await this.assertStore(tenantId, storeId); return this.prisma.customer.findMany({ where: { storeId, ...(q ? { OR: [{ email: { contains: q, mode: 'insensitive' } }, { firstName: { contains: q, mode: 'insensitive' } }, { lastName: { contains: q, mode: 'insensitive' } }] } : {}) }, include: { group: true, _count: { select: { orders: true } } }, orderBy: { createdAt: 'desc' } }); }
+  async customers(tenantId: string, storeId: string, q?: string) { await this.assertStore(tenantId, storeId); return this.prisma.customer.findMany({ where: { storeId, ...(q ? { OR: [{ email: { contains: q, mode: 'insensitive' } }, { firstName: { contains: q, mode: 'insensitive' } }, { lastName: { contains: q, mode: 'insensitive' } }] } : {}) }, include: { group: true, _count: { select: { orders: true } } }, orderBy: { createdAt: 'desc' }, take: 500 }); }
   async customer(tenantId: string, storeId: string, id: string) { await this.assertStore(tenantId, storeId); const c = await this.prisma.customer.findFirst({ where: { id, storeId }, include: { group: true, addresses: true, orders: { orderBy: { createdAt: 'desc' } } } }); if (!c) throw new NotFoundException(); return c; }
 
 
@@ -844,8 +871,8 @@ export class MerchantService {
     return state;
   }
   async designSettings(tenantId:string,storeId:string){
-    const store=await this.assertStore(tenantId,storeId);const state:any=this.themeStateOf(store);const saved:any=state?.design||{};const defaults=this.defaultDesignSettings();
-    return {...saved,general:{...defaults.general,...(saved.general||{})},header:{...defaults.header,...(saved.header||{})},footer:{...defaults.footer,...(saved.footer||{})},products:{...defaults.products,...(saved.products||{})},themeSettings:{...(saved.themeSettings||{}),general:{...(saved.themeSettings?.general||{})},header:{...(saved.themeSettings?.header||{})},footer:{...(saved.themeSettings?.footer||{})},products:{...(saved.themeSettings?.products||{})}}};
+    const store=await this.assertStore(tenantId,storeId);const state:any=this.themeStateOf(store);const skinSlug=String(state?.skinSlug||TICARTI_DEFAULT_SKIN);const resolved:any=resolveTicartiDesign(skinSlug,state?.design||{});const defaults=this.defaultDesignSettings();
+    return {...resolved,general:{...defaults.general,...(resolved.general||{})},header:{...defaults.header,...(resolved.header||{})},footer:{...defaults.footer,...(resolved.footer||{})},products:{...defaults.products,...(resolved.products||{})},themeSettings:{...(resolved.themeSettings||{}),general:{...(resolved.themeSettings?.general||{})},header:{...(resolved.themeSettings?.header||{})},footer:{...(resolved.themeSettings?.footer||{})},products:{...(resolved.themeSettings?.products||{})}}};
   }
 
   async saveThemeState(tenantId:string,storeId:string,body:any){
@@ -854,97 +881,65 @@ export class MerchantService {
     const skinSlug=String(body?.skinSlug||body?.design?.general?.skinSlug||body?.design?.general?.skin||'').trim();
     if(!themeId)throw new BadRequestException('themeId gerekli');
     if(!skinSlug)throw new BadRequestException('skinSlug gerekli');
-    const theme=await this.prisma.themeDefinition.findUnique({where:{id:themeId},select:{id:true,slug:true,isActive:true}});
-    if(!theme||!theme.isActive)throw new NotFoundException('Tema bulunamadı veya aktif değil');
     if(!body?.design||typeof body.design!=='object'||Array.isArray(body.design))throw new BadRequestException('design gerekli');
     if(!Array.isArray(body?.sections))throw new BadRequestException('sections dizi olmalı');
     if(body?.menus!==undefined&&!Array.isArray(body.menus))throw new BadRequestException('menus dizi olmalı');
 
+    const catalog=await this.themeCatalog(tenantId,storeId);
+    const item:any=catalog.find((x:any)=>String(x.id)===themeId);
+    if(!item)throw new NotFoundException('Tema bulunamadı veya aktif değil');
+    if(!item.owned&&Number(item.price)>0)throw new ForbiddenException('Bu temayı kaydetmek için önce satın almalısınız.');
+    const theme=await this.prisma.themeDefinition.findFirst({where:{id:themeId,isActive:true},select:{id:true,slug:true,isActive:true,currency:true}});
+    if(!theme)throw new NotFoundException('Tema bulunamadı veya aktif değil');
+
     const incomingDesign:any=body.design;
     const cleanGeneral:any={...(incomingDesign.general||{})};
     delete cleanGeneral.themeName;
-    const design:any={
-      ...incomingDesign,
-      general:{
-        ...cleanGeneral,
-        skinSlug,
-        skin:skinSlug,
-        themeId,
-        themeBundleSkinSlug:skinSlug,
-        themeBundleSectionsSkinSlug:skinSlug,
-      }
-    };
-    const sections=(body.sections as any[]).map((raw:any,index:number)=>{
+    const resolvedDesign:any={...incomingDesign,general:{...cleanGeneral,skinSlug,skin:skinSlug,themeId,themeBundleSkinSlug:skinSlug,themeBundleSectionsSkinSlug:skinSlug}};
+    const design:any=diffTicartiDesign(skinSlug,resolvedDesign);
+    const resolvedSections=(body.sections as any[]).map((raw:any,index:number)=>{
       const settings=raw?.settings&&typeof raw.settings==='object'&&!Array.isArray(raw.settings)?{...raw.settings}:{};
-      const sourceId=String(raw?.sourceId||settings.__sourceId||`section-${index}`).trim()||`section-${index}`;
-      return {
-        id:String(raw?.id||sourceId),
-        sourceId,
-        pageKey:'home',
-        sectionType:String(raw?.sectionType||'rich_text'),
-        sortOrder:index,
-        enabled:raw?.enabled!==false,
-        settings:{...settings,__sourceId:sourceId}
-      };
+      const sourceId=String(raw?.sourceId||settings.__sourceId||raw?.id||`section-${index}`).trim()||`section-${index}`;
+      return {id:String(raw?.id||sourceId),sourceId,pageKey:'home',sectionType:String(raw?.sectionType||'rich_text').slice(0,120),sortOrder:index,enabled:raw?.enabled!==false,settings:{...settings,__sourceId:sourceId}};
     });
-    const menus=(Array.isArray(body?.menus)?body.menus:[]).map((raw:any)=>({
-      name:String(raw?.name||raw?.handle||'Menü'),
-      handle:String(raw?.handle||'').trim(),
-      items:Array.isArray(raw?.items)?raw.items:[]
-    })).filter((row:any)=>row.handle);
+    const sections=diffTicartiSections(skinSlug,resolvedSections);
+    const normalizeMenuItems=(items:any[],depth=0):any[]=>{if(depth>4)return[];return items.slice(0,100).map((raw:any,index:number)=>({...raw,id:String(raw?.id||`item-${depth}-${index}`),label:String(raw?.label||raw?.title||raw?.name||'Link').slice(0,300),...(raw?.url!==undefined||raw?.href!==undefined?{url:String(raw?.url||raw?.href||'/').slice(0,2048)}:{}),children:Array.isArray(raw?.children)?normalizeMenuItems(raw.children,depth+1):[]}));};
+    const menus=(Array.isArray(body?.menus)?body.menus:[]).slice(0,20).map((raw:any)=>({name:String(raw?.name||raw?.handle||'Menü').slice(0,160),handle:String(raw?.handle||'').trim().slice(0,120),items:normalizeMenuItems(Array.isArray(raw?.items)?raw.items:[])})).filter((row:any)=>row.handle);
 
-    const themeState:any={
-      schema:'THEME_STATE_JSON_V1',
-      version:1,
-      themeId,
-      skinSlug,
-      design,
-      sections,
-      menus,
-      savedAt:new Date().toISOString()
-    };
+    const themeState:any={schema:'THEME_STATE_JSON_V2',version:2,themeId,skinSlug,design:compactThemeValue(design)||{},sections,menus,savedAt:new Date().toISOString()};
+    this.validateThemeStatePayload(themeState);
     const root:any=store.settings&&typeof store.settings==='object'&&!Array.isArray(store.settings)?store.settings:{};
-    const updated=await this.prisma.tenant.update({
-      where:{id:store.id},
-      data:{
-        activeTheme:theme.slug,
-        settings:{...root,themeState}
-      },
-      select:{id:true,activeTheme:true,settings:true}
+    const updated=await this.prisma.$transaction(async tx=>{
+      await tx.themeInstallation.upsert({where:{tenantId_themeId:{tenantId,themeId}},create:{tenantId,themeId,status:'ACTIVE',source:item.included?'PLAN':'FREE',purchasedPrice:0,currency:item.currency||theme.currency,activatedAt:new Date()},update:{status:'ACTIVE',activatedAt:new Date()}});
+      return tx.tenant.update({where:{id:store.id},data:{activeTheme:theme.slug,settings:{...root,themeState}},select:{id:true,activeTheme:true,settings:true}});
     });
     await this.cache.delPattern('public:site:*');
     await this.cache.purgeTenant(tenantId);
     const savedRoot:any=updated.settings&&typeof updated.settings==='object'?updated.settings:{};
     const savedState:any=savedRoot.themeState||null;
-    if(!savedState||savedState.schema!=='THEME_STATE_JSON_V1')throw new InternalServerErrorException('themeState yazıldıktan sonra doğrulanamadı');
-    return {ok:true,schema:'THEME_STATE_JSON_V1',themeState:savedState};
+    if(!savedState||savedState.schema!=='THEME_STATE_JSON_V2'||String(savedState.themeId)!==themeId)throw new InternalServerErrorException('themeState yazıldıktan sonra doğrulanamadı');
+    return {ok:true,schema:'THEME_STATE_JSON_V2',themeState:savedState,resolved:{design:resolveTicartiDesign(skinSlug,savedState.design||{}),sections:resolveTicartiSections(skinSlug,savedState.sections||[])}};
   }
-
 
 
   async updateDesignSettings(tenantId:string,storeId:string,body:any){
-    const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};const current:any=await this.designSettings(tenantId,storeId);const incoming:any=body?.design||body||{};
+    const store=await this.assertStore(tenantId,storeId);const current:any=await this.designSettings(tenantId,storeId);const incoming:any=body?.design||body||{};
     const clamp=(v:any,min:number,max:number,fallback:number)=>{const n=Number(v);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback};
-    const next:any={
-      ...current,...incoming,
-      general:{...current.general,...(incoming.general||{})},
-      header:{...current.header,...(incoming.header||{})},
-      footer:{...current.footer,...(incoming.footer||{})},
-      products:{...current.products,...(incoming.products||{})},
-      themeSettings:{...(current.themeSettings||{}),...(incoming.themeSettings||{}),general:{...(current.themeSettings?.general||{}),...(incoming.themeSettings?.general||{})},header:{...(current.themeSettings?.header||{}),...(incoming.themeSettings?.header||{})},footer:{...(current.themeSettings?.footer||{}),...(incoming.themeSettings?.footer||{})},products:{...(current.themeSettings?.products||{}),...(incoming.themeSettings?.products||{})}}
-    };
+    const next:any={...current,...incoming,general:{...current.general,...(incoming.general||{})},header:{...current.header,...(incoming.header||{})},footer:{...current.footer,...(incoming.footer||{})},products:{...current.products,...(incoming.products||{})},themeSettings:{...(current.themeSettings||{}),...(incoming.themeSettings||{}),general:{...(current.themeSettings?.general||{}),...(incoming.themeSettings?.general||{})},header:{...(current.themeSettings?.header||{}),...(incoming.themeSettings?.header||{})},footer:{...(current.themeSettings?.footer||{}),...(incoming.themeSettings?.footer||{})},products:{...(current.themeSettings?.products||{}),...(incoming.themeSettings?.products||{})}}};
     next.general.baseFontSize=clamp(next.general.baseFontSize,12,24,16);next.general.h1Size=clamp(next.general.h1Size,24,96,52);next.general.h2Size=clamp(next.general.h2Size,20,72,34);next.general.h3Size=clamp(next.general.h3Size,16,56,24);next.general.containerWidth=clamp(next.general.containerWidth,760,1800,1180);next.general.sectionSpacing=clamp(next.general.sectionSpacing,16,160,64);next.general.borderRadius=clamp(next.general.borderRadius,0,40,8);next.general.buttonRadius=clamp(next.general.buttonRadius,0,40,6);
-    next.header.template=clamp(next.header.template,1,8,1);next.footer.template=clamp(next.footer.template,1,5,1);next.products.categoryTemplate=clamp(next.products.categoryTemplate,1,8,1);next.products.productPageTemplate=clamp(next.products.productPageTemplate,1,8,1);next.products.productCardTemplate=clamp(next.products.productCardTemplate,1,4,1);
-    const currentState:any=this.themeStateOf(store)||{};await this.prisma.tenant.update({where:{id:storeId},data:{settings:{...settings,themeState:{...currentState,version:1,storage:'TENANT_SETTINGS_THEME_STATE',design:next,savedAt:new Date().toISOString()}}}});await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return next;
+    const state:any=this.themeStateOf(store);if(!state?.themeId)throw new BadRequestException('Tema state yok. Önce tema editöründen tam tema kaydı oluşturun.');
+    const result:any=await this.saveThemeState(tenantId,storeId,{themeId:state.themeId,skinSlug:state.skinSlug||next?.general?.skinSlug,design:next,sections:Array.isArray(state.sections)?state.sections:[],menus:Array.isArray(state.menus)?state.menus:[]});
+    return result.resolved.design;
   }
-  async designSections(tenantId:string,storeId:string,pageKey='home'){ const store=await this.assertStore(tenantId,storeId); const state:any=this.themeStateOf(store); return pageKey==='home'&&Array.isArray(state?.sections)?state.sections:[]; }
+  async designSections(tenantId:string,storeId:string,pageKey='home'){ const store=await this.assertStore(tenantId,storeId); const state:any=this.themeStateOf(store); if(pageKey!=='home')return[]; return resolveTicartiSections(String(state?.skinSlug||TICARTI_DEFAULT_SKIN),Array.isArray(state?.sections)?state.sections:[]); }
   async saveDesignSection(tenantId:string,storeId:string,body:any){
     const current=await this.designSections(tenantId,storeId,'home');const sourceId=String(body?.sourceId||body?.settings?.__sourceId||`section-${Date.now()}`);const row={id:sourceId,sourceId,pageKey:'home',sectionType:String(body?.sectionType||'rich_text'),sortOrder:current.length,enabled:body?.enabled!==false,settings:{...(body?.settings||{}),__sourceId:sourceId}};await this.replaceDesignSections(tenantId,storeId,{pageKey:'home',sections:[...current,row]});return row;
   }
   async replaceDesignSections(tenantId:string,storeId:string,body:any){
-    const store=await this.assertStore(tenantId,storeId);const pageKey=String(body?.pageKey||'home');if(pageKey!=='home')return [];
-    const items=Array.isArray(body?.sections)?body.sections:[];const normalized=items.map((x:any,i:number)=>{const sourceId=String(x?.sourceId||x?.settings?.__sourceId||`section-${i}`);return {id:String(x?.id||sourceId),sourceId,pageKey:'home',sectionType:String(x?.sectionType||'rich_text'),sortOrder:i,enabled:x?.enabled!==false,settings:{...(x?.settings||{}),__sourceId:sourceId}}});
-    const root:any=store.settings||{};const state:any=this.themeStateOf(store)||{};await this.prisma.tenant.update({where:{id:storeId},data:{settings:{...root,themeState:{...state,version:1,storage:'TENANT_SETTINGS_THEME_STATE',sections:normalized,savedAt:new Date().toISOString()}}}});await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return normalized;
+    const store=await this.assertStore(tenantId,storeId);const pageKey=String(body?.pageKey||'home');if(pageKey!=='home')return[];
+    const state:any=this.themeStateOf(store);if(!state?.themeId)throw new BadRequestException('Tema state yok. Önce tema editöründen tam tema kaydı oluşturun.');
+    const items=Array.isArray(body?.sections)?body.sections:[];const normalized=items.map((x:any,i:number)=>{const sourceId=String(x?.sourceId||x?.settings?.__sourceId||x?.id||`section-${i}`);return {id:String(x?.id||sourceId),sourceId,pageKey:'home',sectionType:String(x?.sectionType||'rich_text'),sortOrder:i,enabled:x?.enabled!==false,settings:{...(x?.settings||{}),__sourceId:sourceId}}});
+    const result:any=await this.saveThemeState(tenantId,storeId,{themeId:state.themeId,skinSlug:state.skinSlug||state?.design?.general?.skinSlug,design:state.design||{},sections:normalized,menus:Array.isArray(state.menus)?state.menus:[]});return result.resolved.sections;
   }
   async updateDesignSection(tenantId:string,storeId:string,id:string,body:any){const current=await this.designSections(tenantId,storeId,'home');const index=current.findIndex((x:any)=>String(x.id||x.sourceId)===String(id));if(index<0)throw new NotFoundException('Design section not found');const next=current.map((x:any,i:number)=>i===index?{...x,...body,settings:body?.settings?{...(x.settings||{}),...body.settings}:x.settings}:x);await this.replaceDesignSections(tenantId,storeId,{sections:next});return next[index];}
   async deleteDesignSection(tenantId:string,storeId:string,id:string){const current=await this.designSections(tenantId,storeId,'home');const next=current.filter((x:any)=>String(x.id||x.sourceId)!==String(id));if(next.length===current.length)throw new NotFoundException('Design section not found');await this.replaceDesignSections(tenantId,storeId,{sections:next});return{deleted:true};}
@@ -1061,14 +1056,14 @@ export class MerchantService {
   async purgeCache(tenantId:string){ await this.cache.purgeTenant(tenantId); await this.cache.delPattern('public:site:*'); return {ok:true}; }
   async cacheStats(tenantId:string){ const stats=await this.cache.stats(); return {tenantId,...stats}; }
 
-  private isTicartiSourceTheme(slug:any){return ['nova-commerce','ticarti','signature','wokiee','ticarti-signature-complete'].includes(String(slug||'').toLowerCase());}
+  private isTicartiSourceTheme(slug:any){return ['nova-commerce','ticarti','signature','Theme'].includes(String(slug||'').toLowerCase());}
   private async ensureThemeSourceDb(theme:any){
     if(!this.isTicartiSourceTheme(theme?.slug))return theme;
     const config:any=theme?.config&&typeof theme.config==='object'&&!Array.isArray(theme.config)?theme.config:{};
     if(String(config.sourceDbSeedVersion||'')==='v23.2.0')return theme;
     const current:any=config.skinDefaults&&typeof config.skinDefaults==='object'&&!Array.isArray(config.skinDefaults)?{...config.skinDefaults}:{};
     for(const skin of ticartiSkinCatalog())if(!current[skin.slug])current[skin.slug]={name:String(skin.name||skin.slug),category:String(skin.category||''),previewImageUrl:String(skin.previewImageUrl||theme.previewImageUrl||''),verifiedFromDemo:!!skin.verifiedFromDemo,design:ticartiSourceDesignForSkin(skin.slug),homePreset:ticartiSourceHomePreset(skin.slug)};
-    const updated=await this.prisma.themeDefinition.update({where:{id:theme.id},data:{config:{...config,engine:'ticarti-db-theme-v1',sourceManagedBy:'DATABASE',sourceDbSeedVersion:'v23.2.0',defaultSkin:String(config.defaultSkin||TICARTI_DEFAULT_SKIN),skinDefaults:current}}});return {...theme,config:updated.config};
+    return {...theme,config:{...config,engine:'ticarti-db-theme-v1',sourceManagedBy:'DATABASE',defaultSkin:String(config.defaultSkin||TICARTI_DEFAULT_SKIN),skinDefaults:current}};
   }
   private themeSkinRowsFromDb(config:any){
     const rows:any=config?.skinDefaults&&typeof config.skinDefaults==='object'&&!Array.isArray(config.skinDefaults)?config.skinDefaults:{};
@@ -1102,7 +1097,7 @@ export class MerchantService {
     const catalog=await this.themeCatalog(tenantId,storeId);const item:any=catalog.find((x:any)=>x.id===themeId);if(!item)throw new NotFoundException('Tema bulunamadı');if(!item.owned&&Number(item.price)>0)throw new BadRequestException('Bu temayı kullanmak için önce satın almalısınız.');
     const cfg:any=theme.config||{};const skins=this.themeSkinRowsFromDb(cfg);const requested=String(options?.skinSlug||options?.skin||cfg?.defaultSkin||skins[0]?.slug||'').trim();const source=skins.find((x:any)=>x.slug===requested)||skins[0];if(!source)throw new BadRequestException('Tema için DB kaynak kaydı bulunamadı.');
     await this.captureThemeDesignHistory(tenantId,storeId,'THEME_CHANGE',`${store.activeTheme} → ${theme.slug}`);
-    const root:any=store.settings||{};const previous:any=this.themeStateOf(store)||{};const state:any={version:1,storage:'TENANT_SETTINGS_THEME_STATE',themeId,themeSlug:theme.slug,skinSlug:source.slug,design:source.design,sections:source.homePreset,menus:Array.isArray(previous.menus)?previous.menus:[],savedAt:new Date().toISOString()};
+    const root:any=store.settings||{};const previous:any=this.themeStateOf(store)||{};const state:any={schema:'THEME_STATE_JSON_V2',version:2,themeId,skinSlug:source.slug,design:{},sections:[],menus:Array.isArray(previous.menus)?previous.menus:[],savedAt:new Date().toISOString()};this.validateThemeStatePayload(state);
     await this.prisma.$transaction(async tx=>{await tx.themeInstallation.upsert({where:{tenantId_themeId:{tenantId,themeId}},create:{tenantId,themeId,status:'ACTIVE',source:item.included?'PLAN':'FREE',purchasedPrice:0,currency:item.currency,activatedAt:new Date()},update:{status:'ACTIVE',activatedAt:new Date()}});await tx.tenant.update({where:{id:store.id},data:{activeTheme:theme.slug,settings:{...root,themeState:state}}});});
     await this.cache.delPattern('public:site:*');await this.cache.purgeTenant(tenantId);return {activeTheme:theme.slug,skinSlug:source.slug,design:source.design,sections:source.homePreset};
   }

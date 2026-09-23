@@ -117,17 +117,17 @@ class CartItems extends HTMLElement {
       {
         id: this.cart_icon,
         section: this.cart_icon,
-        selector: '.shopify-section',
+        selector: '.Ticarti-section',
       },
       {
         id: this.cart_icon_mobile,
         section: this.cart_icon_mobile,
-        selector: '.shopify-section'
+        selector: '.Ticarti-section'
       },
       {
         id: 'cart-live-region-text',
         section: 'cart-live-region-text',
-        selector: '.shopify-section'
+        selector: '.Ticarti-section'
       },
       {
         id: 'main-cart-footer',

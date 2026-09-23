@@ -1,10 +1,10 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Wokiee",
-    "theme_author": "p-themes",
+    "theme_name": "Theme",
+    "theme_author": "Ticarti",
     "theme_version": "3.4.0",
-    "theme_documentation_url": "https:\/\/wokiee.gitbook.io\/docs",
+    "theme_documentation_url": "https:\/\/Theme.gitbook.io\/docs",
     "theme_support_url": "http:\/\/www.portotheme.com\/support"
   },
   {
@@ -17,8 +17,8 @@
       {
         "type": "textarea",
         "id": "license",
-        "label": "Purchase Code from Envato",
-        "info": "[Instruction](https:\/\/help.market.envato.com\/hc\/en-us\/articles\/202822600-Where-Is-My-Purchase-Code)"
+        "label": "Purchase Code from Ticarti",
+        "info": "[Instruction](https:\/\/help.market.Ticarti.com\/hc\/en-us\/articles\/202822600-Where-Is-My-Purchase-Code)"
       },
       {
         "type": "header",
@@ -33,9 +33,9 @@
       },
       {
         "type": "checkbox",
-        "id": "hide_shopify_panel",
+        "id": "hide_Ticarti_panel",
         "default": false,
-        "label": "Hide Shopify navigation bottom panel"
+        "label": "Hide Ticarti navigation bottom panel"
       }
     ]
   },
@@ -321,11 +321,11 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
-        "default": "shopify",
+        "default": "Ticarti",
         "label": "Font type"
       },
       {
@@ -346,12 +346,12 @@
         "default": 500
       },
       {
-        "visible_if": "{{ settings.heading_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.heading_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_header_font",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "type": "range",
@@ -390,8 +390,8 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
         "default": "default",
@@ -415,12 +415,12 @@
         "default": 500
       },
       {
-        "visible_if": "{{ settings.h4h5h6_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.h4h5h6_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_font_h4h5h6",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "visible_if": "{{ settings.h4h5h6_font_type != 'default' }}",
@@ -457,11 +457,11 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
-        "default": "shopify",
+        "default": "Ticarti",
         "label": "Font type"
       },
       {
@@ -492,12 +492,12 @@
         "default": 700
       },      
       {
-        "visible_if": "{{ settings.body_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.body_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_body_font",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "type": "range",
@@ -536,8 +536,8 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
         "default": "default",
@@ -561,12 +561,12 @@
         "default": 500
       },
       {
-        "visible_if": "{{ settings.price_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.price_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_font_price",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "visible_if": "{{ settings.price_font_type != 'default' }}",
@@ -607,8 +607,8 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
         "default": "default",
@@ -632,12 +632,12 @@
         "default": 500
       },
       {
-        "visible_if": "{{ settings.button_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.button_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_font_button",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "visible_if": "{{ settings.button_font_type == 'default' }}",
@@ -695,8 +695,8 @@
             "label": "Google"
           },
           {
-            "value": "shopify",
-            "label": "Shopify"
+            "value": "Ticarti",
+            "label": "Ticarti"
           }
         ],
         "default": "default",
@@ -720,12 +720,12 @@
         "default": 500
       },
       {
-        "visible_if": "{{ settings.mainmenu_font_type == 'shopify' }}",
+        "visible_if": "{{ settings.mainmenu_font_type == 'Ticarti' }}",
         "type": "font_picker",
         "id": "type_font_mainmenu",
         "default": "assistant_n4",
-        "label": "Shopify font",
-        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.shopify.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
+        "label": "Ticarti font",
+        "info": "Selecting a different font can affect the speed of your store. [Learn more about system fonts.](https:\/\/help.Ticarti.com\/manual\/online-store\/os\/store-speed\/improving-speed#fonts)"
       },
       {
         "visible_if": "{{ settings.mainmenu_font_type != 'default' }}",
@@ -789,7 +789,7 @@
     "settings": [
       {
         "type": "checkbox",
-        "id": "wokiee_rtl",
+        "id": "Theme_rtl",
         "default": false,
         "label": "RTL"
       },
@@ -4288,7 +4288,7 @@
         "type": "checkbox",
         "id": "show_accelerated_checkout_buttons",
         "label": "Accelerated checkout buttons",
-        "info": "Allows buyers to check out faster and can improve conversion. [Learn more](https://help.shopify.com/manual/online-store/dynamic-checkout)",
+        "info": "Allows buyers to check out faster and can improve conversion. [Learn more](https://help.Ticarti.com/manual/online-store/dynamic-checkout)",
         "default": true
       },
       {
@@ -4401,25 +4401,25 @@
       {
         "type": "header",
         "content": "SOCIAL ACCOUNTS",
-        "info": "Paste the account link. The icon will be selected automatically. Check the list of supported social networks [here](https:\/\/softalib4.gitbook.io\/minion-shopify-theme\/theme-settings#social-media)."
+        "info": "Paste the account link. The icon will be selected automatically. Check the list of supported social networks [here](https:\/\/softalib4.gitbook.io\/minion-Ticarti-theme\/theme-settings#social-media)."
       },
       {
         "type": "text",
         "id": "social_media_1",
         "label": "Account 1",
-        "info": "Example: https:\/\/twitter.com\/shopify"
+        "info": "Example: https:\/\/twitter.com\/Ticarti"
       },
       {
         "type": "text",
         "id": "social_media_2",
         "label": "Account 2",
-        "info": "Example: https:\/\/facebook.com\/shopify"
+        "info": "Example: https:\/\/facebook.com\/Ticarti"
       },
       {
         "type": "text",
         "id": "social_media_3",
         "label": "Account 3",
-        "info": "Example: https:\/\/instagram.com\/shopify"
+        "info": "Example: https:\/\/instagram.com\/Ticarti"
       },
       {
         "type": "text",
@@ -4735,7 +4735,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Displays reviews from product. An app is required for product ratings. [Learn more](https://help.shopify.com/manual/apps)"
+        "content": "Displays reviews from product. An app is required for product ratings. [Learn more](https://help.Ticarti.com/manual/apps)"
       },
       {
         "type": "paragraph",

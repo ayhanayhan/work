@@ -18,7 +18,7 @@
 }
 
 
-/* v22.8.6 Wokiee header/footer source-DOM compatibility */
+/* v22.8.6 Theme header/footer source-DOM compatibility */
 .header__heading-logo--text{display:block!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;line-height:1!important;width:max-content!important;max-width:none!important}
 @media(min-width:1025px){
   .header-layout-classic.header__main .header.logo-to-left.top-menu-to-center,.header-layout-classic .header.logo-to-left.top-menu-to-center{grid-template-columns:auto minmax(0,1fr) auto!important;column-gap:30px!important}
@@ -55,7 +55,7 @@
 .desktop-main-menu .megamenu-grandchild a{display:block;padding:4px 0;font-size:13px;text-decoration:none}
 @media(max-width:1024px){.header__mobile__grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:54px}.header__mobile .header__icons{justify-content:flex-end;flex-wrap:nowrap}.header__mobile .header__heading{justify-self:center}}
 
-/* v22.8.9 React header interaction compatibility. Shopify custom elements are replaced by explicit React state. */
+/* v22.8.9 React header interaction compatibility. Ticarti custom elements are replaced by explicit React state. */
 .ticarti-react-header-icons{position:relative;z-index:4;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;overflow:visible!important}
 .ticarti-react-header-icons .header__button{position:relative!important;display:grid!important;place-items:center!important;width:34px!important;height:40px!important;min-width:34px!important;padding:0!important;margin:0!important;opacity:1!important;visibility:visible!important;background:transparent!important;border:0!important;color:var(--color-icons-main,var(--color-base,#333))!important;cursor:pointer!important}
 .ticarti-react-header-icons .header__button svg,.menu-drawer__button svg,.popup-modal__close svg,.cart-drawer-modal button svg{display:block!important;width:20px!important;height:20px!important;min-width:20px!important;stroke:currentColor!important;fill:none!important;opacity:1!important;visibility:visible!important}

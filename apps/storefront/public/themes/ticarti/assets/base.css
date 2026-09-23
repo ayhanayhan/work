@@ -1218,13 +1218,13 @@ terms_and_condition-checkbox:not(.checked)~.cart__dynamic-checkout-buttons {
     width:100%;
   }
 }
-.shopify-challenge__message{
+.Ticarti-challenge__message{
   margin:0 0 30px;
 }
-.shopify-challenge__container .shopify-challenge__button{
+.Ticarti-challenge__container .Ticarti-challenge__button{
   margin:40px auto 0;
 }
-.shopify-challenge__container{
+.Ticarti-challenge__container{
   margin:200px auto;
 }
 
@@ -1491,7 +1491,7 @@ body:has(header .page-wide) .breadcrumb .page-width{
   margin-right: unset;
 }
 @media (min-width:1025px){
-  .content-for-layout .shopify-policy__container{
+  .content-for-layout .Ticarti-policy__container{
     max-width: calc(var(--page-width) * 2 / 3);
     width: calc(var(--page-width) * 2 / 3);
   }
@@ -1502,14 +1502,14 @@ body:has(header .page-wide) .breadcrumb .page-width{
 .footer__content{
   margin-top: auto;
 }
-shopify-accelerated-checkout,
-shopify-accelerated-checkout-cart {
-  --shopify-accelerated-checkout-button-border-radius: var(--radius-button);
-  --shopify-accelerated-checkout-button-block-size:50px;
+Ticarti-accelerated-checkout,
+Ticarti-accelerated-checkout-cart {
+  --Ticarti-accelerated-checkout-button-border-radius: var(--radius-button);
+  --Ticarti-accelerated-checkout-button-block-size:50px;
 }
-.cart-notification__content shopify-accelerated-checkout,
-.cart-notification__content shopify-accelerated-checkout-cart {
-  --shopify-accelerated-checkout-button-block-size:40px;
+.cart-notification__content Ticarti-accelerated-checkout,
+.cart-notification__content Ticarti-accelerated-checkout-cart {
+  --Ticarti-accelerated-checkout-button-block-size:40px;
 }
 @media(min-width:1025px){
   .text-center-desktop{text-align: center !important;}
@@ -1535,6 +1535,6 @@ shopify-accelerated-checkout-cart {
   color: inherit;
 }
 
-.shopify-section-clip{
+.Ticarti-section-clip{
   overflow-x:clip;
 }

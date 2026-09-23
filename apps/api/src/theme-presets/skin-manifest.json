@@ -1,0 +1,599 @@
+{
+  "defaultSkin": "demo-1",
+  "skins": [
+    {
+      "slug": "demo-1",
+      "name": "Ticarti Studio 01",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 1
+    },
+    {
+      "slug": "demo-2",
+      "name": "Ticarti Studio 02",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 2
+    },
+    {
+      "slug": "demo-3",
+      "name": "Ticarti Studio 03",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 3
+    },
+    {
+      "slug": "demo-4",
+      "name": "Ticarti Studio 04",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 4
+    },
+    {
+      "slug": "demo-5",
+      "name": "Ticarti Studio 05",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 5
+    },
+    {
+      "slug": "demo-6",
+      "name": "Ticarti Studio 06",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 6
+    },
+    {
+      "slug": "demo-7",
+      "name": "Ticarti Studio 07",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 7
+    },
+    {
+      "slug": "demo-8",
+      "name": "Ticarti Studio 08",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 8
+    },
+    {
+      "slug": "demo-9",
+      "name": "Ticarti Studio 09",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 9
+    },
+    {
+      "slug": "demo-10",
+      "name": "Ticarti Studio 10",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 10
+    },
+    {
+      "slug": "demo-11",
+      "name": "Ticarti Studio 11",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 11
+    },
+    {
+      "slug": "demo-12",
+      "name": "Ticarti Studio 12",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 12
+    },
+    {
+      "slug": "demo-13",
+      "name": "Ticarti Studio 13",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 13
+    },
+    {
+      "slug": "demo-14",
+      "name": "Ticarti Studio 14",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 14
+    },
+    {
+      "slug": "demo-15",
+      "name": "Ticarti Studio 15",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 15
+    },
+    {
+      "slug": "demo-16",
+      "name": "Ticarti Studio 16",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 16
+    },
+    {
+      "slug": "demo-17",
+      "name": "Ticarti Studio 17",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 17
+    },
+    {
+      "slug": "demo-18",
+      "name": "Ticarti Studio 18",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 18
+    },
+    {
+      "slug": "demo-19",
+      "name": "Ticarti Studio 19",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 19
+    },
+    {
+      "slug": "demo-20",
+      "name": "Ticarti Studio 20",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 20
+    },
+    {
+      "slug": "demo-21",
+      "name": "Ticarti Studio 21",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 21
+    },
+    {
+      "slug": "demo-22",
+      "name": "Ticarti Studio 22",
+      "group": "main-demos",
+      "category": "Çok Amaçlı",
+      "sortOrder": 22
+    },
+    {
+      "slug": "american-gear-football-store",
+      "name": "Tera Gaia",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 201
+    },
+    {
+      "slug": "baby-care-store",
+      "name": "Vera Hera",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 202
+    },
+    {
+      "slug": "baseball-gear-store",
+      "name": "Zena Leto",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 203
+    },
+    {
+      "slug": "basketball-gear-store",
+      "name": "Alba Maia",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 204
+    },
+    {
+      "slug": "beers-store",
+      "name": "Dora Nila",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 205
+    },
+    {
+      "slug": "bicycle-store-1",
+      "name": "Eden Olea",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 206
+    },
+    {
+      "slug": "bicycle-store-2",
+      "name": "Freya Pera",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 207
+    },
+    {
+      "slug": "books-store-1",
+      "name": "Gaia Rhea",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 208
+    },
+    {
+      "slug": "books-store-2",
+      "name": "Hera Sia",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 209
+    },
+    {
+      "slug": "cakes-and-pastries-store-catalog",
+      "name": "Leto Talia",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 210
+    },
+    {
+      "slug": "cars-store",
+      "name": "Maia Uma",
+      "group": "classic-skins",
+      "category": "Otomotiv & Mobilite",
+      "sortOrder": 211
+    },
+    {
+      "slug": "christmas-store",
+      "name": "Nila Vita",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 212
+    },
+    {
+      "slug": "clothes-store",
+      "name": "Olea Yara",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 213
+    },
+    {
+      "slug": "coffee-store",
+      "name": "Pera Nova",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 214
+    },
+    {
+      "slug": "comic-books-store",
+      "name": "Rhea Luna",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 215
+    },
+    {
+      "slug": "cookware-store",
+      "name": "Sia Mira",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 216
+    },
+    {
+      "slug": "cosmetics-store",
+      "name": "Talia Aura",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 217
+    },
+    {
+      "slug": "drones-store",
+      "name": "Uma Nexa",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 218
+    },
+    {
+      "slug": "eco-food-store",
+      "name": "Vita Sora",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 219
+    },
+    {
+      "slug": "electronics-store-1",
+      "name": "Yara Vela",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 220
+    },
+    {
+      "slug": "flowers-store",
+      "name": "Nova Luma",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 221
+    },
+    {
+      "slug": "food-delivery-store-restaurant",
+      "name": "Luna Nora",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 222
+    },
+    {
+      "slug": "furniture-store-1",
+      "name": "Mira Aster",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 223
+    },
+    {
+      "slug": "furniture-store-2",
+      "name": "Aura Cora",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 224
+    },
+    {
+      "slug": "glasses-store",
+      "name": "Nexa Elara",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 225
+    },
+    {
+      "slug": "gothic-and-rock-clothing",
+      "name": "Sora Fiora",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 226
+    },
+    {
+      "slug": "handmade-store-sculptor",
+      "name": "Vela Iris",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 227
+    },
+    {
+      "slug": "jewelry-store",
+      "name": "Aria Juno",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 228
+    },
+    {
+      "slug": "kids-clothes-store",
+      "name": "Luma Kora",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 229
+    },
+    {
+      "slug": "kids-toys-store",
+      "name": "Nora Lyra",
+      "group": "classic-skins",
+      "category": "Çocuk",
+      "sortOrder": 230
+    },
+    {
+      "slug": "lifestyle-store",
+      "name": "Aster Mona",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 231
+    },
+    {
+      "slug": "lingerie-store",
+      "name": "Luna Intimates",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 232,
+      "verifiedFromDemo": true,
+      "aliases": [
+        "18-lingerie-store",
+        "lingerie",
+        "18 lingerie store"
+      ]
+    },
+    {
+      "slug": "medical-store",
+      "name": "Elara Riva",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 233
+    },
+    {
+      "slug": "olives-store",
+      "name": "Fiora Sena",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 234
+    },
+    {
+      "slug": "phone-cases-store",
+      "name": "Iris Tera",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 235
+    },
+    {
+      "slug": "phones-store",
+      "name": "Juno Vera",
+      "group": "classic-skins",
+      "category": "Elektronik",
+      "sortOrder": 236
+    },
+    {
+      "slug": "plants-store",
+      "name": "Kora Zena",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 237
+    },
+    {
+      "slug": "single-product-store-1",
+      "name": "Lyra Alba",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 238
+    },
+    {
+      "slug": "single-product-store-2",
+      "name": "Mona Dora",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 239
+    },
+    {
+      "slug": "single-product-store-3",
+      "name": "Oria Eden",
+      "group": "classic-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 240
+    },
+    {
+      "slug": "skin-care-store",
+      "name": "Riva Freya",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 241
+    },
+    {
+      "slug": "snowboards-store",
+      "name": "Sena Gaia",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 242
+    },
+    {
+      "slug": "t-shirt-store",
+      "name": "Tera Hera",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 243
+    },
+    {
+      "slug": "tea-store",
+      "name": "Vera Leto",
+      "group": "classic-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 244
+    },
+    {
+      "slug": "tools-store-1",
+      "name": "Zena Maia",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 245
+    },
+    {
+      "slug": "tools-store-2",
+      "name": "Alba Nila",
+      "group": "classic-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 246
+    },
+    {
+      "slug": "wallets-store",
+      "name": "Dora Olea",
+      "group": "classic-skins",
+      "category": "Moda",
+      "sortOrder": 247
+    },
+    {
+      "slug": "watches-store",
+      "name": "Eden Pera",
+      "group": "classic-skins",
+      "category": "Güzellik & Aksesuar",
+      "sortOrder": 248
+    },
+    {
+      "slug": "weapons-store",
+      "name": "Freya Rhea",
+      "group": "classic-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 249
+    },
+    {
+      "slug": "yoga-gear-store",
+      "name": "Gaia Sia",
+      "group": "classic-skins",
+      "category": "Spor",
+      "sortOrder": 250
+    },
+    {
+      "slug": "antiques-store",
+      "name": "Hera Talia",
+      "group": "new-skins",
+      "category": "Ev & Yaşam",
+      "sortOrder": 401
+    },
+    {
+      "slug": "electronics-store-2",
+      "name": "Leto Uma",
+      "group": "new-skins",
+      "category": "Elektronik",
+      "sortOrder": 402
+    },
+    {
+      "slug": "food-and-drinks-store",
+      "name": "Maia Vita",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 403
+    },
+    {
+      "slug": "food-delivery-store",
+      "name": "Nila Yara",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 404
+    },
+    {
+      "slug": "hookah-store",
+      "name": "Olea Nova",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 405
+    },
+    {
+      "slug": "organic-store",
+      "name": "Pera Luna",
+      "group": "new-skins",
+      "category": "Yeme & İçme",
+      "sortOrder": 406
+    },
+    {
+      "slug": "pets-supplies-1",
+      "name": "Rhea Mira",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 407
+    },
+    {
+      "slug": "pets-supplies-2",
+      "name": "Sia Aura",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 408
+    },
+    {
+      "slug": "shoes-store",
+      "name": "Talia Nexa",
+      "group": "new-skins",
+      "category": "Moda",
+      "sortOrder": 409
+    },
+    {
+      "slug": "sport-nutrition-store",
+      "name": "Uma Sora",
+      "group": "new-skins",
+      "category": "Spor",
+      "sortOrder": 410
+    },
+    {
+      "slug": "start-up-store",
+      "name": "Vita Vela",
+      "group": "new-skins",
+      "category": "Tek Ürün",
+      "sortOrder": 411
+    },
+    {
+      "slug": "tattoo-store",
+      "name": "Yara Aria",
+      "group": "new-skins",
+      "category": "Özel Mağaza",
+      "sortOrder": 412
+    }
+  ]
+}

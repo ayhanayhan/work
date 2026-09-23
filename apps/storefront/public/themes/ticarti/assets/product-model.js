@@ -7,7 +7,7 @@ if (!customElements.get('product-model')) {
     loadContent() {
       super.loadContent();
 
-      Shopify.loadFeatures([
+      Ticarti.loadFeatures([
         {
           name: 'model-viewer-ui',
           version: '1.0',
@@ -19,38 +19,38 @@ if (!customElements.get('product-model')) {
     setupModelViewerUI(errors) {
       if (errors) return;
 
-      this.modelViewerUI = new Shopify.ModelViewerUI(this.querySelector('model-viewer'));
+      this.modelViewerUI = new Ticarti.ModelViewerUI(this.querySelector('model-viewer'));
     }
   });
 }
 
 window.ProductModel = {
-  loadShopifyXR() {
-    Shopify.loadFeatures([
+  loadTicartiXR() {
+    Ticarti.loadFeatures([
       {
-        name: 'shopify-xr',
+        name: 'Ticarti-xr',
         version: '1.0',
-        onLoad: this.setupShopifyXR.bind(this),
+        onLoad: this.setupTicartiXR.bind(this),
       },
     ]);
   },
 
-  setupShopifyXR(errors) {
+  setupTicartiXR(errors) {
     if (errors) return;
 
-    if (!window.ShopifyXR) {
-      document.addEventListener('shopify_xr_initialized', () => this.setupShopifyXR());
+    if (!window.TicartiXR) {
+      document.addEventListener('Ticarti_xr_initialized', () => this.setupTicartiXR());
       return;
     }
 
     document.querySelectorAll('[id^="ProductJSON-"]').forEach((modelJSON) => {
-      window.ShopifyXR.addModels(JSON.parse(modelJSON.textContent));
+      window.TicartiXR.addModels(JSON.parse(modelJSON.textContent));
       modelJSON.remove();
     });
-    window.ShopifyXR.setupXRElements();
+    window.TicartiXR.setupXRElements();
   },
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (window.ProductModel) window.ProductModel.loadShopifyXR();
+  if (window.ProductModel) window.ProductModel.loadTicartiXR();
 });

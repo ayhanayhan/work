@@ -26,7 +26,7 @@ if (!customElements.get('pickup-availability')) {
           .then((text) => {
             const sectionInnerHTML = new DOMParser()
               .parseFromString(text, 'text/html')
-              .querySelector('.shopify-section');
+              .querySelector('.Ticarti-section');
             this.renderPreview(sectionInnerHTML);
           })
           .catch((e) => {

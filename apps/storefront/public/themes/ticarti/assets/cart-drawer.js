@@ -183,7 +183,7 @@ class CartDrawer extends HTMLElement {
       this.open();
     });
   }
-  getSectionInnerHTML(html, selector = '.shopify-section') {
+  getSectionInnerHTML(html, selector = '.Ticarti-section') {
     return new DOMParser().parseFromString(html, 'text/html').querySelector(selector).innerHTML;
   }
 
@@ -205,7 +205,7 @@ class CartDrawer extends HTMLElement {
     ];
   }
 
-  getSectionDOM(html, selector = '.shopify-section') {
+  getSectionDOM(html, selector = '.Ticarti-section') {
     return new DOMParser().parseFromString(html, 'text/html').querySelector(selector);
   }
 
@@ -231,12 +231,12 @@ class CartDrawerItems extends CartItems {
       {
         id: this.cart_icon,
         section: this.cart_icon,
-        selector: '.shopify-section',
+        selector: '.Ticarti-section',
       },
       {
         id: this.cart_icon_mobile,
         section: this.cart_icon_mobile,
-        selector: '.shopify-section'
+        selector: '.Ticarti-section'
       }
     ];
   }

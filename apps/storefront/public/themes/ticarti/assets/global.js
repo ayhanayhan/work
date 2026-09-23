@@ -1,4 +1,4 @@
-console.log('Wokiee Shopify Theme. Version 3.4.0 shopify 2.0. https://themeforest.net/item/wokiee-multipurpose-shopify-theme/22559417')
+console.log('Theme Ticarti Theme. Version 3.4.0 Ticarti 2.0. https://Ticarti.net/item/Theme-multipurpose-Ticarti-theme/22559417')
 
 function getFocusableElements(container) {
   return Array.from(
@@ -243,17 +243,17 @@ function fetchConfig(type = 'json') {
     headers: { 'Content-Type': 'application/json', Accept: `application/${type}` },
   };
 }
-if (typeof window.Shopify == 'undefined') {
-  window.Shopify = {};
+if (typeof window.Ticarti == 'undefined') {
+  window.Ticarti = {};
 }
 
-Shopify.bind = function (fn, scope) {
+Ticarti.bind = function (fn, scope) {
   return function () {
     return fn.apply(scope, arguments);
   };
 };
 
-Shopify.setSelectorByValue = function (selector, value) {
+Ticarti.setSelectorByValue = function (selector, value) {
   for (var i = 0, count = selector.options.length; i < count; i++) {
     var option = selector.options[i];
     if (value == option.value || value == option.innerHTML) {
@@ -263,13 +263,13 @@ Shopify.setSelectorByValue = function (selector, value) {
   }
 };
 
-Shopify.addListener = function (target, eventName, callback) {
+Ticarti.addListener = function (target, eventName, callback) {
   target.addEventListener
     ? target.addEventListener(eventName, callback, false)
     : target.attachEvent('on' + eventName, callback);
 };
 
-Shopify.postLink = function (path, options) {
+Ticarti.postLink = function (path, options) {
   options = options || {};
   var method = options['method'] || 'post';
   var params = options['parameters'] || {};
@@ -580,7 +580,7 @@ class selectOptionJs extends HTMLElement {
       _p.querySelectorAll('[selected-default]').forEach((item) => {
         item.setAttribute('selected', true);
       });
-      var sect = this.closest('.shopify-section')||this.closest('.popup-modal__content__data');
+      var sect = this.closest('.Ticarti-section')||this.closest('.popup-modal__content__data');
       sect.querySelector('select-option-js').remove();
       document.querySelector('.sticky-cart__select_options__text')&&document.querySelector('.sticky-cart__select_options__text').classList.remove('sticky-cart__select_options__text');
     }
@@ -637,7 +637,7 @@ class ComplementaryProducts extends HTMLElement {
 }
 customElements.define('complementary-products', ComplementaryProducts);
 
-class wokieeMasonry extends HTMLElement {
+class ThemeMasonry extends HTMLElement {
   constructor() {
     super();
     this.gutter = Number(this.getAttribute('data-gutter'));
@@ -652,13 +652,13 @@ class wokieeMasonry extends HTMLElement {
     document.addEventListener("DOMContentLoaded", () => {
       setTimeout(this.resizeHandler, 100);
     });
-    Shopify.designMode && setTimeout(this.resizeHandler, 100);
+    Ticarti.designMode && setTimeout(this.resizeHandler, 100);
   }
   init() {
     this.classList.add('initialized');
     this.msnry = new Masonry(this, {
-      itemSelector: '.wokiee-masonry__item',
-      columnWidth: '.wokiee-masonry-grid-sizer',
+      itemSelector: '.Theme-masonry__item',
+      columnWidth: '.Theme-masonry-grid-sizer',
       percentPosition: true,
       gutter: this.gutter
     });
@@ -711,9 +711,9 @@ class wokieeMasonry extends HTMLElement {
     }
   }
 }
-customElements.define('masonry-items', wokieeMasonry);
+customElements.define('masonry-items', ThemeMasonry);
 
-class wokieeSwiper extends HTMLElement {
+class ThemeSwiper extends HTMLElement {
   constructor() {
     super();
     this.swiper = false;
@@ -745,7 +745,7 @@ class wokieeSwiper extends HTMLElement {
       document.head.append(script);
     }
     else{
-      Shopify.designMode&&setTimeout(this.start.bind(this), 100);
+      Ticarti.designMode&&setTimeout(this.start.bind(this), 100);
     }
   }
   isTouchDevice() {
@@ -787,7 +787,7 @@ class wokieeSwiper extends HTMLElement {
       this.init();
     }
 
-    if(!this.video_autoplay || Shopify.designMode) return;
+    if(!this.video_autoplay || Ticarti.designMode) return;
 
     this.stopslider = false;
     var _this = this;
@@ -1026,16 +1026,16 @@ class wokieeSwiper extends HTMLElement {
   }
 }
 if (document.readyState === 'complete') {
-  customElements.define('swiper-slider', wokieeSwiper);
+  customElements.define('swiper-slider', ThemeSwiper);
 }
 else{
   window.addEventListener('load', () => {
-    customElements.define('swiper-slider', wokieeSwiper);
+    customElements.define('swiper-slider', ThemeSwiper);
   });
 }
 
 
-class mainSlider extends wokieeSwiper {
+class mainSlider extends ThemeSwiper {
   constructor() {
     super();
     this.childs_string = '.banner__block-item__content__items>*';
@@ -1107,7 +1107,7 @@ class mainSlider extends wokieeSwiper {
 }
 customElements.define('main-slider', mainSlider);
 
-class ListSpotlight extends wokieeSwiper {
+class ListSpotlight extends ThemeSwiper {
   constructor() {
     super();
   }
@@ -1427,7 +1427,7 @@ class VariantSelects extends HTMLElement {
     }
   }
   initMedia(){
-    var _parent = this.closest('.shopify-section')||this.closest('.popup-modal__content__data');
+    var _parent = this.closest('.Ticarti-section')||this.closest('.popup-modal__content__data');
     var mediaGallery = _parent.querySelectorAll(`[data-current-color]`);
     if(mediaGallery.length && !_parent.querySelector('select-option-js.active')){
       var data_main_color = _parent.querySelector(`[data-main-color]`).getAttribute('data-main-color');
@@ -1461,7 +1461,7 @@ class VariantSelects extends HTMLElement {
   updateMedia(){
     if (!this.currentVariant) return;
 
-    var _parent = this.closest('.shopify-section')||this.closest('.popup-modal__content__data');
+    var _parent = this.closest('.Ticarti-section')||this.closest('.popup-modal__content__data');
     var mediaGallery = _parent.querySelectorAll(`[data-current-color]`);
     if(mediaGallery.length){
       var option1 = this.currentVariant.option1.toLowerCase();
@@ -1551,7 +1551,7 @@ class VariantSelects extends HTMLElement {
     section?.querySelector('.sticky-cart__select_options__text')?.classList.remove('sticky-cart__select_options__text');
   }
   getParent(){
-    return this.closest('.shopify-section, .popup-modal__content__data');
+    return this.closest('.Ticarti-section, .popup-modal__content__data');
   }
   updateMasterId() {
     this.currentVariant = this.getVariantData();
@@ -2436,7 +2436,7 @@ class externalMegamenuContent extends HTMLElement {
   constructor() {
     super();
     this.init();
-    Shopify.designMode&&window.addEventListener('reinit_megamenu', this.init.bind(this));
+    Ticarti.designMode&&window.addEventListener('reinit_megamenu', this.init.bind(this));
   }
   init(){
     var item2 = document.querySelectorAll('[data-parent-megamenu] [data-megamenu-index]');
@@ -2479,7 +2479,7 @@ class externalMegamenuContent extends HTMLElement {
           elem.setAttribute('clip-path', mainstr);
           elem.parentNode.querySelector('clipPath').setAttribute('id', mainstr.replace(')', '').replace('url(#', ''));
         });
-        Shopify.designMode && document.querySelectorAll('.admin-select-menu-item').forEach((elem) => {
+        Ticarti.designMode && document.querySelectorAll('.admin-select-menu-item').forEach((elem) => {
           elem.dispatchEvent(new Event('mouseenter', { bubbles: true }));
         });
       }
@@ -2494,7 +2494,7 @@ class externalMegamenuContent extends HTMLElement {
     return result;
   }
   detach(node) {
-    if (Shopify.designMode) {
+    if (Ticarti.designMode) {
       return node.cloneNode(true);
     }
     else{
@@ -2781,7 +2781,7 @@ customElements.define('wishlist-page', wishlistPage);
 class compareButton extends mediaButtonsEvent {
   constructor() {
     super();
-    this.parent = this.closest('.wokiee-compare');
+    this.parent = this.closest('.Theme-compare');
     this.init('productDataCompare', this.getAttribute('data-id'));
     window.addEventListener('compareIdChanged', this.compareIdChanged.bind(this));
   }
@@ -2813,7 +2813,7 @@ class compareButton extends mediaButtonsEvent {
       _this.parent.querySelectorAll(`[data-item="${item_value}"]`).forEach((item) => {
         item.remove()
       });
-      _this.parent.querySelector('.wokiee-compare__count__number').innerHTML = _this.parent.querySelectorAll('.wokiee-compare__container')[0].children.length;
+      _this.parent.querySelector('.Theme-compare__count__number').innerHTML = _this.parent.querySelectorAll('.Theme-compare__container')[0].children.length;
       window.dispatchEvent(new CustomEvent('compareItemDeleted'));
     }, 300);
   }
@@ -3255,7 +3255,7 @@ class CollectionsTabs extends HTMLElement {
 }
 customElements.define('featured-tabs', CollectionsTabs);
 
-(!!navigator.platform.match(/iPhone|iPod|iPad/) || Shopify.designMode) && import("@theme/module-change-svg-id").then((module) => { module.changeSvgId() });
+(!!navigator.platform.match(/iPhone|iPod|iPad/) || Ticarti.designMode) && import("@theme/module-change-svg-id").then((module) => { module.changeSvgId() });
 document.querySelectorAll(".section-background__elements__item").length > 0 && import("@theme/module-parallax").then((module) => { module.startParallax() });
 
 class mapSectionHandler extends HTMLElement {
@@ -3269,7 +3269,7 @@ class mapSectionHandler extends HTMLElement {
 	  window.addEventListener('mapLoaded', this.initMap.bind(this), false);
     
     var scripts = document.querySelectorAll('[src*="'+this.map_src+'"]');
-    if(!scripts.length || Shopify.designMode) this.loadMapScript();
+    if(!scripts.length || Ticarti.designMode) this.loadMapScript();
   }
   loadMapScript(){
     var map_script = document.createElement('script');
@@ -3407,7 +3407,7 @@ class freeDeliveryBar extends HTMLElement {
   }
   connectedCallback() {
     this.threshold = this.getAttribute("data-price-max");
-    this.threshold = Math.round(this.threshold * (Shopify.currency.rate || 1));
+    this.threshold = Math.round(this.threshold * (Ticarti.currency.rate || 1));
     this.style.setProperty('--max-length', this.threshold);
     var _threshold = Number(getComputedStyle(this).getPropertyValue('--length'));
 
@@ -3417,7 +3417,7 @@ class freeDeliveryBar extends HTMLElement {
     else{
       var pr1 = this.getAttribute("data-price-current").replace(',', '.');
       var pr2 = this.getAttribute("data-price-max-real");
-      pr2 = Math.round(pr2 * (Shopify.currency.rate || 1));
+      pr2 = Math.round(pr2 * (Ticarti.currency.rate || 1));
       var dataSymbol = this.getAttribute("data-symbol");
       var val = Number(pr2 - pr1);
       val = val != Math.round(val) ? val.toFixed(2) : val;
@@ -3480,7 +3480,7 @@ class tickerHandler extends HTMLElement {
       };
       document.head.append(script);
     }
-    Shopify.designMode&&this.init();
+    Ticarti.designMode&&this.init();
   }
   debounce(func, wait) {
     let timeout;
@@ -3498,7 +3498,7 @@ class tickerHandler extends HTMLElement {
     window.removeEventListener('tickerLoaded', this.initfunction);
   }
   init(){
-      !Shopify.designMode&&window.removeEventListener('tickerLoaded', this.initfunction);
+      !Ticarti.designMode&&window.removeEventListener('tickerLoaded', this.initfunction);
       var translate = 1.5 * 100 / (1 + 1.5);
       if (this.dataset.direction == 'right') {
         translate = translate * -1;
@@ -3536,7 +3536,7 @@ class tickerHandler extends HTMLElement {
 }
 customElements.define('component-ticker', tickerHandler);
 
-class wokieeSwiperReels extends HTMLElement {
+class ThemeSwiperReels extends HTMLElement {
   constructor() {
     super();
     this.swiper = false;
@@ -3554,7 +3554,7 @@ class wokieeSwiperReels extends HTMLElement {
       document.head.append(script);
     }
     else{
-      Shopify.designMode&&setTimeout(this.start.bind(this), 100);
+      Ticarti.designMode&&setTimeout(this.start.bind(this), 100);
     }
   }
   start(){
@@ -3706,7 +3706,7 @@ class wokieeSwiperReels extends HTMLElement {
     return this.swiper.activeIndex;
   }
 }
-customElements.define('swiper-reels', wokieeSwiperReels);
+customElements.define('swiper-reels', ThemeSwiperReels);
 
 class SectionAccordion extends HTMLElement {
   constructor() {
@@ -3764,7 +3764,7 @@ class PromoHeader extends HTMLElement {
     this.space_name = "promo-header";
   }
   connectedCallback() {
-    if(this.getCookie(this.space_name) && !Shopify.designMode && this.time_next > 0){
+    if(this.getCookie(this.space_name) && !Ticarti.designMode && this.time_next > 0){
       return false;
     }
     this.parentNode.classList.add('show');
@@ -3773,7 +3773,7 @@ class PromoHeader extends HTMLElement {
   closeHandler(e){
     e.preventDefault();
     this.parentNode.classList.remove('show');
-    if(!Shopify.designMode && this.time_next > 0){
+    if(!Ticarti.designMode && this.time_next > 0){
       this.setCookie(this.space_name,"close",this.time_next);
     }
   }
@@ -3950,10 +3950,10 @@ class quickViewHandler{
       this.setInnerHTML(this.modal_content, this.productElement.innerHTML);
       this.modal_content.classList.remove('opacity0');
 
-      if (window.Shopify && Shopify.PaymentButton) {
-        Shopify.PaymentButton.init();
+      if (window.Ticarti && Ticarti.PaymentButton) {
+        Ticarti.PaymentButton.init();
       }
-      if (window.ProductModel) window.ProductModel.loadShopifyXR();
+      if (window.ProductModel) window.ProductModel.loadTicartiXR();
 
       this.createEvents();
     })

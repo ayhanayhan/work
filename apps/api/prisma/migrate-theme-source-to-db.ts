@@ -4,7 +4,7 @@ import { ticartiSkinCatalog, ticartiSourceDesignForSkin, ticartiSourceHomePreset
 const prisma=new PrismaClient();
 
 async function main(){
-  const themes=await prisma.themeDefinition.findMany({where:{slug:{in:['ticarti','nova-commerce','signature','wokiee']}}});
+  const themes=await prisma.themeDefinition.findMany({where:{slug:{in:['ticarti','nova-commerce','signature','Theme']}}});
   if(!themes.length)throw new Error('Ticarti tema kaydı bulunamadı. Önce tema kataloğu oluşturulmalıdır.');
   const catalog=ticartiSkinCatalog();
   for(const theme of themes){

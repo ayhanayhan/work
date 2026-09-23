@@ -62,7 +62,7 @@
     }
 }
 @media (min-width:577px) and (max-width:1024px){
-    .media-with-text-collage__align-center [data-items="1"] .wokiee-masonry__item{
+    .media-with-text-collage__align-center [data-items="1"] .Theme-masonry__item{
         width:100%;
     }
     .media-with-text-collage__align-center:has([data-items="1"]){
@@ -82,7 +82,7 @@
     }
 }
 @media (max-width:576px){
-    .media-with-text-collage__align-center [data-items="1"] .wokiee-masonry__item{
+    .media-with-text-collage__align-center [data-items="1"] .Theme-masonry__item{
         width:100%;
     }
     .media-with-text-collage__align-center .media-with-text-collage__container__image>*:first-child{

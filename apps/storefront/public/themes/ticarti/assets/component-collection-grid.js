@@ -1,7 +1,7 @@
 class collectionGrid extends HTMLElement {
   constructor() {
     super();
-    Shopify.designMode && localStorage.getItem("collection-grid") !== null && localStorage.removeItem("collection-grid");
+    Ticarti.designMode && localStorage.getItem("collection-grid") !== null && localStorage.removeItem("collection-grid");
     this.querySelectorAll('.collection-grid__item').forEach((item) => {
       item.addEventListener('click', (event) => {
         var item = event.target;            

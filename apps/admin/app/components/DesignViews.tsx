@@ -3,8 +3,8 @@
 import {useSearchParams} from 'next/navigation';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {Icon} from '@iconify/react';
-import wokieeSectionSchemas from './wokiee-section-schemas.json';
-import wokieeThemeSettingsSchema from './wokiee-theme-settings-schema.json';
+import ThemeSectionSchemas from './theme-section-schemas.json';
+import ThemeThemeSettingsSchema from './theme-settings-schema.json';
 
 export type DesignPage='overview'|'general'|'header'|'footer'|'products'|'homepage'|'menu';
 type Props={page:DesignPage;data:any;sid:string;req:(path:string,options?:any)=>Promise<any>;reload:()=>Promise<void>};
@@ -24,10 +24,10 @@ function menuFind(rows:MenuItem[],id:string):MenuItem|undefined{for(const row of
 
 
 const SECTION_SCHEMA_ALIASES:Record<string,string>={
-  'banner':'banners','banner-collage':'banners-collage','blog-posts':'blog-posts','brands-grid':'brands-grid','collection-list':'collection-list','featured-collection':'featured-collection','featured-product':'featured-product','media-with-text':'media-with-text','media-text':'media-with-text','media-text-vertical':'media-with-text-vertical','media-collage':'media-with-text-collage','rich-text':'text','rich_text':'text','shop-the-feed':'shop-the-feed','shoppable-feed':'shop-the-feed','text-columns-with-icons-type-2':'text-columns-with-icons-type-2','wokiee-review':'wokiee-review','review':'wokiee-review','reviews':'wokiee-review','banner-text-outside':'banners-with-text-outside','product-grid':'grid-of-products','product-list':'list-of-products','discount-banner':'discount-banner','newsletter':'newsletter-signup','image-comparison':'image-comparison','lookbook':'lookbook','contact-form':'contact-form','ticker-collection':'ticker-collection','ticker-text':'ticker-text','accordion':'accordion','gallery':'gallery','slider':'slider'
+  'banner':'banners','banner-collage':'banners-collage','blog-posts':'blog-posts','brands-grid':'brands-grid','collection-list':'collection-list','featured-collection':'featured-collection','featured-product':'featured-product','media-with-text':'media-with-text','media-text':'media-with-text','media-text-vertical':'media-with-text-vertical','media-collage':'media-with-text-collage','rich-text':'text','rich_text':'text','shop-the-feed':'shop-the-feed','shoppable-feed':'shop-the-feed','text-columns-with-icons-type-2':'text-columns-with-icons-type-2','Theme-review':'Theme-review','review':'Theme-review','reviews':'Theme-review','banner-text-outside':'banners-with-text-outside','product-grid':'grid-of-products','product-list':'list-of-products','discount-banner':'discount-banner','newsletter':'newsletter-signup','image-comparison':'image-comparison','lookbook':'lookbook','contact-form':'contact-form','ticker-collection':'ticker-collection','ticker-text':'ticker-text','accordion':'accordion','gallery':'gallery','slider':'slider'
 };
 function normalizeSchemaType(value:any){const raw=String(value||'').trim().replaceAll('_','-').toLowerCase();return SECTION_SCHEMA_ALIASES[raw]||raw}
-function sectionSchemaFor(type:any){const key=normalizeSchemaType(type);return (wokieeSectionSchemas as any)[key]||null}
+function sectionSchemaFor(type:any){const key=normalizeSchemaType(type);return (ThemeSectionSchemas as any)[key]||null}
 function sourceLabel(value:any,fallback='Ayar'){const s=String(value||fallback);return s.startsWith('t:')?s.split('.').slice(-1)[0].replaceAll('_',' '):s}
 const BLOCK_FIELD_TO_RUNTIME:Record<string,string>={heading_text:'title',main_heading:'title',collection_name:'title',desc:'content',main_desc:'content',button_name:'buttonText',button_link_1:'linkUrl',url:'linkUrl',custom_link:'linkUrl',image:'imageUrl',image_mobile:'imageUrlMobile',video:'videoUrl',video_url:'videoUrl',video_file:'videoUrl',author_description:'role'};
 const RUNTIME_TO_BLOCK_FIELD:Record<string,string>=Object.fromEntries(Object.entries(BLOCK_FIELD_TO_RUNTIME).map(([k,v])=>[v,k]));
@@ -44,14 +44,9 @@ function esc(value:any){return String(value??'').replace(/[&<>\"']/g,m=>({"&":"&
 function cleanHtml(value:any){return String(value||'').replace(/<script[\s\S]*?<\/script>/gi,'').replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,'').replace(/javascript\s*:/gi,'')}
 function sectionTitle(section:any){return String(section?.settings?.title||blockTitle(section?.sectionType)||'Bölüm')}
 function defaultSectionSettings(type:string,col=12){
-  const base:any={title:'',subtitle:'',content:'',colDesktop:col,colTablet:12,colMobile:12,textAlign:'left',count:8};
-  if(type==='blog'||type==='blog_posts')return {...base,count:3};
-  if(type==='reviews'||type==='testimonials'||type==='testimonials_large')return {...base,count:4};
-  if(type==='custom_html')return {...base,html:''};
-  if(type==='shoppable_feed')return {...base,handle:''};
-  if(type==='spacer')return {...base,height:60};
-  if(type==='divider')return {...base,thickness:1};
-  return base;
+  if(type==='spacer')return {height:60};
+  if(type==='divider')return {thickness:1};
+  return {};
 }
 
 const FONT_OPTIONS=[
@@ -220,12 +215,12 @@ export default function DesignViewRouter({page,data,sid,req,reload}:Props){
       const nextDesign={...design,general:{...cleanGeneral,skinSlug:targetSkin,skin:targetSkin,themeBundleSkinSlug:targetSkin,themeBundleSectionsSkinSlug:targetSkin,themeBundleVersion:'v23.2.0'}};
       const sectionPayload=sections.map((x:any,i:number)=>({sourceId:String(x.sourceId||x.settings?.__sourceId||''),sectionType:String(x.sectionType||'rich_text'),sortOrder:i,enabled:x.enabled!==false,settings:{...(x.settings||{}),...((x.sourceId||x.settings?.__sourceId)?{__sourceId:String(x.sourceId||x.settings?.__sourceId)}:{})}}));
       const result=await req('/admin/design/theme-state',{method:'PUT',body:JSON.stringify({storeId:sid,themeId:String(targetTheme.id),skinSlug:targetSkin,design:nextDesign,sections:sectionPayload,menus})});
-      if(!result?.ok||result?.schema!=='THEME_STATE_JSON_V1'||!result?.themeState){
+      if(!result?.ok||result?.schema!=='THEME_STATE_JSON_V2'||!result?.themeState){
         throw new Error(`Tema kaydı doğrulanamadı. schema=${String(result?.schema||'boş')} response=${JSON.stringify(result||{})}`);
       }
       const savedState=result.themeState;
-      const savedDesign=clone(savedState.design||nextDesign);
-      const savedSections=clone(arr(savedState.sections));
+      const savedDesign=clone(result?.resolved?.design||nextDesign);
+      const savedSections=clone(arr(result?.resolved?.sections||sections));
       const savedMenus=clone(arr(savedState.menus));
       designRef.current=savedDesign;sectionsRef.current=savedSections;menusRef.current=savedMenus;
       setDesign(savedDesign);setSections(savedSections);setMenus(savedMenus);setDirty(false);
@@ -412,7 +407,7 @@ function SettingsPanel({selected,section,design,menus,locales,updateMenus,update
     <Switch label="Duyuru barını göster" checked={!!design?.header?.topbarEnabled} onChange={v=>updateDesign('header','topbarEnabled',v)}/>
     <Field label="Metin" value={design?.header?.topbarText||''} onChange={v=>updateDesign('header','topbarText',v)} placeholder="Duyuru metni"/>
     <Field label="Link" value={design?.header?.topbarLink||''} onChange={v=>updateDesign('header','topbarLink',v)} placeholder="/kampanya"/>
-    <details className="design-v22-source-settings"><summary>Wokiee header ayarları</summary><SchemaSettingsList settings={(sectionSchemaFor('header')?.settings||[])} values={design?.header||{}} onChange={(key,value)=>updateDesign('header',key,value)}/></details>
+    <details className="design-v22-source-settings"><summary>Theme header ayarları</summary><SchemaSettingsList settings={(sectionSchemaFor('header')?.settings||[])} values={design?.header||{}} onChange={(key,value)=>updateDesign('header',key,value)}/></details>
   </Panel>;
   if(selected==='menu')return <Panel title="Menü" subtitle="Ana menü, mega menü, mobil ve footer menüsü" icon="iconoir:menu-scale"><MenuSettings menus={menus} update={updateMenus}/></Panel>;
   if(selected==='footer')return <Panel title="Footer" subtitle="Bülten, kolonlar ve alt alan" icon="iconoir:panel-bottom">
@@ -425,7 +420,7 @@ function SettingsPanel({selected,section,design,menus,locales,updateMenus,update
     <SectionHead text="Alt alan"/>
     <Field label="Copyright" value={design?.footer?.copyright||''} onChange={v=>updateDesign('footer','copyright',v)} placeholder="© {{year}} {{store_name}}"/>
     <Area label="Footer üstü HTML" value={design?.footer?.upperHtml||''} onChange={v=>updateDesign('footer','upperHtml',v)} rows={5}/>
-    <details className="design-v22-source-settings"><summary>Wokiee footer ayarları</summary><SchemaSettingsList settings={(sectionSchemaFor('footer')?.settings||[])} values={design?.footer||{}} onChange={(key,value)=>updateDesign('footer',key,value)}/></details>
+    <details className="design-v22-source-settings"><summary>Theme footer ayarları</summary><SchemaSettingsList settings={(sectionSchemaFor('footer')?.settings||[])} values={design?.footer||{}} onChange={(key,value)=>updateDesign('footer',key,value)}/></details>
   </Panel>;
   if(selected==='product'||selected==='product-card'||selected==='category')return <Panel title={selected==='category'?'Kategori Tasarımı':selected==='product-card'?'Ürün Kartı':'Ürün Sayfası'} subtitle="Şablon ve grid görünümü" icon="iconoir:box-iso"><ProductPanel selected={selected} design={design} update={updateDesign}/></Panel>;
   if(selected==='blog')return <Panel title="Blog Görünümü" subtitle="Global tema ayarlarını kullanır" icon="iconoir:book"><div className="design-v14-help">Blog liste ve detay sayfası seçtiğiniz renk, tipografi, header ve footer ayarlarını otomatik kullanır. İçerikleri Blog menüsünden yönetebilirsiniz.</div><button type="button" className="btn btn-outline-primary w-100" onClick={()=>window.location.href='/blog/posts'}>Blog Yazılarına Git</button></Panel>;
@@ -475,7 +470,7 @@ function ThemeSettings({design,update}:{design:any;update:(group:string,key:stri
   <div className="design-v14-colors">{[['primaryColor','Ana'],['secondaryColor','İkincil'],['textColor','Metin'],['backgroundColor','Arka Plan'],['surfaceColor','Yüzey'],['borderColor','Border']].map(([key,label])=><ColorField key={key} label={label} value={g[key]} onChange={v=>update('general',key,v)}/>)}</div>
   <SectionHead text="Yerleşim"/>
   <NumberField label="Site genişliği" value={g.containerWidth} min={760} max={1800} suffix="px" onChange={v=>update('general','containerWidth',v)}/><div className="design-v14-two"><NumberField label="Yatay sayfa boşluğu" value={g.pagePadding??20} min={0} max={80} suffix="px" onChange={v=>update('general','pagePadding',v)}/><NumberField label="Grid boşluğu" value={g.gridSpacing??20} min={0} max={80} suffix="px" onChange={v=>update('general','gridSpacing',v)}/></div><NumberField label="Bölüm aralığı" value={g.sectionSpacing} min={16} max={160} suffix="px" onChange={v=>update('general','sectionSpacing',v)}/><div className="design-v14-two"><NumberField label="Kart köşesi" value={g.borderRadius} min={0} max={40} suffix="px" onChange={v=>update('general','borderRadius',v)}/><NumberField label="Buton köşesi" value={g.buttonRadius} min={0} max={40} suffix="px" onChange={v=>update('general','buttonRadius',v)}/></div><div className="design-v14-two"><NumberField label="Input köşesi" value={g.inputRadius??20} min={0} max={40} suffix="px" onChange={v=>update('general','inputRadius',v)}/><NumberField label="Badge köşesi" value={g.badgeRadius??20} min={0} max={40} suffix="px" onChange={v=>update('general','badgeRadius',v)}/></div><Area label="Özel CSS" value={g.customCss||''} onChange={v=>update('general','customCss',v)} rows={6}/>
-  <details className="design-v22-source-settings"><summary>Wokiee orijinal tema ayarları</summary><div className="design-v14-help">Bu alanlar Wokiee <code>settings_schema.json</code> kaynağından gelir. Değişiklikler mağazanın düzenlenebilir tema kopyasında tutulur; kaynak preset değişmez.</div><SchemaSettingsGroups groups={wokieeThemeSettingsSchema as any[]} values={source} onChange={(key,value)=>update('themeSettings','general',{...source,[key]:value})}/></details>
+  <details className="design-v22-source-settings"><summary>Gelişmiş tema ayarları</summary><div className="design-v14-help">Bu alanlar tema şemasından gelir. Yalnızca değiştirdiğiniz değerler mağaza kaydına yazılır; skin varsayılanları kaynak dosyada kalır.</div><SchemaSettingsGroups groups={ThemeThemeSettingsSchema as any[]} values={source} onChange={(key,value)=>update('themeSettings','general',{...source,[key]:value})}/></details>
 </>}
 
 function ProductPanel({selected,design,update}:{selected:string;design:any;update:(group:string,key:string,value:any)=>void}){const p=design?.products||{};if(selected==='category')return <><TemplateMini count={8} value={num(p.categoryTemplate,1)} label="Kategori" onChange={v=>update('products','categoryTemplate',v)}/><GridFields p={p} update={update}/></>;if(selected==='product-card')return <><TemplateMini count={4} value={num(p.productCardTemplate,1)} label="Kart" onChange={v=>update('products','productCardTemplate',v)}/><GridFields p={p} update={update}/></>;return <TemplateMini count={8} value={num(p.productPageTemplate,1)} label="Ürün" onChange={v=>update('products','productPageTemplate',v)}/>}
@@ -491,13 +486,31 @@ function blockSchemaForItem(schema:any,item:any){
   return best;
 }
 
-function SectionSettings({section,update,locales}:{section:any;update:(patch:any)=>void;locales:any[]}){const s=section.settings||{};const schema=sectionSchemaFor(section.sectionType);if(!schema)return <LegacySectionSettings section={section} update={update} locales={locales}/>;const blockSchemas=(Array.isArray(schema.blocks)?schema.blocks:[]).filter((b:any)=>b.type!=='@app');const items=Array.isArray(s.items)?s.items:[];const normalizedType=String(section.sectionType||'').replaceAll('_','-');const isProductSection=['featured-collection','featured-collection-row','product-grid','product-list','products','product-slider','recommendations','recently-viewed','featured-product','shop-the-feed','shoppable-feed'].includes(normalizedType);return <>
-  <div className="design-v14-help">Bu ayarlar Wokiee kaynak bölüm şemasından okunur: <b>{sourceLabel(schema.name,normalizeSchemaType(section.sectionType))}</b>. Teknik setting id ve class davranışı korunur.</div>
-  {isProductSection&&<><SectionHead text="Ürün veri kaynağı"/><div className="design-v14-help">Tema demo ürünleri kullanılmaz. Bu bölüm her zaman mağazanızdaki gerçek ürünlerden beslenir.</div><label className="design-v14-field"><span>Ürün seçimi</span><select value={String(s.productSource||'newest')} onChange={e=>update({productSource:e.target.value})}><option value="newest">En yeni ürünler</option><option value="best-selling">Çok satanlar</option><option value="best-rated">En yüksek puanlılar</option><option value="sale">İndirimli ürünler</option><option value="selected">Seçili ürünler</option></select></label><Field label="Kategori slug" value={s.categorySlug||''} onChange={v=>update({categorySlug:v})} placeholder="ör. lingerie"/><Field label="Marka slug" value={s.brandSlug||''} onChange={v=>update({brandSlug:v})} placeholder="ör. north-studio"/><Field label="Seçili ürün ID'leri" value={Array.isArray(s.productIds)?s.productIds.join(', '):(s.productIds||'')} onChange={v=>update({productIds:v.split(',').map(x=>x.trim()).filter(Boolean)})} placeholder="id1, id2, id3"/></>}
-  <SchemaSettingsList settings={schema.settings||[]} values={s} onChange={(key,value)=>update({[key]:value})}/>
-  {blockSchemas.length>0&&<><SectionHead text="Bloklar / içerikler"/><div className="design-v22-block-list">{items.map((item:any,index:number)=>{const blockSchema=blockSchemaForItem(schema,item)||blockSchemas[0];return <details key={item.id||index} open={index===0}><summary><span>{sourceLabel(blockSchema?.name,'Blok')} #{index+1}</span><button type="button" onClick={e=>{e.preventDefault();e.stopPropagation();update({items:items.filter((_:any,i:number)=>i!==index)})}}><Icon icon="iconoir:trash"/></button></summary>{blockSchemas.length>1&&<label className="design-v14-field"><span>Blok türü</span><select value={String(blockSchema?.type||'')} onChange={e=>{const next=items.map((x:any,i:number)=>i===index?{...x,__blockType:e.target.value}:x);update({items:next})}}>{blockSchemas.map((b:any)=><option key={String(b.type)} value={String(b.type)}>{sourceLabel(b.name,b.type)}</option>)}</select></label>}<SchemaSettingsList settings={blockSchema?.settings||[]} values={item} onChange={(key,value)=>{const next=items.map((x:any,i:number)=>i===index?patchSchemaValue(x,key,value):x);update({items:next})}}/></details>})}</div><button type="button" className="design-v14-add-row" onClick={()=>update({items:[...items,{id:`block-${Date.now()}`,__blockType:String(blockSchemas[0]?.type||'')}]})}><Icon icon="iconoir:plus"/> Blok ekle</button></>}
-  <LocalizedSectionContent settings={s} locales={locales} onChange={next=>update(next)}/>
-</>}
+function schemaGroups(settings:any[]){
+  const groups:{title:string;items:any[]}[]=[];let current={title:'Genel',items:[] as any[]};
+  for(const def of settings||[]){if(String(def?.type||'')==='header'){if(current.items.length)groups.push(current);current={title:sourceLabel(def?.content||def?.label,'Genel'),items:[]};continue}current.items.push(def)}
+  if(current.items.length)groups.push(current);return groups;
+}
+function designSetting(def:any){const id=String(def?.id||'').toLowerCase();const type=String(def?.type||'').toLowerCase();if(['color','color_background','range','number'].includes(type))return true;return /(color|background|overlay|opacity|spacing|padding|margin|width|height|align|position|font|size|weight|radius|border|shadow|animation|layout|columns?|gap|mobile|desktop|tablet|aspect|ratio|style|design)/.test(id)}
+function SectionSettings({section,update,locales}:{section:any;update:(patch:any)=>void;locales:any[]}){
+  const s=section.settings||{};const schema=sectionSchemaFor(section.sectionType);const[tab,setTab]=useState<'content'|'design'>('content');
+  if(!schema)return <LegacySectionSettings section={section} update={update} locales={locales}/>;
+  const blockSchemas=(Array.isArray(schema.blocks)?schema.blocks:[]).filter((b:any)=>b.type!=='@app');const items=Array.isArray(s.items)?s.items:[];const normalizedType=String(section.sectionType||'').replaceAll('_','-');const isProductSection=['featured-collection','featured-collection-row','product-grid','product-list','products','product-slider','recommendations','recently-viewed','featured-product','shop-the-feed','shoppable-feed'].includes(normalizedType);
+  const groups=schemaGroups(schema.settings||[]);const contentGroups=groups.map(g=>({...g,items:g.items.filter((x:any)=>!designSetting(x))})).filter(g=>g.items.length);const designGroups=groups.map(g=>({...g,items:g.items.filter((x:any)=>designSetting(x))})).filter(g=>g.items.length);
+  return <>
+    <div className="design-v24-setting-tabs"><button type="button" className={tab==='content'?'active':''} onClick={()=>setTab('content')}>İçerik</button><button type="button" className={tab==='design'?'active':''} onClick={()=>setTab('design')}>Tasarım</button></div>
+    {tab==='content'?<>
+      <div className="design-v14-help">İçerik ve modülün çalışması için gereken alanlar burada tutulur. Boş bırakılan opsiyonel değerler veritabanına yazılmaz.</div>
+      {isProductSection&&<><SectionHead text="Ürün veri kaynağı"/><div className="design-v14-help">Demo ürün kullanılmaz; bölüm gerçek mağaza ürünlerinden beslenir.</div><label className="design-v14-field"><span>Ürün seçimi</span><select value={String(s.productSource||'newest')} onChange={e=>update({productSource:e.target.value})}><option value="newest">En yeni ürünler</option><option value="best-selling">Çok satanlar</option><option value="best-rated">En yüksek puanlılar</option><option value="sale">İndirimli ürünler</option><option value="selected">Seçili ürünler</option></select></label><Field label="Kategori slug" value={s.categorySlug||''} onChange={v=>update({categorySlug:v||undefined})} placeholder="ör. lingerie"/><Field label="Marka slug" value={s.brandSlug||''} onChange={v=>update({brandSlug:v||undefined})} placeholder="ör. north-studio"/><Field label="Seçili ürün ID'leri" value={Array.isArray(s.productIds)?s.productIds.join(', '):(s.productIds||'')} onChange={v=>update({productIds:v?v.split(',').map(x=>x.trim()).filter(Boolean):undefined})} placeholder="id1, id2, id3"/></>}
+      {contentGroups.map((g,i)=><details className="design-v22-schema-group" key={`${g.title}-${i}`} open={i===0}><summary>{g.title}</summary><SchemaSettingsList settings={g.items} values={s} onChange={(key,value)=>update({[key]:value})}/></details>)}
+      {blockSchemas.length>0&&<><SectionHead text="Bloklar / içerikler"/><div className="design-v22-block-list">{items.map((item:any,index:number)=>{const blockSchema=blockSchemaForItem(schema,item)||blockSchemas[0];return <details key={item.id||index} open={index===0}><summary><span>{sourceLabel(blockSchema?.name,'Blok')} #{index+1}</span><button type="button" onClick={e=>{e.preventDefault();e.stopPropagation();update({items:items.filter((_:any,i:number)=>i!==index)})}}><Icon icon="iconoir:trash"/></button></summary>{blockSchemas.length>1&&<label className="design-v14-field"><span>Blok türü</span><select value={String(blockSchema?.type||'')} onChange={e=>{const next=items.map((x:any,i:number)=>i===index?{...x,__blockType:e.target.value}:x);update({items:next})}}>{blockSchemas.map((b:any)=><option key={String(b.type)} value={String(b.type)}>{sourceLabel(b.name,b.type)}</option>)}</select></label>}<SchemaSettingsList settings={blockSchema?.settings||[]} values={item} onChange={(key,value)=>{const next=items.map((x:any,i:number)=>i===index?patchSchemaValue(x,key,value):x);update({items:next})}}/></details>})}</div><button type="button" className="design-v14-add-row" onClick={()=>update({items:[...items,{id:`block-${Date.now()}`,__blockType:String(blockSchemas[0]?.type||'')}]})}><Icon icon="iconoir:plus"/> Blok ekle</button></>}
+      <LocalizedSectionContent settings={s} locales={locales} onChange={next=>update(next)}/>
+    </>:<>
+      <div className="design-v14-help">Tasarım alanları opsiyoneldir. Değer vermediğinizde seçili temanın/skin'in varsayılanı kullanılır.</div>
+      {designGroups.length?designGroups.map((g,i)=><details className="design-v22-schema-group" key={`${g.title}-${i}`}><summary>{g.title}</summary><SchemaSettingsList settings={g.items} values={s} onChange={(key,value)=>update({[key]:value})}/></details>):<div className="design-v14-help">Bu modül için ayrıca tasarım override alanı bulunmuyor.</div>}
+    </>}
+  </>
+}
 function LegacySectionSettings({section,update,locales}:{section:any;update:(patch:any)=>void;locales:any[]}){const s=section.settings||{};return <>
   <Field label="Başlık" value={s.title||''} onChange={v=>update({title:v})}/><Field label="Alt başlık" value={s.subtitle||''} onChange={v=>update({subtitle:v})}/><Area label="İçerik" value={s.content||''} onChange={v=>update({content:v})} rows={4}/>
   <SectionHead text="Kolon"/><div className="design-v14-three"><SelectNumber label="Desktop" value={num(s.colDesktop,12)} values={[12,9,8,6,4,3]} onChange={v=>update({colDesktop:v})}/><SelectNumber label="Tablet" value={num(s.colTablet,12)} values={[12,8,6,4]} onChange={v=>update({colTablet:v})}/><SelectNumber label="Mobil" value={num(s.colMobile,12)} values={[12,6]} onChange={v=>update({colMobile:v})}/></div>

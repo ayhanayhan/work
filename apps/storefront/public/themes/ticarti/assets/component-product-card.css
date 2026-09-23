@@ -145,7 +145,7 @@
 .product-card .visual-display{
   --color-base:var(--color-product-name-block, var(--color-base-section, var(--color-product-name-main)));
 }
-.wokiee-compare__item__content_buttons.product-card__media-buttons__inline{
+.Theme-compare__item__content_buttons.product-card__media-buttons__inline{
   margin-top:16px;
 }
 .product-card .product-card-small__heading>*{

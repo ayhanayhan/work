@@ -47,7 +47,7 @@ customElements.define('compare-page', comparePage);
 class sliderSlide extends HTMLElement {
   constructor() {
     super();
-    this.slider = this.querySelectorAll('.wokiee-compare__container');
+    this.slider = this.querySelectorAll('.Theme-compare__container');
     this.grid_gap = Number(window.getComputedStyle(this).getPropertyValue('--compare-grid-gap').trim().replace('px',''));
     this.currentIndex = 0;
     this.querySelector('.next-btn').addEventListener('click', this.nextBtn.bind(this));
@@ -89,7 +89,7 @@ class sliderSlide extends HTMLElement {
   updateSlider() {
     var slideWidth = this.slider[0].lastChild.offsetWidth;
     var fullwidth = (this.slider[0].children.length * slideWidth + this.slider[0].children.length * this.grid_gap) - this.grid_gap;
-    this.querySelectorAll('.wokiee-compare__container').forEach((item) => {
+    this.querySelectorAll('.Theme-compare__container').forEach((item) => {
       const slideWidth = item.children[0].offsetWidth;
       item.style.transform = `translateX(${Math.max((this.currentIndex * (slideWidth + this.grid_gap)) * -1, this.offsetWidth - fullwidth)}px)`;
     });
@@ -107,15 +107,15 @@ class sliderSlide extends HTMLElement {
       }
     }
     if(fullwidth<=sliderWidth+20){
-      this.querySelector('.wokiee-compare__buttons').classList.add('hide')
-      this.querySelector('.wokiee-compare').classList.add('wokiee-compare--center');
+      this.querySelector('.Theme-compare__buttons').classList.add('hide')
+      this.querySelector('.Theme-compare').classList.add('Theme-compare--center');
     }
     else{
-      this.querySelector('.wokiee-compare__buttons').classList.remove('hide');
-      this.querySelector('.wokiee-compare').classList.remove('wokiee-compare--center');
+      this.querySelector('.Theme-compare__buttons').classList.remove('hide');
+      this.querySelector('.Theme-compare').classList.remove('Theme-compare--center');
     }
 
-    this.querySelectorAll('.wokiee-compare__heading').forEach((item) => {
+    this.querySelectorAll('.Theme-compare__heading').forEach((item) => {
       if(window.innerWidth >= 577){
         item.style.width = fullwidth<sliderWidth?fullwidth+'px':'100%';
       }

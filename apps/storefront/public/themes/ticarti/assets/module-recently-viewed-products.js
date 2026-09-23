@@ -1,7 +1,7 @@
 class recordRecentlyViewedProducts extends HTMLElement {
   constructor() {
     super();
-    this.name = "wokiee_recently_viewed";
+    this.name = "Theme_recently_viewed";
     this.recordRecentlyViewed();
   }
   config(){
@@ -60,7 +60,7 @@ class recentlyViewedProducts extends recordRecentlyViewedProducts {
     var currentproducts = this.getCookie(this.name);
     if(currentproducts.length <= 0){
             console.log(currentproducts.length)
-        if(Shopify.designMode){
+        if(Ticarti.designMode){
             this.getProducts("");
         }
         return;
