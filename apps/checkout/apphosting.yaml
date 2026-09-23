@@ -13,4 +13,4 @@ env:
 
 scripts:
   buildCommand: npm run build --workspace=@commerce/checkout
-  runCommand: node apps/checkout/.next/standalone/server.js
+  runCommand: node .next/standalone/server.js
