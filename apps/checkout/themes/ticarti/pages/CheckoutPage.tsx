@@ -2,13 +2,15 @@
 import Link from 'next/link';
 import {FormEvent,useEffect,useMemo,useRef,useState} from 'react';
 import {api,getCartToken,getLocale,money,track,mediaUrl} from '../../../lib/api';
+import {uiText} from '../../../lib/i18n';
 import PhoneField from '../../../components/PhoneField';
 
 type Geo={id:string;name:string;code?:string|null;source?:string};
 type CheckoutAccessMode='REQUIRED'|'SUGGESTED'|'GUEST';
 type Step=1|2|3;
 
-export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId?:string;storeOrigin?:string;sessionStore?:any}){
+export default function Checkout({
+  const tt=(key:string)=>uiText(key,locale||getLocale());sessionId,storeOrigin,sessionStore,locale}:{sessionId?:string;storeOrigin?:string;sessionStore?:any;locale?:string}){
   const storeUrl=(href:string)=>{if(!storeOrigin)return href;try{return new URL(href,storeOrigin).toString()}catch{return href}};
   const goStore=(href:string)=>{if(typeof window!=='undefined')window.location.assign(storeUrl(href))};
   const formRef=useRef<HTMLFormElement|null>(null);
@@ -76,7 +78,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
   }
   async function saveSelectedAddress(){
     if(!selectedAddressId||!customerToken||!formRef.current)return;
-    if((config.requirePhone??true)&&!phoneValid){setErr('Lütfen ülke koduna uygun geçerli bir telefon numarası girin.');return}
+    if((config.requirePhone??true)&&!phoneValid){setErr(tt('checkout.errors.phoneInvalid'));return}
     const f:any=Object.fromEntries(new FormData(formRef.current));
     const payload={firstName:f.firstName,lastName:f.lastName,phone,address1:f.address1,address2:f.address2||null,district:names.district||f.districtManual||null,city:names.state||f.cityManual||'',state:names.state||null,postalCode:f.postalCode||null,country,admin1Id:admin1||null,admin2Id:admin2||null};
     try{setSavingAddress(true);setErr('');const updated=await api(`/storefront/customer/addresses/${selectedAddressId}`,{method:'PATCH',headers:{authorization:`Bearer ${customerToken}`},body:JSON.stringify(payload)});setSelectedAddress(updated);setCustomer((c:any)=>({...c,addresses:(c.addresses||[]).map((a:any)=>a.id===updated.id?updated:a)}));setEditingAddress(false);setAddressFormKey(v=>v+1)}catch(e:any){setErr(e.message)}finally{setSavingAddress(false)}
@@ -107,7 +109,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
       if(control.type==='hidden'||control.disabled)continue;
       if(!control.checkValidity()){control.reportValidity();return false}
     }
-    if(section===1&&(config.requirePhone??true)&&!phoneValid){setErr('Lütfen seçtiğiniz ülkeye uygun geçerli bir telefon numarası girin.');return false}
+    if(section===1&&(config.requirePhone??true)&&!phoneValid){setErr(tt('checkout.errors.phoneInvalid'));return false}
     return true;
   }
 
@@ -128,15 +130,15 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
 
   function continueShipping(){
     setErr('');
-    if(!cart?.shippingMethodId){setErr('Devam etmek için bir teslimat yöntemi seçin.');return}
+    if(!cart?.shippingMethodId){setErr(tt('checkout.errors.shippingRequired'));return}
     track('begin_checkout',{value:Number(cart?.totals?.grandTotal||0),currency:cur,items:(cart?.items||[]).map((i:any)=>({item_id:i.variant?.product?.id,item_name:i.variant?.product?.title,item_variant:i.variant?.title,quantity:i.quantity,price:Number(i.variant?.price||0)}))});
     setStep(3);window.scrollTo({top:0,behavior:'smooth'});
   }
 
   async function submit(e:FormEvent<HTMLFormElement>){
     e.preventDefault();setErr('');
-    if(step!==3){setErr('Lütfen checkout adımlarını sırayla tamamlayın.');return}
-    if((config.requirePhone??true)&&!phoneValid){setErr('Lütfen ülke koduna uygun geçerli bir telefon numarası girin.');setStep(1);return}
+    if(step!==3){setErr(tt('checkout.errors.steps'));return}
+    if((config.requirePhone??true)&&!phoneValid){setErr(tt('checkout.errors.phoneInvalid'));setStep(1);return}
     if(mode==='REQUIRED'&&!customerToken){goStore('/account?mode=login&return=/checkout');return}
     const f:any=Object.fromEntries(new FormData(e.currentTarget));
     const billingAddress={firstName:f.firstName,lastName:f.lastName,phone,address1:f.address1,address2:f.address2||null,district:names.district||f.districtManual||null,city:names.state||f.cityManual||'',state:names.state||null,postalCode:f.postalCode||null,country,admin1Id:admin1||null,admin2Id:admin2||null,...(invoiceDetails?{company:f.invoiceCompany||null,taxNumber:f.invoiceTaxNumber||null}: {})};
@@ -162,9 +164,9 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
             {registerDone&&<div className="success-register-card success-register-done"><h2>Hesabınız oluşturuldu</h2><p>Siparişinizi ve adreslerinizi hesabınızdan yönetebilirsiniz.</p><Link className="btn" href={storeUrl("/account")}>Hesabıma git</Link></div>}
             <Link className="success-back-link" href="/">Alışverişe devam et</Link>
           </div>
-          <aside className="success-order-summary"><h2>Sipariş özeti</h2><div className="success-order-items">{order.items?.map((i:any)=>{const cartItem=data?.cart?.items?.find((x:any)=>x.variantId===i.variantId||x.variant?.id===i.variantId);const imageAsset=cartItem?.variant?.product?.images?.[0];const image=mediaUrl(imageAsset?.url,'thumb','webp');return <div className="success-order-item" key={i.id}>{image&&<div className="success-order-thumb product-image-wrap"><img src={image} alt=""/>{imageAsset?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}</div>}<div className="success-order-copy"><b>{i.title}</b><small>Adet: {i.quantity}</small></div><strong>{money(Number(i.total),order.currency)}</strong></div>})}</div><div className="success-summary-lines"><div><span>Ara toplam</span><b>{money(order.subtotal,order.currency)}</b></div>{Number(order.discountTotal)>0&&<div><span>İndirim</span><b>-{money(order.discountTotal,order.currency)}</b></div>}<div><span>Kargo</span><b>{Number(order.shippingTotal)===0?'Ücretsiz':money(order.shippingTotal,order.currency)}</b></div>{Number(order.paymentFee)>0&&<div><span>Ödeme hizmet bedeli</span><b>{money(order.paymentFee,order.currency)}</b></div>}<div className="success-summary-total"><span>Toplam</span><b>{money(order.grandTotal,order.currency)}</b></div></div></aside>
+          <aside className="success-order-summary"><h2>Sipariş özeti</h2><div className="success-order-items">{order.items?.map((i:any)=>{const cartItem=data?.cart?.items?.find((x:any)=>x.variantId===i.variantId||x.variant?.id===i.variantId);const imageAsset=cartItem?.variant?.product?.images?.[0];const image=mediaUrl(imageAsset?.url,'thumb','webp');return <div className="success-order-item" key={i.id}>{image&&<div className="success-order-thumb product-image-wrap"><img src={image} alt=""/>{imageAsset?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}</div>}<div className="success-order-copy"><b>{i.title}</b><small>Adet: {i.quantity}</small></div><strong>{money(Number(i.total),order.currency)}</strong></div>})}</div><div className="success-summary-lines"><div><span>{tt('checkout.summary.subtotal')}</span><b>{money(order.subtotal,order.currency)}</b></div>{Number(order.discountTotal)>0&&<div><span>{tt('checkout.summary.discount')}</span><b>-{money(order.discountTotal,order.currency)}</b></div>}<div><span>Kargo</span><b>{Number(order.shippingTotal)===0?tt('common.free'):money(order.shippingTotal,order.currency)}</b></div>{Number(order.paymentFee)>0&&<div><span>{tt('checkout.summary.paymentFee')}</span><b>{money(order.paymentFee,order.currency)}</b></div>}<div className="success-summary-total"><span>Toplam</span><b>{money(order.grandTotal,order.currency)}</b></div></div></aside>
         </section>
-        <footer className="checkout-success-footer"><img className="banksicon" src="/banksicon.png" alt="Desteklenen ödeme yöntemleri"/><a href="https://wediditagency.com" target="_blank" rel="noreferrer">designed by wediditagency</a></footer>
+        <footer className="checkout-success-footer"><img className="banksicon" src="/banksicon.png" alt="Desteklenen ödeme yöntemleri"/><a href="https://ticarti.com" target="_blank" rel="noreferrer">Designed by Ticarti</a></footer>
       </main>
     </div>;
   }
@@ -175,6 +177,12 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
   const selectedShipping=data.shippingMethods?.find((s:any)=>s.id===cart.shippingMethodId);
 
   return <div className="checkout-shell checkout-stepflow">
+    <header className="checkout-page-header">
+      <div className="checkout-page-header-inner">
+        <Link href={storeUrl("/")} className="checkout-brand">{data.store?.logoUrl?<img src={data.store.logoUrl} alt={data.store.name}/>:<span>{data.store?.name||'Mağaza'}</span>}</Link>
+        {!customer?<span className="checkout-login-link">{tt('checkout.login.question')} <Link href={storeUrl("/account?mode=login&return=/checkout")}>{tt('checkout.login.action')}</Link></span>:<span className="checkout-signed">{customer.email||customer.phone}</span>}
+      </div>
+    </header>
     <main className="checkout-main">
       <form ref={formRef} className="checkout-final-grid" onSubmit={submit}>
         <div className="checkout-form-column">
@@ -184,7 +192,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
           </div>
           <div className={`checkout-mobile-summary ${mobileSummaryOpen?'open':''}`}>
             <button type="button" className="checkout-mobile-summary-toggle" onClick={()=>setMobileSummaryOpen(v=>!v)} aria-expanded={mobileSummaryOpen}><span>Özet</span><strong>{money(cart.totals.grandTotal,cur)} ({cart.items.reduce((a:number,i:any)=>a+i.quantity,0)} ürün)</strong><span className="checkout-mobile-summary-arrow">⌃</span></button>
-            {mobileSummaryOpen&&<div className="checkout-mobile-summary-body"><div className="checkout-items">{cart.items.map((i:any)=><div className="checkout-item" key={`m-${i.id}`}><div className="checkout-thumb product-image-wrap"><img src={mediaUrl(i.variant.product.images?.[0]?.url,'thumb','webp')||'https://placehold.co/96'} alt=""/>{i.variant.product.images?.[0]?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}<span>{i.quantity}</span></div><div className="checkout-item-copy"><b>{i.variant.product.title}</b><small>{i.variant.title}</small></div><strong>{money(Number(i.variant.price)*i.quantity,cur)}</strong></div>)}</div>{config.showCouponField!==false&&<div className={`checkout-coupon-wrap ${couponOpen?'open':''}`}><button type="button" className="checkout-coupon-toggle" onClick={()=>setCouponOpen(v=>!v)}>İndirim kodu ekle <span>{couponOpen?'−':'+'}</span></button>{couponOpen&&<div className="checkout-coupon"><input value={code} onChange={e=>setCode(e.target.value)} placeholder="İndirim kodu"/><button type="button" disabled={busy||!code.trim()} onClick={()=>void applyDiscount()}>Uygula</button></div>}</div>}<div className="checkout-totals"><div><span>Ara toplam</span><b>{money(cart.totals.subtotal,cur)}</b></div>{Number(cart.totals.discountTotal)>0&&<div className="discount"><span>İndirim</span><b>-{money(cart.totals.discountTotal,cur)}</b></div>}<div><span>Teslimat / Kargo</span><b>{cart.shippingMethodId?(Number(cart.totals.shippingTotal)===0?'Ücretsiz':money(cart.totals.shippingTotal,cur)):'—'}</b></div><div className="checkout-total"><span>Toplam</span><b>{money(cart.totals.grandTotal,cur)}</b></div></div></div>}
+            {mobileSummaryOpen&&<div className="checkout-mobile-summary-body"><div className="checkout-items">{cart.items.map((i:any)=><div className="checkout-item" key={`m-${i.id}`}><div className="checkout-thumb product-image-wrap"><img src={mediaUrl(i.variant.product.images?.[0]?.url,'thumb','webp')||'https://placehold.co/96'} alt=""/>{i.variant.product.images?.[0]?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}<span>{i.quantity}</span></div><div className="checkout-item-copy"><b>{i.variant.product.title}</b><small>{i.variant.title}</small></div><strong>{money(Number(i.variant.price)*i.quantity,cur)}</strong></div>)}</div>{config.showCouponField!==false&&<div className={`checkout-coupon-wrap ${couponOpen?'open':''}`}><button type="button" className="checkout-coupon-toggle" onClick={()=>setCouponOpen(v=>!v)}>{tt('checkout.summary.addDiscount')} <span>{couponOpen?'−':'+'}</span></button>{couponOpen&&<div className="checkout-coupon"><input value={code} onChange={e=>setCode(e.target.value)} placeholder={tt('checkout.summary.discountCode')}/><button type="button" disabled={busy||!code.trim()} onClick={()=>void applyDiscount()}>Uygula</button></div>}</div>}<div className="checkout-totals"><div><span>{tt('checkout.summary.subtotal')}</span><b>{money(cart.totals.subtotal,cur)}</b></div>{Number(cart.totals.discountTotal)>0&&<div className="discount"><span>{tt('checkout.summary.discount')}</span><b>-{money(cart.totals.discountTotal,cur)}</b></div>}<div><span>{tt('checkout.summary.shipping')}</span><b>{cart.shippingMethodId?(Number(cart.totals.shippingTotal)===0?tt('common.free'):money(cart.totals.shippingTotal,cur)):'—'}</b></div><div className="checkout-total"><span>Toplam</span><b>{money(cart.totals.grandTotal,cur)}</b></div></div></div>}
           </div>
 
           {err&&<div className="checkout-error">{err}</div>}
@@ -193,23 +201,23 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
           <section className={`checkout-step ${step===1?'active':step>1?'complete':''}`} data-checkout-step="1">
             <div className="checkout-step-heading">
               <span className="checkout-step-index">{step>1?'✓':'1'}</span>
-              <h2>Adres</h2>
-              {step>1&&<button type="button" className="checkout-step-edit" onClick={()=>setStep(1)}>Düzenle</button>}
+              <h2>{tt('checkout.steps.address')}</h2>
+              {step>1&&<button type="button" className="checkout-step-edit" onClick={()=>setStep(1)}>{tt('common.edit')}</button>}
             </div>
             {step>1&&<div className="checkout-step-summary"><b>{addressSummary.email}</b><span>{addressSummary.name}</span><span>{addressSummary.phone}</span><span>{addressSummary.line1}</span><span>{addressSummary.line2}</span></div>}
             <div className="checkout-step-body">
-              <h3>İletişim bilgileri</h3>
+              <h3>{tt('checkout.contact.title')}</h3>
               <div className="checkout-form-grid checkout-contact-grid" key={`contact-${selectedAddressId||'new'}-${addressFormKey}`}>
                 <label className="field"><span>Ad</span><input name="firstName" autoComplete="given-name" placeholder="Ad" defaultValue={activeAddress?.firstName||customer?.firstName||''} required/></label>
                 <label className="field"><span>Soyad</span><input name="lastName" autoComplete="family-name" placeholder="Soyad" defaultValue={activeAddress?.lastName||customer?.lastName||''} required/></label>
                 <PhoneField key={`contact-phone-${selectedAddressId||'new'}-${addressFormKey}`} required={config.requirePhone??true} country={country} locale={getLocale()} defaultValue={phoneInitial} onChange={(v,valid,phoneCountryCode)=>{setPhone(v);setPhoneCountry(phoneCountryCode);setPhoneValid(valid)}}/>
-                <label className="field full"><span>E-posta</span><input name="email" type="email" autoComplete="email" placeholder="E-posta" defaultValue={customer?.email||''} readOnly={!!customer} required/></label>
+                <label className="field full"><span>{tt('checkout.contact.email')} <em>{tt('common.optional')}</em></span><input name="email" type="email" autoComplete="email" placeholder={tt('checkout.contact.email')} defaultValue={customer?.email||''} readOnly={!!customer}/></label>
                 <label className="inline-check checkout-marketing-check"><input type="checkbox" name="emailMarketing"/> Beni haberlerden ve özel tekliflerden haberdar et</label>
               </div>
-              <h3>Fatura adresi</h3>
+              <h3>{tt('checkout.address.billing')}</h3>
               {customer?.addresses?.length>0&&<div className="saved-addresses">
                 <div className="saved-address-list">
-                  {customer.addresses.map((a:any)=><div className={`saved-address-card ${selectedAddressId===a.id?'selected':''}`} key={a.id}><label><input type="radio" name="savedBillingAddress" checked={selectedAddressId===a.id} onChange={()=>void selectSavedAddress(a)}/><span><small>{[a.address1,a.address2,a.district,a.city,a.country].filter(Boolean).join(', ')}</small></span></label>{selectedAddressId===a.id&&<button type="button" className="saved-address-edit" onClick={()=>setEditingAddress(true)}>Düzenle</button>}</div>)}
+                  {customer.addresses.map((a:any)=><div className={`saved-address-card ${selectedAddressId===a.id?'selected':''}`} key={a.id}><label><input type="radio" name="savedBillingAddress" checked={selectedAddressId===a.id} onChange={()=>void selectSavedAddress(a)}/><span><small>{[a.address1,a.address2,a.district,a.city,a.country].filter(Boolean).join(', ')}</small></span></label>{selectedAddressId===a.id&&<button type="button" className="saved-address-edit" onClick={()=>setEditingAddress(true)}>{tt('common.edit')}</button>}</div>)}
                 </div>
                 <button type="button" className="saved-address-new" onClick={()=>void newAddress()}>+ Yeni adres kullan</button>
               </div>}
@@ -228,8 +236,8 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
               <div className="invoice-details-block">
                 <label className="inline-check"><input type="checkbox" checked={invoiceDetails} onChange={e=>setInvoiceDetails(e.target.checked)}/> Fatura bilgisi girin</label>
                 {invoiceDetails&&<div className="checkout-form-grid invoice-details-grid">
-                  <label className="field full"><span>Firma / Kurum adı</span><input name="invoiceCompany" placeholder="Firma / Kurum adı" defaultValue={activeAddress?.company||''}/></label>
-                  <label className="field full"><span>{invoiceTaxLabel}</span><input name="invoiceTaxNumber" placeholder={invoiceTaxLabel}/></label>
+                  <label className="field"><span>{tt('checkout.address.company')}</span><input name="invoiceCompany" placeholder="Firma / Kurum adı" defaultValue={activeAddress?.company||''}/></label>
+                  <label className="field"><span>{invoiceTaxLabel}</span><input name="invoiceTaxNumber" placeholder={invoiceTaxLabel}/></label>
                 </div>}
               </div>
               <div className="checkout-delivery-address-toggle">
@@ -243,25 +251,25 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
                   <label className="field"><span>İlçe</span>{shippingAdmin2Rows.length||shippingCountry==='TR'?<select value={shippingAdmin2} onChange={e=>setShippingAdmin2(e.target.value)} disabled={!shippingAdmin1||!shippingAdmin2Rows.length}><option value="">İlçe seçin</option>{shippingAdmin2Rows.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select>:<input name="shippingDistrictManual" placeholder="İlçe"/>}</label>
                 </div>}
               </div>
-              <button type="button" className="checkout-continue-button" onClick={continueAddress}>Teslimata devam et</button>
+              <button type="button" className="checkout-continue-button" onClick={continueAddress}>{tt('checkout.actions.continueShipping')}</button>
             </div>
           </section>
 
           <section className={`checkout-step ${step===2?'active':step>2?'complete':''}`} data-checkout-step="2">
             <div className="checkout-step-heading">
-              <span className="checkout-step-index">{step>2?'✓':'2'}</span><h2>Teslimat</h2>
-              {step>2&&<button type="button" className="checkout-step-edit" onClick={()=>setStep(2)}>Düzenle</button>}
+              <span className="checkout-step-index">{step>2?'✓':'2'}</span><h2>{tt('checkout.steps.shipping')}</h2>
+              {step>2&&<button type="button" className="checkout-step-edit" onClick={()=>setStep(2)}>{tt('common.edit')}</button>}
             </div>
-            {step>2&&selectedShipping&&<div className="checkout-step-summary checkout-step-summary-row"><span>{selectedShipping.name}</span><b>{Number(cart.totals.shippingTotal)===0?'Ücretsiz':money(cart.totals.shippingTotal,cur)}</b></div>}
+            {step>2&&selectedShipping&&<div className="checkout-step-summary checkout-step-summary-row"><span>{selectedShipping.name}</span><b>{Number(cart.totals.shippingTotal)===0?tt('common.free'):money(cart.totals.shippingTotal,cur)}</b></div>}
             <div className="checkout-step-body">
               <p className="checkout-help">Siparişiniz için uygun teslimat yöntemini seçin.</p>
-              <div className="checkout-options">{data.shippingMethods.map((s:any)=><label className={`checkout-option ${cart.shippingMethodId===s.id?'selected':''}`} key={s.id}><input type="radio" name="shippingMethodId" value={s.id} checked={cart.shippingMethodId===s.id} onChange={()=>void chooseShipping(s.id)} required/><span className="checkout-option-copy"><b>{s.name}</b>{(s.description||s.estimatedMinDays)&&<small>{s.description||`${s.estimatedMinDays}–${s.estimatedMaxDays||s.estimatedMinDays} gün`}</small>}</span><strong>{Number(s.price)===0?'Ücretsiz':money(s.price,cur)}</strong></label>)}</div>
-              <button type="button" className="checkout-continue-button" disabled={busy||!cart.shippingMethodId} onClick={continueShipping}>Ödemeye devam et</button>
+              <div className="checkout-options">{data.shippingMethods.map((s:any)=><label className={`checkout-option ${cart.shippingMethodId===s.id?'selected':''}`} key={s.id}><input type="radio" name="shippingMethodId" value={s.id} checked={cart.shippingMethodId===s.id} onChange={()=>void chooseShipping(s.id)} required/><span className="checkout-option-copy"><b>{s.name}</b>{(s.description||s.estimatedMinDays)&&<small>{s.description||`${s.estimatedMinDays}–${s.estimatedMaxDays||s.estimatedMinDays} gün`}</small>}</span><strong>{Number(s.price)===0?tt('common.free'):money(s.price,cur)}</strong></label>)}</div>
+              <button type="button" className="checkout-continue-button" disabled={busy||!cart.shippingMethodId} onClick={continueShipping}>{tt('checkout.actions.continuePayment')}</button>
             </div>
           </section>
 
           <section className={`checkout-step ${step===3?'active':''}`} data-checkout-step="3">
-            <div className="checkout-step-heading"><span className="checkout-step-index">3</span><h2>Ödeme</h2></div>
+            <div className="checkout-step-heading"><span className="checkout-step-index">3</span><h2>{tt('checkout.steps.payment')}</h2></div>
             <div className="checkout-step-body">
               <p className="checkout-help">Tüm ödeme işlemleri güvenli bağlantı üzerinden gerçekleştirilir.</p>
               <div className="checkout-options">{data.paymentMethods.map((p:any)=><label className={`checkout-option ${cart.paymentMethodId===p.id?'selected':''}`} key={p.id}><input type="radio" name="paymentMethodId" value={p.id} checked={cart.paymentMethodId===p.id} onChange={()=>void choosePayment(p.id)} required/><span className="checkout-option-copy"><b>{p.name}</b>{p.instructions&&<small>{p.instructions}</small>}</span>{Number(p.fee)>0&&<strong>+{money(p.fee,cur)}</strong>}</label>)}</div>
@@ -274,23 +282,38 @@ export default function Checkout({sessionId,storeOrigin,sessionStore}:{sessionId
                   <input type="hidden" name="kvkkNotice" value="1"/>
                   <label><input type="checkbox" name="terms" required/> <span>{contracts.DISTANCE_SALES?.href?<><Link href={storeUrl(contracts.DISTANCE_SALES.href)} target="_blank">Mesafeli Satış Sözleşmesi</Link>ni</>:<>Mesafeli Satış Sözleşmesini</>}, {contracts.PRIVACY?.href?<><Link href={storeUrl(contracts.PRIVACY.href)} target="_blank">Gizlilik Politikası</Link>nı</>:<>Gizlilik Politikasını</>} ve {contracts.KVKK_NOTICE?.href?<><Link href={storeUrl(contracts.KVKK_NOTICE.href)} target="_blank">KVKK Aydınlatma Metni</Link>ni</>:<>KVKK Aydınlatma Metnini</>} okudum, onaylıyorum.</span></label>
                 </div>
-                <button className="checkout-pay-button" disabled={busy||!cart.paymentMethodId||mode==='REQUIRED'&&!customerToken}>{busy?'İşleniyor…':'Siparişi Tamamla'}</button>
+                <button className="checkout-pay-button" disabled={busy||!cart.paymentMethodId||mode==='REQUIRED'&&!customerToken}>{busy?tt('checkout.actions.processing'):tt('checkout.actions.completeOrder')}</button>
                 <p className="checkout-secure-note">🔒 Ödemeler güvenli ve şifrelidir</p>
               </div>
             </div>
           </section>
-          <div className="checkout-left-footer"><div className="checkout-footer-links">{contracts.RETURNS?.href?<Link href={storeUrl(contracts.RETURNS.href)}>İade Politikası</Link>:<span>İade Politikası</span>}<span>•</span>{contracts.PRIVACY?.href?<Link href={storeUrl(contracts.PRIVACY.href)}>Gizlilik Politikası</Link>:<span>Gizlilik Politikası</span>}<span>•</span>{contracts.TERMS?.href?<Link href={storeUrl(contracts.TERMS.href)}>Hizmet Şartları</Link>:<span>Hizmet Şartları</span>}</div><div className="checkout-footer-meta"><img className="banksicon" src="/banksicon.png" alt="Desteklenen ödeme yöntemleri"/><a className="designed-by" href="https://wediditagency.com" target="_blank" rel="noreferrer">designed by wediditagency</a></div></div>
+          <div className="checkout-left-footer"><div className="checkout-footer-links">{contracts.RETURNS?.href?<Link href={storeUrl(contracts.RETURNS.href)}>İade Politikası</Link>:<span>İade Politikası</span>}<span>•</span>{contracts.PRIVACY?.href?<Link href={storeUrl(contracts.PRIVACY.href)}>Gizlilik Politikası</Link>:<span>Gizlilik Politikası</span>}<span>•</span>{contracts.TERMS?.href?<Link href={storeUrl(contracts.TERMS.href)}>Hizmet Şartları</Link>:<span>Hizmet Şartları</span>}</div><div className="checkout-footer-meta"><img className="banksicon" src="/banksicon.png" alt="Desteklenen ödeme yöntemleri"/><a className="designed-by" href="https://ticarti.com" target="_blank" rel="noreferrer">Designed by Ticarti</a></div></div>
         </div>
 
         <aside className="checkout-summary-column">
           <div className="checkout-summary-inner">
             <div className="checkout-items">{cart.items.map((i:any)=><div className="checkout-item" key={i.id}><div className="checkout-thumb product-image-wrap"><img src={mediaUrl(i.variant.product.images?.[0]?.url,'thumb','webp')||'https://placehold.co/96'} alt=""/>{i.variant.product.images?.[0]?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}<span>{i.quantity}</span></div><div className="checkout-item-copy"><b>{i.variant.product.title}</b><small>{i.variant.title}</small></div><strong>{money(Number(i.variant.price)*i.quantity,cur)}</strong></div>)}{cart.promotionGifts?.map((g:any)=><div className="checkout-item" key={g.variantId}><div className="checkout-thumb product-image-wrap"><img src={mediaUrl(g.product?.images?.[0]?.url,'thumb','webp')||'https://placehold.co/96'} alt=""/>{g.product?.images?.[0]?.aiGenerated&&<span className="product-ai-badge" title="AI ile oluşturuldu">AI</span>}<span>{g.quantity}</span></div><div className="checkout-item-copy"><b>{g.title}</b><small>Promosyon hediyesi</small></div><strong>{money(0,cur)}</strong></div>)}</div>
-            {config.showCouponField!==false&&<div className={`checkout-coupon-wrap ${couponOpen?'open':''}`}><button type="button" className="checkout-coupon-toggle" onClick={()=>setCouponOpen(v=>!v)}>İndirim kodu ekle <span>{couponOpen?'−':'+'}</span></button>{couponOpen&&<div className="checkout-coupon"><input value={code} onChange={e=>setCode(e.target.value)} placeholder="İndirim kodu"/><button type="button" disabled={busy||!code.trim()} onClick={()=>void applyDiscount()}>Uygula</button></div>}</div>}
+            {config.showCouponField!==false&&<div className={`checkout-coupon-wrap ${couponOpen?'open':''}`}><button type="button" className="checkout-coupon-toggle" onClick={()=>setCouponOpen(v=>!v)}>{tt('checkout.summary.addDiscount')} <span>{couponOpen?'−':'+'}</span></button>{couponOpen&&<div className="checkout-coupon"><input value={code} onChange={e=>setCode(e.target.value)} placeholder={tt('checkout.summary.discountCode')}/><button type="button" disabled={busy||!code.trim()} onClick={()=>void applyDiscount()}>Uygula</button></div>}</div>}
             {cart.totals.appliedPromotions?.length>0&&<div className="checkout-promos">{cart.totals.appliedPromotions.map((p:any)=><span key={p.id}>✓ {p.name}</span>)}</div>}
-            <div className="checkout-totals"><div><span>Ara toplam</span><b>{money(cart.totals.subtotal,cur)}</b></div>{Number(cart.totals.discountTotal)>0&&<div className="discount"><span>İndirim</span><b>-{money(cart.totals.discountTotal,cur)}</b></div>}<div><span>Teslimat / Kargo</span><b>{cart.shippingMethodId?(Number(cart.totals.shippingTotal)===0?'Ücretsiz':money(cart.totals.shippingTotal,cur)):'—'}</b></div>{Number(cart.totals.paymentFee)>0&&<div><span>Ödeme hizmet bedeli</span><b>{money(cart.totals.paymentFee,cur)}</b></div>}{Number(cart.totals.taxTotal)>0&&<div><span>Vergi</span><b>{money(cart.totals.taxTotal,cur)}</b></div>}<div className="checkout-total"><span>Toplam <small>{cur}</small></span><b>{money(cart.totals.grandTotal,cur)}</b></div></div>
+            <div className="checkout-totals"><div><span>{tt('checkout.summary.subtotal')}</span><b>{money(cart.totals.subtotal,cur)}</b></div>{Number(cart.totals.discountTotal)>0&&<div className="discount"><span>{tt('checkout.summary.discount')}</span><b>-{money(cart.totals.discountTotal,cur)}</b></div>}<div><span>{tt('checkout.summary.shipping')}</span><b>{cart.shippingMethodId?(Number(cart.totals.shippingTotal)===0?tt('common.free'):money(cart.totals.shippingTotal,cur)):'—'}</b></div>{Number(cart.totals.paymentFee)>0&&<div><span>{tt('checkout.summary.paymentFee')}</span><b>{money(cart.totals.paymentFee,cur)}</b></div>}{Number(cart.totals.taxTotal)>0&&<div><span>{tt('checkout.summary.tax')}</span><b>{money(cart.totals.taxTotal,cur)}</b></div>}<div className="checkout-total"><span>{tt('checkout.summary.total')} <small>{cur}</small></span><b>{money(cart.totals.grandTotal,cur)}</b></div></div>
           </div>
         </aside>
       </form>
     </main>
+    <footer className="checkout-page-footer">
+      <div className="checkout-page-footer-inner">
+        <div className="checkout-footer-links">
+          {contracts.RETURNS?.href?<Link href={storeUrl(contracts.RETURNS.href)}>{tt('checkout.footer.returns')}</Link>:<span>{tt('checkout.footer.returns')}</span>}
+          <span>•</span>
+          {contracts.PRIVACY?.href?<Link href={storeUrl(contracts.PRIVACY.href)}>{tt('checkout.footer.privacy')}</Link>:<span>{tt('checkout.footer.privacy')}</span>}
+          <span>•</span>
+          {contracts.TERMS?.href?<Link href={storeUrl(contracts.TERMS.href)}>{tt('checkout.footer.terms')}</Link>:<span>{tt('checkout.footer.terms')}</span>}
+        </div>
+        <div className="checkout-footer-meta">
+          <img className="banksicon" src="/banksicon.png" alt=""/>
+          <a className="designed-by designed-by-ticarti" href="https://ticarti.com" target="_blank" rel="noreferrer"><span>{tt('checkout.footer.designedBy')}</span><img src="/ticarti-logo.svg" alt="Ticarti"/></a>
+        </div>
+      </div>
+    </footer>
   </div>
 }
