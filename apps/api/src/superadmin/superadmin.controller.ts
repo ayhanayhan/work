@@ -38,4 +38,11 @@ export class SuperAdminController {
   @Delete('themes/:id/skin-defaults/:skin') themeSkinDefaultsReset(@Param('id') id:string,@Param('skin') skin:string){ return this.svc.resetThemeSkinDefaults(id,skin); }
   @Post('themes/:id/module-toggle') themeModuleToggle(@Param('id') id:string,@Body() b:any){ return this.svc.toggleThemeModule(id,b); }
 
+
+  @Get('geo')
+  geo(@Query() query:any){return this.svc.geoNodes(query);}
+
+  @Patch('geo/:id')
+  updateGeo(@Param('id') id:string,@Body() body:any){return this.svc.updateGeoNode(id,body);}
+
 }

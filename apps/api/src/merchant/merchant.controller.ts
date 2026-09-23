@@ -338,4 +338,11 @@ export class MerchantController {
   @RequirePermission('settings.read')
   @Get('cache/stats') cacheStats(@CurrentTenant() t:string){ return this.svc.cacheStats(t); }
 
+
+  @Get('store-settings/:id/bank-transfer')
+  bankTransfer(@CurrentTenant() t:string,@Param('id') id:string){return this.svc.bankTransferSettings(t,id);}
+
+  @Patch('store-settings/:id/bank-transfer')
+  updateBankTransfer(@CurrentTenant() t:string,@Param('id') id:string,@Body() body:any){return this.svc.updateBankTransferSettings(t,id,body);}
+
 }

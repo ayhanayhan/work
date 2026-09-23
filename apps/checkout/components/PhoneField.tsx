@@ -1,5 +1,4 @@
 'use client';
-import {currentUiLocale,uiText} from '../lib/i18n';
 
 import {useEffect,useMemo,useState} from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   parsePhoneNumberFromString,
   type CountryCode
 } from 'libphonenumber-js';
+import {currentUiLocale,uiText} from '../lib/i18n';
 
 type Props={
   required?:boolean;
@@ -17,33 +17,23 @@ type Props={
   onChange?:(value:string,valid:boolean,countryCode:string)=>void;
 };
 
-export default function PhoneField({
-  required=true,
-  country='TR',
-  locale='tr-TR',
-  defaultValue='',
-  onChange
-}:Props){
-  const normalizeCountry=(value?:string):CountryCode=>{
-    const code=String(value||'TR').toUpperCase();
-    return (getCountries().includes(code as CountryCode)?code:'TR') as CountryCode;
-  };
+function normalizeCountry(value?:string):CountryCode{
+  const code=String(value||'TR').toUpperCase();
+  return (getCountries().includes(code as CountryCode)?code:'TR') as CountryCode;
+}
 
+function flagEmoji(code:string){
+  return String(code||'').toUpperCase().replace(/[A-Z]/g,c=>String.fromCodePoint(127397+c.charCodeAt(0)));
+}
+
+export default function PhoneField({required=true,country='TR',locale='tr-TR',defaultValue='',onChange}:Props){
   const initialCountry=normalizeCountry(country);
-
   const initial=useMemo(()=>{
     if(!defaultValue)return {country:initialCountry,value:''};
-
     try{
       const parsed=parsePhoneNumberFromString(defaultValue);
-      if(parsed){
-        return {
-          country:(parsed.country||initialCountry) as CountryCode,
-          value:parsed.formatNational()
-        };
-      }
+      if(parsed)return {country:(parsed.country||initialCountry) as CountryCode,value:parsed.formatNational()};
     }catch{}
-
     return {country:initialCountry,value:defaultValue};
   },[]);
 
@@ -52,136 +42,69 @@ export default function PhoneField({
   const[touched,setTouched]=useState(false);
 
   const displayNames=useMemo(()=>{
-    try{
-      return new Intl.DisplayNames([locale||'tr-TR'],{type:'region'});
-    }catch{
-      return null;
-    }
+    try{return new Intl.DisplayNames([locale||'tr-TR'],{type:'region'})}
+    catch{return null}
   },[locale]);
 
-  const countries=useMemo(()=>{
-    return getCountries()
-      .map(code=>({
-        code,
-        name:displayNames?.of(code)||code,
-        callingCode:getCountryCallingCode(code)
-      }))
-      .sort((a,b)=>a.name.localeCompare(b.name,locale||'tr-TR'));
-  },[displayNames,locale]);
+  const countries=useMemo(()=>getCountries().map(code=>({
+    code,
+    name:displayNames?.of(code)||code,
+    callingCode:getCountryCallingCode(code),
+    flag:flagEmoji(code)
+  })).sort((a,b)=>a.name.localeCompare(b.name,locale||'tr-TR')),[displayNames,locale]);
 
-  const validate=(raw:string,c:CountryCode)=>{
-    const clean=raw.trim();
-
-    if(!clean){
-      onChange?.('',!required,c);
-      return false;
-    }
-
+  function parsed(raw:string,c:CountryCode){
     try{
-      const parsed=clean.startsWith('+')
-        ? parsePhoneNumberFromString(clean)
-        : parsePhoneNumberFromString(clean,c);
-
-      const valid=!!parsed?.isValid();
-
-      onChange?.(
-        valid&&parsed ? parsed.number : clean,
-        valid,
-        c
-      );
-
-      return valid;
-    }catch{
-      onChange?.(clean,false,c);
-      return false;
-    }
-  };
-
-  const valid=value.trim()?validateSilently(value,phoneCountry):!required;
-
-  function validateSilently(raw:string,c:CountryCode){
-    try{
-      const parsed=raw.trim().startsWith('+')
-        ? parsePhoneNumberFromString(raw.trim())
-        : parsePhoneNumberFromString(raw.trim(),c);
-
-      return !!parsed?.isValid();
-    }catch{
-      return false;
-    }
+      return raw.trim().startsWith('+')?parsePhoneNumberFromString(raw.trim()):parsePhoneNumberFromString(raw.trim(),c);
+    }catch{return undefined}
   }
+
+  function emit(raw:string,c:CountryCode){
+    const clean=raw.trim();
+    if(!clean){onChange?.('',!required,c);return !required}
+    const p=parsed(clean,c);
+    const valid=!!p?.isValid();
+    onChange?.(valid&&p?p.number:clean,valid,c);
+    return valid;
+  }
+
+  const valid=value.trim()?!!parsed(value,phoneCountry)?.isValid():!required;
+  const showError=touched&&((required&&!value.trim())||(!!value.trim()&&!valid));
 
   useEffect(()=>{
     const next=normalizeCountry(country);
-
     if(!value.trim()){
       setPhoneCountry(next);
       onChange?.('',!required,next);
     }
   },[country]);
 
-  useEffect(()=>{
-    validate(value,phoneCountry);
-  },[]);
+  useEffect(()=>{emit(value,phoneCountry)},[]);
 
   function changeCountry(next:string){
     const code=normalizeCountry(next);
     setPhoneCountry(code);
     setTouched(false);
-    validate(value,code);
+    emit(value,code);
   }
 
-  function changePhone(raw:string){
-    setValue(raw);
-    validate(raw,phoneCountry);
-  }
+  function changePhone(raw:string){setValue(raw);emit(raw,phoneCountry)}
 
-  const showError=touched&&(
-    required&&!value.trim() ||
-    !!value.trim()&&!valid
-  );
-
-  return (
-    <label className={`phone-field full ${showError?'has-error':''}`}>
-      <span>
-        Telefon{required&&<b className="required-mark"> *</b>}
-      </span>
-
-      <div className="phone-field-row">
-        <select
-          className="phone-country-select"
-          value={phoneCountry}
-          onChange={e=>changeCountry(e.target.value)}
-          aria-label="Telefon ülke kodu"
-        >
-          {countries.map(item=>(
-            <option key={item.code} value={item.code}>
-              {item.name} (+{item.callingCode})
-            </option>
-          ))}
+  return <label className={`phone-field full ${showError?'has-error':''}`}>
+    <span className="phone-floating-label">
+      {uiText('checkout.contact.phone',currentUiLocale())}{required?<b className="required-mark"> *</b>:null}
+    </span>
+    <div className="phone-field-shell">
+      <div className="phone-country-control">
+        <span className="phone-flag" aria-hidden="true">{flagEmoji(phoneCountry)}</span>
+        <select className="phone-country-select" value={phoneCountry} onChange={e=>changeCountry(e.target.value)} aria-label={uiText('checkout.contact.phone',currentUiLocale())}>
+          {countries.map(item=><option key={item.code} value={item.code}>{item.flag} {item.name} (+{item.callingCode})</option>)}
         </select>
-
-        <input
-          className="phone-number-input"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          value={value}
-          onChange={e=>changePhone(e.target.value)}
-          onBlur={()=>setTouched(true)}
-          placeholder="Telefon numarası"
-          required={required}
-          aria-invalid={showError}
-        />
+        <span className="phone-dial-code">+{getCountryCallingCode(phoneCountry)}</span>
       </div>
-
-      {showError&&(
-        <small className="phone-field-error">
-          {value.trim()
-            ? uiText('checkout.errors.phoneInvalid',currentUiLocale())
-            : uiText('checkout.errors.phoneRequired',currentUiLocale())}
-        </small>
-      )}
-    </label>
-  );
+      <input className="phone-number-input" type="tel" inputMode="tel" autoComplete="tel" value={value} onChange={e=>changePhone(e.target.value)} onBlur={()=>setTouched(true)} placeholder=" " required={required} aria-invalid={showError}/>
+    </div>
+    <small className="phone-required-help">{uiText('checkout.contact.phoneRequiredHelp',currentUiLocale())}</small>
+    {showError&&<small className="phone-field-error">{value.trim()?uiText('checkout.errors.phoneInvalid',currentUiLocale()):uiText('checkout.errors.phoneRequired',currentUiLocale())}</small>}
+  </label>;
 }

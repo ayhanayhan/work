@@ -96,16 +96,14 @@ export class StorefrontService {
     return { countries: COUNTRY_CODES, locales: LOCALES, subdivisions: country ? (SUBDIVISIONS[country.toUpperCase()] || []) : [] };
   }
 
-  async publicGeoChildren(slug:string, parentId?:string, countryCode?:string, level?:any) {
-    const store = await this.store(slug);
-    const where:any={ isActive:true, ...(parentId?{parentId}:{parentId:null}), ...(countryCode?{countryCode}:{}) , ...(level?{level}:{}) };
-    const [base, overrides, custom]=await Promise.all([
-      this.prisma.geoNode.findMany({where,orderBy:[{sortOrder:'asc'},{name:'asc'}]}),
-      this.prisma.geoOverride.findMany({where:{tenantId:store.tenantId}}),
-      this.prisma.geoCustomNode.findMany({where:{tenantId:store.tenantId,isActive:true,...(parentId?{parentId}:{parentId:null}),...(countryCode?{countryCode}:{}),...(level?{level}:{})},orderBy:[{sortOrder:'asc'},{name:'asc'}]})
-    ]);
-    const om=new Map(overrides.map((x:any)=>[x.geoNodeId,x]));
-    return [...base.filter((x:any)=>om.get(x.id)?.isEnabled!==false).map((x:any)=>({...x,name:om.get(x.id)?.customName||x.name,source:'SYSTEM'})),...custom.map((x:any)=>({...x,source:'CUSTOM'}))];
+  async publicGeoChildren(slug:string,parentId?:string,countryCode?:string,level?:any){
+    await this.store(slug);
+    const where:any={isActive:true};
+    if(parentId)where.parentId=parentId;
+    if(countryCode)where.countryCode=String(countryCode).toUpperCase();
+    if(level)where.level=level;
+    if(!parentId&&!countryCode&&!level)where.parentId=null;
+    return this.prisma.geoNode.findMany({where,orderBy:[{sortOrder:'asc'},{name:'asc'}]});
   }
 
   private async maybeRefreshStoreCurrency(store:any){

@@ -4,6 +4,7 @@ import {FormEvent,useEffect,useMemo,useRef,useState} from 'react';
 import {api,getCartToken,getLocale,money,track,mediaUrl} from '../../../lib/api';
 import {uiText} from '../../../lib/i18n';
 import PhoneField from '../../../components/PhoneField';
+import CardPaymentFields from '../../../components/payments/CardPaymentFields';
 
 type Geo={id:string;name:string;code?:string|null;source?:string};
 type CheckoutAccessMode='REQUIRED'|'SUGGESTED'|'GUEST';
@@ -179,8 +180,12 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
   return <div className="checkout-shell checkout-stepflow">
     <header className="checkout-page-header">
       <div className="checkout-page-header-inner">
-        <Link href={storeUrl("/")} className="checkout-brand">{data.store?.logoUrl?<img src={data.store.logoUrl} alt={data.store.name}/>:<span>{data.store?.name||'Mağaza'}</span>}</Link>
-        {!customer?<span className="checkout-login-link">{tt('checkout.login.question')} <Link href={storeUrl("/account?mode=login&return=/checkout")}>{tt('checkout.login.action')}</Link></span>:<span className="checkout-signed">{customer.email||customer.phone}</span>}
+        <div className="checkout-secure-badge">
+          <span className="checkout-secure-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.8"/><path d="M12 14v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></span>
+          <span>{tt('checkout.header.securePayment')}</span>
+        </div>
+        <Link href={storeUrl("/")} className="checkout-brand checkout-brand-centered">{data.store?.logoUrl?<img src={data.store.logoUrl} alt={data.store.name}/>:<span>{data.store?.name||'Mağaza'}</span>}</Link>
+        <div className="checkout-header-account">{!customer?<span className="checkout-login-link"><Link href={storeUrl("/account?mode=login&return=/checkout")}>{tt('checkout.header.login')}</Link></span>:<span className="checkout-signed">{customer.email||customer.phone}</span>}</div>
       </div>
     </header>
     <main className="checkout-main">
@@ -263,7 +268,15 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
             {step>2&&selectedShipping&&<div className="checkout-step-summary checkout-step-summary-row"><span>{selectedShipping.name}</span><b>{Number(cart.totals.shippingTotal)===0?tt('common.free'):money(cart.totals.shippingTotal,cur)}</b></div>}
             <div className="checkout-step-body">
               <p className="checkout-help">Siparişiniz için uygun teslimat yöntemini seçin.</p>
-              <div className="checkout-options">{data.shippingMethods.map((s:any)=><label className={`checkout-option ${cart.shippingMethodId===s.id?'selected':''}`} key={s.id}><input type="radio" name="shippingMethodId" value={s.id} checked={cart.shippingMethodId===s.id} onChange={()=>void chooseShipping(s.id)} required/><span className="checkout-option-copy"><b>{s.name}</b>{(s.description||s.estimatedMinDays)&&<small>{s.description||`${s.estimatedMinDays}–${s.estimatedMaxDays||s.estimatedMinDays} gün`}</small>}</span><strong>{Number(s.price)===0?tt('common.free'):money(s.price,cur)}</strong></label>)}</div>
+              <div className="checkout-options">{data.shippingMethods.map((s:any)=>{
+                const freeByThreshold=s.freeAbove!=null&&Number(cart?.totals?.subtotal||0)>=Number(s.freeAbove);
+                const isFree=Number(s.price)===0||freeByThreshold;
+                return <label className={`checkout-option ${cart.shippingMethodId===s.id?'selected':''}`} key={s.id}>
+                  <input type="radio" name="shippingMethodId" value={s.id} checked={cart.shippingMethodId===s.id} onChange={()=>void chooseShipping(s.id)} required/>
+                  <span className="checkout-option-copy"><b>{s.name}</b>{(s.description||s.estimatedMinDays)&&<small>{s.description||`${s.estimatedMinDays}–${s.estimatedMaxDays||s.estimatedMinDays} gün`}</small>}{s.freeAbove!=null&&!isFree&&<small>{money(s.freeAbove,cur)} ve üzeri ücretsiz</small>}</span>
+                  <span className="checkout-shipping-price"><strong>{isFree?tt('checkout.shipping.free'):money(s.price,cur)}</strong><small>{tt('checkout.shipping.taxIncluded')}</small></span>
+                </label>
+              })}</div>
               <button type="button" className="checkout-continue-button" disabled={busy||!cart.shippingMethodId} onClick={continueShipping}>{tt('checkout.actions.continuePayment')}</button>
             </div>
           </section>
@@ -272,7 +285,18 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
             <div className="checkout-step-heading"><span className="checkout-step-index">3</span><h2>{tt('checkout.steps.payment')}</h2></div>
             <div className="checkout-step-body">
               <p className="checkout-help">Tüm ödeme işlemleri güvenli bağlantı üzerinden gerçekleştirilir.</p>
-              <div className="checkout-options">{data.paymentMethods.map((p:any)=><label className={`checkout-option ${cart.paymentMethodId===p.id?'selected':''}`} key={p.id}><input type="radio" name="paymentMethodId" value={p.id} checked={cart.paymentMethodId===p.id} onChange={()=>void choosePayment(p.id)} required/><span className="checkout-option-copy"><b>{p.name}</b>{p.instructions&&<small>{p.instructions}</small>}</span>{Number(p.fee)>0&&<strong>+{money(p.fee,cur)}</strong>}</label>)}</div>
+              <div className="checkout-options">{data.paymentMethods.map((p:any)=><label className={`checkout-option ${cart.paymentMethodId===p.id?'selected':''}`} key={p.id}>
+                <input type="radio" name="paymentMethodId" value={p.id} checked={cart.paymentMethodId===p.id} onChange={()=>void choosePayment(p.id)} required/>
+                <span className="checkout-option-copy"><b>{p.name}</b>{p.instructions&&<small>{p.instructions}</small>}</span>{Number(p.fee)>0&&<strong>+{money(p.fee,cur)}</strong>}
+              </label>)}</div>
+              {selectedPayment?.code==='bank_transfer'&&<div className="bank-transfer-panel">
+                <div className="bank-transfer-title">{tt('checkout.payment.bankTransferDetails')}</div>
+                {selectedPayment?.config?.bankTransfer?.bankName&&<div><span>{tt('checkout.payment.bankName')}</span><b>{selectedPayment.config.bankTransfer.bankName}</b></div>}
+                {selectedPayment?.config?.bankTransfer?.accountHolder&&<div><span>{tt('checkout.payment.accountHolder')}</span><b>{selectedPayment.config.bankTransfer.accountHolder}</b></div>}
+                {selectedPayment?.config?.bankTransfer?.iban&&<div className="bank-transfer-iban"><span>IBAN</span><b>{selectedPayment.config.bankTransfer.iban}</b></div>}
+                {selectedPayment?.instructions&&<p>{selectedPayment.instructions}</p>}
+              </div>}
+              <CardPaymentFields enabled={selectedPayment?.type==='provider'&&selectedPayment?.config?.public?.cardFieldsEnabled===true} adapter={null}/>
               {selectedPayment?.requiresOnlinePayment&&<div className="payment-provider-slot"><div className="payment-provider-lock">🔒</div><div><b>Güvenli ödeme alanı</b><p>Kart veya cüzdan bilgileri ödeme sağlayıcısının güvenli bileşeninde burada açılır; kart verisi mağaza sunucusunda tutulmaz.</p></div></div>}
 
               <div className="checkout-payment-extras">

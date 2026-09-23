@@ -1108,4 +1108,24 @@ export class MerchantService {
   }
 
 
+
+  async bankTransferSettings(tenantId:string,storeId:string){
+    await this.assertStore(tenantId,storeId);
+    const row=await this.prisma.paymentMethod.findFirst({where:{storeId,code:'bank_transfer'}});
+    const cfg:any=(row?.config as any)||{};const bank:any=cfg.bankTransfer||{};
+    return{id:row?.id||null,enabled:row?.isActive??false,name:row?.name||'Havale / EFT',instructions:row?.instructions||'',bankName:String(bank.bankName||''),accountHolder:String(bank.accountHolder||''),iban:String(bank.iban||'')};
+  }
+
+  async updateBankTransferSettings(tenantId:string,storeId:string,body:any){
+    await this.assertStore(tenantId,storeId);
+    const existing=await this.prisma.paymentMethod.findFirst({where:{storeId,code:'bank_transfer'}});
+    const iban=String(body.iban||'').replace(/\s+/g,'').toUpperCase();
+    if(iban&&!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(iban))throw new BadRequestException('Invalid IBAN');
+    const oldCfg:any=(existing?.config as any)||{};
+    const config:any={...oldCfg,bankTransfer:{bankName:String(body.bankName||'').trim(),accountHolder:String(body.accountHolder||'').trim(),iban}};
+    const data:any={name:String(body.name||'Havale / EFT').trim()||'Havale / EFT',type:'manual',instructions:String(body.instructions||'').trim()||null,requiresOnlinePayment:false,supportsInstallment:false,fee:0,isActive:body.enabled!==false,config};
+    if(existing)return this.prisma.paymentMethod.update({where:{id:existing.id},data});
+    return this.prisma.paymentMethod.create({data:{storeId,code:'bank_transfer',sortOrder:0,...data}});
+  }
+
 }

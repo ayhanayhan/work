@@ -227,4 +227,22 @@ export class SuperAdminService {
     return this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,modules:next}}});
   }
 
+
+  async geoNodes(query:any){
+    const where:any={};
+    if(query?.countryCode)where.countryCode=String(query.countryCode).toUpperCase();
+    if(query?.level)where.level=String(query.level);
+    if(query?.parentId)where.parentId=String(query.parentId);
+    if(query?.root==='true')where.parentId=null;
+    return (this.prisma as any).geoNode.findMany({where,orderBy:[{sortOrder:'asc'},{name:'asc'}],take:5000});
+  }
+
+  async updateGeoNode(id:string,body:any){
+    const data:any={};
+    if(body.name!==undefined)data.name=String(body.name).trim();
+    if(body.isActive!==undefined)data.isActive=!!body.isActive;
+    if(body.sortOrder!==undefined)data.sortOrder=Number(body.sortOrder)||0;
+    return (this.prisma as any).geoNode.update({where:{id},data});
+  }
+
 }
