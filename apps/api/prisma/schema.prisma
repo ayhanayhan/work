@@ -298,7 +298,7 @@ model Tenant {
   defaultCountry           String                  @default("TR")
   weightUnit               String                  @default("kg")
   dimensionUnit            String                  @default("cm")
-  activeTheme              String                  @default("ticarti-signature-complete")
+  activeTheme              String                  @default("nova-commerce")
   logoUrl                  String?
   faviconUrl               String?
   email                    String?
@@ -1010,6 +1010,14 @@ model Banner {
   updatedAt      DateTime  @updatedAt
 
   @@index([storeId, position, isActive])
+}
+
+
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Plan {

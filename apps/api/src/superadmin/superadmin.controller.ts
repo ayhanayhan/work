@@ -23,6 +23,8 @@ export class SuperAdminController {
   @Delete('reserved-subdomains/:id') deleteReservedSubdomain(@Param('id') id:string) { return this.svc.deleteReservedSubdomain(id); }
   @Patch('subscriptions/:id') updateSub(@Param('id') id: string, @Body() b: any) { return this.svc.updateSubscription(id, b); }
   @Get('platform-locales') platformLocales() { return this.svc.platformLocales(); }
+  @Get('platform-settings') platformSettings() { return this.svc.platformSettings(); }
+  @Patch('platform-settings') updatePlatformSettings(@Body() b:any) { return this.svc.updatePlatformSettings(b); }
   @Get('apps') apps() { return this.svc.apps(); }
   @Post('apps') createApp(@Body() b: any) { return this.svc.createApp(b); }
   @Patch('apps/:id') updateApp(@Param('id') id: string, @Body() b: any) { return this.svc.updateApp(id, b); }
