@@ -22,6 +22,7 @@ export class SuperAdminController {
   @Patch('reserved-subdomains/:id') updateReservedSubdomain(@Param('id') id:string,@Body() b:any) { return this.svc.updateReservedSubdomain(id,b); }
   @Delete('reserved-subdomains/:id') deleteReservedSubdomain(@Param('id') id:string) { return this.svc.deleteReservedSubdomain(id); }
   @Patch('subscriptions/:id') updateSub(@Param('id') id: string, @Body() b: any) { return this.svc.updateSubscription(id, b); }
+  @Get('platform-locales') platformLocales() { return this.svc.platformLocales(); }
   @Get('apps') apps() { return this.svc.apps(); }
   @Post('apps') createApp(@Body() b: any) { return this.svc.createApp(b); }
   @Patch('apps/:id') updateApp(@Param('id') id: string, @Body() b: any) { return this.svc.updateApp(id, b); }
@@ -37,6 +38,12 @@ export class SuperAdminController {
   @Patch('themes/:id/skin-defaults/:skin') themeSkinDefaultsUpdate(@Param('id') id:string,@Param('skin') skin:string,@Body() b:any){ return this.svc.updateThemeSkinDefaults(id,skin,b); }
   @Delete('themes/:id/skin-defaults/:skin') themeSkinDefaultsReset(@Param('id') id:string,@Param('skin') skin:string){ return this.svc.resetThemeSkinDefaults(id,skin); }
   @Post('themes/:id/module-toggle') themeModuleToggle(@Param('id') id:string,@Body() b:any){ return this.svc.toggleThemeModule(id,b); }
+  @Get('themes/:id/workspace') themeWorkspace(@Param('id') id:string){return this.svc.themeWorkspace(id);}
+  @Patch('themes/:id/workspace/groups') themeWorkspaceGroups(@Param('id') id:string,@Body() b:any){return this.svc.updateThemeWorkspaceGroups(id,b);}
+  @Patch('themes/:id/skins/:skin/catalog') themeSkinCatalogUpdate(@Param('id') id:string,@Param('skin') skin:string,@Body() b:any){return this.svc.updateThemeSkinCatalog(id,skin,b);}
+  @Patch('themes/:id/skins/:skin/source') themeSkinSourceUpdate(@Param('id') id:string,@Param('skin') skin:string,@Body() b:any){return this.svc.updateThemeSkinSource(id,skin,b);}
+  @Delete('themes/:id/skins/:skin/source') themeSkinSourceReset(@Param('id') id:string,@Param('skin') skin:string){return this.svc.resetThemeSkinSource(id,skin);}
+  @Patch('themes/:id/modules/:type/catalog') themeModuleCatalogUpdate(@Param('id') id:string,@Param('type') type:string,@Body() b:any){return this.svc.updateThemeModuleCatalog(id,type,b);}
 
 
   @Get('geo')

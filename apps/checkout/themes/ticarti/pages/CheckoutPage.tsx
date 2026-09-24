@@ -43,14 +43,14 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
       let authToken='';let me:any=null;
       try{const r=await api('/storefront/customer/refresh',{method:'POST',credentials:'include',body:'{}'});authToken=r.accessToken||'';if(authToken){me=await api('/storefront/customer/me',{headers:{authorization:`Bearer ${authToken}`}});setCustomerToken(authToken);setCustomer(me)}}catch{}
       setCountry(d.store?.defaultCountry||'TR');setData(d);
-      const resolvedSlug=String(sessionStore?.publicSlug||d.store?.publicSlug||'').trim();if(resolvedSlug){try{const boot=await api(`/storefront/${encodeURIComponent(resolvedSlug)}?currency=${encodeURIComponent(d.store?.currency||sessionStore?.currency||'TRY')}&locale=${encodeURIComponent(getLocale())}`);setContracts(boot.contractPages||{})}catch{setContracts({})}}
+      if(d.store?.publicSlug){try{const boot=await api(`/storefront/${d.store.publicSlug}?currency=${encodeURIComponent(d.store.currency||'TRY')}&locale=${encodeURIComponent(getLocale())}`);setContracts(boot.contractPages||{})}catch{setContracts({})}}
       const address=me?.addresses?.find((x:any)=>x.isDefault)||me?.addresses?.[0];
       if(address){setSelectedAddressId(address.id);setSelectedAddress(address);setPhone(address.phone||me?.phone||'');}
-      await hydrateGeo(address,d.store?.defaultCountry||'TR',String(sessionStore?.publicSlug||d.store?.publicSlug||''));
+      await hydrateGeo(address,d.store?.defaultCountry||'TR',d.store?.publicSlug||'main');
     }catch(e:any){setErr(e.message)}
   }
   async function refreshCheckout(){if(!token)return;setData(await api(`/storefront/carts/${token}/checkout`))}
-  async function hydrateGeo(address:any,fallbackCountry:string,storeSlug:string){if(!storeSlug){setAdmin1Rows([]);setAdmin2Rows([]);return;}
+  async function hydrateGeo(address:any,fallbackCountry:string,storeSlug:string){
     const co=address?.country||fallbackCountry||'TR';setCountry(co);
     try{
       const a1=await api(`/storefront/${storeSlug}/locations?countryCode=${encodeURIComponent(co)}&level=ADMIN1`).catch(()=>[]);setAdmin1Rows(a1);
@@ -58,24 +58,24 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
       if(a1id){const a2=await api(`/storefront/${storeSlug}/locations?parentId=${encodeURIComponent(a1id)}&level=ADMIN2`).catch(()=>[]);setAdmin2Rows(a2);setAdmin2(address?.admin2Id||'')}else{setAdmin2Rows([]);setAdmin2('')}
     }catch{setAdmin1Rows([]);setAdmin2Rows([])}
   }
-  async function loadAdmin1(codeValue:string){setAdmin1('');setAdmin2('');setAdmin2Rows([]);try{setAdmin1Rows(await api(`/storefront/${encodeURIComponent(String(sessionStore?.publicSlug||data?.store?.publicSlug||''))}/locations?countryCode=${encodeURIComponent(codeValue)}&level=ADMIN1`))}catch{setAdmin1Rows([])}}
+  async function loadAdmin1(codeValue:string){setAdmin1('');setAdmin2('');setAdmin2Rows([]);try{setAdmin1Rows(await api(`/storefront/${data?.store?.publicSlug||sessionStore?.publicSlug||'main'}/locations?countryCode=${encodeURIComponent(codeValue)}&level=ADMIN1`))}catch{setAdmin1Rows([])}}
   async function changeCountry(codeValue:string){setCountry(codeValue);await loadAdmin1(codeValue)}
-  async function changeAdmin1(id:string){setAdmin1(id);setAdmin2('');try{setAdmin2Rows(id?await api(`/storefront/${encodeURIComponent(String(sessionStore?.publicSlug||data?.store?.publicSlug||''))}/locations?parentId=${encodeURIComponent(id)}&level=ADMIN2`):[])}catch{setAdmin2Rows([])}}
+  async function changeAdmin1(id:string){setAdmin1(id);setAdmin2('');try{setAdmin2Rows(id?await api(`/storefront/${data?.store?.publicSlug||sessionStore?.publicSlug||'main'}/locations?parentId=${encodeURIComponent(id)}&level=ADMIN2`):[])}catch{setAdmin2Rows([])}}
   function changeAdmin2(id:string){setAdmin2(id)}
   const names=useMemo(()=>({state:admin1Rows.find(x=>x.id===admin1)?.name||'',district:admin2Rows.find(x=>x.id===admin2)?.name||''}),[admin1,admin2,admin1Rows,admin2Rows]);
 
-  async function loadShippingAdmin1(codeValue:string){setShippingAdmin1('');setShippingAdmin2('');setShippingAdmin2Rows([]);try{setShippingAdmin1Rows(await api(`/storefront/${encodeURIComponent(String(sessionStore?.publicSlug||data?.store?.publicSlug||''))}/locations?countryCode=${encodeURIComponent(codeValue)}&level=ADMIN1`))}catch{setShippingAdmin1Rows([])}}
+  async function loadShippingAdmin1(codeValue:string){setShippingAdmin1('');setShippingAdmin2('');setShippingAdmin2Rows([]);try{setShippingAdmin1Rows(await api(`/storefront/${data?.store?.publicSlug||sessionStore?.publicSlug||'main'}/locations?countryCode=${encodeURIComponent(codeValue)}&level=ADMIN1`))}catch{setShippingAdmin1Rows([])}}
   async function changeShippingCountry(codeValue:string){setShippingCountry(codeValue);await loadShippingAdmin1(codeValue)}
-  async function changeShippingAdmin1(id:string){setShippingAdmin1(id);setShippingAdmin2('');try{setShippingAdmin2Rows(id?await api(`/storefront/${encodeURIComponent(String(sessionStore?.publicSlug||data?.store?.publicSlug||''))}/locations?parentId=${encodeURIComponent(id)}&level=ADMIN2`):[])}catch{setShippingAdmin2Rows([])}}
+  async function changeShippingAdmin1(id:string){setShippingAdmin1(id);setShippingAdmin2('');try{setShippingAdmin2Rows(id?await api(`/storefront/${data?.store?.publicSlug||sessionStore?.publicSlug||'main'}/locations?parentId=${encodeURIComponent(id)}&level=ADMIN2`):[])}catch{setShippingAdmin2Rows([])}}
   const shippingNames=useMemo(()=>({state:shippingAdmin1Rows.find(x=>x.id===shippingAdmin1)?.name||'',district:shippingAdmin2Rows.find(x=>x.id===shippingAdmin2)?.name||''}),[shippingAdmin1,shippingAdmin2,shippingAdmin1Rows,shippingAdmin2Rows]);
 
   async function selectSavedAddress(address:any){
     setSelectedAddressId(address.id);setSelectedAddress(address);setEditingAddress(false);setPhone(address.phone||customer?.phone||'');setAddressFormKey(v=>v+1);
-    await hydrateGeo(address,data?.store?.defaultCountry||'TR',String(sessionStore?.publicSlug||data?.store?.publicSlug||''));
+    await hydrateGeo(address,data?.store?.defaultCountry||'TR',data?.store?.publicSlug||sessionStore?.publicSlug||'main');
   }
   async function newAddress(){
     setSelectedAddressId('');setSelectedAddress(null);setEditingAddress(true);setPhone(customer?.phone||'');setAddressFormKey(v=>v+1);
-    await hydrateGeo(null,data?.store?.defaultCountry||'TR',String(sessionStore?.publicSlug||data?.store?.publicSlug||''));
+    await hydrateGeo(null,data?.store?.defaultCountry||'TR',data?.store?.publicSlug||sessionStore?.publicSlug||'main');
   }
   async function saveSelectedAddress(){
     if(!selectedAddressId||!customerToken||!formRef.current)return;
@@ -96,7 +96,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
     const c=done.order.customer;
     try{
       setRegisterBusy(true);setRegisterErr('');
-      await api(`/storefront/${encodeURIComponent(String(sessionStore?.publicSlug||data.store.publicSlug))}/customers/register`,{method:'POST',credentials:'include',body:JSON.stringify({email:c.email,firstName:c.firstName,lastName:c.lastName,phone:c.phone,password:successPassword,consents:{terms:true,privacy:true,kvkkNotice:true},consentVersions:{terms:'checkout',privacy:'checkout',kvkkNotice:'checkout'}})});
+      await api(`/storefront/${data.store.publicSlug}/customers/register`,{method:'POST',credentials:'include',body:JSON.stringify({email:c.email,firstName:c.firstName,lastName:c.lastName,phone:c.phone,password:successPassword,consents:{terms:true,privacy:true,kvkkNotice:true},consentVersions:{terms:'checkout',privacy:'checkout',kvkkNotice:'checkout'}})});
       setRegisterDone(true);
     }catch(e:any){setRegisterErr(e.message||'Hesap oluşturulamadı.')}finally{setRegisterBusy(false)}
   }
@@ -185,7 +185,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
           <span>{tt('checkout.header.securePayment')}</span>
         </div>
         <Link href={storeUrl("/")} className="checkout-brand checkout-brand-centered">{data.store?.logoUrl?<img src={data.store.logoUrl} alt={data.store.name}/>:<span>{data.store?.name||'Mağaza'}</span>}</Link>
-        <div className="checkout-header-account">{!customer?<span className="checkout-login-link"><Link href={storeUrl("/account?mode=login&return=/checkout")}>{tt('checkout.header.login')}</Link></span>:<span className="checkout-signed">{customer.email||customer.phone}</span>}</div>
+        <div className="checkout-header-account">{!customer?<span className="checkout-login-link"><span>{tt('checkout.login.question')}</span> <Link href={storeUrl("/account?mode=login&return=/checkout")}>{tt('checkout.login.action')}</Link></span>:<span className="checkout-signed">{customer.email||customer.phone}</span>}</div>
       </div>
     </header>
     <main className="checkout-main">
@@ -201,7 +201,7 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
           </div>
 
           {err&&<div className="checkout-error">{err}</div>}
-          {mode==='REQUIRED'&&!customerToken&&<div className="checkout-auth-required"><b>Bu mağazada ödeme öncesi giriş zorunlu.</b><span>Checkout içinde üyelik oluşturulmaz. Giriş yaptıktan sonra bu sayfaya geri dönersiniz.</span><Link className="btn" href={storeUrl("/account?mode=login&return=/checkout")}>Giriş yap</Link></div>}
+          {mode==='REQUIRED'&&!customerToken&&<div className="checkout-auth-required"><b>Bu mağazada ödeme öncesi giriş zorunlu.</b><span>Checkout içinde üyelik oluşturulmaz. Giriş yaptıktan sonra bu sayfaya geri dönersiniz.</span><div className="checkout-required-login-row"><Link className="btn" href={storeUrl("/account?mode=login&return=/checkout")}>Giriş yap</Link><span>Zaten hesabınız var mı?</span></div></div>}
 
           <section className={`checkout-step ${step===1?'active':step>1?'complete':''}`} data-checkout-step="1">
             <div className="checkout-step-heading">
@@ -333,9 +333,9 @@ export default function Checkout({sessionId,storeOrigin,sessionStore,locale}:{se
           <span>•</span>
           {contracts.TERMS?.href?<Link href={storeUrl(contracts.TERMS.href)}>{tt('checkout.footer.terms')}</Link>:<span>{tt('checkout.footer.terms')}</span>}
         </div>
+        <a className="designed-by designed-by-ticarti checkout-footer-brand" href="https://ticarti.com" target="_blank" rel="noreferrer"><span>{tt('checkout.footer.designedBy')}</span><img src="/ticarti-logo.svg" alt="Ticarti"/></a>
         <div className="checkout-footer-meta">
           <img className="banksicon" src="/banksicon.png" alt=""/>
-          <a className="designed-by designed-by-ticarti" href="https://ticarti.com" target="_blank" rel="noreferrer"><span>{tt('checkout.footer.designedBy')}</span><img src="/ticarti-logo.svg" alt="Ticarti"/></a>
         </div>
       </div>
     </footer>

@@ -1056,18 +1056,22 @@ export class MerchantService {
   async purgeCache(tenantId:string){ await this.cache.purgeTenant(tenantId); await this.cache.delPattern('public:site:*'); return {ok:true}; }
   async cacheStats(tenantId:string){ const stats=await this.cache.stats(); return {tenantId,...stats}; }
 
-  private isTicartiSourceTheme(slug:any){return ['nova-commerce','ticarti','signature','Theme'].includes(String(slug||'').toLowerCase());}
+  private isTicartiSourceTheme(slug:any){return ['nova-commerce','ticarti','signature','theme','ticarti-signature-complete'].includes(String(slug||'').toLowerCase());}
   private async ensureThemeSourceDb(theme:any){
     if(!this.isTicartiSourceTheme(theme?.slug))return theme;
     const config:any=theme?.config&&typeof theme.config==='object'&&!Array.isArray(theme.config)?theme.config:{};
-    if(String(config.sourceDbSeedVersion||'')==='v23.2.0')return theme;
-    const current:any=config.skinDefaults&&typeof config.skinDefaults==='object'&&!Array.isArray(config.skinDefaults)?{...config.skinDefaults}:{};
-    for(const skin of ticartiSkinCatalog())if(!current[skin.slug])current[skin.slug]={name:String(skin.name||skin.slug),category:String(skin.category||''),previewImageUrl:String(skin.previewImageUrl||theme.previewImageUrl||''),verifiedFromDemo:!!skin.verifiedFromDemo,design:ticartiSourceDesignForSkin(skin.slug),homePreset:ticartiSourceHomePreset(skin.slug)};
-    return {...theme,config:{...config,engine:'ticarti-db-theme-v1',sourceManagedBy:'DATABASE',defaultSkin:String(config.defaultSkin||TICARTI_DEFAULT_SKIN),skinDefaults:current}};
+    return {...theme,config:{...config,engine:'ticarti-source-v2',sourceManagedBy:'SOURCE_FILES',defaultSkin:String(config.defaultSkin||TICARTI_DEFAULT_SKIN)}};
   }
   private themeSkinRowsFromDb(config:any){
-    const rows:any=config?.skinDefaults&&typeof config.skinDefaults==='object'&&!Array.isArray(config.skinDefaults)?config.skinDefaults:{};
-    return Object.entries(rows).map(([slug,value]:any)=>{const row:any=value||{};const design:any=row.design&&typeof row.design==='object'&&!Array.isArray(row.design)?row.design:{};const homePreset:any[]=Array.isArray(row.homePreset)?row.homePreset:[];return {slug:String(slug),name:String(row.name||slug),category:String(row.category||''),previewImageUrl:String(row.previewImageUrl||''),verifiedFromDemo:!!row.verifiedFromDemo,design:{...design,general:{...(design.general||{}),themeId:'ticarti',themePackageId:'ticarti',skinSlug:String(slug),skin:String(slug)}},homePreset:homePreset.map((x:any,i:number)=>({sourceId:String(x.sourceId||x.settings?.__sourceId||`${slug}-${i}`),sectionType:String(x.sectionType||'rich_text'),sortOrder:Number(x.sortOrder??i),enabled:x.enabled!==false,settings:{...(x.settings||{}),__sourceId:String(x.sourceId||x.settings?.__sourceId||`${slug}-${i}`)}})),locales:row.locales&&typeof row.locales==='object'?row.locales:{},sourceManagedBy:'DATABASE'};});
+    const meta:any=config?.skinMeta&&typeof config.skinMeta==='object'&&!Array.isArray(config.skinMeta)?config.skinMeta:{};
+    const overrides:any=config?.skinSourceOverrides&&typeof config.skinSourceOverrides==='object'&&!Array.isArray(config.skinSourceOverrides)?config.skinSourceOverrides:{};
+    return ticartiSkinCatalog().map((skin:any)=>{
+      const row:any=overrides[skin.slug]&&typeof overrides[skin.slug]==='object'&&!Array.isArray(overrides[skin.slug])?overrides[skin.slug]:skin;
+      const m:any=meta[skin.slug]||{};
+      const design:any=row.design&&typeof row.design==='object'&&!Array.isArray(row.design)?row.design:ticartiSourceDesignForSkin(skin.slug);
+      const homePreset:any[]=Array.isArray(row.homePreset)?row.homePreset:ticartiSourceHomePreset(skin.slug);
+      return {slug:String(skin.slug),name:String(m.name||row.name||skin.name||skin.slug),category:String(m.groupId||row.category||skin.category||skin.group||''),groupId:String(m.groupId||skin.group||''),previewImageUrl:String(m.previewImageUrl||row.previewImageUrl||skin.previewImageUrl||''),verifiedFromDemo:!!skin.verifiedFromDemo,translations:m.translations||{},planPricing:Array.isArray(m.planPricing)?m.planPricing:[],isActive:m.isActive!==false,isFeatured:!!m.isFeatured,design:{...design,general:{...(design.general||{}),themeId:'ticarti',themePackageId:'ticarti',skinSlug:String(skin.slug),skin:String(skin.slug)}},homePreset:homePreset.map((x:any,i:number)=>({sourceId:String(x.sourceId||x.settings?.__sourceId||`${skin.slug}-${i}`),sectionType:String(x.sectionType||'rich_text'),sortOrder:Number(x.sortOrder??i),enabled:x.enabled!==false,settings:{...(x.settings||{}),__sourceId:String(x.sourceId||x.settings?.__sourceId||`${skin.slug}-${i}`)}})),sourceManagedBy:overrides[skin.slug]?'PLATFORM_OVERRIDE':'SOURCE_FILES'};
+    }).filter((x:any)=>x.isActive!==false);
   }
   async themeCatalog(tenantId:string,storeId:string){
     const store=await this.assertStore(tenantId,storeId);
