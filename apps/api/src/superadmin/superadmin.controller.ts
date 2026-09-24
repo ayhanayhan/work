@@ -10,6 +10,11 @@ export class SuperAdminController {
   @Get('tenants') tenants(@Query('q') q?: string) { return this.svc.tenants(q); }
   @Get('tenants/:id') tenant(@Param('id') id: string) { return this.svc.tenant(id); }
   @Patch('tenants/:id') updateTenant(@Param('id') id: string, @Body() b: any) { return this.svc.updateTenant(id, b); }
+  @Delete('tenants/:id') deleteTenant(@Param('id') id:string){ return this.svc.deleteTenant(id); }
+  @Post('tenants/:id/ai-credits') grantAiCredits(@Param('id') id:string,@Body() b:any){ return this.svc.grantAiCredits(id,b); }
+  @Get('memberships') memberships(){ return this.svc.memberships(); }
+  @Patch('memberships/:id/status') membershipStatus(@Param('id') id:string,@Body() b:any){ return this.svc.setMembershipStatus(id,b); }
+  @Delete('memberships/:id') deleteMembership(@Param('id') id:string){ return this.svc.deleteMembership(id); }
   @Post('tenants/:id/subscription') setSub(@Param('id') id: string, @Body() b: any) { return this.svc.setSubscription(id, b); }
   @Get('users') users(@Query('q') q?: string) { return this.svc.users(q); }
   @Get('currency-rates') currencyRates() { return this.svc.currencyRates(); }
@@ -26,6 +31,11 @@ export class SuperAdminController {
   @Get('platform-settings') platformSettings() { return this.svc.platformSettings(); }
   @Patch('platform-settings') updatePlatformSettings(@Body() b:any) { return this.svc.updatePlatformSettings(b); }
   @Get('apps') apps() { return this.svc.apps(); }
+  @Get('app-categories') appCategories(){ return this.svc.appCategories(); }
+  @Patch('app-categories') updateAppCategories(@Body() b:any){ return this.svc.updateAppCategories(b); }
+  @Get('team') team(){ return this.svc.team(); }
+  @Post('team') createTeam(@Body() b:any){ return this.svc.createTeamMember(b); }
+  @Patch('team/:id') updateTeam(@Param('id') id:string,@Body() b:any){ return this.svc.updateTeamMember(id,b); }
   @Post('apps') createApp(@Body() b: any) { return this.svc.createApp(b); }
   @Patch('apps/:id') updateApp(@Param('id') id: string, @Body() b: any) { return this.svc.updateApp(id, b); }
   @Post('apps/:id/plan-pricing') setAppPlanPricing(@Param('id') id: string, @Body() b: any) { return this.svc.setAppPlanPricing(id, b); }

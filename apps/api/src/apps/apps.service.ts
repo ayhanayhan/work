@@ -27,13 +27,18 @@ export class AppsService{
 
   async store(tenantId:string){
     await this.ensureBuiltinApps();
-    const [apps,installs,pricing]=await Promise.all([
+    const [apps,installs,pricing,tenant,categoryRow]=await Promise.all([
       this.prisma.appDefinition.findMany({where:{isActive:true},include:{_count:{select:{installs:true}}},orderBy:[{isFeatured:'desc'},{sortOrder:'asc'},{name:'asc'}]}),
       this.prisma.appInstallation.findMany({where:{tenantId},include:{app:true}}),
       this.priceMap(tenantId),
+      this.prisma.tenant.findUnique({where:{id:tenantId},select:{locale:true}}),
+      (this.prisma as any).platformSetting.findUnique({where:{key:'app_categories'}}),
     ]);
+    const locale=String(tenant?.locale||'tr-TR');const cats:any[]=Array.isArray((categoryRow as any)?.value?.categories)?(categoryRow as any).value.categories:[];
     const installed=new Map(installs.map(x=>[x.appId,x]));
-    return {plan:pricing.sub?.plan?{id:pricing.sub.plan.id,name:pricing.sub.plan.name,code:pricing.sub.plan.code}:null,items:apps.map(app=>{const p=this.priced(app,pricing.map.get(app.id));const row=installed.get(app.id);const schema:any=app.settingsSchema&&typeof app.settingsSchema==='object'?app.settingsSchema:{};return {id:app.id,slug:app.slug,name:app.name,category:app.category,summary:app.summary,description:app.description,icon:app.icon,developer:app.developer,kind:app.kind,provider:app.provider,integrationType:app.integrationType,settingsSchema:app.settingsSchema,marketplace:schema.marketplace||{},downloadCount:app._count?.installs||0,isFeatured:app.isFeatured,...p,installed:!!row&&row.status!=='ERROR',installStatus:row?.status||null,enabled:row?.enabled??false};})};
+    const tr=(obj:any,key:string,fallback:any)=>obj?.translations?.[locale]?.[key]||obj?.translations?.[locale.toLowerCase()]?.[key]||fallback;
+    const cat=(id:string,fallback:string)=>{const row=cats.find((x:any)=>String(x.id)===String(id));return row?String(tr(row,'name',row.id)):fallback};
+    return {plan:pricing.sub?.plan?{id:pricing.sub.plan.id,name:pricing.sub.plan.name,code:pricing.sub.plan.code}:null,items:apps.map(app=>{const p=this.priced(app,pricing.map.get(app.id));const row=installed.get(app.id);const schema:any=app.settingsSchema&&typeof app.settingsSchema==='object'?app.settingsSchema:{};const market:any=schema.marketplace||{};return {id:app.id,slug:app.slug,name:String(tr(market,'name',app.name)),category:cat(String(market.categoryId||app.category),app.category),categoryId:String(market.categoryId||''),summary:String(tr(market,'summary',app.summary)),description:String(tr(market,'description',app.description||'')),icon:app.icon,developer:app.developer,kind:app.kind,provider:app.provider,integrationType:app.integrationType,settingsSchema:app.settingsSchema,marketplace:market,downloadCount:app._count?.installs||0,isFeatured:app.isFeatured,...p,trialDays:Number(market.planTrials?.[pricing.sub?.planId||'']||0),installed:!!row&&row.status!=='ERROR',installStatus:row?.status||null,enabled:row?.enabled??false};})};
   }
 
   async installed(tenantId:string){

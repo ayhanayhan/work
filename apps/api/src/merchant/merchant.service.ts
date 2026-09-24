@@ -1010,9 +1010,11 @@ export class MerchantService {
 
   async regionalSettings(tenantId:string,storeId:string){
     const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};
-    const [locales,currencies]=await Promise.all([this.prisma.storeLocale.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{sortOrder:'asc'}]}),this.prisma.storeCurrency.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{code:'asc'}]})]);
-    const regional:any=settings.regional||{};
-    return {defaultLocale:store.locale,defaultCurrency:store.currency,locales,currencies,currencyMeta:regional.currencyMeta||{},exchange:regional.exchange||{source:'TCMB',autoUpdate:false,intervalHours:6,lastUpdatedAt:null},tax:regional.tax||{pricesIncludeTax:true,defaultRate:20},taxRules:Array.isArray(regional.taxRules)?regional.taxRules:[]};
+    const [locales,currencies,platformRow]=await Promise.all([this.prisma.storeLocale.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{sortOrder:'asc'}]}),this.prisma.storeCurrency.findMany({where:{storeId},orderBy:[{isDefault:'desc'},{code:'asc'}]}),(this.prisma as any).platformSetting.findUnique({where:{key:'general'}})]);
+    const regional:any=settings.regional||{};const p:any=platformRow?.value&&typeof platformRow.value==='object'?platformRow.value:{};
+    const allowedLocales=(Array.isArray(p.locales)?p.locales:[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+    const allowedCurrencies=(Array.isArray(p.currencies)?p.currencies:[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+    return {defaultLocale:store.locale,defaultCurrency:store.currency,locales,currencies,currencyMeta:regional.currencyMeta||{},exchange:regional.exchange||{source:'TCMB',autoUpdate:false,intervalHours:6,lastUpdatedAt:null},tax:regional.tax||{pricesIncludeTax:true,defaultRate:20},taxRules:Array.isArray(regional.taxRules)?regional.taxRules:[],refs:{locales:allowedLocales.map((x:any)=>String(x.locale)),localeRows:allowedLocales,currencies:allowedCurrencies.map((x:any)=>String(x.code)),currencyRows:allowedCurrencies}};
   }
   async updateRegionalSettings(tenantId:string,storeId:string,body:any){
     const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};const regional:any=settings.regional||{};

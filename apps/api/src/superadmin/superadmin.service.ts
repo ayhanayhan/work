@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { getTicartiSkinPreset, normalizeTicartiSkinSlug, ticartiSkinCatalog } from '../theme-presets/ticarti-skins';
 import { ticartiSourceDesignForSkin, ticartiSourceHomePreset } from '../theme-presets/ticarti-source-preset';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class SuperAdminService {
@@ -41,6 +42,61 @@ export class SuperAdminService {
     const data: any = {};
     for (const k of ['name','status','trialEndsAt','domain','maintenanceMode','email','phone']) if (body[k] !== undefined) data[k] = k === 'trialEndsAt' && body[k] ? new Date(body[k]) : body[k];
     return this.prisma.tenant.update({ where: { id }, data });
+  }
+
+  async deleteTenant(id:string){
+    const row=await this.prisma.tenant.findUnique({where:{id}});
+    if(!row)throw new NotFoundException('Mağaza bulunamadı');
+    await this.prisma.tenant.delete({where:{id}});
+    return {deleted:true,id};
+  }
+
+  async memberships(){
+    const disabledRow:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'merchant_membership_status'}});
+    const disabled:any=disabledRow?.value&&typeof disabledRow.value==='object'?disabledRow.value:{};
+    const users:any[]=await this.prisma.user.findMany({
+      where:{memberships:{some:{}}},
+      select:{id:true,email:true,name:true,createdAt:true,memberships:{include:{tenant:{include:{subscriptions:{include:{plan:true},orderBy:{createdAt:'desc'},take:1},aiWallet:true}}}}},
+      orderBy:{createdAt:'desc'}
+    });
+    return users.map(u=>({id:u.id,email:u.email,name:u.name,createdAt:u.createdAt,isActive:disabled[u.id]!==false,stores:u.memberships.map((m:any)=>{const t=m.tenant;return{id:t.id,name:t.name,slug:t.slug,publicSlug:t.publicSlug,domain:t.domain,status:t.status,createdAt:t.createdAt,plan:t.subscriptions?.[0]?.plan||null,subscription:t.subscriptions?.[0]||null,aiCredits:t.aiWallet?.balance||0}})}));
+  }
+
+  async setMembershipStatus(userId:string,body:any){
+    const user=await this.prisma.user.findUnique({where:{id:userId},include:{memberships:true}});
+    if(!user)throw new NotFoundException('Üyelik bulunamadı');
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'merchant_membership_status'}});
+    const value:any=row?.value&&typeof row.value==='object'?{...row.value}:{};
+    const active=body?.isActive!==false; value[userId]=active;
+    await (this.prisma as any).platformSetting.upsert({where:{key:'merchant_membership_status'},create:{key:'merchant_membership_status',value},update:{value}});
+    if(!active){
+      const tenantIds=user.memberships.map((m:any)=>m.tenantId);
+      if(tenantIds.length)await this.prisma.tenant.updateMany({where:{id:{in:tenantIds},status:{in:['ACTIVE','TRIAL']}},data:{status:'SUSPENDED'}});
+      await this.prisma.merchantSession.updateMany({where:{userId,revokedAt:null},data:{revokedAt:new Date()}});
+    }
+    return {ok:true,isActive:active};
+  }
+
+  async deleteMembership(userId:string){
+    const user=await this.prisma.user.findUnique({where:{id:userId}});
+    if(!user)throw new NotFoundException('Üyelik bulunamadı');
+    await this.prisma.$transaction(async tx=>{
+      await tx.merchantSession.deleteMany({where:{userId}});
+      await tx.membership.deleteMany({where:{userId}});
+    });
+    return {deleted:true};
+  }
+
+  async grantAiCredits(tenantId:string,body:any){
+    const amount=Math.trunc(Number(body?.amount||0)); if(!Number.isFinite(amount)||amount<=0)throw new BadRequestException('AI kredi miktarı 0’dan büyük olmalı');
+    const tenant=await this.prisma.tenant.findUnique({where:{id:tenantId}});if(!tenant)throw new NotFoundException('Mağaza bulunamadı');
+    return this.prisma.$transaction(async tx=>{
+      const wallet=await tx.aiCreditWallet.upsert({where:{tenantId},create:{tenantId,balance:0,lifetimePurchased:0,lifetimeUsed:0},update:{}});
+      const balanceAfter=wallet.balance+amount;
+      await tx.aiCreditWallet.update({where:{id:wallet.id},data:{balance:balanceAfter,lifetimePurchased:{increment:amount}}});
+      await tx.aiCreditLedger.create({data:{walletId:wallet.id,amount,type:'MANUAL_GRANT',source:'SUPERADMIN',description:String(body?.description||'Super Admin kredi tanımlaması'),balanceAfter}});
+      return {ok:true,balance:balanceAfter};
+    });
   }
 
   plans() { return this.prisma.plan.findMany({ orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] }); }
@@ -126,7 +182,7 @@ export class SuperAdminService {
   async updatePlatformSettings(body:any){
     const current=await this.platformSettings();
     const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();
-    const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,50).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim().toLowerCase(),label:String(x.label||x.name||x.locale||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
+    const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,50).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim(),label:String(x.label||x.name||x.locale||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
     const currencies=(Array.isArray(body?.currencies)?body.currencies:current.currencies).slice(0,50).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),symbol:String(x.symbol||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
     if(!locales.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif dil gerekli');
     if(!currencies.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif para birimi gerekli');
@@ -142,6 +198,41 @@ export class SuperAdminService {
     return (settings.locales||[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)).map((x:any)=>({locale:String(x.locale),label:String(x.label||x.locale).trim()||String(x.locale).toUpperCase(),isDefault:!!x.isDefault}));
   }
 
+  async appCategories(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'app_categories'}});
+    const value:any=row?.value&&typeof row.value==='object'?row.value:{};
+    return Array.isArray(value.categories)?value.categories.sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)):[];
+  }
+
+  async updateAppCategories(body:any){
+    const categories=(Array.isArray(body?.categories)?body.categories:[]).slice(0,200).map((x:any,i:number)=>({id:String(x.id||`cat-${i}`).trim(),translations:this.cleanTranslations(x.translations),sortOrder:Number(x.sortOrder??i),isActive:x.isActive!==false})).filter((x:any)=>x.id);
+    const value={categories};await (this.prisma as any).platformSetting.upsert({where:{key:'app_categories'},create:{key:'app_categories',value},update:{value}});return categories;
+  }
+
+  async team(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'superadmin_team_permissions'}});
+    const map:any=row?.value&&typeof row.value==='object'?row.value:{};
+    const rows:any[]=await this.prisma.superAdmin.findMany({orderBy:{createdAt:'asc'}});
+    return rows.map(x=>({id:x.id,email:x.email,name:x.name,isActive:x.isActive,lastLoginAt:x.lastLoginAt,createdAt:x.createdAt,permissions:Array.isArray(map[x.id])?map[x.id]:['dashboard','settings','memberships','plans','themes','apps','domains','currency','support','team'],roleLabel:Array.isArray(map[x.id])&&map[x.id].length<10?'Özel yetki':'Tam yetki'}));
+  }
+
+  async createTeamMember(body:any){
+    const email=String(body?.email||'').trim().toLowerCase();const password=String(body?.password||'');if(!email||password.length<8)throw new BadRequestException('E-posta ve en az 8 karakter şifre gerekli');
+    const admin=await this.prisma.superAdmin.create({data:{email,name:String(body?.name||'').trim()||null,passwordHash:await bcrypt.hash(password,14),isActive:body?.isActive!==false}});
+    await this.saveTeamPermissions(admin.id,body?.permissions);return (await this.team()).find((x:any)=>x.id===admin.id);
+  }
+
+  async updateTeamMember(id:string,body:any){
+    const current=await this.prisma.superAdmin.findUnique({where:{id}});if(!current)throw new NotFoundException('Ekip üyesi bulunamadı');
+    const data:any={};if(body.name!==undefined)data.name=String(body.name||'').trim()||null;if(body.email!==undefined)data.email=String(body.email||'').trim().toLowerCase();if(body.isActive!==undefined)data.isActive=!!body.isActive;if(body.password){if(String(body.password).length<8)throw new BadRequestException('Şifre en az 8 karakter olmalı');data.passwordHash=await bcrypt.hash(String(body.password),14);data.passwordChangedAt=new Date();}
+    await this.prisma.superAdmin.update({where:{id},data});if(body.permissions!==undefined)await this.saveTeamPermissions(id,body.permissions);return (await this.team()).find((x:any)=>x.id===id);
+  }
+
+  private async saveTeamPermissions(id:string,permissions:any){
+    const allowed=['dashboard','settings','memberships','plans','themes','apps','domains','currency','support','team'];const perms=Array.isArray(permissions)?permissions.map(String).filter((x:string)=>allowed.includes(x)):[];
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'superadmin_team_permissions'}});const value:any=row?.value&&typeof row.value==='object'?{...row.value}:{};value[id]=perms;await (this.prisma as any).platformSetting.upsert({where:{key:'superadmin_team_permissions'},create:{key:'superadmin_team_permissions',value},update:{value}});
+  }
+
   apps(){
     return this.prisma.appDefinition.findMany({include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
   }
@@ -149,8 +240,8 @@ export class SuperAdminService {
   private appMarketplaceMeta(body:any){
     const screenshots=Array.isArray(body.screenshots)?body.screenshots.map((x:any)=>String(x).trim()).filter(Boolean):String(body.screenshots||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
     const translations:any={};const rawTranslations=body?.translations&&typeof body.translations==='object'&&!Array.isArray(body.translations)?body.translations:{};
-    for(const [locale,row] of Object.entries(rawTranslations)){const r:any=row||{};translations[String(locale).toLowerCase()]={name:String(r.name||'').trim(),summary:String(r.summary||'').trim(),description:String(r.description||'').trim(),usageGuide:String(r.usageGuide||'').trim()};}
-    return {logoUrl:String(body.logoUrl||'').trim()||null,usageGuide:String(body.usageGuide||'').trim()||null,screenshots,translations};
+    for(const [locale,row] of Object.entries(rawTranslations)){const r:any=row||{};translations[String(locale)]={name:String(r.name||'').trim(),summary:String(r.summary||'').trim(),description:String(r.description||'').trim(),usageGuide:String(r.usageGuide||'').trim()};}
+    return {logoUrl:String(body.logoUrl||'').trim()||null,usageGuide:String(body.usageGuide||'').trim()||null,screenshots,translations,categoryId:String(body.categoryId||'').trim(),planTrials:body.planTrials&&typeof body.planTrials==='object'?body.planTrials:{}};
   }
 
   createApp(body:any){
@@ -168,7 +259,7 @@ export class SuperAdminService {
     for(const k of ['name','category','summary','description','icon','developer','kind','provider','currency','billingType']) if(body[k]!==undefined)data[k]=body[k];
     if(body.integrationType!==undefined)data.integrationType=body.integrationType||null;
     if(body.settingsSchema!==undefined)data.settingsSchema=body.settingsSchema;
-    if(['logoUrl','usageGuide','screenshots','translations'].some(k=>body[k]!==undefined)){
+    if(['logoUrl','usageGuide','screenshots','translations','categoryId','planTrials'].some(k=>body[k]!==undefined)){
       const currentSchema:any=current.settingsSchema&&typeof current.settingsSchema==='object'&&!Array.isArray(current.settingsSchema)?current.settingsSchema:{};
       data.settingsSchema={...currentSchema,marketplace:{...(currentSchema.marketplace||{}),...this.appMarketplaceMeta({...currentSchema.marketplace,...body})}};
     }
@@ -178,9 +269,12 @@ export class SuperAdminService {
     return this.prisma.appDefinition.update({where:{id},data});
   }
 
-  setAppPlanPricing(appId:string,body:any){
+  async setAppPlanPricing(appId:string,body:any){
     if(!body.planId)throw new NotFoundException('Plan is required');
-    return this.prisma.appPlanPrice.upsert({where:{appId_planId:{appId,planId:String(body.planId)}},create:{appId,planId:String(body.planId),price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false},update:{price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false}});
+    const planId=String(body.planId);
+    const result=await this.prisma.appPlanPrice.upsert({where:{appId_planId:{appId,planId}},create:{appId,planId,price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false},update:{price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false}});
+    if(body.trialDays!==undefined){const app:any=await this.prisma.appDefinition.findUnique({where:{id:appId}});const schema:any=app?.settingsSchema&&typeof app.settingsSchema==='object'&&!Array.isArray(app.settingsSchema)?app.settingsSchema:{};const market:any=schema.marketplace||{};const planTrials:any={...(market.planTrials||{}),[planId]:Math.max(0,Number(body.trialDays||0))};await this.prisma.appDefinition.update({where:{id:appId},data:{settingsSchema:{...schema,marketplace:{...market,planTrials}}}});}
+    return result;
   }
 
   async grantApp(tenantId:string,appId:string){
@@ -257,7 +351,7 @@ export class SuperAdminService {
   async updateThemeSkinCatalog(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const exists=ticartiSkinCatalog().some((x:any)=>x.slug===slug);if(!exists)throw new NotFoundException('Skin bulunamadı');const config:any=this.themeConfig(theme);const skinMeta:any={...(config.skinMeta||{})};const current:any=skinMeta[slug]||{};skinMeta[slug]={...current,name:body.name!==undefined?String(body.name):current.name,groupId:body.groupId!==undefined?String(body.groupId):current.groupId,previewImageUrl:body.previewImageUrl!==undefined?String(body.previewImageUrl):current.previewImageUrl,translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY')})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive,isFeatured:body.isFeatured!==undefined?!!body.isFeatured:current.isFeatured};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinMeta}}});return this.themeWorkspace(themeId);}
   async updateThemeSkinSource(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const source=body?.rawJson;if(!source||typeof source!=='object'||Array.isArray(source))throw new BadRequestException('Geçerli ham tema JSON gerekli');if(String(source.slug||slug)!==slug)throw new BadRequestException('JSON slug seçili skin ile aynı olmalı');const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};rows[slug]=source;await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
   async resetThemeSkinSource(themeId:string,skinValue:string){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};delete rows[slug];await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
-  async updateThemeModuleCatalog(themeId:string,typeValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const type=String(typeValue||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');const config:any=this.themeConfig(theme);const moduleCatalog:any={...(config.moduleCatalog||{})};const current:any=moduleCatalog[type]||{};const categoryId=body.categoryId!==undefined?String(body.categoryId||''):body.groupId!==undefined?String(body.groupId||''):(current.categoryId||current.groupId||'');moduleCatalog[type]={...current,name:body.name!==undefined?String(body.name):current.name,categoryId,groupId:categoryId,translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,screenshots:Array.isArray(body.screenshots)?body.screenshots.map(String).slice(0,24):current.screenshots,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY'),trialDays:Math.max(0,Number(x.trialDays||0))})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,moduleCatalog}}});return this.themeWorkspace(themeId);}
+  async updateThemeModuleCatalog(themeId:string,typeValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const type=String(typeValue||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');const config:any=this.themeConfig(theme);const moduleCatalog:any={...(config.moduleCatalog||{})};const current:any=moduleCatalog[type]||{};moduleCatalog[type]={...current,name:body.name!==undefined?String(body.name):current.name,categoryId:'',groupId:'',translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,screenshots:Array.isArray(body.screenshots)?body.screenshots.map(String).slice(0,24):current.screenshots,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY'),trialDays:Math.max(0,Number(x.trialDays||0))})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,moduleCatalog}}});return this.themeWorkspace(themeId);}
 
   async geoNodes(query:any){
     const where:any={};
