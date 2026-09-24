@@ -248,6 +248,13 @@ export class StorefrontService {
     return { items: mapped, currency: ci.code, locale: query.locale || store.locale, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
   }
 
+  async productSelection(slug:string,idsRaw:string,currency?:string,locale?:string){
+    const store=await this.store(slug);const ci=await this.currencyInfo(store,currency);const ids=String(idsRaw||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,40);if(!ids.length)return{items:[],currency:ci.code,locale:locale||store.locale};
+    const rows=await this.prisma.product.findMany({where:{storeId:store.id,status:'ACTIVE',id:{in:ids}},include:{brand:true,images:{orderBy:{sortOrder:'asc'}},variants:{where:{isActive:true},include:{inventory:true}},categories:{include:{category:true}},reviews:{where:{status:'APPROVED'},select:{rating:true}}}});
+    const localized=await this.translateMany(store.id,'product',rows,locale,store.locale);const map=new Map(localized.map((p:any)=>[String(p.id),this.presentProduct({...p,rating:p.reviews?.length?p.reviews.reduce((a:number,r:any)=>a+Number(r.rating||0),0)/p.reviews.length:null,reviewCount:p.reviews?.length||0},ci)]));
+    return{items:ids.map(id=>map.get(id)).filter(Boolean),currency:ci.code,locale:locale||store.locale};
+  }
+
   async product(slug: string, productSlug: string, currency?: string, locale?: string) {
     const store = await this.store(slug); const ci=await this.currencyInfo(store,currency);const include:any={brand:true,images:{orderBy:{sortOrder:'asc'}},variants:{where:{isActive:true},include:{inventory:true}},categories:{include:{category:true}},reviews:{where:{status:'APPROVED'},include:{customer:{select:{firstName:true,lastName:true}}},orderBy:{createdAt:'desc'}}};
     let p:any=await this.prisma.product.findFirst({where:{storeId:store.id,slug:productSlug,status:'ACTIVE'},include});

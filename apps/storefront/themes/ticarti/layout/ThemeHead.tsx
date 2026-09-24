@@ -26,6 +26,7 @@ export default function ThemeHead({design,children}:{design:any;children:React.R
    <link rel="stylesheet" href="/themes/ticarti/style-grid.css"/>
    <link rel="stylesheet" href="/themes/ticarti/header-runtime.css"/>
    <link rel="stylesheet" href="/themes/ticarti/source-runtime.css"/>
+   <link rel="stylesheet" href="/themes/ticarti/wokiee-runtime.css"/>
    {exactLingerie&&<link rel="stylesheet" href="/themes/ticarti/lingerie-generated.css"/>}
    {children}
  </div>;

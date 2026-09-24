@@ -13,6 +13,7 @@ export class StorefrontController {
   @Post(':storeSlug/live/heartbeat') liveHeartbeat(@Param('storeSlug') s:string,@Body() b:any,@Req() req:any){return this.svc.liveHeartbeat(s,b,req);}
   @Get(':storeSlug') bootstrap(@Param('storeSlug') s:string,@Query('currency') c?:string,@Query('locale') l?:string){return this.svc.bootstrap(s,c,l);}
   @Get(':storeSlug/products') products(@Param('storeSlug') s:string,@Query() q:any){return this.svc.products(s,q);}
+  @Get(':storeSlug/product-selection') productSelection(@Param('storeSlug') s:string,@Query('ids') ids:string,@Query('currency') c?:string,@Query('locale') l?:string){return this.svc.productSelection(s,ids,c,l);}
   @Get(':storeSlug/products/:productSlug') product(@Param('storeSlug') s:string,@Param('productSlug') p:string,@Query('currency') c?:string,@Query('locale') l?:string){return this.svc.product(s,p,c,l);}
   @Get(':storeSlug/blog/categories') blogCategories(@Param('storeSlug') s:string){return this.svc.blogCategories(s);}
   @Get(':storeSlug/blog/posts') blogPosts(@Param('storeSlug') s:string,@Query() q:any){return this.svc.blogPosts(s,q);}
