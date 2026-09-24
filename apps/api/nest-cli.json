@@ -1,1 +1,10 @@
-{"collection":"@nestjs/schematics","sourceRoot":"src"}
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      "theme-presets/**/*.json"
+    ],
+    "watchAssets": true
+  }
+}
