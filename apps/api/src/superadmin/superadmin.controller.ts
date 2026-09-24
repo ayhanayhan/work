@@ -31,6 +31,7 @@ export class SuperAdminController {
   @Get('platform-settings') platformSettings() { return this.svc.platformSettings(); }
   @Patch('platform-settings') updatePlatformSettings(@Body() b:any) { return this.svc.updatePlatformSettings(b); }
   @Get('apps') apps() { return this.svc.apps(); }
+  @Get('app-workspace') appWorkspace() { return this.svc.appWorkspace(); }
   @Get('app-categories') appCategories(){ return this.svc.appCategories(); }
   @Patch('app-categories') updateAppCategories(@Body() b:any){ return this.svc.updateAppCategories(b); }
   @Get('team') team(){ return this.svc.team(); }

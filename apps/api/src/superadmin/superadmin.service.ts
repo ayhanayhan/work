@@ -233,8 +233,33 @@ export class SuperAdminService {
     const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'superadmin_team_permissions'}});const value:any=row?.value&&typeof row.value==='object'?{...row.value}:{};value[id]=perms;await (this.prisma as any).platformSetting.upsert({where:{key:'superadmin_team_permissions'},create:{key:'superadmin_team_permissions',value},update:{value}});
   }
 
-  apps(){
-    return this.prisma.appDefinition.findMany({include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
+  private readonly placeholderAppSlugs=[
+    'whatsapp-ai','google-shopping','meta-pixel','google-analytics-4','google-tag-manager','sms',
+    'trendyol','hepsiburada','n11','amazon','pazarama','ciceksepeti','pttavm',
+    'kargo-yurtici','kargo-aras','kargo-mng','kargo-surat','kargo-ptt',
+    'fatura-parasut','fatura-logo','fatura-mikro','fatura-nebim',
+    'odeme-iyzico','odeme-paytr','odeme-param','odeme-sipay','odeme-stripe'
+  ];
+
+  private async cleanupPlaceholderApps(){
+    const rows=await this.prisma.appDefinition.findMany({where:{slug:{in:this.placeholderAppSlugs}},select:{id:true}});
+    if(!rows.length)return;
+    const ids=rows.map(x=>x.id);
+    await this.prisma.$transaction([
+      this.prisma.appInstallation.deleteMany({where:{appId:{in:ids}}}),
+      this.prisma.appPlanPrice.deleteMany({where:{appId:{in:ids}}}),
+      this.prisma.appDefinition.deleteMany({where:{id:{in:ids}}}),
+    ]);
+  }
+
+  async apps(){
+    await this.cleanupPlaceholderApps();
+    return this.prisma.appDefinition.findMany({where:{slug:{notIn:this.placeholderAppSlugs}},include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
+  }
+
+  async appWorkspace(){
+    const [items,plans,settings,categories,locales]=await Promise.all([this.apps(),this.plans(),this.platformSettings(),this.appCategories(),this.platformLocales()]);
+    return {items,plans,locales,currencies:(settings.currencies||[]).filter((x:any)=>x.isActive!==false),categories};
   }
 
   private appMarketplaceMeta(body:any){
