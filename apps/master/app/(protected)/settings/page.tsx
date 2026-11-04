@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Building2, Languages, CircleDollarSign, LogIn, ArrowRight } from 'lucide-react';
-import { Container } from '@/components/common/container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const modules=[
@@ -13,7 +12,7 @@ const modules=[
 ];
 
 export default function SettingsPage(){
-  return <Container>
+  return <>
     <div className="mb-6">
       <h1 className="text-2xl font-semibold">Ayarlar</h1>
       <p className="mt-1 text-sm text-muted-foreground">Platform ayarlarını ilgili bölümlerden yönetin.</p>
@@ -41,5 +40,5 @@ export default function SettingsPage(){
         </Link>
       })}
     </div>
-  </Container>;
+  </>;
 }
