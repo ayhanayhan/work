@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Building2, Languages, CircleDollarSign, LogIn, Settings } from 'lucide-react';
 import { Container } from '@/components/common/container';
@@ -13,7 +14,7 @@ const items=[
   {href:'/settings/social-auth',label:'Sosyal Giriş',icon:LogIn},
 ];
 
-export default function SettingsLayout({children}:{children:React.ReactNode}){
+export default function SettingsLayout({children}:{children:ReactNode}){
   const pathname=usePathname();
   return <Container>
     <div className="grid gap-6 lg:grid-cols-[230px_minmax(0,1fr)]">
