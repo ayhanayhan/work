@@ -29,13 +29,13 @@ export function GeneralSettings(){
 
   if(loading)return <div className="text-muted">Ayarlar yükleniyor…</div>;
   return <div className="settings-v15-detail">
-    <DetailHead title="Genel Ayarlar" description="Platformun temel firma ve marka bilgileri."/>
+    <DetailHead title="Genel" description="Mağaza bilgileri, logo, fatura bilgileri ve temel tercihler."/>
     <form onSubmit={save}>
       <Notice message={message} error={error}/>
       <div className="row">
         <div className="col-xl-8">
           <div className="card">
-            <div className="card-header"><div className="row"><div className="col"><h4 className="card-title mb-0">Firma Ayarları</h4><p className="text-muted mb-0 mt-1">Platformun temel sistem bilgileri.</p></div></div></div>
+            <div className="card-header"><div className="row"><div className="col"><h4 className="card-title mb-0">Mağaza Ayarları</h4><p className="text-muted mb-0 mt-1">Mağazanın temel sistem bilgileri.</p></div></div></div>
             <div className="card-body pt-0">
               <div className="row g-3">
                 <div className="col-md-6"><label className="form-label">Marka adı</label><input className="form-control" value={company.name||''} onChange={e=>setCompany({...company,name:e.target.value})}/></div>
