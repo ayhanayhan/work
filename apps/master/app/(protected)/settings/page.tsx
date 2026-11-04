@@ -1,44 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import { Building2, Languages, CircleDollarSign, LogIn, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Icon } from '@iconify/react';
 
-const modules=[
-  {href:'/settings/general',title:'Genel Ayarlar',description:'Firma bilgileri, iletişim ve marka görselleri.',icon:Building2},
-  {href:'/settings/languages',title:'Diller',description:'Platform dillerini, varsayılan dili ve durumlarını yönetin.',icon:Languages},
-  {href:'/settings/currencies',title:'Para Birimleri',description:'Kullanılabilir para birimleri ve varsayılan para birimini yönetin.',icon:CircleDollarSign},
-  {href:'/settings/social-auth',title:'Sosyal Giriş',description:'Google ve Facebook giriş sağlayıcılarını yönetin.',icon:LogIn},
+type SettingsModule={href:string;icon:string;title:string;description:string};
+type SettingsGroup={title:string;subtitle:string;items:SettingsModule[]};
+
+const settingsGroups:SettingsGroup[]=[
+  {title:'PLATFORM & MARKA',subtitle:'Kimlik, dil ve para birimi',items:[
+    {href:'/settings/general',icon:'iconoir:shop',title:'Genel Ayarlar',description:'Firma bilgileri, iletişim bilgileri ve marka görselleri.'},
+    {href:'/settings/languages',icon:'iconoir:language',title:'Diller',description:'Platform dilleri, varsayılan dil ve kullanım durumları.'},
+    {href:'/settings/currencies',icon:'iconoir:coins',title:'Para Birimleri',description:'Platform para birimleri ve varsayılan para birimi.'},
+  ]},
+  {title:'GİRİŞ & HESAPLAR',subtitle:'Müşteri giriş sağlayıcıları',items:[
+    {href:'/settings/social-auth',icon:'iconoir:log-in',title:'Sosyal Giriş',description:'Google ve Facebook müşteri giriş ayarları.'},
+  ]},
 ];
 
 export default function SettingsPage(){
-  return <>
-    <div className="mb-6">
-      <h1 className="text-2xl font-semibold">Ayarlar</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Platform ayarlarını ilgili bölümlerden yönetin.</p>
-    </div>
-
-    <div className="grid gap-4 md:grid-cols-2">
-      {modules.map(item=>{
-        const Icon=item.icon;
-        return <Link href={item.href} key={item.href} className="group block">
-          <Card className="h-full transition-colors group-hover:border-primary/40">
-            <CardHeader className="flex-row items-start justify-between gap-4">
-              <div className="flex gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                  <Icon className="size-5"/>
-                </div>
-                <div>
-                  <CardTitle>{item.title}</CardTitle>
-                  <CardDescription className="mt-1">{item.description}</CardDescription>
-                </div>
-              </div>
-              <ArrowRight className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1"/>
-            </CardHeader>
-            <CardContent/>
-          </Card>
-        </Link>
-      })}
-    </div>
-  </>;
+  return <div className="settings-v15-home">
+    {settingsGroups.map(group=><section key={group.title} className="settings-v15-group">
+      <div className="settings-v15-group-title"><b>{group.title}</b><span>{group.subtitle}</span></div>
+      <div className="settings-v15-grid">
+        {group.items.map(item=><Link href={item.href} className="settings-v15-card" key={item.href}>
+          <span className="setting-module-icon"><Icon icon={item.icon}/></span>
+          <div><b>{item.title}</b><p>{item.description}</p></div>
+          <Icon icon="iconoir:nav-arrow-right" className="settings-v15-arrow"/>
+        </Link>)}
+      </div>
+    </section>)}
+  </div>;
 }
