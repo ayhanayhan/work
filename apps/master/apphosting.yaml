@@ -6,11 +6,6 @@ runConfig:
   memoryMiB: 512
 
 env:
-  - variable: NEXT_PUBLIC_BASE_PATH
-    value: /admin
-    availability:
-      - BUILD
-      - RUNTIME
   - variable: API_ORIGIN
     value: "https://commerce-api-ynhobkprgq-ew.a.run.app"
   - variable: NEXT_PUBLIC_API_URL
