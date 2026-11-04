@@ -1,1 +1,0 @@
-import AdminApp from '../../../components/AdminApp';export const metadata={title:'Blog Yazısı | Ticarti'};export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;return <AdminApp tab="Blog" blogPage="posts" blogEditorId={id}/>}
