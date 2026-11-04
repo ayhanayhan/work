@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Plus, Save, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ function Status({message,error}:{message:string;error:string}){
   return <div className={`mb-5 rounded-lg border px-4 py-3 text-sm ${error?'border-destructive/30 bg-destructive/5 text-destructive':'border-green-200 bg-green-50 text-green-700'}`}>{error||message}</div>;
 }
 
-function Header({title,description,action}:{title:string;description:string;action?:React.ReactNode}){
+function Header({title,description,action}:{title:string;description:string;action?:ReactNode}){
   return <div className="mb-6 flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">{title}</h1><p className="mt-1 text-sm text-muted-foreground">{description}</p></div>{action}</div>;
 }
 
