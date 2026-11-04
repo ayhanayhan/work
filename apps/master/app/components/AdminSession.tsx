@@ -1,6 +1,4 @@
 'use client';
-import {adminText} from '../lib/admin-text';
-
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 let merchantRefreshFlight:Promise<any>|null=null;
@@ -88,4 +86,4 @@ export function AdminSessionProvider({children}:{children:ReactNode}){
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
-export function useAdminSession(){const value=useContext(Ctx);if(!value)throw new Error(adminText('final.admin.002'));return value;}
+export function useAdminSession(){const value=useContext(Ctx);if(!value)throw new Error('AdminSessionProvider bulunamadı');return value;}
