@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import { useEffect, useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
 import { useMasterSession } from '@/app/components/MasterSession';
 
 type Row={ [key:string]:any };
@@ -24,7 +25,7 @@ export function GeneralSettings(){
   async function load(){setLoading(true);setError('');try{const settings=await request('/superadmin/platform-settings');setCompany(settings?.company||{});setBranding(settings?.branding||{});}catch(e:any){setError(e.message)}finally{setLoading(false)}}
   useEffect(()=>{void load()},[]);
 
-  async function save(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setSaving(true);setMessage('');setError('');try{await request('/superadmin/platform-settings',{method:'PATCH',body:JSON.stringify({company,branding})});setMessage('Genel ayarlar kaydedildi.');await load()}catch(e:any){setError(e.message)}finally{setSaving(false)}}
+  async function save(e:FormEvent<HTMLFormElement>){e.preventDefault();setSaving(true);setMessage('');setError('');try{await request('/superadmin/platform-settings',{method:'PATCH',body:JSON.stringify({company,branding})});setMessage('Genel ayarlar kaydedildi.');await load()}catch(e:any){setError(e.message)}finally{setSaving(false)}}
 
   if(loading)return <div className="text-muted">Ayarlar yükleniyor…</div>;
   return <div className="settings-v15-detail">
