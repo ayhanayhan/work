@@ -13,7 +13,6 @@ const workspaceRoot = path.resolve(process.cwd(), '../..');
 const nextConfig = {
   poweredByHeader: false,
   devIndicators: false,
-  basePath: '/admin',
   output: 'standalone',
   outputFileTracingRoot: workspaceRoot,
   images: {},
