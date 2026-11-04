@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 
-type SettingsItem={href:string;icon:string;title:string;description:string};
-type SettingsGroup={title:string;subtitle:string;items:SettingsItem[]};
+type Item={href:string;icon:string;title:string;description:string};
+type Group={title:string;subtitle:string;items:Item[]};
 
-const groups:SettingsGroup[]=[
+const groups:Group[]=[
   {title:'Mağaza',subtitle:'Mağaza kimliği, bölgesel yapı ve görünürlük.',items:[
     {href:'/settings/general',icon:'iconoir:settings',title:'Genel',description:'Mağaza bilgileri, logo, fatura bilgileri ve temel tercihler.'},
     {href:'/settings/domains',icon:'iconoir:globe',title:'Domain',description:'Alan adınızı bağlayın, DNS ve Cloudflare ayarlarını yönetin.'},
@@ -42,39 +42,19 @@ const groups:SettingsGroup[]=[
 ];
 
 export default function SettingsPage(){
-  return <div className="commerce-admin-settings-clone">
-    <div className="settings-clone-title">
-      <h1>Ayarlar Merkezi</h1>
-      <p>Mağazanızın ayarlarını kategorilere göre yönetin.</p>
-    </div>
-
-    {groups.map(group=><section className="settings-clone-section" key={group.title}>
-      <div className="settings-clone-section-head">
+  return <div className="master-settings-admin-copy">
+    {groups.map(group=><section className="master-settings-section" key={group.title}>
+      <header>
         <h2>{group.title}</h2>
         <p>{group.subtitle}</p>
-      </div>
-      <div className="settings-clone-grid">
-        {group.items.map((item,index)=><Link
-          href={item.href}
-          key={item.href}
-          className={'settings-clone-card '+(group.title==='Mağaza'&&index===0?'active':'')}
-        >
-          <Icon icon={item.icon} className="settings-clone-icon"/>
-          <div>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-          </div>
-          {group.title==='Mağaza'&&index===0&&<Icon icon="iconoir:nav-arrow-right" className="settings-clone-arrow"/>}
+      </header>
+      <div className="master-settings-grid">
+        {group.items.map(item=><Link href={item.href} key={item.href} className="master-settings-card">
+          <Icon icon={item.icon} className="master-settings-icon"/>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
         </Link>)}
       </div>
     </section>)}
-
-    <section className="settings-clone-danger">
-      <div>
-        <h2>Tehlikeli İşlemler</h2>
-        <p>Mağaza kapatma talebi, mağaza sahibi doğrulaması ve Super Admin incelemesi gerektirir. Veriler otomatik silinmez.</p>
-      </div>
-      <Link href="/settings/delete-store"><Icon icon="iconoir:trash"/> Mağazayı Sil</Link>
-    </section>
   </div>;
 }
