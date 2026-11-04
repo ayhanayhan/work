@@ -42,19 +42,47 @@ const groups:Group[]=[
 ];
 
 export default function SettingsPage(){
-  return <div className="master-settings-admin-copy">
-    {groups.map(group=><section className="master-settings-section" key={group.title}>
-      <header>
+  return <div className="admin-settings-page-copy">
+    <div className="admin-settings-heading">
+      <h1>Ayarlar Merkezi</h1>
+      <p>Mağazanızın ayarlarını kategorilere göre yönetin.</p>
+    </div>
+
+    <div className="admin-settings-subscription">
+      <div className="admin-settings-subscription-main">
+        <span className="admin-settings-subscription-icon"><Icon icon="iconoir:wallet"/></span>
+        <div>
+          <small>Mağaza aboneliğiniz</small>
+          <p>Planınızı, abonelik sürenizi ve yükseltme seçeneklerini yönetin.</p>
+        </div>
+      </div>
+      <strong>Grow</strong>
+      <span className="admin-settings-status">Aktif</span>
+      <span className="admin-settings-expire">19 Ekim 2026 · 0 gün kaldı</span>
+      <Link href="/plans" className="admin-settings-plan-btn">Planları görüntüle</Link>
+      <Link href="/memberships" className="admin-settings-billing-link">Abonelik ve fatura ayrıntıları →</Link>
+    </div>
+
+    {groups.map(group=><section className="admin-settings-section" key={group.title}>
+      <div className="admin-settings-section-title">
         <h2>{group.title}</h2>
         <p>{group.subtitle}</p>
-      </header>
-      <div className="master-settings-grid">
-        {group.items.map(item=><Link href={item.href} key={item.href} className="master-settings-card">
-          <Icon icon={item.icon} className="master-settings-icon"/>
+      </div>
+      <div className="admin-settings-cards">
+        {group.items.map(item=><Link href={item.href} className="admin-settings-card" key={item.href}>
+          <Icon icon={item.icon} className="admin-settings-card-icon"/>
           <h3>{item.title}</h3>
           <p>{item.description}</p>
         </Link>)}
       </div>
     </section>)}
+
+    <section className="admin-settings-danger">
+      <div>
+        <h2>Tehlikeli İşlemler</h2>
+        <p>Mağaza kapatma talebi, mağaza sahibi doğrulaması ve Super Admin incelemesi gerektirir. Veriler otomatik silinmez.</p>
+      </div>
+      <Link href="/settings/delete-store"><Icon icon="iconoir:trash"/>Mağazayı Sil</Link>
+    </section>
   </div>;
 }
