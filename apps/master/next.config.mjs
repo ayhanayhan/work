@@ -6,8 +6,6 @@ const workspaceRoot = path.resolve(process.cwd(), '../..');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
-  basePath: '/admin',
-
   // Dependencies are installed at the workspace root by Firebase App Hosting.
   // Trace from there so the standalone bundle contains Next.js at runtime.
   output: 'standalone',
