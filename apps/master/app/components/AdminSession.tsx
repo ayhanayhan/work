@@ -1,7 +1,7 @@
 'use client';
+
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
-let merchantRefreshFlight:Promise<any>|null=null;
 
 const API = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
@@ -28,7 +28,8 @@ const PUBLIC_PATHS=['/login','/forgot-password','/reset-password','/admin/login'
 
 function selectedMembership(rows:any[]):any{
   if(!rows?.length)return null;
-  return rows[0];
+  let preferred='';try{preferred=localStorage.getItem('commerce-active-tenant')||''}catch{}
+  return rows.find((x:any)=>x.tenantId===preferred)||rows[0];
 }
 function toSession(accessToken:string,m:any):AdminSession|null{
   const st=m?.site;if(!accessToken||!m||!st)return null;
@@ -45,27 +46,26 @@ export function AdminSessionProvider({children}:{children:ReactNode}){
 
   const refreshSession=useCallback(async()=>{
     try{
-      if(!merchantRefreshFlight){
-        merchantRefreshFlight=(async()=>{
-          const r=await fetch(API+'/merchant-auth/refresh',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-admin'},body:'{}'});
-          if(!r.ok)throw new Error(`merchant refresh failed: ${r.status}`);
-          return r.json();
-        })().finally(()=>{merchantRefreshFlight=null});
-      }
-      let j:any;
-      try{j=await merchantRefreshFlight}catch{setSession(null);setStores([]);return null}
-      const rows=Array.isArray(j?.memberships)?j.memberships.slice(0,1):[];setStores(rows);
+      const r=await fetch(API+'/merchant-auth/refresh',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-admin'},body:'{}'});
+      if(!r.ok){setSession(null);setStores([]);setInstalledApps([]);setAppsLoaded(false);return null;}
+      const j=await r.json();const rows=Array.isArray(j?.memberships)?j.memberships:[];setStores(rows);
       const m=selectedMembership(rows);const next=toSession(j.accessToken,m);setSession(next);return next;
     }catch{setSession(null);setStores([]);setInstalledApps([]);setAppsLoaded(false);return null;}
   },[]);
 
-  const switchStore=useCallback((_tenantId:string)=>{
-    return;
-  },[]);
+  const switchStore=useCallback((tenantId:string)=>{
+    const m=stores.find(x=>x.tenantId===tenantId);if(!m||!session)return;
+    try{localStorage.setItem('commerce-active-tenant',tenantId)}catch{}
+    setSession(toSession(session.accessToken,m));setInstalledApps([]);setAppsLoaded(false);
+  },[stores,session]);
 
-  const createStore=useCallback(async(_name:string)=>{
-    throw new Error('Ticarti hesap başına tek mağaza kullanır. Ek satış noktaları için Satış Kanalları bölümünü kullanın.');
-  },[]);
+  const createStore=useCallback(async(name:string)=>{
+    if(!session)throw new Error('Oturum yok');
+    const r=await fetch(API+'/admin/stores',{method:'POST',credentials:'include',headers:{'content-type':'application/json',authorization:`Bearer ${session.accessToken}`,'x-tenant-id':session.tenantId},body:JSON.stringify({name})});
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(Array.isArray(j.message)?j.message.join(', '):(j.message||'Mağaza oluşturulamadı'));
+    try{localStorage.setItem('commerce-active-tenant',String(j.id))}catch{}
+    return refreshSession();
+  },[session,refreshSession]);
 
   const refreshInstalledApps=useCallback(async()=>{
     if(!session){setInstalledApps([]);setAppsLoaded(false);return []}

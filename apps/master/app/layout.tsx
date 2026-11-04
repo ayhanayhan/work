@@ -1,15 +1,18 @@
-import { ReactNode } from 'react';
-import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
-import { cn } from '@/lib/utils';
-import { SettingsProvider } from '@/providers/settings-provider';
-import { ThemeProvider } from '@/providers/theme-provider';
-import { TooltipsProvider } from '@/providers/tooltips-provider';
-import { Toaster } from '@/components/ui/sonner';
-import { MasterSessionProvider } from '@/app/components/MasterSession';
-import '@/css/styles.css';
-import '@/components/keenicons/assets/styles.css';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import './theme/scss/app.scss';
+import './theme/commerce.scss';
+import { AdminSessionProvider } from './components/AdminSession';
 
-const inter=Inter({subsets:['latin']});
-export const metadata:Metadata={title:{template:'%s | Ticarti Master',default:'Ticarti Master'},description:'Ticarti platform yönetimi'};
-export default function RootLayout({children}:{children:ReactNode}){return <html className="h-full" lang="tr" suppressHydrationWarning><body className={cn('antialiased flex h-full text-base text-foreground bg-background',inter.className)}><MasterSessionProvider><SettingsProvider><ThemeProvider><TooltipsProvider>{children}<Toaster/></TooltipsProvider></ThemeProvider></SettingsProvider></MasterSessionProvider></body></html>}
+const font = Inter({
+  weight: ['400','500','600','700'],
+  subsets: ['latin','latin-ext'],
+  display: 'swap',
+});
+
+export const metadata: Metadata = { title: 'Commerce Admin', description: 'Mağaza yönetimi' };
+
+export default function RootLayout({children}:{children:React.ReactNode}){
+  return <html lang="tr" data-bs-theme="light"><body className={font.className} data-sidebar-size="default"><AdminSessionProvider>{children}</AdminSessionProvider></body></html>;
+}
