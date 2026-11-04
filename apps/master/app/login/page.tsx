@@ -1,33 +1,132 @@
 'use client';
-import {adminText} from '../lib/admin-text';
-import { useEffect, useRef, useState } from 'react';
+
+import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useMasterSession } from '@/app/components/MasterSession';
 
-const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
-const CENTRAL_LOGIN='https://login.ticarti.com';
+const API = '/api/v1';
 
-function safeNext(raw:string|null){
-  if(!raw||!raw.startsWith('/')||raw.startsWith('//'))return '/dashboard';
-  if(raw.startsWith('/admin/'))return raw.slice('/admin'.length)||'/dashboard';
-  if(raw==='/admin')return '/dashboard';
-  return raw;
-}
+export default function LoginPage() {
+  const router = useRouter();
+  const { token, restoring } = useMasterSession();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
 
-export default function AdminLoginBridge(){
-  const router=useRouter();const handoffStarted=useRef(false);const[error,setError]=useState('');
-  useEffect(()=>{if(handoffStarted.current)return;handoffStarted.current=true;void (async()=>{
-    const sp=new URLSearchParams(window.location.search);const handoff=sp.get('handoff');const tenant=sp.get('tenant');const next=safeNext(sp.get('next'));
-    try{
-      if(handoff){
-        if(tenant)try{localStorage.setItem('commerce-active-tenant',tenant)}catch{}
-        const r=await fetch(API+'/merchant-auth/handoff',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-admin'},body:JSON.stringify({code:handoff})});
-        const j=await r.json().catch(()=>({}));if(!r.ok||!j.accessToken)throw new Error(j?.message||adminText('auth.linkExpired'));
-        window.location.replace('/admin'+next);return;
+  useEffect(() => {
+    if (!restoring && token) {
+      router.replace('/dashboard');
+    }
+  }, [restoring, token, router]);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setBusy(true);
+    setError('');
+
+    const form = new FormData(e.currentTarget);
+
+    try {
+      const r = await fetch(API + '/superadmin-auth/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'content-type': 'application/json',
+          'x-auth-client': 'superadmin',
+        },
+        body: JSON.stringify({
+          email: String(form.get('email') || '').trim(),
+          password: String(form.get('password') || ''),
+        }),
+      });
+
+      const j = await r.json().catch(() => ({}));
+
+      if (!r.ok || !j?.accessToken) {
+        throw new Error(j?.message || 'E-posta veya şifre hatalı.');
       }
-      const r=await fetch(API+'/merchant-auth/refresh',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-admin'},body:'{}'});
-      if(r.ok){router.replace('/dashboard');return;}
-      window.location.replace(CENTRAL_LOGIN+'/?returnTo='+encodeURIComponent(window.location.origin+'/admin'));
-    }catch(e:any){setError(e?.message||adminText('auth.loginFailed'));}
-  })()},[router]);
-  return <div className="commerce-auth-screen"><div className="commerce-auth-card card"><div className="card-body commerce-auth-body"><h3>{adminText('final.admin.115')}</h3><p className="text-muted">{error||'Güvenli oturum hazırlanıyor…'}</p>{error&&<a className="btn btn-primary w-100" href={CENTRAL_LOGIN}>{adminText('final.admin.116')}</a>}</div></div></div>;
+
+      window.location.href = '/dashboard';
+    } catch (err: any) {
+      setError(err?.message || 'Giriş yapılamadı.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen w-full bg-muted/30 flex items-center justify-center p-5">
+      <div className="w-full max-w-[420px]">
+        <div className="mb-8 flex justify-center">
+          <img
+            src="/brand/ticarti-logo.svg"
+            alt="Ticarti"
+            className="h-7"
+          />
+        </div>
+
+        <Card>
+          <CardHeader className="block py-6">
+            <CardTitle className="text-xl">
+              Ticarti Master
+            </CardTitle>
+
+            <CardDescription className="mt-2">
+              Platform yönetim paneline giriş yapın.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={submit} className="space-y-5">
+              <label className="block space-y-2 text-sm font-medium">
+                E-posta
+                <Input
+                  name="email"
+                  type="email"
+                  autoComplete="username"
+                  required
+                  variant="lg"
+                />
+              </label>
+
+              <label className="block space-y-2 text-sm font-medium">
+                Şifre
+                <Input
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  variant="lg"
+                />
+              </label>
+
+              {error && (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={busy}
+              >
+                {busy ? 'Giriş yapılıyor…' : 'Giriş yap'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
 }

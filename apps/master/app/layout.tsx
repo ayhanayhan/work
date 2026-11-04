@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { Metadata } from 'next';
 import { I18nProvider } from '@/providers/i18n-provider';
 import { ModulesProvider } from '@/providers/modules-provider';
-import { AdminSessionProvider } from '@/app/components/AdminSession';
+import { MasterSessionProvider } from '@/app/components/MasterSession';
 import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 
@@ -37,7 +37,7 @@ export default async function RootLayout({
         )}
       >
         <QueryProvider>
-          <AdminSessionProvider>
+          <MasterSessionProvider>
             <SettingsProvider>
               <ThemeProvider>
                 <I18nProvider>
@@ -50,7 +50,7 @@ export default async function RootLayout({
                 </I18nProvider>
               </ThemeProvider>
             </SettingsProvider>
-          </AdminSessionProvider>
+          </MasterSessionProvider>
         </QueryProvider>
       </body>
     </html>
