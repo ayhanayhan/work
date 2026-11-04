@@ -10,8 +10,9 @@
 
 /* Exact content layout copied from Commerce Admin settings screen */
 .master-settings-admin-copy{
-  width:100%;
-  padding:0 6px 48px;
+  width:min(1056px,100%);
+  margin:0 auto;
+  padding:0 0 48px;
 }
 
 .master-settings-section{
@@ -44,11 +45,11 @@
 }
 
 .master-settings-card{
-  min-height:138px;
+  min-height:136px;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  padding:22px 24px;
+  padding:23px 24px;
   background:#fff;
   border:1px solid var(--admin-border);
   border-radius:10px;
