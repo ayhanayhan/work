@@ -5,90 +5,221 @@
   --admin-muted:#7c818a;
   color:var(--admin-text);
 }
-
 .master-admin-settings a{text-decoration:none;color:inherit}
 
-/* Exact content layout copied from Commerce Admin settings screen */
-.master-settings-admin-copy{
-  width:min(1056px,100%);
+.admin-settings-page-copy{
+  width:min(1056px,calc(100% - 48px));
   margin:0 auto;
-  padding:0 0 48px;
+  padding:2px 0 54px;
 }
 
-.master-settings-section{
-  margin:0 0 32px;
+.admin-settings-heading{
+  margin:0 0 18px;
+}
+.admin-settings-heading h1{
+  margin:0;
+  font-size:20px;
+  line-height:1.25;
+  font-weight:650;
+  color:#17191d;
+}
+.admin-settings-heading p{
+  margin:6px 0 0;
+  font-size:12px;
+  line-height:1.5;
+  color:#7f838c;
 }
 
-.master-settings-section header{
+.admin-settings-subscription{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto auto auto auto;
+  grid-template-areas:
+    "main plan status expire button"
+    "main plan status billing billing";
+  align-items:center;
+  column-gap:22px;
+  row-gap:6px;
+  min-height:88px;
+  padding:15px 18px;
+  margin-bottom:30px;
+  background:#fff;
+  border:1px solid #e2e6eb;
+  border-radius:10px;
+  box-shadow:0 1px 3px rgba(16,24,40,.05);
+}
+.admin-settings-subscription-main{
+  grid-area:main;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.admin-settings-subscription-icon{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:#f4f7ff;
+  color:#2f7cff;
+  font-size:20px;
+}
+.admin-settings-subscription-main small{
+  display:block;
+  font-size:10px;
+  color:#7f838c;
+}
+.admin-settings-subscription-main p{
+  margin:3px 0 0;
+  font-size:10.5px;
+  color:#7f838c;
+  white-space:nowrap;
+}
+.admin-settings-subscription>strong{
+  grid-area:plan;
+  font-size:14px;
+  font-weight:650;
+}
+.admin-settings-status{
+  grid-area:status;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:22px;
+  padding:2px 8px;
+  border-radius:999px;
+  background:#edf9f1;
+  color:#1e9b50;
+  font-size:9px;
+  font-weight:650;
+}
+.admin-settings-expire{
+  grid-area:expire;
+  font-size:9.5px;
+  color:#7f838c;
+  white-space:nowrap;
+}
+.admin-settings-plan-btn{
+  grid-area:button;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:32px;
+  padding:0 12px;
+  border:1px solid #2f7cff;
+  border-radius:6px;
+  color:#2f7cff!important;
+  font-size:10.5px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.admin-settings-billing-link{
+  grid-area:billing;
+  justify-self:end;
+  color:#2f7cff!important;
+  font-size:9.5px;
+}
+
+.admin-settings-section{
+  margin:0 0 31px;
+}
+.admin-settings-section-title{
   margin:0 0 14px;
 }
-
-.master-settings-section h2{
+.admin-settings-section-title h2{
   margin:0;
-  color:var(--admin-text);
   font-size:16px;
   line-height:1.25;
-  font-weight:600;
+  font-weight:650;
+  color:#17191d;
 }
-
-.master-settings-section header p{
+.admin-settings-section-title p{
   margin:5px 0 0;
-  color:var(--admin-muted);
   font-size:11.5px;
   line-height:1.45;
+  color:#7f838c;
 }
 
-.master-settings-grid{
+.admin-settings-cards{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:18px;
 }
-
-.master-settings-card{
-  min-height:136px;
+.admin-settings-card{
+  min-height:138px;
   display:flex;
   flex-direction:column;
   justify-content:center;
   padding:23px 24px;
   background:#fff;
-  border:1px solid var(--admin-border);
+  border:1px solid #e1e5ea;
   border-radius:10px;
   box-shadow:0 1px 3px rgba(16,24,40,.06);
   transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;
 }
-
-.master-settings-card:hover{
+.admin-settings-card:hover{
   border-color:#cfd5de;
   box-shadow:0 3px 9px rgba(16,24,40,.07);
   transform:translateY(-1px);
 }
-
-.master-settings-icon{
+.admin-settings-card-icon{
   width:24px;
   height:24px;
   margin:0 0 14px;
-  color:var(--admin-blue);
+  color:#2f7cff;
   font-size:22px;
 }
-
-.master-settings-card h3{
+.admin-settings-card h3{
   margin:0;
-  color:var(--admin-text);
   font-size:14px;
   line-height:1.3;
   font-weight:500;
+  color:#17191d;
 }
-
-.master-settings-card p{
-  margin:7px 0 0;
+.admin-settings-card p{
   max-width:95%;
-  color:var(--admin-muted);
+  margin:7px 0 0;
   font-size:11.5px;
   line-height:1.5;
+  color:#7f838c;
+}
+
+.admin-settings-danger{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+  margin-top:4px;
+  padding:18px 20px;
+  border:1px solid #eddede;
+  border-radius:10px;
+  background:#fff;
+}
+.admin-settings-danger h2{
+  margin:0;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:650;
+}
+.admin-settings-danger p{
+  margin:5px 0 0;
+  font-size:10.5px;
+  line-height:1.45;
+  color:#7f838c;
+}
+.admin-settings-danger>a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  flex:0 0 auto;
+  color:#e5484d!important;
+  font-size:11px;
+  font-weight:600;
 }
 
 /* Detail pages */
-.master-admin-settings .settings-v15-detail{width:100%;padding:0 6px 48px}
+.master-admin-settings .settings-v15-detail{width:min(1056px,calc(100% - 48px));margin:0 auto;padding:0 0 48px}
 .master-admin-settings .settings-v15-detail-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .master-admin-settings .settings-v15-detail-head h4{font-size:17px;font-weight:600;margin:0 0 4px}
 .master-admin-settings .text-muted{color:#7f838c!important}
@@ -101,7 +232,7 @@
 .master-admin-settings .px-4{padding-left:1.5rem!important;padding-right:1.5rem!important}
 .master-admin-settings .breadcrumb{display:flex;flex-wrap:wrap;padding:0;margin:5px 0 0;list-style:none;font-size:9px;color:#7f838c}
 .master-admin-settings .breadcrumb-item+.breadcrumb-item:before{content:"›";padding:0 7px;color:#a8b5d1}
-.master-admin-settings .breadcrumb-item a{color:var(--admin-blue)}
+.master-admin-settings .breadcrumb-item a{color:#2f7cff}
 .master-admin-settings .row{display:flex;flex-wrap:wrap;margin-left:-12px;margin-right:-12px}
 .master-admin-settings .row>*{padding-left:12px;padding-right:12px;width:100%;max-width:100%}
 .master-admin-settings .g-3{row-gap:18px}
@@ -115,9 +246,9 @@
 .master-admin-settings .form-label{display:inline-block;margin-bottom:.5rem;color:#555b7e;font-size:11px;font-weight:500}
 .master-admin-settings .form-control,.master-admin-settings .form-select{display:block;width:100%;padding:.47rem .75rem;font-size:12px;font-weight:400;line-height:1.5;color:#2b2d3b;background:#fff;border:1px solid #e2e7f1;border-radius:.4rem;outline:none;min-height:36px}
 .master-admin-settings textarea.form-control{min-height:92px;resize:vertical}
-.master-admin-settings .form-control:focus,.master-admin-settings .form-select:focus{border-color:var(--admin-blue);box-shadow:none}
+.master-admin-settings .form-control:focus,.master-admin-settings .form-select:focus{border-color:#2f7cff;box-shadow:none}
 .master-admin-settings .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:36px;padding:.45rem .9rem;border-radius:.4rem;border:1px solid transparent;font-size:11px;font-weight:500;cursor:pointer}
-.master-admin-settings .btn-primary{background:var(--admin-blue);border-color:var(--admin-blue);color:#fff}
+.master-admin-settings .btn-primary{background:#2f7cff;border-color:#2f7cff;color:#fff}
 .master-admin-settings .btn-outline-danger{background:transparent;border-color:#ef4444;color:#ef4444}
 .master-admin-settings .alert{border-radius:.4rem;padding:.75rem 1rem;margin-bottom:1.5rem;font-size:11px}
 .master-admin-settings .alert-success{background:#ecfdf3;color:#067647;border:1px solid #abefc6}
@@ -129,7 +260,7 @@
 .master-admin-settings .settings-list-row{display:grid;grid-template-columns:1fr 1.2fr auto auto auto;gap:10px;align-items:end;border:1px solid #e2e7f1;border-radius:9px;padding:10px;margin-bottom:10px}
 .master-admin-settings .settings-list-row.currency{grid-template-columns:.7fr 1.2fr .6fr auto auto auto}
 .master-admin-settings .switch-wrap{display:flex;align-items:center;gap:7px;min-height:36px;font-size:11px}
-.master-admin-settings .switch-wrap input{accent-color:var(--admin-blue)}
+.master-admin-settings .switch-wrap input{accent-color:#2f7cff}
 .master-admin-settings .icon-button{width:36px;height:36px;padding:0}
 .master-admin-settings .empty-state{text-align:center;color:#7f838c;font-size:11px;padding:24px;border:1px dashed #e2e7f1;border-radius:9px}
 .master-admin-settings .settings-default-note{font-size:9px;color:#7f838c;margin-top:8px}
@@ -144,9 +275,17 @@
   .master-admin-settings .col-xl-4{flex:0 0 auto;width:33.33333333%}
 }
 @media(max-width:1199.98px){
-  .master-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-settings-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-settings-subscription{grid-template-columns:1fr auto;grid-template-areas:"main plan" "status expire" "button billing"}
 }
 @media(max-width:767.98px){
-  .master-settings-grid,.master-admin-settings .social-auth-grid{grid-template-columns:1fr}
-  .master-admin-settings .settings-list-row,.master-admin-settings .settings-list-row.currency{grid-template-columns:1fr}
+  .admin-settings-page-copy,
+  .master-admin-settings .settings-v15-detail{width:calc(100% - 28px)}
+  .admin-settings-cards,
+  .master-admin-settings .social-auth-grid{grid-template-columns:1fr}
+  .admin-settings-subscription{grid-template-columns:1fr;grid-template-areas:"main" "plan" "status" "expire" "button" "billing"}
+  .admin-settings-billing-link{justify-self:start}
+  .master-admin-settings .settings-list-row,
+  .master-admin-settings .settings-list-row.currency{grid-template-columns:1fr}
+  .admin-settings-danger{align-items:flex-start;flex-direction:column}
 }
