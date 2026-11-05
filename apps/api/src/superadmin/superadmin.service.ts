@@ -212,6 +212,24 @@ export class SuperAdminService {
         {key:'PAYMENT_BILLING',label:'Ödeme ve Faturalandırma Koşulları',contentKey:'payment-billing-terms',isActive:true,placements:['CHECKOUT_TERMS']},
         {key:'DATA_PROCESSING',label:'Kişisel Verilerin İşlenmesi ve Saklanması',contentKey:'data-processing-policy',isActive:true,placements:['FOOTER','REGISTER_KVKK','ACCOUNT']},
       ],
+      placementOptions:[
+        {key:'FOOTER',label:'Footer'},
+        {key:'REGISTER_TERMS',label:'Kayıt · Kullanım / üyelik onayı'},
+        {key:'REGISTER_PRIVACY',label:'Kayıt · Gizlilik bağlantısı'},
+        {key:'REGISTER_KVKK',label:'Kayıt · KVKK / açık rıza'},
+        {key:'REGISTER_MARKETING',label:'Kayıt · Ticari ileti izni'},
+        {key:'LOGIN_SOCIAL',label:'Google / Facebook / sosyal giriş'},
+        {key:'CHECKOUT_TERMS',label:'Checkout · Koşullar'},
+        {key:'CHECKOUT_PREINFO',label:'Checkout · Ön bilgilendirme'},
+        {key:'CHECKOUT_DISTANCE_SALES',label:'Checkout · Mesafeli satış'},
+        {key:'CHECKOUT_PRIVACY',label:'Checkout · KVKK / gizlilik'},
+        {key:'NEWSLETTER',label:'Newsletter / e-bülten'},
+        {key:'COOKIE_BANNER',label:'Çerez bannerı / tercih merkezi'},
+        {key:'CONTACT_FORM',label:'İletişim formu'},
+        {key:'SUPPORT_FORM',label:'Destek formu'},
+        {key:'ACCOUNT',label:'Hesap / profil alanı'},
+        {key:'MOBILE_APP',label:'Mobil uygulama'},
+      ],
       contentOptions:[
         {key:'terms-of-service',label:'Kullanım Koşulları'},
         {key:'membership-agreement',label:'Üyelik Sözleşmesi'},
@@ -236,15 +254,21 @@ export class SuperAdminService {
     const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
     return {
       contracts:Array.isArray(value.contracts)&&value.contracts.length?value.contracts:base.contracts,
+      placementOptions:Array.isArray(value.placementOptions)&&value.placementOptions.length?value.placementOptions:base.placementOptions,
       contentOptions:Array.isArray(value.contentOptions)&&value.contentOptions.length?value.contentOptions:base.contentOptions,
     };
   }
 
   async updateContractSettings(body:any){
     const current:any=await this.contractSettings();
-    const allowedPlacements=new Set(['FOOTER','REGISTER_TERMS','REGISTER_PRIVACY','REGISTER_KVKK','REGISTER_MARKETING','LOGIN_SOCIAL','CHECKOUT_TERMS','CHECKOUT_PREINFO','CHECKOUT_DISTANCE_SALES','CHECKOUT_PRIVACY','NEWSLETTER','COOKIE_BANNER','CONTACT_FORM','SUPPORT_FORM','ACCOUNT','MOBILE_APP']);
+    const placementOptions=(Array.isArray(body?.placementOptions)?body.placementOptions:current.placementOptions||[]).slice(0,200).map((x:any,i:number)=>({
+      key:String(x.key||'').trim().toUpperCase().replace(/[^A-Z0-9_]+/g,'_').replace(/^_+|_+$/g,''),
+      label:String(x.label||x.key||'').trim(),
+      sortOrder:Number(x.sortOrder??i),
+    })).filter((x:any)=>x.key);
+    const allowedPlacements=new Set(placementOptions.map((x:any)=>x.key));
     const contracts=(Array.isArray(body?.contracts)?body.contracts:current.contracts).slice(0,100).map((x:any,i:number)=>({
-      key:String(x.key||'CONTRACT_'+i).trim().toUpperCase(),
+      key:String(x.key||'CONTRACT_'+i).trim().toUpperCase().replace(/[^A-Z0-9_]+/g,'_').replace(/^_+|_+$/g,''),
       label:String(x.label||x.key||'Sözleşme').trim(),
       contentKey:String(x.contentKey||'').trim(),
       isActive:x.isActive!==false,
@@ -256,7 +280,7 @@ export class SuperAdminService {
       label:String(x.label||x.key||'').trim(),
       sortOrder:Number(x.sortOrder??i),
     })).filter((x:any)=>x.key);
-    const value={contracts,contentOptions};
+    const value={contracts,placementOptions,contentOptions};
     await (this.prisma as any).platformSetting.upsert({where:{key:'platform_contracts'},create:{key:'platform_contracts',value},update:{value}});
     return value;
   }
