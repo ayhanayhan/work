@@ -7,7 +7,7 @@ import { AppsDropdownMenu } from '@/partials/topbar/apps-dropdown-menu';
 import { ChatSheet } from '@/partials/topbar/chat-sheet';
 import { NotificationsSheet } from '@/partials/topbar/notifications-sheet';
 import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
-import { Activity, Bell, LayoutGrid, Menu, MessageCircleMore, Search, ShoppingCart } from 'lucide-react';
+import { Activity, Bell, LayoutGrid, Menu, MessageCircleMore, ShoppingCart } from 'lucide-react';
 import { toAbsoluteUrl } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,7 +17,6 @@ import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTrigger } from '@/com
 import { Container } from '@/components/common/container';
 import { StoreClientTopbar } from '@/app/(protected)/store-client/components/common/topbar';
 import { SidebarMenu } from './sidebar-menu';
-import { TicartiSearchDialog } from './ticarti-search-dialog';
 
 export function Header() {
   const [isSidebarSheetOpen, setIsSidebarSheetOpen] = useState(false);
@@ -61,11 +60,6 @@ export function Header() {
               <Button variant="ghost" mode="icon" shape="circle" className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary" asChild title="POS / Sipariş Oluştur">
                 <Link href="/pos"><ShoppingCart className="size-4.5!" /></Link>
               </Button>
-              {!mobileMode && (
-                <TicartiSearchDialog
-                  trigger={<Button variant="ghost" mode="icon" shape="circle" className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary" title="Ara"><Search className="size-4.5!" /></Button>}
-                />
-              )}
               <NotificationsSheet trigger={<Button variant="ghost" mode="icon" shape="circle" className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"><Bell className="size-4.5!" /></Button>} />
               <ChatSheet trigger={<Button variant="ghost" mode="icon" shape="circle" className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"><MessageCircleMore className="size-4.5!" /></Button>} />
               <AppsDropdownMenu trigger={<Button variant="ghost" mode="icon" shape="circle" className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"><LayoutGrid className="size-4.5!" /></Button>} />
