@@ -68,21 +68,21 @@ type PlatformSettings = {
 };
 
 const LANGUAGE_CATALOG = [
-  ['tr-TR', 'Türkçe'],
-  ['en-US', 'English'],
-  ['bg-BG', 'Български'],
-  ['de-DE', 'Deutsch'],
-  ['ru-RU', 'Русский'],
-  ['ar-SA', 'العربية'],
-  ['az-AZ', 'Azərbaycan dili'],
-  ['ro-RO', 'Română'],
-  ['sq-AL', 'Shqip'],
-  ['bs-BA', 'Bosanski'],
-  ['sr-RS', 'Srpski'],
-  ['fr-FR', 'Français'],
-  ['pt-PT', 'Português'],
-  ['es-ES', 'Español'],
-  ['uk-UA', 'Українська'],
+  ['tr', 'Türkçe'],
+  ['en', 'English'],
+  ['bg', 'Български'],
+  ['de', 'Deutsch'],
+  ['ru', 'Русский'],
+  ['ar', 'العربية'],
+  ['az', 'Azərbaycan dili'],
+  ['ro', 'Română'],
+  ['sq', 'Shqip'],
+  ['bs', 'Bosanski'],
+  ['sr', 'Srpski'],
+  ['fr', 'Français'],
+  ['pt', 'Português'],
+  ['es', 'Español'],
+  ['uk', 'Українська'],
 ] as const;
 
 const CURRENCY_CATALOG = [
