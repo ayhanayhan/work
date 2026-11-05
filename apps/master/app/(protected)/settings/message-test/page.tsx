@@ -1,3 +1,3 @@
-import { MessageTestPage } from '../components/platform-settings-ui';
+import { PlatformMessageTestPage } from '../components/communication-settings';
 
-export default function Page(){ return <MessageTestPage/>; }
+export default function Page(){ return <PlatformMessageTestPage/>; }
