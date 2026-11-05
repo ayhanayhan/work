@@ -5,14 +5,18 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PlatformService {
   constructor(private readonly prisma: PrismaService) {}
 
-  plans(){
-    return this.prisma.plan.findMany({
+  async plans(){
+    const rows:any[]=await this.prisma.plan.findMany({
       where:{isActive:true},
       orderBy:[{sortOrder:'asc'},{monthlyPrice:'asc'}],
       select:{
         id:true,name:true,code:true,description:true,monthlyPrice:true,yearlyPrice:true,currency:true,
         trialDays:true,maxStaff:true,maxProducts:true,maxOrdersPerMonth:true,features:true,sortOrder:true,
       },
+    });
+    return rows.filter(row=>{
+      const features:any=row?.features&&typeof row.features==='object'&&!Array.isArray(row.features)?row.features:{};
+      return features?._meta?.frontendVisible!==false;
     });
   }
 
