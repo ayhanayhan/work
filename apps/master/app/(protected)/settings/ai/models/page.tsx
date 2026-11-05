@@ -1,3 +1,3 @@
-import { AiModelsPage } from '../../components/platform-settings-ui';
+import { AiServicesSettingsPage } from '../../components/ai-services-settings';
 
-export default function Page(){ return <AiModelsPage/>; }
+export default function Page(){ return <AiServicesSettingsPage/>; }
