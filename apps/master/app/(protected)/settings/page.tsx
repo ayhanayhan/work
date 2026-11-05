@@ -6,6 +6,7 @@ import {
   ChevronRight,
   FileText,
   Globe2,
+  KeyRound,
   Languages,
   Mail,
   MessageCircle,
@@ -35,6 +36,7 @@ const groups = [
       ['Dil Ayarları', 'Platformda kullanılabilecek dilleri, varsayılan dili ve aktiflik durumunu yönetin.', '/settings/languages', Languages],
       ['Para Birimleri', 'Desteklenen para birimleri, semboller, formatlar ve varsayılan para birimi.', '/settings/currencies', WalletCards],
       ['Ülkeler', 'Ülke, ISO kodu, telefon kodu ve aktif/pasif ülke tanımları.', '/settings/countries', Globe2],
+      ['Harici Giriş Sağlayıcıları', 'Google, Facebook, Apple ve Microsoft ile giriş ayarlarını yönetin.', '/settings/auth-providers', KeyRound],
     ],
   },
   {
@@ -42,7 +44,7 @@ const groups = [
     title: 'Sözleşmeler & Yasal',
     description: 'Ticarti kullanıcılarının onaylayacağı merkezi sözleşme ve metinler.',
     items: [
-      ['Sözleşme Tanımları', 'KVKK, gizlilik, kullanım koşulları, abonelik ve diğer yasal metinleri versiyonlayın.', '/settings/contracts', FileText],
+      ['Sözleşme Eşleştirmeleri', 'Yasal içerikleri Footer, Register, Checkout, Newsletter ve diğer kullanım alanlarıyla eşleştirin.', '/settings/contracts', FileText],
     ],
   },
   {
