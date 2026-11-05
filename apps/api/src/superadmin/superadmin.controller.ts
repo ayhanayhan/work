@@ -55,6 +55,7 @@ export class SuperAdminController {
   @Post('tenants/:tenantId/apps/:appId/grant') grantApp(@Param('tenantId') tenantId:string,@Param('appId') appId:string){ return this.svc.grantApp(tenantId,appId); }
   @Patch('tenants/:tenantId/apps/:appId') tenantApp(@Param('tenantId') tenantId:string,@Param('appId') appId:string,@Body() b:any){ return this.svc.updateTenantApp(tenantId,appId,b); }
   @Get('themes') themes(){ return this.svc.themes(); }
+  @Get('theme-installations') themeInstallations(@Query() query:any){return this.svc.themeInstallations(query);}
   @Post('themes') createTheme(@Body() b:any){ return this.svc.createTheme(b); }
   @Patch('themes/:id') updateTheme(@Param('id') id:string,@Body() b:any){ return this.svc.updateTheme(id,b); }
   @Post('themes/:id/plan-pricing') themePlanPricing(@Param('id') id:string,@Body() b:any){ return this.svc.setThemePlanPricing(id,b); }
