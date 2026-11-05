@@ -169,7 +169,7 @@ export class SuperAdminService {
     return {
       company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:''},
       locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
-      currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'
+      currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
     };
   }
 
