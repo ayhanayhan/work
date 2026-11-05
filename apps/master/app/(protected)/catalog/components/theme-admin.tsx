@@ -101,7 +101,7 @@ export default function ThemeAdminPage(){
     </Container>
     {editSkin&&workspace?<SkinEditor key={editSkin.slug} skin={editSkin} themeId={themeId} ctx={context} categories={workspace.moduleCategories} request={request} onClose={()=>setEditSkin(null)} onSaved={async()=>saved('Tema ayarları kaydedildi.')} onSourceSaved={async()=>{await loadWorkspace();setSuccess('Kaynak JSON kaydedildi.')}}/>:null}
     {editModule&&workspace?<ModuleEditor key={editModule.type} module={editModule} themeId={themeId} ctx={context} categories={workspace.moduleCategories} request={request} onClose={()=>setEditModule(null)} onSaved={async()=>saved('Tema modülü kaydedildi.')}/>:null}
-    {editPackage!==null?<ThemePackageEditor key={'theme-'+('id' in editPackage?editPackage.id:'new')} initial={editPackage as Partial<ThemePackage>} ctx={context} request={request} onClose={()=>setEditPackage(null)} onSaved={async()=>saved('Tema paketi kaydedildi.')}/>:null}
+    {editPackage!==null?<ThemePackageEditor key={'theme-'+String((editPackage as ThemePackage).id||'new')} initial={editPackage as Partial<ThemePackage>} ctx={context} request={request} onClose={()=>setEditPackage(null)} onSaved={async()=>saved('Tema paketi kaydedildi.')}/>:null}
   </>;
 }
 
