@@ -66,6 +66,11 @@ type PlatformCompany = {
   taxOffice?: string;
   taxNumber?: string;
   address?: string;
+  country?: string;
+  city?: string;
+  district?: string;
+  postalCode?: string;
+  phoneCountry?: string;
   timezone?: string;
   logoUrl?: string;
   logoDarkUrl?: string;
@@ -174,18 +179,41 @@ const SOCIAL_PLATFORMS = [
   'Diğer',
 ] as const;
 
-const TIMEZONES = [
-  ['Europe/Istanbul', 'İstanbul (UTC+3)'],
-  ['Europe/London', 'Londra'],
-  ['Europe/Berlin', 'Berlin'],
-  ['Europe/Sofia', 'Sofya'],
-  ['Europe/Bucharest', 'Bükreş'],
-  ['Europe/Moscow', 'Moskova'],
-  ['Asia/Dubai', 'Dubai'],
-  ['Asia/Baku', 'Bakü'],
-  ['America/New_York', 'New York'],
-  ['America/Los_Angeles', 'Los Angeles'],
-] as const;
+type GeoNode = {id:string;name:string;code?:string|null;countryCode?:string|null;level:string};
+const ALL_TIMEZONES = (() => {
+  try {
+    return Array.from(new Set(['UTC', 'Europe/Istanbul', ...Intl.supportedValuesOf('timeZone')])).sort((a,b)=>a.localeCompare(b));
+  } catch { return ['UTC','Europe/Istanbul']; }
+})();
+function timezoneLabel(zone:string){
+  try {
+    const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone,timeZoneName:'shortOffset'}).formatToParts(new Date());
+    const offset = parts.find(x=>x.type==='timeZoneName')?.value||'GMT';
+    return `(${offset.replace('GMT','UTC')}) ${zone.replace(/_/g,' ')}`;
+  }catch{return zone;}
+}
+function PlatformLocationFields({company,patch,request,countries}:{company:PlatformCompany;patch:(p:Partial<PlatformCompany>)=>void;request:(p:string)=>Promise<any>;countries:PlatformCountry[]}){
+  const [roots,setRoots]=useState<GeoNode[]>([]);
+  const [cities,setCities]=useState<GeoNode[]>([]);
+  const [districts,setDistricts]=useState<GeoNode[]>([]);
+  const [error,setError]=useState('');
+  const root=roots.find(x=>x.code===company.country||x.countryCode===company.country||x.name===company.country);
+  const city=cities.find(x=>x.name===company.city||x.code===company.city);
+  useEffect(()=>{let active=true;void request('/superadmin/geo?level=COUNTRY&root=true').then((r:any)=>{if(active)setRoots(Array.isArray(r)?r:[])}).catch(()=>{if(active)setError('Ülke verisi yüklenemedi.')});return()=>{active=false}},[request]);
+  useEffect(()=>{let active=true;setCities([]);setDistricts([]);if(root)void request('/superadmin/geo?level=ADMIN1&parentId='+encodeURIComponent(root.id)).then((r:any)=>{if(active)setCities(Array.isArray(r)?r:[])}).catch(()=>{if(active)setError('Şehir verisi alınamadı.')});return()=>{active=false}},[request,root?.id]);
+  useEffect(()=>{let active=true;setDistricts([]);if(city)void request('/superadmin/geo?level=ADMIN2&parentId='+encodeURIComponent(city.id)).then((r:any)=>{if(active)setDistricts(Array.isArray(r)?r:[])}).catch(()=>{if(active)setError('İlçe verisi alınamadı.')});return()=>{active=false}},[request,city?.id]);
+  const countryOptions = roots.length ? roots.map(x=>({key:x.id,code:x.code||x.countryCode||x.name,label:x.name})) : countries.filter(x=>x.isActive).map(x=>({key:x.code,code:x.code,label:x.name}));
+  return <div className="grid gap-4">
+    <Field label="Açık adres"><Textarea rows={3} value={company.address||''} onChange={e=>patch({address:e.target.value})} placeholder="Cadde, sokak, bina ve daire numarası"/></Field>
+    <div className="grid gap-4 md:grid-cols-2">
+      <Field label="Ülke"><Select value={countryOptions.find(x=>x.code===company.country)?.key||undefined} onValueChange={id=>{const x=countryOptions.find(y=>y.key===id);if(x)patch({country:x.code,city:'',district:''})}}><SelectTrigger><SelectValue placeholder="Ülke seçin"/></SelectTrigger><SelectContent>{countryOptions.map(x=><SelectItem key={x.key} value={x.key}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
+      <Field label="İl / Şehir">{cities.length?<Select value={city?.id||undefined} onValueChange={id=>{const x=cities.find(y=>y.id===id);if(x)patch({city:x.name,district:''})}}><SelectTrigger><SelectValue placeholder="İl / şehir seçin"/></SelectTrigger><SelectContent>{cities.map(x=><SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent></Select>:<Input value={company.city||''} onChange={e=>patch({city:e.target.value,district:''})} placeholder="Şehir adı"/>}</Field>
+      <Field label="İlçe">{districts.length?<Select value={districts.find(x=>x.name===company.district)?.id||undefined} onValueChange={id=>{const x=districts.find(y=>y.id===id);if(x)patch({district:x.name})}}><SelectTrigger><SelectValue placeholder="İlçe seçin"/></SelectTrigger><SelectContent>{districts.map(x=><SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent></Select>:<Input value={company.district||''} onChange={e=>patch({district:e.target.value})} placeholder="İlçe adı"/>}</Field>
+      <Field label="Posta kodu"><Input value={company.postalCode||''} onChange={e=>patch({postalCode:e.target.value})} maxLength={12} placeholder="Posta kodu"/></Field>
+    </div>
+    {error?<p className="text-sm text-destructive">{error}</p>:null}
+  </div>;
+}
 
 function Box({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return <Card>
@@ -318,74 +346,74 @@ function LogoPicker({
 
 export function PlatformGeneralPage() {
   const s = usePlatformSettings();
+  const {request} = useMasterSession();
+  const [validationError,setValidationError] = useState('');
   const data = s.data;
   if (!data) return <div className="grid min-h-[60vh] place-items-center"><LoaderCircle className="animate-spin" /></div>;
   const company = data.company || {};
-  const patchCompany = (patch: Partial<PlatformCompany>) => s.setData({ ...data, company: { ...company, ...patch } });
+  const patchCompany = (patch: Partial<PlatformCompany>) => {setValidationError('');s.setData({ ...data, company: { ...company, ...patch } });};
   const defaultLocale = data.locales.find(x => x.isDefault && x.isActive)?.locale || data.locales.find(x => x.isActive)?.locale || '';
   const defaultCurrency = data.currencies.find(x => x.isDefault && x.isActive)?.code || data.currencies.find(x => x.isActive)?.code || '';
-
-  return <SettingsShell title="Genel Ayarlar" description="Ticarti platformunun firma, marka ve varsayılan sistem tanımları." icon={Building2} busy={s.busy} message={s.message} onSave={s.save}>
-    <Box title="Marka & Görseller" description="Platform genelinde kullanılacak Ticarti marka görselleri.">
-      <div className="grid gap-5 xl:grid-cols-2">
-        <LogoPicker label="Ana logo" value={company.logoUrl} onChange={v => patchCompany({ logoUrl: v })}/>
-        <LogoPicker label="Koyu zemin logosu" value={company.logoDarkUrl} onChange={v => patchCompany({ logoDarkUrl: v })}/>
-      </div>
-      <LogoPicker label="Favicon / ikon" compact value={company.faviconUrl} onChange={v => patchCompany({ faviconUrl: v })}/>
-    </Box>
-
-    <Box title="Firma Bilgileri">
+  const selectedCountry = data.countries.find(x=>x.code===company.phoneCountry) || data.countries.find(x=>x.code==='TR') || data.countries.find(x=>x.isActive);
+  const dial = selectedCountry?.phoneCode || '+90';
+  const phone = company.phone||'';
+  const localPhone = phone.startsWith(dial) ? phone.slice(dial.length) : phone.replace(/^\+\d{1,3}/,'');
+  const save = () => {
+    if(company.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(company.email)){setValidationError('Geçerli bir e-posta adresi girin.');return;}
+    if(company.phone && !/^\+[1-9]\d{6,14}$/.test(company.phone)){setValidationError('Telefon numarası ülke kodu dahil 7–15 rakam içermelidir.');return;}
+    if(company.phone?.startsWith('+90') && !/^\+90[2-5]\d{9}$/.test(company.phone)){setValidationError('Türkiye numarasını başında sıfır olmadan 10 hane girin.');return;}
+    if(company.website){try{const url=new URL(company.website);if(!['http:','https:'].includes(url.protocol))throw Error();}catch{setValidationError('Web sitesi http:// veya https:// ile başlamalı.');return;}}
+    setValidationError('');void s.save();
+  };
+  return <SettingsShell title="Genel Ayarlar" description="Ticarti platformunun firma, iletişim ve sistem tanımları." icon={Building2} busy={s.busy} message={s.message} onSave={save}>
+    {validationError?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationError}</div>:null}
+    <Box title="Firma Bilgileri" description="Kurumsal kimlik ve resmi kayıt bilgileri.">
       <div className="grid gap-4 md:grid-cols-2">
-        <Field label="Marka adı"><Input value={company.name || ''} onChange={e => patchCompany({ name: e.target.value })}/></Field>
-        <Field label="Yasal ünvan"><Input value={company.legalName || ''} onChange={e => patchCompany({ legalName: e.target.value })}/></Field>
-        <Field label="E-posta"><Input type="email" value={company.email || ''} onChange={e => patchCompany({ email: e.target.value })}/></Field>
-        <Field label="Telefon"><Input value={company.phone || ''} onChange={e => patchCompany({ phone: e.target.value })}/></Field>
-        <Field label="Web sitesi"><Input value={company.website || ''} onChange={e => patchCompany({ website: e.target.value })}/></Field>
-        <Field label="Vergi dairesi"><Input value={company.taxOffice || ''} onChange={e => patchCompany({ taxOffice: e.target.value })}/></Field>
-        <Field label="Vergi numarası"><Input value={company.taxNumber || ''} onChange={e => patchCompany({ taxNumber: e.target.value })}/></Field>
+        <Field label="Marka adı"><Input value={company.name||''} onChange={e=>patchCompany({name:e.target.value})}/></Field>
+        <Field label="Yasal ünvan"><Input value={company.legalName||''} onChange={e=>patchCompany({legalName:e.target.value})}/></Field>
+        <Field label="Vergi dairesi"><Input value={company.taxOffice||''} onChange={e=>patchCompany({taxOffice:e.target.value})}/></Field>
+        <Field label="Vergi numarası"><Input value={company.taxNumber||''} onChange={e=>patchCompany({taxNumber:e.target.value})}/></Field>
       </div>
-      <Field label="Adres"><Textarea rows={4} value={company.address || ''} onChange={e => patchCompany({ address: e.target.value })}/></Field>
     </Box>
-
-    <Box title="Sosyal Medya Hesapları" description="Ticarti'nin kurumsal sosyal medya hesaplarını ekleyin. İstediğiniz kadar hesap tanımlayabilirsiniz.">
+    <Box title="İletişim Bilgileri" description="Ticarti'nin resmi iletişim kanalları.">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="E-posta"><Input type="email" value={company.email||''} onChange={e=>patchCompany({email:e.target.value})}/></Field>
+        <Field label="Web sitesi"><Input type="url" value={company.website||''} onChange={e=>patchCompany({website:e.target.value})} placeholder="https://ticarti.com"/></Field>
+      </div>
+      <Field label="Telefon">
+        <div className="flex gap-2">
+          <Select value={selectedCountry?.code||''} onValueChange={code=>{const hit=data.countries.find(x=>x.code===code);if(hit)patchCompany({phoneCountry:code,phone:hit.phoneCode+localPhone.replace(/\D/g,'').replace(/^0+/,'')})}}>
+            <SelectTrigger className="w-44 shrink-0"><SelectValue placeholder="Alan kodu"/></SelectTrigger>
+            <SelectContent>{data.countries.filter(x=>x.isActive).map(x=><SelectItem key={x.code} value={x.code}>{x.flag} {x.phoneCode} · {x.name}</SelectItem>)}</SelectContent>
+          </Select>
+          <Input inputMode="tel" value={localPhone} maxLength={18} placeholder="Telefon numarası" onChange={e=>{const digits=e.target.value.replace(/\D/g,'').replace(/^0+/,'');patchCompany({phoneCountry:selectedCountry?.code||'TR',phone:digits?dial+digits:''})}}/>
+        </div>
+        <span className="text-xs text-muted-foreground">Numara, ülke koduyla E.164 biçiminde kaydedilir. Türkiye: 10 hane.</span>
+      </Field>
+    </Box>
+    <Box title="Firma Adresi" description="Ülke, il ve ilçe bilgilerini mağaza adresleri gibi ayrı ayrı tanımlayın.">
+      <PlatformLocationFields company={company} patch={patchCompany} request={request} countries={data.countries}/>
+    </Box>
+    <Box title="Sosyal Medya Hesapları" description="Ticarti'nin kurumsal sosyal medya hesapları.">
       <div className="grid gap-3">
-        {(company.socialLinks || []).map((row,index)=><div key={`${row.platform}-${index}`} className="grid gap-3 rounded-lg border p-4 md:grid-cols-[220px_1fr_auto] md:items-end">
-          <Field label="Platform">
-            <Select value={row.platform || 'Instagram'} onValueChange={platform=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,platform}:x)})}>
-              <SelectTrigger><SelectValue/></SelectTrigger>
-              <SelectContent>{SOCIAL_PLATFORMS.map(platform=><SelectItem key={platform} value={platform}>{platform}</SelectItem>)}</SelectContent>
-            </Select>
-          </Field>
-          <Field label="Hesap URL">
-            <Input type="url" value={row.url || ''} placeholder="https://..." onChange={e=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,url:e.target.value}:x)})}/>
-          </Field>
+        {(company.socialLinks||[]).map((row,index)=><div key={index} className="grid gap-3 rounded-lg border p-4 md:grid-cols-[220px_1fr_auto] md:items-end">
+          <Field label="Platform"><Select value={row.platform||'Instagram'} onValueChange={platform=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,platform}:x)})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{SOCIAL_PLATFORMS.map(platform=><SelectItem key={platform} value={platform}>{platform}</SelectItem>)}</SelectContent></Select></Field>
+          <Field label="Hesap URL"><Input type="url" value={row.url||''} placeholder="https://..." onChange={e=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,url:e.target.value}:x)})}/></Field>
           <Button variant="outline" size="icon" onClick={()=>patchCompany({socialLinks:(company.socialLinks||[]).filter((_,i)=>i!==index)})}><Trash2 className="size-4"/></Button>
         </div>)}
         <div><Button variant="outline" onClick={()=>patchCompany({socialLinks:[...(company.socialLinks||[]),{platform:'Instagram',url:''}]})}><Plus className="size-4"/>Hesap ekle</Button></div>
       </div>
     </Box>
-
-    <Box title="Varsayılanlar" description="Seçenekler yalnızca platformda aktif tanımlardan gelir.">
+    <Box title="Varsayılanlar" description="Saat dilimleri sistemin desteklediği tam IANA listesinden gelir.">
       <div className="grid gap-4 md:grid-cols-3">
-        <Field label="Saat dilimi">
-          <Select value={company.timezone || 'Europe/Istanbul'} onValueChange={v => patchCompany({ timezone: v })}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{TIMEZONES.map(([value,label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
-          </Select>
-        </Field>
-        <Field label="Varsayılan dil">
-          <Select value={defaultLocale} onValueChange={locale => s.setData({...data,locales:data.locales.map(x=>({...x,isDefault:x.locale===locale}))})}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{data.locales.filter(x=>x.isActive).map(x=><SelectItem key={x.locale} value={x.locale}>{x.label}</SelectItem>)}</SelectContent>
-          </Select>
-        </Field>
-        <Field label="Varsayılan para birimi">
-          <Select value={defaultCurrency} onValueChange={code => s.setData({...data,currencies:data.currencies.map(x=>({...x,isDefault:x.code===code}))})}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{data.currencies.filter(x=>x.isActive).map(x=><SelectItem key={x.code} value={x.code}>{x.name} · {x.code}</SelectItem>)}</SelectContent>
-          </Select>
-        </Field>
+        <Field label="Saat dilimi"><Select value={company.timezone||'Europe/Istanbul'} onValueChange={v=>patchCompany({timezone:v})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent className="max-h-80">{ALL_TIMEZONES.map(value=><SelectItem key={value} value={value}>{timezoneLabel(value)}</SelectItem>)}</SelectContent></Select></Field>
+        <Field label="Varsayılan dil"><Select value={defaultLocale} onValueChange={locale=>s.setData({...data,locales:data.locales.map(x=>({...x,isDefault:x.locale===locale}))})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{data.locales.filter(x=>x.isActive).map(x=><SelectItem key={x.locale} value={x.locale}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
+        <Field label="Varsayılan para birimi"><Select value={defaultCurrency} onValueChange={code=>s.setData({...data,currencies:data.currencies.map(x=>({...x,isDefault:x.code===code}))})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{data.currencies.filter(x=>x.isActive).map(x=><SelectItem key={x.code} value={x.code}>{x.name} · {x.code}</SelectItem>)}</SelectContent></Select></Field>
       </div>
+    </Box>
+    <Box title="Marka & Görseller" description="Logo ve favicon alanları firma bilgilerinden ayrı tutulur.">
+      <div className="grid gap-5 xl:grid-cols-2"><LogoPicker label="Ana logo" value={company.logoUrl} onChange={v=>patchCompany({logoUrl:v})}/><LogoPicker label="Koyu zemin logosu" value={company.logoDarkUrl} onChange={v=>patchCompany({logoDarkUrl:v})}/></div>
+      <LogoPicker label="Favicon / ikon" compact value={company.faviconUrl} onChange={v=>patchCompany({faviconUrl:v})}/>
     </Box>
   </SettingsShell>;
 }
