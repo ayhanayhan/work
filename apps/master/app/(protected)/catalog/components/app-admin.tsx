@@ -78,7 +78,7 @@ export function AppAdminPage(){
         </CardContent></Card>
       </>}
     </Container>
-    {editing!==null&&data?<AppEditor key={'app-'+('id' in editing?editing.id:'new')} initial={editing as Partial<AppRow>} workspace={data} request={request} onClose={()=>setEditing(null)} onSaved={async()=>{setEditing(null);await load();setSuccess('Uygulama bilgileri ve fiyatlandırma kaydedildi.')}}/>:null}
+    {editing!==null&&data?<AppEditor key={'app-'+String((editing as AppRow).id||'new')} initial={editing as Partial<AppRow>} workspace={data} request={request} onClose={()=>setEditing(null)} onSaved={async()=>{setEditing(null);await load();setSuccess('Uygulama bilgileri ve fiyatlandırma kaydedildi.')}}/>:null}
   </>;
 }
 
