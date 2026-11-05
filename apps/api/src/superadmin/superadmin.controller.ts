@@ -30,6 +30,10 @@ export class SuperAdminController {
   @Get('platform-locales') platformLocales() { return this.svc.platformLocales(); }
   @Get('platform-settings') platformSettings() { return this.svc.platformSettings(); }
   @Patch('platform-settings') updatePlatformSettings(@Body() b:any) { return this.svc.updatePlatformSettings(b); }
+  @Get('contract-settings') contractSettings() { return this.svc.contractSettings(); }
+  @Patch('contract-settings') updateContractSettings(@Body() b:any) { return this.svc.updateContractSettings(b); }
+  @Get('auth-providers') authProviders() { return this.svc.authProviders(); }
+  @Patch('auth-providers') updateAuthProviders(@Body() b:any) { return this.svc.updateAuthProviders(b); }
   @Get('ai-services') aiServices() { return this.svc.aiServices(); }
   @Patch('ai-services') updateAiServices(@Body() b:any) { return this.svc.updateAiServices(b); }
   @Get('apps') apps() { return this.svc.apps(); }
