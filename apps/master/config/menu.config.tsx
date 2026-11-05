@@ -79,6 +79,7 @@ export const MENU_SIDEBAR: MenuConfig = [
   { title: 'Raporlar', i18nKey: 'navigation.reports', icon: TrendingUp, path: '/reports' },
   { title: 'SEO', i18nKey: 'navigation.seo', icon: FileText, path: '/seo' },
   { title: 'Destek', i18nKey: 'navigation.support', icon: LifeBuoy, path: '/support' },
+  { title: 'İletişim Mesajları', icon: FileText, path: '/contact' },
   {
     title: 'Eklentiler', i18nKey: 'navigation.extensions', icon: Plug, children: [
       { title: 'Eklenti Marketi', i18nKey: 'navigation.extension_market', path: '/extensions/market' },
