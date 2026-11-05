@@ -52,8 +52,8 @@ const groups = [
     title: 'E-posta',
     description: 'Ticarti tarafından gönderilen tüm sistem e-postalarını yönetin.',
     items: [
-      ['AWS SES Ayarları', 'Region, sender domain, from/reply-to ve SES bağlantı durumunu yönetin.', '/settings/email/ses', Send],
-      ['E-posta Ayarları', 'Varsayılan gönderici, kanal durumu, hata ve teslim politikaları.', '/settings/email', Mail],
+      ['AWS SES Ayarları', 'Mağazaların da kullandığı merkezi e-posta transportunu ve SES bağlantısını yönetin.', '/settings/email/ses', Send],
+      ['E-posta Ayarları', 'Kanal durumu, sistem dili ve teslim politikalarını yönetin.', '/settings/email', Mail],
       ['E-posta Şablonları', 'Kayıt, doğrulama, şifre, ödeme, destek ve sistem e-posta şablonları.', '/settings/email/templates', MessageSquareText],
     ],
   },
@@ -75,7 +75,7 @@ const groups = [
     items: [
       ['Bildirim Kuralları', 'Sistem olaylarını e-posta, SMS ve WhatsApp kanallarıyla eşleştirin.', '/settings/notifications', ShieldCheck],
       ['Şablon Değişkenleri', 'E-posta, SMS ve WhatsApp şablonlarında kullanılabilecek sistem değişkenleri.', '/settings/template-variables', Variable],
-      ['Test Merkezi', 'Tanımlı kanallardan test e-posta, SMS ve WhatsApp mesajı gönderin.', '/settings/message-test', WandSparkles],
+      ['Kanal Durumu', 'E-posta, SMS ve WhatsApp kanallarının merkezi yapılandırma durumunu kontrol edin.', '/settings/message-test', WandSparkles],
     ],
   },
   {
