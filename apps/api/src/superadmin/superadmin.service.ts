@@ -168,9 +168,28 @@ export class SuperAdminService {
 
   plans() { return this.prisma.plan.findMany({ orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] }); }
   createPlan(body: any) {
-    return this.prisma.plan.create({ data: { name: body.name, code: body.code, description: body.description, monthlyPrice: body.monthlyPrice || 0, yearlyPrice: body.yearlyPrice, currency: body.currency || 'TRY', trialDays: body.trialDays ?? 14, maxStaff: body.maxStaff ?? 3, maxProducts: body.maxProducts ?? 1000, maxOrdersPerMonth: body.maxOrdersPerMonth, features: body.features || {}, isActive: body.isActive ?? true, sortOrder: body.sortOrder || 0 } });
+    const rawFeatures:any=body.features&&typeof body.features==='object'&&!Array.isArray(body.features)?body.features:{};
+    const selections=Array.isArray(body.featureSelections)?body.featureSelections:[];
+    const features:any={...rawFeatures,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations&&typeof body.translations==='object'?body.translations:{},_meta:{...(rawFeatures._meta||{}),badge:String(body.badge||''),imageUrl:String(body.imageUrl||''),isFeatured:!!body.isFeatured}};
+    for(const item of selections){const code=String(item.code||'').trim();if(code)features[code]=item.enabled!==false;}
+    return this.prisma.plan.create({ data: { name: body.name, code: body.code, description: body.description, monthlyPrice: body.monthlyPrice || 0, yearlyPrice: body.yearlyPrice, currency: body.currency || 'TRY', trialDays: body.trialDays ?? 14, maxStaff: body.maxStaff ?? 3, maxProducts: body.maxProducts ?? 1000, maxOrdersPerMonth: body.maxOrdersPerMonth, features, isActive: body.isActive ?? true, sortOrder: body.sortOrder || 0 } });
   }
-  updatePlan(id: string, body: any) { return this.prisma.plan.update({ where: { id }, data: body }); }
+  async updatePlan(id: string, body: any) {
+    const current:any=await this.prisma.plan.findUnique({where:{id}});if(!current)throw new NotFoundException('Paket bulunamadı');
+    const data:any={};
+    for(const k of ['name','description','currency','trialDays','maxStaff','maxProducts','maxOrdersPerMonth','isActive','sortOrder'])if(body[k]!==undefined)data[k]=body[k];
+    if(body.monthlyPrice!==undefined)data.monthlyPrice=body.monthlyPrice||0;
+    if(body.yearlyPrice!==undefined)data.yearlyPrice=body.yearlyPrice;
+    if(body.featureSelections!==undefined||body.translations!==undefined||body.badge!==undefined||body.imageUrl!==undefined||body.isFeatured!==undefined||body.features!==undefined){
+      const old:any=current.features&&typeof current.features==='object'&&!Array.isArray(current.features)?current.features:{};
+      const incoming:any=body.features&&typeof body.features==='object'&&!Array.isArray(body.features)?body.features:{};
+      const selections=Array.isArray(body.featureSelections)?body.featureSelections:(Array.isArray(old._catalog)?old._catalog:[]);
+      const features:any={...old,...incoming,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations!==undefined?body.translations:(old._translations||{}),_meta:{...(old._meta||{}),...(incoming._meta||{}),...(body.badge!==undefined?{badge:String(body.badge||'')} :{}),...(body.imageUrl!==undefined?{imageUrl:String(body.imageUrl||'')} :{}),...(body.isFeatured!==undefined?{isFeatured:!!body.isFeatured}:{})}};
+      if(Array.isArray(body.featureSelections))for(const item of body.featureSelections){const code=String(item.code||'').trim();if(code)features[code]=item.enabled!==false;}
+      data.features=features;
+    }
+    return this.prisma.plan.update({where:{id},data});
+  }
 
 
   reservedSubdomains(){ return this.prisma.reservedSubdomain.findMany({orderBy:[{locked:'desc'},{value:'asc'}]}); }
