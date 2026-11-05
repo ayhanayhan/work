@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, FileText, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, FileText, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
 
 import { useMasterSession } from '@/app/components/MasterSession';
 import { Container } from '@/components/common/container';
@@ -40,6 +40,8 @@ export function PlatformContractsSettingsPage() {
   const [newPlacementLabel,setNewPlacementLabel] = useState('');
   const [newContentKey,setNewContentKey] = useState('');
   const [newContentLabel,setNewContentLabel] = useState('');
+  const [expandedPlacements,setExpandedPlacements] = useState<Record<string,boolean>>({});
+  const toggleExpanded=(key:string)=>setExpandedPlacements(x=>({...x,[key]:!x[key]}));
 
   useEffect(()=>{
     if(restoring) return;
@@ -112,7 +114,7 @@ export function PlatformContractsSettingsPage() {
 
     <Container className="grid gap-5 pb-10">
       <Card>
-        <CardHeader>
+        <CardHeader className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><CardHeading>Sözleşme Eşleştirmeleri</CardHeading><p className="mt-1 text-sm text-muted-foreground">Sayfa içeriği ve slug İçerik bölümünden yönetilir. Burada yalnızca hangi yasal içeriğin nerede kullanılacağını seçersiniz.</p></div>
             <Button variant="outline" onClick={addContract}><Plus className="size-4"/>Sözleşme ekle</Button>
@@ -121,20 +123,24 @@ export function PlatformContractsSettingsPage() {
         <CardContent className="grid gap-4">
           {sortedContracts.map((row)=>{
             const index=data.contracts.findIndex(x=>x===row);
-            return <div key={row.key+'-'+index} className="rounded-xl border p-4">
-              <div className="grid gap-4 xl:grid-cols-[1.1fr_1.1fr_130px_auto] xl:items-end">
+            return <div key={row.key+'-'+index} className="rounded-xl border">
+              <div className="sticky top-16 z-10 flex items-center justify-between gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur">
+                <div className="min-w-0"><div className="font-semibold">{row.label || row.key}</div><div className="text-xs text-muted-foreground">{(row.placements||[]).length} gösterim konumu seçildi</div></div>
+                <Button variant="outline" size="sm" onClick={()=>toggleExpanded(row.key)}>{expandedPlacements[row.key]?<ChevronUp className="size-4"/>:<ChevronDown className="size-4"/>}{expandedPlacements[row.key]?'Konumları gizle':'Gösterim konumları'}</Button>
+              </div>
+              <div className="grid gap-4 p-4 xl:grid-cols-[1.1fr_1.1fr_130px_auto] xl:items-end">
                 <label className="grid gap-2"><span className="text-sm font-medium">Sözleşme / politika</span><Input value={row.label} onChange={e=>patchContract(index,{label:e.target.value})}/><span className="font-mono text-[11px] text-muted-foreground">{row.key}</span></label>
                 <label className="grid gap-2"><span className="text-sm font-medium">İçerik sayfası</span><Select value={row.contentKey||'__none'} onValueChange={v=>patchContract(index,{contentKey:v==='__none'?'':v})}><SelectTrigger><SelectValue placeholder="Sayfa seçin"/></SelectTrigger><SelectContent><SelectItem value="__none">Sayfa seçilmedi</SelectItem>{data.contentOptions.map(x=><SelectItem key={x.key} value={x.key}>{x.label}</SelectItem>)}</SelectContent></Select><span className="text-[11px] text-muted-foreground">Slug ve içerik burada değiştirilmez.</span></label>
                 <label className="flex h-10 items-center gap-2 text-sm"><Switch checked={row.isActive!==false} onCheckedChange={isActive=>patchContract(index,{isActive})}/>Aktif</label>
                 <Button variant="outline" size="icon" onClick={()=>setData({...data,contracts:data.contracts.filter((_,i)=>i!==index)})}><Trash2 className="size-4"/></Button>
               </div>
 
-              <div className="mt-4 border-t pt-4">
+              {expandedPlacements[row.key]?<div className="border-t p-4">
                 <div className="mb-3 flex items-center justify-between gap-3"><div><div className="text-sm font-medium">Kullanım konumları</div><div className="text-xs text-muted-foreground">Bu sözleşmenin platformun hangi alanlarında gösterileceğini seçin.</div></div>{row.contentKey?<Badge appearance="light" variant="success">Eşlendi</Badge>:<Badge appearance="light" variant="warning">Sayfa eksik</Badge>}</div>
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {data.placementOptions.map(option=><label key={option.key} className="flex min-h-12 items-center gap-3 rounded-lg border px-3 py-2 text-sm"><Switch checked={(row.placements||[]).includes(option.key)} onCheckedChange={checked=>togglePlacement(index,option.key,checked)}/><span>{option.label}</span></label>)}
                 </div>
-              </div>
+              </div>:null}
             </div>
           })}
         </CardContent>
