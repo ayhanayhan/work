@@ -123,7 +123,29 @@ const LANGUAGE_CATALOG = [
 
 const CURRENCY_CATALOG = [
   ['TRY', 'Türk Lirası', '₺', 'BEFORE'],
-  ['USD', 'US Dollar', 'const TIMEZONES = [
+  ['USD', 'US Dollar', '$', 'BEFORE'],
+  ['EUR', 'Euro', '€', 'AFTER'],
+  ['GBP', 'British Pound', '£', 'BEFORE'],
+  ['BGN', 'Bulgar Levası', 'лв', 'AFTER'],
+  ['RON', 'Rumen Leyi', 'lei', 'AFTER'],
+  ['RUB', 'Rus Rublesi', '₽', 'AFTER'],
+  ['AZN', 'Azerbaycan Manatı', '₼', 'AFTER'],
+  ['CHF', 'İsviçre Frangı', 'CHF', 'AFTER'],
+  ['PLN', 'Polonya Zlotisi', 'zł', 'AFTER'],
+  ['AED', 'BAE Dirhemi', 'د.إ', 'AFTER'],
+  ['SAR', 'Suudi Riyali', '﷼', 'AFTER'],
+  ['CAD', 'Kanada Doları', 'C$', 'BEFORE'],
+  ['AUD', 'Avustralya Doları', 'A$', 'BEFORE'],
+  ['JPY', 'Japon Yeni', '¥', 'BEFORE'],
+  ['CNY', 'Çin Yuanı', '¥', 'BEFORE'],
+  ['SEK', 'İsveç Kronu', 'kr', 'AFTER'],
+  ['NOK', 'Norveç Kronu', 'kr', 'AFTER'],
+  ['DKK', 'Danimarka Kronu', 'kr', 'AFTER'],
+  ['CZK', 'Çek Korunası', 'Kč', 'AFTER'],
+  ['HUF', 'Macar Forinti', 'Ft', 'AFTER'],
+] as const;
+
+const TIMEZONES = [
   ['Europe/Istanbul', 'İstanbul (UTC+3)'],
   ['Europe/London', 'Londra'],
   ['Europe/Berlin', 'Berlin'],
