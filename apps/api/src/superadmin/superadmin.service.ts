@@ -99,6 +99,73 @@ export class SuperAdminService {
     });
   }
 
+  private defaultPlanFeatureCatalog(){
+    return {
+      categories:[
+        {id:'marketing',code:'MARKETING',isActive:true,sortOrder:10,translations:{tr:{title:'Pazarlama',description:'Satış ve müşteri iletişimi özellikleri.'},en:{title:'Marketing',description:'Sales and customer communication features.'}}},
+        {id:'commerce',code:'COMMERCE',isActive:true,sortOrder:20,translations:{tr:{title:'E-ticaret',description:'Mağaza ve satış operasyonu özellikleri.'},en:{title:'Commerce',description:'Store and commerce capabilities.'}}},
+        {id:'support',code:'SUPPORT',isActive:true,sortOrder:30,translations:{tr:{title:'Destek',description:'Destek ve hizmet seviyesi özellikleri.'},en:{title:'Support',description:'Support and service level capabilities.'}}},
+      ],
+      features:[
+        {id:'promotions',code:'promotions',categoryId:'marketing',valueType:'BOOLEAN',isActive:true,isPageEnabled:true,sortOrder:10,imageUrl:'',translations:{tr:{title:'Promosyonlar',subtitle:'Gelişmiş kampanya yönetimi',slug:'promosyonlar',description:'İndirim ve kampanyalarınızı esnek koşullarla yönetin.',body:'',seoTitle:'Promosyon Yönetimi | Ticarti',seoDescription:'Ticarti promosyon ve kampanya özellikleri.'},en:{title:'Promotions',subtitle:'Advanced campaign management',slug:'promotions',description:'Manage discounts and campaigns with flexible rules.',body:'',seoTitle:'Promotions | Ticarti',seoDescription:'Ticarti promotion and campaign features.'}}},
+        {id:'email-marketing',code:'marketing',categoryId:'marketing',valueType:'TEXT',isActive:true,isPageEnabled:true,sortOrder:20,imageUrl:'',translations:{tr:{title:'E-posta Pazarlama',subtitle:'Müşterilerinize doğru zamanda ulaşın',slug:'e-posta-pazarlama',description:'Kampanya ve otomasyon e-postalarını tek merkezden yönetin.',body:'',seoTitle:'E-posta Pazarlama | Ticarti',seoDescription:'Ticarti e-posta pazarlama özellikleri.'},en:{title:'Email Marketing',subtitle:'Reach customers at the right time',slug:'email-marketing',description:'Manage campaigns and automated emails centrally.',body:'',seoTitle:'Email Marketing | Ticarti',seoDescription:'Ticarti email marketing features.'}}},
+        {id:'multi-currency',code:'multiCurrency',categoryId:'commerce',valueType:'TEXT',isActive:true,isPageEnabled:true,sortOrder:10,imageUrl:'',translations:{tr:{title:'Çoklu Para Birimi',subtitle:'Global satışa hazır',slug:'coklu-para-birimi',description:'Mağazanızda birden fazla para birimiyle satış yapın.',body:'',seoTitle:'Çoklu Para Birimi | Ticarti',seoDescription:'Ticarti çoklu para birimi özellikleri.'},en:{title:'Multi Currency',subtitle:'Ready for global commerce',slug:'multi-currency',description:'Sell using multiple currencies.',body:'',seoTitle:'Multi Currency | Ticarti',seoDescription:'Ticarti multi-currency capabilities.'}}},
+        {id:'priority-support',code:'prioritySupport',categoryId:'support',valueType:'TEXT',isActive:true,isPageEnabled:true,sortOrder:10,imageUrl:'',translations:{tr:{title:'Öncelikli Destek',subtitle:'Daha hızlı destek erişimi',slug:'oncelikli-destek',description:'İhtiyacınız olduğunda öncelikli destek alın.',body:'',seoTitle:'Öncelikli Destek | Ticarti',seoDescription:'Ticarti öncelikli destek hizmeti.'},en:{title:'Priority Support',subtitle:'Faster support access',slug:'priority-support',description:'Get priority support when you need it.',body:'',seoTitle:'Priority Support | Ticarti',seoDescription:'Ticarti priority support service.'}}},
+      ]
+    };
+  }
+
+  async planFeatureCatalog(){
+    const [row,platform]:any=await Promise.all([
+      (this.prisma as any).platformSetting.findUnique({where:{key:'plan_feature_catalog'}}),
+      this.platformSettings()
+    ]);
+    const base:any=this.defaultPlanFeatureCatalog();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    return {
+      categories:Array.isArray(value.categories)?value.categories:base.categories,
+      features:Array.isArray(value.features)?value.features:base.features,
+      locales:(platform.locales||[]).filter((x:any)=>x.isActive!==false).map((x:any)=>({locale:x.locale,label:x.label,flag:x.flag||'',isDefault:!!x.isDefault})),
+    };
+  }
+
+  async updatePlanFeatureCatalog(body:any){
+    const current:any=await this.planFeatureCatalog();
+    const locales=new Set((current.locales||[]).map((x:any)=>String(x.locale)));
+    const cleanTranslations=(raw:any,fields:string[])=>{
+      const out:any={};const source=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+      for(const [locale,row] of Object.entries(source)){if(!locales.has(String(locale)))continue;const v:any=row||{};out[String(locale)]={};for(const f of fields)out[String(locale)][f]=String(v[f]||'');}
+      return out;
+    };
+    const categories=(Array.isArray(body?.categories)?body.categories:current.categories).slice(0,100).map((x:any,i:number)=>({
+      id:String(x.id||x.code||'category-'+i).trim().toLowerCase().replace(/[^a-z0-9_-]+/g,'-'),
+      code:String(x.code||x.id||'CATEGORY_'+i).trim().toUpperCase().replace(/[^A-Z0-9_]+/g,'_'),
+      isActive:x.isActive!==false,
+      sortOrder:Number(x.sortOrder??i),
+      translations:cleanTranslations(x.translations,['title','description']),
+    })).filter((x:any)=>x.id);
+    const categoryIds=new Set(categories.map((x:any)=>x.id));
+    const features=(Array.isArray(body?.features)?body.features:current.features).slice(0,500).map((x:any,i:number)=>({
+      id:String(x.id||x.code||'feature-'+i).trim().toLowerCase().replace(/[^a-z0-9_-]+/g,'-'),
+      code:String(x.code||x.id||'feature_'+i).trim().replace(/[^A-Za-z0-9_]+/g,'_'),
+      categoryId:categoryIds.has(String(x.categoryId))?String(x.categoryId):categories[0]?.id||'',
+      valueType:['BOOLEAN','TEXT','NUMBER'].includes(String(x.valueType||'').toUpperCase())?String(x.valueType).toUpperCase():'TEXT',
+      isActive:x.isActive!==false,
+      isPageEnabled:x.isPageEnabled!==false,
+      sortOrder:Number(x.sortOrder??i),
+      imageUrl:String(x.imageUrl||'').trim(),
+      translations:cleanTranslations(x.translations,['title','subtitle','slug','description','body','seoTitle','seoDescription']),
+    })).filter((x:any)=>x.id&&x.code);
+    const value={categories,features};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'plan_feature_catalog'},create:{key:'plan_feature_catalog',value},update:{value}});
+    return this.planFeatureCatalog();
+  }
+
+  async planWorkspace(){
+    const [plans,catalog,platform]:any=await Promise.all([this.plans(),this.planFeatureCatalog(),this.platformSettings()]);
+    return {plans,categories:catalog.categories,features:catalog.features,locales:catalog.locales,currencies:(platform.currencies||[]).filter((x:any)=>x.isActive!==false)};
+  }
+
   plans() { return this.prisma.plan.findMany({ orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] }); }
   createPlan(body: any) {
     return this.prisma.plan.create({ data: { name: body.name, code: body.code, description: body.description, monthlyPrice: body.monthlyPrice || 0, yearlyPrice: body.yearlyPrice, currency: body.currency || 'TRY', trialDays: body.trialDays ?? 14, maxStaff: body.maxStaff ?? 3, maxProducts: body.maxProducts ?? 1000, maxOrdersPerMonth: body.maxOrdersPerMonth, features: body.features || {}, isActive: body.isActive ?? true, sortOrder: body.sortOrder || 0 } });
