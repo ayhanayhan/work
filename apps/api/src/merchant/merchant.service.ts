@@ -673,7 +673,12 @@ export class MerchantService {
 
   async storeSettings(tenantId: string, storeId: string) {
     await this.assertStore(tenantId, storeId);
-    return this.prisma.tenant.findUnique({ where: { id: storeId }, include: { addresses: { orderBy: [{ isDefault: 'desc' }, { label: 'asc' }] }, currencies: { orderBy: [{ isDefault: 'desc' }, { code: 'asc' }] }, locales: { orderBy: [{ isDefault: 'desc' }, { sortOrder: 'asc' }] }, checkoutConfig: true, legalDocuments: { orderBy: { updatedAt: 'desc' } } } });
+    const [store,communicationRow]:any=await Promise.all([
+      this.prisma.tenant.findUnique({ where: { id: storeId }, include: { addresses: { orderBy: [{ isDefault: 'desc' }, { label: 'asc' }] }, currencies: { orderBy: [{ isDefault: 'desc' }, { code: 'asc' }] }, locales: { orderBy: [{ isDefault: 'desc' }, { sortOrder: 'asc' }] }, checkoutConfig: true, legalDocuments: { orderBy: { updatedAt: 'desc' } } } }),
+      (this.prisma as any).platformSetting.findUnique({where:{key:'communication_settings'}})
+    ]);
+    const platformEmail:any=communicationRow?.value?.email||{};
+    return {...store,platformEmailTransport:{provider:'AWS_SES',enabled:platformEmail.enabled!==false,region:String(platformEmail.region||'eu-central-1'),senderDomain:String(platformEmail.senderDomain||''),defaultFromName:String(platformEmail.defaultFromName||'Ticarti'),defaultFromEmail:String(platformEmail.defaultFromEmail||''),defaultReplyTo:String(platformEmail.defaultReplyTo||''),defaultLocale:String(platformEmail.defaultLocale||'tr')}};
   }
   async contractSettings(tenantId:string,storeId:string){
     const store=await this.assertStore(tenantId,storeId);const settings:any=store.settings||{};return{mappings:settings.contractPages||{}};
