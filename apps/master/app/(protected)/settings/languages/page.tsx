@@ -1,3 +1,3 @@
-import { LanguagesPage } from '../components/platform-settings-ui';
+import { PlatformLanguagesPage } from '../components/platform-core-settings';
 
-export default function Page(){ return <LanguagesPage/>; }
+export default function Page(){ return <PlatformLanguagesPage/>; }
