@@ -169,6 +169,7 @@ export class SuperAdminService {
     return {
       company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:'',socialLinks:[]},
       locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
+      countries:[{code:'TR',name:'Türkiye',phoneCode:'+90',flag:'🇹🇷',isActive:true},{code:'DE',name:'Almanya',phoneCode:'+49',flag:'🇩🇪',isActive:true},{code:'GB',name:'Birleşik Krallık',phoneCode:'+44',flag:'🇬🇧',isActive:true}],
       currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
     };
   }
@@ -178,7 +179,8 @@ export class SuperAdminService {
     const base=this.defaultPlatformSettings();const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
     const locales=(Array.isArray(value.locales)&&value.locales.length?value.locales:base.locales).map((x:any)=>({...x,flag:String(x.flag||'')}));
     const currencies=(Array.isArray(value.currencies)&&value.currencies.length?value.currencies:base.currencies).map((x:any)=>({...x,symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE'}));
-    return {...base,...value,company:{...base.company,...(value.company||{})},locales,currencies};
+    const countries=(Array.isArray(value.countries)&&value.countries.length?value.countries:base.countries).map((x:any)=>({...x,code:String(x.code||'').toUpperCase(),flag:String(x.flag||'')}));
+    return {...base,...value,company:{...base.company,...(value.company||{})},locales,currencies,countries};
   }
 
   async updatePlatformSettings(body:any){
@@ -190,7 +192,8 @@ export class SuperAdminService {
     if(!currencies.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif para birimi gerekli');
     let localeDefaultSeen=false;for(const x of locales){if(x.isDefault&&x.isActive&&!localeDefaultSeen)localeDefaultSeen=true;else x.isDefault=false;}if(!localeDefaultSeen){const x=locales.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
     let currencyDefaultSeen=false;for(const x of currencies){if(x.isDefault&&x.isActive&&!currencyDefaultSeen)currencyDefaultSeen=true;else x.isDefault=false;}if(!currencyDefaultSeen){const x=currencies.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
-    const value={company,locales,currencies};
+    const countries=(Array.isArray(body?.countries)?body.countries:current.countries||[]).slice(0,250).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),phoneCode:String(x.phoneCode||'').trim(),flag:String(x.flag||'').trim(),isActive:x.isActive!==false,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
+    const value={company,locales,currencies,countries};
     await (this.prisma as any).platformSetting.upsert({where:{key:'general'},create:{key:'general',value},update:{value}});
     return value;
   }
