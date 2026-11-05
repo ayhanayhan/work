@@ -1,3 +1,3 @@
-import { SesSettingsPage } from '../../components/platform-settings-ui';
+import { PlatformSesSettingsPage } from '../../components/communication-settings';
 
-export default function Page(){ return <SesSettingsPage/>; }
+export default function Page(){ return <PlatformSesSettingsPage/>; }
