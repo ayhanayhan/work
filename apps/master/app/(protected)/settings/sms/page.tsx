@@ -1,3 +1,3 @@
-import { SmsSettingsPage } from '../components/platform-settings-ui';
+import { PlatformSmsSettingsPage } from '../components/communication-settings';
 
-export default function Page(){ return <SmsSettingsPage/>; }
+export default function Page(){ return <PlatformSmsSettingsPage/>; }
