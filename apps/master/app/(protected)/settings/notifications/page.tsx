@@ -1,2 +1,3 @@
-import { SettingsPage } from '../components/settings-page';
-export default function Page(){ return <SettingsPage section="notifications"/>; }
+import { NotificationRulesPage } from '../components/platform-settings-ui';
+
+export default function Page(){ return <NotificationRulesPage/>; }
