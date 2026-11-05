@@ -167,7 +167,7 @@ export class SuperAdminService {
 
   private defaultPlatformSettings(){
     return {
-      company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:''},
+      company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:''},
       locales:[{locale:'tr',label:'Türkçe',isActive:true,isDefault:true},{locale:'en',label:'English',isActive:true,isDefault:false}],
       currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',isActive:true,isDefault:false}]
     };
@@ -181,7 +181,7 @@ export class SuperAdminService {
 
   async updatePlatformSettings(body:any){
     const current=await this.platformSettings();
-    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();
+    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();
     const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,50).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim(),label:String(x.label||x.name||x.locale||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
     const currencies=(Array.isArray(body?.currencies)?body.currencies:current.currencies).slice(0,50).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),symbol:String(x.symbol||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
     if(!locales.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif dil gerekli');
