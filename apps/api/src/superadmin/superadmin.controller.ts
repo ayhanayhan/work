@@ -20,6 +20,9 @@ export class SuperAdminController {
   @Get('currency-rates') currencyRates() { return this.svc.currencyRates(); }
   @Post('currency-rates/refresh') refreshCurrencyRates(@Body() b:any) { return this.svc.refreshCurrencyRates(b); }
   @Get('plans') plans() { return this.svc.plans(); }
+  @Get('plan-workspace') planWorkspace() { return this.svc.planWorkspace(); }
+  @Get('plan-feature-catalog') planFeatureCatalog() { return this.svc.planFeatureCatalog(); }
+  @Patch('plan-feature-catalog') updatePlanFeatureCatalog(@Body() b:any) { return this.svc.updatePlanFeatureCatalog(b); }
   @Post('plans') createPlan(@Body() b: any) { return this.svc.createPlan(b); }
   @Patch('plans/:id') updatePlan(@Param('id') id: string, @Body() b: any) { return this.svc.updatePlan(id, b); }
   @Get('reserved-subdomains') reservedSubdomains() { return this.svc.reservedSubdomains(); }
