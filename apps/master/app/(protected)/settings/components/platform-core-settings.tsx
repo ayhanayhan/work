@@ -48,6 +48,15 @@ type PlatformCurrency = {
   sortOrder?: number;
 };
 
+type PlatformCountry = {
+  code: string;
+  name: string;
+  phoneCode: string;
+  flag?: string;
+  isActive: boolean;
+  sortOrder?: number;
+};
+
 type PlatformCompany = {
   name?: string;
   legalName?: string;
@@ -68,6 +77,7 @@ type PlatformSettings = {
   company: PlatformCompany;
   locales: PlatformLocale[];
   currencies: PlatformCurrency[];
+  countries: PlatformCountry[];
 };
 
 const LANGUAGE_CATALOG = [
@@ -144,6 +154,10 @@ const CURRENCY_CATALOG = [
   ['DKK', 'Danimarka Kronu', 'kr', 'AFTER'],
   ['CZK', 'Çek Korunası', 'Kč', 'AFTER'],
   ['HUF', 'Macar Forinti', 'Ft', 'AFTER'],
+] as const;
+
+const COUNTRY_CATALOG = [
+  ['TR','Türkiye','+90','🇹🇷'],['DE','Almanya','+49','🇩🇪'],['GB','Birleşik Krallık','+44','🇬🇧'],['US','Amerika Birleşik Devletleri','+1','🇺🇸'],['BG','Bulgaristan','+359','🇧🇬'],['RO','Romanya','+40','🇷🇴'],['FR','Fransa','+33','🇫🇷'],['IT','İtalya','+39','🇮🇹'],['ES','İspanya','+34','🇪🇸'],['PT','Portekiz','+351','🇵🇹'],['NL','Hollanda','+31','🇳🇱'],['BE','Belçika','+32','🇧🇪'],['CH','İsviçre','+41','🇨🇭'],['AT','Avusturya','+43','🇦🇹'],['PL','Polonya','+48','🇵🇱'],['CZ','Çekya','+420','🇨🇿'],['HU','Macaristan','+36','🇭🇺'],['GR','Yunanistan','+30','🇬🇷'],['SE','İsveç','+46','🇸🇪'],['NO','Norveç','+47','🇳🇴'],['DK','Danimarka','+45','🇩🇰'],['FI','Finlandiya','+358','🇫🇮'],['RS','Sırbistan','+381','🇷🇸'],['BA','Bosna-Hersek','+387','🇧🇦'],['AL','Arnavutluk','+355','🇦🇱'],['MK','Kuzey Makedonya','+389','🇲🇰'],['AZ','Azerbaycan','+994','🇦🇿'],['GE','Gürcistan','+995','🇬🇪'],['AE','Birleşik Arap Emirlikleri','+971','🇦🇪'],['SA','Suudi Arabistan','+966','🇸🇦'],['QA','Katar','+974','🇶🇦'],['IL','İsrail','+972','🇮🇱'],['RU','Rusya','+7','🇷🇺'],['UA','Ukrayna','+380','🇺🇦'],['CN','Çin','+86','🇨🇳'],['JP','Japonya','+81','🇯🇵'],['KR','Güney Kore','+82','🇰🇷'],['IN','Hindistan','+91','🇮🇳'],['AU','Avustralya','+61','🇦🇺'],['CA','Kanada','+1','🇨🇦'],
 ] as const;
 
 const SOCIAL_PLATFORMS = [
@@ -472,5 +486,26 @@ export function PlatformCurrenciesPage() {
         </div>)}
       </div>
     </Box>
+  </SettingsShell>;
+}
+
+
+export function PlatformCountriesPage() {
+  const s = usePlatformSettings();
+  const [candidate,setCandidate]=useState('');
+  const data=s.data;
+  const available=useMemo(()=>COUNTRY_CATALOG.filter(([code])=>!data?.countries?.some(x=>x.code===code)),[data]);
+  if(!data)return <div className="grid min-h-[60vh] place-items-center"><LoaderCircle className="animate-spin"/></div>;
+  const add=()=>{const hit=COUNTRY_CATALOG.find(([code])=>code===candidate);if(!hit)return;s.setData({...data,countries:[...(data.countries||[]),{code:hit[0],name:hit[1],phoneCode:hit[2],flag:hit[3],isActive:true,sortOrder:(data.countries||[]).length}]});setCandidate('')};
+  return <SettingsShell title="Ülkeler" description="Kayıt ve iletişim alanlarında kullanılabilecek ülkeleri merkezi olarak yönetin." icon={Globe2} busy={s.busy} message={s.message} onSave={s.save}>
+    <Box title="Ülke ekle"><div className="flex flex-col gap-3 md:flex-row"><Select value={candidate} onValueChange={setCandidate}><SelectTrigger className="md:max-w-sm"><SelectValue placeholder="Ülke seçin"/></SelectTrigger><SelectContent>{available.map(([code,name,,flag])=><SelectItem key={code} value={code}>{flag} {name} · {code}</SelectItem>)}</SelectContent></Select><Button variant="outline" onClick={add} disabled={!candidate}><Plus className="size-4"/>Ülke ekle</Button></div></Box>
+    <Box title="Tanımlı Ülkeler"><div className="grid gap-3">{(data.countries||[]).map((row,index)=><div key={row.code+'-'+index} className="grid gap-3 rounded-lg border p-4 lg:grid-cols-[90px_1fr_120px_140px_120px_auto] lg:items-end">
+      <Field label="Bayrak"><Input value={row.flag||''} className="text-center text-xl" onChange={e=>s.setData({...data,countries:data.countries.map((x,i)=>i===index?{...x,flag:e.target.value}:x)})}/></Field>
+      <Field label="Ülke"><Input value={row.name} onChange={e=>s.setData({...data,countries:data.countries.map((x,i)=>i===index?{...x,name:e.target.value}:x)})}/></Field>
+      <Field label="ISO"><Input value={row.code} onChange={e=>s.setData({...data,countries:data.countries.map((x,i)=>i===index?{...x,code:e.target.value.toUpperCase()}:x)})}/></Field>
+      <Field label="Telefon kodu"><Input value={row.phoneCode} onChange={e=>s.setData({...data,countries:data.countries.map((x,i)=>i===index?{...x,phoneCode:e.target.value}:x)})}/></Field>
+      <label className="flex h-10 items-center gap-2 text-sm"><Switch checked={row.isActive!==false} onCheckedChange={isActive=>s.setData({...data,countries:data.countries.map((x,i)=>i===index?{...x,isActive}:x)})}/>Aktif</label>
+      <Button variant="outline" size="icon" onClick={()=>s.setData({...data,countries:data.countries.filter((_,i)=>i!==index)})}><Trash2 className="size-4"/></Button>
+    </div>)}</div></Box>
   </SettingsShell>;
 }
