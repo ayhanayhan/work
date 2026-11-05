@@ -1,5 +1,3 @@
-import { ProductsPageClient } from './components/products-page-client';
+import { PackagesListPage } from './components/package-manager';
 
-export default function ProductsPage(){
-  return <ProductsPageClient />;
-}
+export default function Page(){ return <PackagesListPage/>; }
