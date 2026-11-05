@@ -72,7 +72,11 @@ export function PackageEditorPage({planId}:{planId?:string}){
   if(w.loading||!form)return <div className="grid min-h-[65vh] place-items-center"><LoaderCircle className="animate-spin"/></div>;
   if(!w.data)return <div className="p-6 text-destructive">{w.error||'Paket bilgileri alınamadı.'}</div>;
   const locales=w.data.locales;const def=locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'tr';
-  const selectedMap=new Map((form.featureSelections||[]).map((x:any)=>[String(x.featureId),x]));
+  const selectedMap = new Map<string, { value?: string }>(
+    (form.featureSelections || []).map(
+      (x: any): [string, { value?: string }] => [String(x.featureId), x]
+    )
+  );
   const patch=(k:string,v:any)=>setForm((x:any)=>({...x,[k]:v}));
   const patchTranslation=(locale:string,k:string,v:string)=>setForm((x:any)=>({...x,translations:{...x.translations,[locale]:{...(x.translations?.[locale]||{}),[k]:v}}}));
   const toggleFeature=(feature:Feature,enabled:boolean)=>{const rows=(form.featureSelections||[]).filter((x:any)=>String(x.featureId)!==feature.id);if(enabled)rows.push({featureId:feature.id,code:feature.code,enabled:true,value:''});patch('featureSelections',rows)};
