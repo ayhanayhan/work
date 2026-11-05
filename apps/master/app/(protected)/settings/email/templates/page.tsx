@@ -1,3 +1,3 @@
-import { EmailTemplatesPage } from '../../components/platform-settings-ui';
+import { PlatformEmailTemplatesPage } from '../../components/communication-settings';
 
-export default function Page(){ return <EmailTemplatesPage/>; }
+export default function Page(){ return <PlatformEmailTemplatesPage/>; }
