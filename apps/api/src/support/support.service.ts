@@ -6,7 +6,7 @@ export class SupportService {
   constructor(private prisma: PrismaService) {}
 
   async listTenant(tenantId: string) {
-    return this.prisma.supportTicket.findMany({ where: { tenantId }, include: { messages: { orderBy: { createdAt: 'asc' } } }, orderBy: { updatedAt: 'desc' } });
+    return this.prisma.supportTicket.findMany({ where: { tenantId }, include: { messages: { where: { isInternal: false }, orderBy: { createdAt: 'asc' } } }, orderBy: { updatedAt: 'desc' } });
   }
   async create(tenantId: string, userId: string, body: any) {
     if (body.storeId && body.storeId !== tenantId) throw new ForbiddenException('Site does not belong to tenant');
