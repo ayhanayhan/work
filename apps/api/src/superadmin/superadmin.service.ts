@@ -167,24 +167,61 @@ export class SuperAdminService {
   }
 
   plans() { return this.prisma.plan.findMany({ orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] }); }
+  private normalizePlanPricing(body:any,current?:any){
+    const oldFeatures:any=current?.features&&typeof current.features==='object'&&!Array.isArray(current.features)?current.features:{};
+    const fallback=[
+      {period:'MONTHLY',label:'Aylık',enabled:Number(current?.monthlyPrice||0)>0,price:Number(current?.monthlyPrice||0),salePrice:null,saleStartAt:'',saleEndAt:''},
+      {period:'YEARLY',label:'Yıllık',enabled:current?.yearlyPrice!==null&&current?.yearlyPrice!==undefined&&Number(current?.yearlyPrice||0)>0,price:Number(current?.yearlyPrice||0),salePrice:null,saleStartAt:'',saleEndAt:''},
+    ];
+    const source=Array.isArray(body?.pricingPeriods)?body.pricingPeriods:(Array.isArray(oldFeatures?._pricing)?oldFeatures._pricing:fallback);
+    const allowed=new Set(['MONTHLY','YEARLY']);
+    const rows=source.map((x:any)=>({
+      period:String(x.period||'').toUpperCase(),
+      label:String(x.label||'').trim(),
+      enabled:x.enabled===true,
+      price:Math.max(0,Number(x.price||0)),
+      salePrice:x.salePrice===null||x.salePrice===undefined||x.salePrice===''?null:Math.max(0,Number(x.salePrice)),
+      saleStartAt:String(x.saleStartAt||'').trim(),
+      saleEndAt:String(x.saleEndAt||'').trim(),
+    })).filter((x:any)=>allowed.has(x.period));
+    for(const period of ['MONTHLY','YEARLY'])if(!rows.some((x:any)=>x.period===period))rows.push({period,label:period==='MONTHLY'?'Aylık':'Yıllık',enabled:false,price:0,salePrice:null,saleStartAt:'',saleEndAt:''});
+    return rows;
+  }
+
   createPlan(body: any) {
     const rawFeatures:any=body.features&&typeof body.features==='object'&&!Array.isArray(body.features)?body.features:{};
     const selections=Array.isArray(body.featureSelections)?body.featureSelections:[];
-    const features:any={...rawFeatures,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations&&typeof body.translations==='object'?body.translations:{},_meta:{...(rawFeatures._meta||{}),badge:String(body.badge||''),imageUrl:String(body.imageUrl||''),isFeatured:!!body.isFeatured,frontendVisible:body.frontendVisible!==false,vatIncluded:body.vatIncluded!==false,yearlyOnly:body.yearlyOnly!==false}};
+    const pricing=this.normalizePlanPricing(body);
+    const monthly=pricing.find((x:any)=>x.period==='MONTHLY');
+    const yearly=pricing.find((x:any)=>x.period==='YEARLY');
+    const yearlyOnly=!!yearly?.enabled&&!monthly?.enabled;
+    const features:any={...rawFeatures,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations&&typeof body.translations==='object'?body.translations:{},_pricing:pricing,_meta:{...(rawFeatures._meta||{}),imageUrl:String(body.imageUrl||''),isFeatured:!!body.isFeatured,frontendVisible:body.frontendVisible!==false,vatIncluded:body.vatIncluded!==false,yearlyOnly}};
     for(const item of selections){const code=String(item.code||'').trim();if(code)features[code]=item.enabled!==false;}
-    return this.prisma.plan.create({ data: { name: body.name, code: body.code, description: body.description, monthlyPrice: body.monthlyPrice || 0, yearlyPrice: body.yearlyPrice, currency: body.currency || 'TRY', trialDays: body.trialDays ?? 14, maxStaff: body.maxStaff ?? 3, maxProducts: body.maxProducts ?? 1000, maxOrdersPerMonth: body.maxOrdersPerMonth, features, isActive: body.isActive ?? true, sortOrder: body.sortOrder || 0 } });
+    return this.prisma.plan.create({ data: { name: body.name, code: body.code, description: body.description, monthlyPrice: monthly?.enabled?monthly.price:0, yearlyPrice: yearly?.enabled?yearly.price:null, currency: body.currency || 'TRY', trialDays: body.trialDays ?? 14, maxStaff: body.maxStaff ?? 3, maxProducts: body.maxProducts ?? 1000, maxOrdersPerMonth: body.maxOrdersPerMonth, features, isActive: body.isActive ?? true, sortOrder: body.sortOrder || 0 } });
   }
+
   async updatePlan(id: string, body: any) {
     const current:any=await this.prisma.plan.findUnique({where:{id}});if(!current)throw new NotFoundException('Paket bulunamadı');
     const data:any={};
     for(const k of ['name','description','currency','trialDays','maxStaff','maxProducts','maxOrdersPerMonth','isActive','sortOrder'])if(body[k]!==undefined)data[k]=body[k];
-    if(body.monthlyPrice!==undefined)data.monthlyPrice=body.monthlyPrice||0;
-    if(body.yearlyPrice!==undefined)data.yearlyPrice=body.yearlyPrice;
-    if(body.featureSelections!==undefined||body.translations!==undefined||body.badge!==undefined||body.imageUrl!==undefined||body.isFeatured!==undefined||body.frontendVisible!==undefined||body.vatIncluded!==undefined||body.yearlyOnly!==undefined||body.features!==undefined){
+    const pricing=this.normalizePlanPricing(body,current);
+    if(body.pricingPeriods!==undefined){
+      const monthly=pricing.find((x:any)=>x.period==='MONTHLY');
+      const yearly=pricing.find((x:any)=>x.period==='YEARLY');
+      data.monthlyPrice=monthly?.enabled?monthly.price:0;
+      data.yearlyPrice=yearly?.enabled?yearly.price:null;
+    }else{
+      if(body.monthlyPrice!==undefined)data.monthlyPrice=body.monthlyPrice||0;
+      if(body.yearlyPrice!==undefined)data.yearlyPrice=body.yearlyPrice;
+    }
+    if(body.featureSelections!==undefined||body.translations!==undefined||body.imageUrl!==undefined||body.isFeatured!==undefined||body.frontendVisible!==undefined||body.vatIncluded!==undefined||body.pricingPeriods!==undefined||body.features!==undefined){
       const old:any=current.features&&typeof current.features==='object'&&!Array.isArray(current.features)?current.features:{};
       const incoming:any=body.features&&typeof body.features==='object'&&!Array.isArray(body.features)?body.features:{};
       const selections=Array.isArray(body.featureSelections)?body.featureSelections:(Array.isArray(old._catalog)?old._catalog:[]);
-      const features:any={...old,...incoming,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations!==undefined?body.translations:(old._translations||{}),_meta:{...(old._meta||{}),...(incoming._meta||{}),...(body.badge!==undefined?{badge:String(body.badge||'')} :{}),...(body.imageUrl!==undefined?{imageUrl:String(body.imageUrl||'')} :{}),...(body.isFeatured!==undefined?{isFeatured:!!body.isFeatured}:{}),...(body.frontendVisible!==undefined?{frontendVisible:!!body.frontendVisible}:{}),...(body.vatIncluded!==undefined?{vatIncluded:!!body.vatIncluded}:{}),...(body.yearlyOnly!==undefined?{yearlyOnly:!!body.yearlyOnly}:{})}};
+      const monthly=pricing.find((x:any)=>x.period==='MONTHLY');
+      const yearly=pricing.find((x:any)=>x.period==='YEARLY');
+      const yearlyOnly=!!yearly?.enabled&&!monthly?.enabled;
+      const features:any={...old,...incoming,_catalog:selections.map((x:any)=>({featureId:String(x.featureId||''),enabled:x.enabled!==false,value:x.value===undefined||x.value===null?'':String(x.value)})).filter((x:any)=>x.featureId),_translations:body.translations!==undefined?body.translations:(old._translations||{}),_pricing:pricing,_meta:{...(old._meta||{}),...(incoming._meta||{}),...(body.imageUrl!==undefined?{imageUrl:String(body.imageUrl||'')} :{}),...(body.isFeatured!==undefined?{isFeatured:!!body.isFeatured}:{}),...(body.frontendVisible!==undefined?{frontendVisible:!!body.frontendVisible}:{}),...(body.vatIncluded!==undefined?{vatIncluded:!!body.vatIncluded}:{}),yearlyOnly}};
       if(Array.isArray(body.featureSelections))for(const item of body.featureSelections){const code=String(item.code||'').trim();if(code)features[code]=item.enabled!==false;}
       data.features=features;
     }
