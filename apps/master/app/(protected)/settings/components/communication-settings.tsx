@@ -70,10 +70,11 @@ function useCommunication(){
   const[msg,setMsg]=useState('');
   const[err,setErr]=useState('');
   useEffect(()=>{if(restoring)return;void request('/superadmin/communication-settings').then(setData).catch((e:any)=>setErr(e.message||'Ayarlar alınamadı.'))},[request,restoring]);
-  async function save(){
-    if(!data)return;
+  async function save(override?:CommunicationState){
+    const payload=override||data;
+    if(!payload)return;
     setBusy(true);setMsg('');setErr('');
-    try{const next=await request('/superadmin/communication-settings',{method:'PATCH',body:JSON.stringify(data)});setData(next);setMsg('Ayarlar kaydedildi.');window.setTimeout(()=>setMsg(''),2200)}
+    try{const next=await request('/superadmin/communication-settings',{method:'PATCH',body:JSON.stringify(payload)});setData(next);setMsg('Ayarlar kaydedildi.');window.setTimeout(()=>setMsg(''),2200)}
     catch(e:any){setErr(e.message||'Kaydedilemedi.')}finally{setBusy(false)}
   }
   return{data,setData,busy,msg,err,save};
@@ -151,7 +152,7 @@ function TemplatesPage({channel}:{channel:'email'|'sms'|'whatsapp'}){
   const patchText=(key:'subject'|'body',value:string)=>patch({translations:{...current.translations,[locale]:{...text,[key]:value}}});
   const title=channel==='email'?'E-posta Şablonları':channel==='sms'?'SMS Şablonları':'WhatsApp Şablonları';
   const Icon=channel==='email'?Mail:channel==='sms'?MessageSquareText:MessageCircle;
-  return <Shell title={title} description="Şablon dilleri merkezi Dil Ayarları'ndan otomatik gelir." icon={Icon} busy={s.busy} msg={s.msg} err={s.err} onSave={()=>{persist(templates);void s.save()}}>
+  return <Shell title={title} description="Şablon dilleri merkezi Dil Ayarları'ndan otomatik gelir." icon={Icon} busy={s.busy} msg={s.msg} err={s.err} onSave={()=>void s.save({...data,templates:{...data.templates,[channel]:templates}})}>
     <div className="grid gap-5 lg:grid-cols-[290px_1fr]">
       <Card><CardHeader><CardHeading>Şablonlar</CardHeading></CardHeader><CardContent className="grid gap-1 p-2">{templates.map(x=><button key={x.event} type="button" onClick={()=>setSelected(x.event)} className={'flex items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm '+(current?.event===x.event?'bg-muted font-medium':'hover:bg-muted/60')}><span>{x.name}</span>{x.enabled?<Badge appearance="light" variant="success">Aktif</Badge>:null}</button>)}</CardContent></Card>
       {current?<Box title={current.name}>
