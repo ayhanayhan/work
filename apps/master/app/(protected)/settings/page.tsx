@@ -4,7 +4,6 @@ import Link from 'next/link';
 import {
   Bot,
   Braces,
-  Building2,
   ChevronRight,
   FileText,
   Globe2,
@@ -33,7 +32,7 @@ const groups = [
     title: 'Genel Tanımlar',
     description: 'Ticarti platformunun temel sistem ve kurumsal tanımları.',
     items: [
-      ['Genel Ayarlar', 'Platform adı, şirket bilgileri, destek kanalları ve temel sistem tanımları.', '/settings/general', Settings],
+      ['Genel Ayarlar', 'Firma bilgileri, marka görselleri ve platform varsayılanlarını yönetin.', '/settings/general', Settings],
       ['Dil Ayarları', 'Platformda kullanılabilecek dilleri, varsayılan dili ve aktiflik durumunu yönetin.', '/settings/languages', Languages],
       ['Para Birimleri', 'Desteklenen para birimleri, semboller, formatlar ve varsayılan para birimi.', '/settings/currencies', WalletCards],
       ['Ülkeler', 'Ülke, ISO kodu, telefon kodu ve aktif/pasif ülke tanımları.', '/settings/countries', Globe2],
@@ -45,7 +44,6 @@ const groups = [
     description: 'Ticarti kullanıcılarının onaylayacağı merkezi sözleşme ve metinler.',
     items: [
       ['Sözleşme Tanımları', 'KVKK, gizlilik, kullanım koşulları, abonelik ve diğer yasal metinleri versiyonlayın.', '/settings/contracts', FileText],
-      ['Şirket & Yasal Kimlik', 'Ticarti şirket unvanı, adres, vergi ve yasal footer bilgileri.', '/settings/legal-identity', Building2],
     ],
   },
   {
