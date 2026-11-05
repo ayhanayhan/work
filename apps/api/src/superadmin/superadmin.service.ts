@@ -168,8 +168,284 @@ export class SuperAdminService {
   private defaultPlatformSettings(){
     return {
       company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:''},
-      locales:[{locale:'tr',label:'Türkçe',isActive:true,isDefault:true},{locale:'en',label:'English',isActive:true,isDefault:false}],
-      currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',isActive:true,isDefault:false}]
+      locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
+      currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'
+    };
+  }
+
+  async platformSettings(){
+    const row=await (this.prisma as any).platformSetting.findUnique({where:{key:'general'}});
+    const base=this.defaultPlatformSettings();const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    const locales=(Array.isArray(value.locales)&&value.locales.length?value.locales:base.locales).map((x:any)=>({...x,flag:String(x.flag||'')}));
+    const currencies=(Array.isArray(value.currencies)&&value.currencies.length?value.currencies:base.currencies).map((x:any)=>({...x,symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE'}));
+    return {...base,...value,company:{...base.company,...(value.company||{})},locales,currencies};
+  }
+
+  async updatePlatformSettings(body:any){
+    const current=await this.platformSettings();
+    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();
+    const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,100).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim().toLowerCase(),label:String(x.label||x.name||x.locale||'').trim(),flag:String(x.flag||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
+    const currencies=(Array.isArray(body?.currencies)?body.currencies:current.currencies).slice(0,100).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),symbol:String(x.symbol||'').trim(),symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE',isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
+    if(!locales.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif dil gerekli');
+    if(!currencies.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif para birimi gerekli');
+    let localeDefaultSeen=false;for(const x of locales){if(x.isDefault&&x.isActive&&!localeDefaultSeen)localeDefaultSeen=true;else x.isDefault=false;}if(!localeDefaultSeen){const x=locales.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
+    let currencyDefaultSeen=false;for(const x of currencies){if(x.isDefault&&x.isActive&&!currencyDefaultSeen)currencyDefaultSeen=true;else x.isDefault=false;}if(!currencyDefaultSeen){const x=currencies.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
+    const value={company,locales,currencies};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'general'},create:{key:'general',value},update:{value}});
+    return value;
+  }
+
+  private defaultAiServices(){
+    const baseUrl='https://api.openai.com/v1';
+    return {
+      services:{
+        text:{label:'Metin ve asistan',enabled:true,provider:'openai-compatible',model:'gpt-4.1-mini',baseUrl},
+        image:{label:'Görsel üretimi',enabled:true,provider:'openai-compatible',model:'gpt-image-1',baseUrl},
+        embedding:{label:'Arama ve embedding',enabled:false,provider:'openai-compatible',model:'text-embedding-3-small',baseUrl},
+        vision:{label:'Görsel analiz',enabled:false,provider:'openai-compatible',model:'gpt-4.1-mini',baseUrl},
+        speechToText:{label:'Ses yazıya çevirme',enabled:false,provider:'openai-compatible',model:'gpt-4o-mini-transcribe',baseUrl},
+        textToSpeech:{label:'Ses sentezi',enabled:false,provider:'openai-compatible',model:'gpt-4o-mini-tts',baseUrl},
+        moderation:{label:'Güvenlik ve moderasyon',enabled:false,provider:'openai-compatible',model:'omni-moderation-latest',baseUrl},
+        video:{label:'Video üretimi',enabled:false,provider:'openai-compatible',model:'',baseUrl},
+      },
+      creditPolicy:{enabled:true},
+    };
+  }
+
+  async aiServices(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'ai_services'}});
+    const base:any=this.defaultAiServices();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    const services:any={...base.services};
+    for(const [key,def] of Object.entries(base.services as any)){
+      const current:any=value?.services?.[key]||{};
+      services[key]={...(def as any),...current};
+    }
+    return {services,creditPolicy:{...base.creditPolicy,...(value.creditPolicy||{})}};
+  }
+
+  async updateAiServices(body:any){
+    const current:any=await this.aiServices();
+    const services:any={};
+    for(const [key,def] of Object.entries(current.services||{})){
+      const row:any=body?.services?.[key]||def;
+      services[key]={
+        label:String(row.label||(def as any).label||key),
+        enabled:row.enabled!==false,
+        provider:String(row.provider||(def as any).provider||'openai-compatible').trim(),
+        model:String(row.model??(def as any).model??'').trim(),
+        baseUrl:String(row.baseUrl||(def as any).baseUrl||'').trim(),
+      };
+    }
+    const value={services,creditPolicy:{...current.creditPolicy,...(body?.creditPolicy||{})}};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'ai_services'},create:{key:'ai_services',value},update:{value}});
+    return value;
+  }
+
+  async platformLocales(){
+    const settings:any=await this.platformSettings();
+    return (settings.locales||[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)).map((x:any)=>({locale:String(x.locale),label:String(x.label||x.locale).trim()||String(x.locale).toUpperCase(),isDefault:!!x.isDefault}));
+  }
+
+  async appCategories(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'app_categories'}});
+    const value:any=row?.value&&typeof row.value==='object'?row.value:{};
+    return Array.isArray(value.categories)?value.categories.sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)):[];
+  }
+
+  async updateAppCategories(body:any){
+    const categories=(Array.isArray(body?.categories)?body.categories:[]).slice(0,200).map((x:any,i:number)=>({id:String(x.id||`cat-${i}`).trim(),translations:this.cleanTranslations(x.translations),sortOrder:Number(x.sortOrder??i),isActive:x.isActive!==false})).filter((x:any)=>x.id);
+    const value={categories};await (this.prisma as any).platformSetting.upsert({where:{key:'app_categories'},create:{key:'app_categories',value},update:{value}});return categories;
+  }
+
+  async team(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'superadmin_team_permissions'}});
+    const map:any=row?.value&&typeof row.value==='object'?row.value:{};
+    const rows:any[]=await this.prisma.superAdmin.findMany({orderBy:{createdAt:'asc'}});
+    return rows.map(x=>({id:x.id,email:x.email,name:x.name,isActive:x.isActive,lastLoginAt:x.lastLoginAt,createdAt:x.createdAt,permissions:Array.isArray(map[x.id])?map[x.id]:['dashboard','settings','memberships','plans','themes','apps','domains','currency','support','team'],roleLabel:Array.isArray(map[x.id])&&map[x.id].length<10?'Özel yetki':'Tam yetki'}));
+  }
+
+  async createTeamMember(body:any){
+    const email=String(body?.email||'').trim().toLowerCase();const password=String(body?.password||'');if(!email||password.length<8)throw new BadRequestException('E-posta ve en az 8 karakter şifre gerekli');
+    const admin=await this.prisma.superAdmin.create({data:{email,name:String(body?.name||'').trim()||null,passwordHash:await bcrypt.hash(password,14),isActive:body?.isActive!==false}});
+    await this.saveTeamPermissions(admin.id,body?.permissions);return (await this.team()).find((x:any)=>x.id===admin.id);
+  }
+
+  async updateTeamMember(id:string,body:any){
+    const current=await this.prisma.superAdmin.findUnique({where:{id}});if(!current)throw new NotFoundException('Ekip üyesi bulunamadı');
+    const data:any={};if(body.name!==undefined)data.name=String(body.name||'').trim()||null;if(body.email!==undefined)data.email=String(body.email||'').trim().toLowerCase();if(body.isActive!==undefined)data.isActive=!!body.isActive;if(body.password){if(String(body.password).length<8)throw new BadRequestException('Şifre en az 8 karakter olmalı');data.passwordHash=await bcrypt.hash(String(body.password),14);data.passwordChangedAt=new Date();}
+    await this.prisma.superAdmin.update({where:{id},data});if(body.permissions!==undefined)await this.saveTeamPermissions(id,body.permissions);return (await this.team()).find((x:any)=>x.id===id);
+  }
+
+  private async saveTeamPermissions(id:string,permissions:any){
+    const allowed=['dashboard','settings','memberships','plans','themes','apps','domains','currency','support','team'];const perms=Array.isArray(permissions)?permissions.map(String).filter((x:string)=>allowed.includes(x)):[];
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'superadmin_team_permissions'}});const value:any=row?.value&&typeof row.value==='object'?{...row.value}:{};value[id]=perms;await (this.prisma as any).platformSetting.upsert({where:{key:'superadmin_team_permissions'},create:{key:'superadmin_team_permissions',value},update:{value}});
+  }
+
+  private readonly placeholderAppSlugs=[
+    'whatsapp-ai','google-shopping','meta-pixel','google-analytics-4','google-tag-manager','sms',
+    'trendyol','hepsiburada','n11','amazon','pazarama','ciceksepeti','pttavm',
+    'kargo-yurtici','kargo-aras','kargo-mng','kargo-surat','kargo-ptt',
+    'fatura-parasut','fatura-logo','fatura-mikro','fatura-nebim',
+    'odeme-iyzico','odeme-paytr','odeme-param','odeme-sipay','odeme-stripe'
+  ];
+
+  private async cleanupPlaceholderApps(){
+    const rows=await this.prisma.appDefinition.findMany({where:{slug:{in:this.placeholderAppSlugs}},select:{id:true}});
+    if(!rows.length)return;
+    const ids=rows.map(x=>x.id);
+    await this.prisma.$transaction([
+      this.prisma.appInstallation.deleteMany({where:{appId:{in:ids}}}),
+      this.prisma.appPlanPrice.deleteMany({where:{appId:{in:ids}}}),
+      this.prisma.appDefinition.deleteMany({where:{id:{in:ids}}}),
+    ]);
+  }
+
+  async apps(){
+    await this.cleanupPlaceholderApps();
+    return this.prisma.appDefinition.findMany({where:{slug:{notIn:this.placeholderAppSlugs}},include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
+  }
+
+  async appWorkspace(){
+    const [items,plans,settings,categories,locales]=await Promise.all([this.apps(),this.plans(),this.platformSettings(),this.appCategories(),this.platformLocales()]);
+    return {items,plans,locales,currencies:(settings.currencies||[]).filter((x:any)=>x.isActive!==false),categories};
+  }
+
+  private appMarketplaceMeta(body:any){
+    const screenshots=Array.isArray(body.screenshots)?body.screenshots.map((x:any)=>String(x).trim()).filter(Boolean):String(body.screenshots||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    const translations:any={};const rawTranslations=body?.translations&&typeof body.translations==='object'&&!Array.isArray(body.translations)?body.translations:{};
+    for(const [locale,row] of Object.entries(rawTranslations)){const r:any=row||{};translations[String(locale)]={name:String(r.name||'').trim(),summary:String(r.summary||'').trim(),description:String(r.description||'').trim(),usageGuide:String(r.usageGuide||'').trim()};}
+    return {logoUrl:String(body.logoUrl||'').trim()||null,usageGuide:String(body.usageGuide||'').trim()||null,screenshots,translations,categoryId:String(body.categoryId||'').trim(),planTrials:body.planTrials&&typeof body.planTrials==='object'?body.planTrials:{}};
+  }
+
+  createApp(body:any){
+    const slug=String(body.slug||'').trim().toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-+|-+$/g,'');
+    if(!slug||!body.name) throw new BadRequestException('App name and slug are required');
+    const baseSchema=body.settingsSchema&&typeof body.settingsSchema==='object'&&!Array.isArray(body.settingsSchema)?body.settingsSchema:{};
+    const settingsSchema={...baseSchema,marketplace:this.appMarketplaceMeta(body)};
+    return this.prisma.appDefinition.create({data:{slug,name:String(body.name),category:String(body.category||'Diğer'),summary:String(body.summary||body.name),description:body.description?String(body.description):null,icon:body.icon?String(body.icon):null,developer:String(body.developer||'WE DID IT'),kind:String(body.kind||'INTEGRATION'),integrationType:body.integrationType||null,provider:body.provider?String(body.provider):null,settingsSchema:settingsSchema as any,basePrice:Number(body.basePrice||0),currency:String(body.currency||'TRY'),billingType:String(body.billingType||'FREE'),isActive:body.isActive!==false,isFeatured:!!body.isFeatured,sortOrder:Number(body.sortOrder||0)}});
+  }
+
+  async updateApp(id:string,body:any){
+    const current=await this.prisma.appDefinition.findUnique({where:{id}});
+    if(!current)throw new NotFoundException('App not found');
+    const data:any={};
+    for(const k of ['name','category','summary','description','icon','developer','kind','provider','currency','billingType']) if(body[k]!==undefined)data[k]=body[k];
+    if(body.integrationType!==undefined)data.integrationType=body.integrationType||null;
+    if(body.settingsSchema!==undefined)data.settingsSchema=body.settingsSchema;
+    if(['logoUrl','usageGuide','screenshots','translations','categoryId','planTrials'].some(k=>body[k]!==undefined)){
+      const currentSchema:any=current.settingsSchema&&typeof current.settingsSchema==='object'&&!Array.isArray(current.settingsSchema)?current.settingsSchema:{};
+      data.settingsSchema={...currentSchema,marketplace:{...(currentSchema.marketplace||{}),...this.appMarketplaceMeta({...currentSchema.marketplace,...body})}};
+    }
+    for(const k of ['isActive','isFeatured']) if(body[k]!==undefined)data[k]=!!body[k];
+    if(body.basePrice!==undefined)data.basePrice=Number(body.basePrice||0);
+    if(body.sortOrder!==undefined)data.sortOrder=Number(body.sortOrder||0);
+    return this.prisma.appDefinition.update({where:{id},data});
+  }
+
+  async setAppPlanPricing(appId:string,body:any){
+    if(!body.planId)throw new NotFoundException('Plan is required');
+    const planId=String(body.planId);
+    const result=await this.prisma.appPlanPrice.upsert({where:{appId_planId:{appId,planId}},create:{appId,planId,price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false},update:{price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,billingType:body.billingType?String(body.billingType):null,included:!!body.included,isActive:body.isActive!==false}});
+    if(body.trialDays!==undefined){const app:any=await this.prisma.appDefinition.findUnique({where:{id:appId}});const schema:any=app?.settingsSchema&&typeof app.settingsSchema==='object'&&!Array.isArray(app.settingsSchema)?app.settingsSchema:{};const market:any=schema.marketplace||{};const planTrials:any={...(market.planTrials||{}),[planId]:Math.max(0,Number(body.trialDays||0))};await this.prisma.appDefinition.update({where:{id:appId},data:{settingsSchema:{...schema,marketplace:{...market,planTrials}}}});}
+    return result;
+  }
+
+  async grantApp(tenantId:string,appId:string){
+    const [tenant,app]=await Promise.all([this.prisma.tenant.findUnique({where:{id:tenantId}}),this.prisma.appDefinition.findUnique({where:{id:appId}})]);
+    if(!tenant||!app)throw new NotFoundException('Tenant or app not found');
+    return this.prisma.appInstallation.upsert({where:{tenantId_appId:{tenantId,appId}},create:{tenantId,appId,status:'ACTIVE',enabled:true,source:'SUPERADMIN',installedPrice:0,currency:app.currency,config:{}},update:{status:'ACTIVE',enabled:true,source:'SUPERADMIN',installedAt:new Date()}});
+  }
+
+  async updateTenantApp(tenantId:string,appId:string,body:any){
+    const row=await this.prisma.appInstallation.findUnique({where:{tenantId_appId:{tenantId,appId}}});
+    if(!row)throw new NotFoundException('Tenant app not found');
+    return this.prisma.appInstallation.update({where:{id:row.id},data:{enabled:body.enabled!==false,status:body.enabled===false?'DISABLED':'ACTIVE'}});
+  }
+
+  themes(){
+    return this.prisma.themeDefinition.findMany({include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installations:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
+  }
+  createTheme(body:any){
+    const slug=String(body.slug||body.name||'').trim().toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-+|-+$/g,'');
+    if(!slug||!body.name)throw new BadRequestException('Tema adı ve slug gerekli');
+    return this.prisma.themeDefinition.create({data:{slug,name:String(body.name),description:body.description?String(body.description):null,category:String(body.category||'GENEL'),previewImageUrl:body.previewImageUrl?String(body.previewImageUrl):null,version:String(body.version||'1.0.0'),basePrice:Number(body.basePrice||0),currency:String(body.currency||'TRY'),billingType:String(body.billingType||'ONE_TIME'),isActive:body.isActive!==false,isFeatured:!!body.isFeatured,isDefault:!!body.isDefault,sortOrder:Number(body.sortOrder||0),config:body.config||{}}});
+  }
+  async updateTheme(id:string,body:any){
+    const current=await this.prisma.themeDefinition.findUnique({where:{id}});if(!current)throw new NotFoundException('Tema bulunamadı');
+    const data:any={};for(const k of ['name','description','category','previewImageUrl','version','currency','billingType'])if(body[k]!==undefined)data[k]=body[k]||null;
+    for(const k of ['isActive','isFeatured','isDefault'])if(body[k]!==undefined)data[k]=!!body[k];
+    for(const k of ['basePrice','sortOrder'])if(body[k]!==undefined)data[k]=Number(body[k]||0);
+    if(body.config!==undefined)data.config=body.config;
+    if(body.isDefault===true)await this.prisma.themeDefinition.updateMany({where:{id:{not:id}},data:{isDefault:false}});
+    return this.prisma.themeDefinition.update({where:{id},data});
+  }
+  setThemePlanPricing(themeId:string,body:any){
+    if(!body.planId)throw new BadRequestException('Paket gerekli');
+    return this.prisma.themePlanPrice.upsert({where:{themeId_planId:{themeId,planId:String(body.planId)}},create:{themeId,planId:String(body.planId),price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,included:!!body.included,isActive:body.isActive!==false},update:{price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,included:!!body.included,isActive:body.isActive!==false}});
+  }
+  async grantTheme(tenantId:string,themeId:string){
+    const [tenant,theme]=await Promise.all([this.prisma.tenant.findUnique({where:{id:tenantId}}),this.prisma.themeDefinition.findUnique({where:{id:themeId}})]);if(!tenant||!theme)throw new NotFoundException('Mağaza veya tema bulunamadı');
+    return this.prisma.themeInstallation.upsert({where:{tenantId_themeId:{tenantId,themeId}},create:{tenantId,themeId,status:'ACTIVE',source:'SUPERADMIN',purchasedPrice:0,currency:theme.currency,activatedAt:null},update:{status:'ACTIVE',source:'SUPERADMIN'}});
+  }
+
+
+  async themeSkinDefaults(themeId:string){
+    const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');
+    const config:any=this.themeConfig(theme);const overrides:any=config.skinSourceOverrides||{};const meta:any=config.skinMeta||{};
+    return ticartiSkinCatalog().map((skin:any)=>{const raw:any=overrides[skin.slug]||skin;const m:any=meta[skin.slug]||{};return {slug:skin.slug,name:m.name||raw.name||skin.name,category:m.groupId||raw.category||skin.category||skin.group||'',previewImageUrl:m.previewImageUrl||raw.previewImageUrl||skin.previewImageUrl||theme.previewImageUrl||'',verifiedFromDemo:!!skin.verifiedFromDemo,overridden:!!overrides[skin.slug],design:raw.design||ticartiSourceDesignForSkin(skin.slug),homePreset:Array.isArray(raw.homePreset)?raw.homePreset:ticartiSourceHomePreset(skin.slug),sourceManagedBy:overrides[skin.slug]?'PLATFORM_OVERRIDE':'SOURCE_FILES'};});
+  }
+  async updateThemeSkinDefaults(themeId:string,skinValue:string,body:any){
+    return this.updateThemeSkinSource(themeId,skinValue,{rawJson:{slug:normalizeTicartiSkinSlug(skinValue),name:String(body?.name||skinValue),category:String(body?.category||''),previewImageUrl:String(body?.previewImageUrl||''),design:body?.design||{},homePreset:Array.isArray(body?.homePreset)?body.homePreset:[]}});
+  }
+  async resetThemeSkinDefaults(themeId:string,skinValue:string){return this.resetThemeSkinSource(themeId,skinValue);}
+
+
+  async toggleThemeModule(themeId:string,body:any){
+    const theme=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');
+    const config:any=theme.config&&typeof theme.config==='object'&&!Array.isArray(theme.config)?theme.config:{};const modules=Array.isArray(config.modules)?config.modules:[];const type=String(body.type||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');
+    let found=false;const next=modules.map((m:any)=>{if(String(m.type)===type){found=true;return{...m,enabled:body.enabled!==false}}return m});if(!found)next.push({type,label:String(body.label||type),enabled:body.enabled!==false});
+    return this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,modules:next}}});
+  }
+
+
+
+  private themeConfig(theme:any){return theme?.config&&typeof theme.config==='object'&&!Array.isArray(theme.config)?theme.config:{};}
+  private cleanTranslations(value:any){const out:any={};if(value&&typeof value==='object'&&!Array.isArray(value))for(const [locale,row] of Object.entries(value)){if(!row||typeof row!=='object'||Array.isArray(row))continue;const r:any=row;const clean:any={};for(const key of ['name','description','summary'])if(r[key]!==undefined&&String(r[key]).trim())clean[key]=String(r[key]);if(Object.keys(clean).length)out[String(locale)]=clean;}return out;}
+  async themeWorkspace(themeId:string){
+    const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId},include:{planPrices:{include:{plan:true}}}});if(!theme)throw new NotFoundException('Tema bulunamadı');
+    const config:any=this.themeConfig(theme);const skinMeta:any=config.skinMeta||{};const sourceOverrides:any=config.skinSourceOverrides||{};const moduleCatalog:any=config.moduleCatalog||{};
+    const skins=ticartiSkinCatalog().map((skin:any)=>{const meta:any=skinMeta[skin.slug]||{};const raw:any=sourceOverrides[skin.slug]||skin;return {slug:skin.slug,sourceName:skin.name,name:meta.name||skin.name,previewImageUrl:meta.previewImageUrl||skin.previewImageUrl||theme.previewImageUrl||'',translations:meta.translations||{},planPricing:Array.isArray(meta.planPricing)?meta.planPricing:[],isActive:meta.isActive!==false,isFeatured:!!meta.isFeatured,verifiedFromDemo:!!skin.verifiedFromDemo,rawJson:raw};});
+    const types=Array.from(new Set(ticartiSkinCatalog().flatMap((skin:any)=>(skin.homePreset||[]).map((x:any)=>String(x.sectionType||'')).filter(Boolean))));
+    const modules=types.map((type:string)=>{const meta:any=moduleCatalog[type]||{};return {type,name:meta.name||type,categoryId:meta.categoryId||meta.groupId||'',translations:meta.translations||{},screenshots:Array.isArray(meta.screenshots)?meta.screenshots:[],planPricing:Array.isArray(meta.planPricing)?meta.planPricing:[],isActive:meta.isActive!==false};});
+    const moduleCategories=(Array.isArray(config.moduleCategories)?config.moduleCategories:(Array.isArray(config.moduleGroups)?config.moduleGroups:[])).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+    return {theme:{id:theme.id,name:theme.name,slug:theme.slug},moduleCategories,moduleGroups:moduleCategories,skins,modules};
+  }
+  async updateThemeWorkspaceGroups(themeId:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const config:any=this.themeConfig(theme);const normalize=(rows:any)=>Array.isArray(rows)?rows.slice(0,200).map((x:any,i:number)=>({id:String(x.id||`category-${i}`),translations:this.cleanTranslations(x.translations),sortOrder:Number(x.sortOrder??i),isActive:x.isActive!==false})):[];const next={...config};const categories=body.moduleCategories!==undefined?body.moduleCategories:body.moduleGroups;if(categories!==undefined){next.moduleCategories=normalize(categories);next.moduleGroups=next.moduleCategories;}await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:next}});return this.themeWorkspace(themeId);}
+  async updateThemeSkinCatalog(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const exists=ticartiSkinCatalog().some((x:any)=>x.slug===slug);if(!exists)throw new NotFoundException('Skin bulunamadı');const config:any=this.themeConfig(theme);const skinMeta:any={...(config.skinMeta||{})};const current:any=skinMeta[slug]||{};skinMeta[slug]={...current,name:body.name!==undefined?String(body.name):current.name,groupId:body.groupId!==undefined?String(body.groupId):current.groupId,previewImageUrl:body.previewImageUrl!==undefined?String(body.previewImageUrl):current.previewImageUrl,translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY')})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive,isFeatured:body.isFeatured!==undefined?!!body.isFeatured:current.isFeatured};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinMeta}}});return this.themeWorkspace(themeId);}
+  async updateThemeSkinSource(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const source=body?.rawJson;if(!source||typeof source!=='object'||Array.isArray(source))throw new BadRequestException('Geçerli ham tema JSON gerekli');if(String(source.slug||slug)!==slug)throw new BadRequestException('JSON slug seçili skin ile aynı olmalı');const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};rows[slug]=source;await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
+  async resetThemeSkinSource(themeId:string,skinValue:string){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};delete rows[slug];await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
+  async updateThemeModuleCatalog(themeId:string,typeValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const type=String(typeValue||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');const config:any=this.themeConfig(theme);const moduleCatalog:any={...(config.moduleCatalog||{})};const current:any=moduleCatalog[type]||{};moduleCatalog[type]={...current,name:body.name!==undefined?String(body.name):current.name,categoryId:'',groupId:'',translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,screenshots:Array.isArray(body.screenshots)?body.screenshots.map(String).slice(0,24):current.screenshots,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY'),trialDays:Math.max(0,Number(x.trialDays||0))})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,moduleCatalog}}});return this.themeWorkspace(themeId);}
+
+  async geoNodes(query:any){
+    const where:any={};
+    if(query?.countryCode)where.countryCode=String(query.countryCode).toUpperCase();
+    if(query?.level)where.level=String(query.level);
+    if(query?.parentId)where.parentId=String(query.parentId);
+    if(query?.root==='true')where.parentId=null;
+    return (this.prisma as any).geoNode.findMany({where,orderBy:[{sortOrder:'asc'},{name:'asc'}],take:5000});
+  }
+
+  async updateGeoNode(id:string,body:any){
+    const data:any={};
+    if(body.name!==undefined)data.name=String(body.name).trim();
+    if(body.isActive!==undefined)data.isActive=!!body.isActive;
+    if(body.sortOrder!==undefined)data.sortOrder=Number(body.sortOrder)||0;
+    return (this.prisma as any).geoNode.update({where:{id},data});
+  }
+
+}
+,symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
     };
   }
 
