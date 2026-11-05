@@ -43,6 +43,7 @@ export class SuperAdminController {
   @Patch('ai-services') updateAiServices(@Body() b:any) { return this.svc.updateAiServices(b); }
   @Get('apps') apps() { return this.svc.apps(); }
   @Get('app-workspace') appWorkspace() { return this.svc.appWorkspace(); }
+  @Get('app-installations') appInstallations(@Query() query:any){return this.svc.appInstallations(query)}
   @Get('app-categories') appCategories(){ return this.svc.appCategories(); }
   @Patch('app-categories') updateAppCategories(@Body() b:any){ return this.svc.updateAppCategories(b); }
   @Get('team') team(){ return this.svc.team(); }
