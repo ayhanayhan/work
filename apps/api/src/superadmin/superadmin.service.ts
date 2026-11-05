@@ -662,13 +662,34 @@ export class SuperAdminService {
   }
 
   async apps(){
-    await this.cleanupPlaceholderApps();
-    return this.prisma.appDefinition.findMany({where:{slug:{notIn:this.placeholderAppSlugs}},include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
+    // Never delete or hide existing app records when opening the catalog.
+    return this.prisma.appDefinition.findMany({include:{planPrices:{include:{plan:true},orderBy:{createdAt:'asc'}},_count:{select:{installs:true}}},orderBy:[{sortOrder:'asc'},{name:'asc'}]});
   }
 
   async appWorkspace(){
     const [items,plans,settings,categories,locales]=await Promise.all([this.apps(),this.plans(),this.platformSettings(),this.appCategories(),this.platformLocales()]);
     return {items,plans,locales,currencies:(settings.currencies||[]).filter((x:any)=>x.isActive!==false),categories};
+  }
+
+
+  async appInstallations(query:any){
+    const page=Math.max(1,Number(query?.page)||1);
+    const limit=Math.min(100,Math.max(1,Number(query?.limit)||30));
+    const q=String(query?.q||'').trim().slice(0,120);
+    const where:any=q?{OR:[
+      {app:{name:{contains:q,mode:'insensitive'}}},
+      {app:{slug:{contains:q,mode:'insensitive'}}},
+      {tenant:{name:{contains:q,mode:'insensitive'}}},
+      {tenant:{slug:{contains:q,mode:'insensitive'}}}
+    ]}:{};
+    const [items,total]=await Promise.all([
+      this.prisma.appInstallation.findMany({where,include:{
+        app:{select:{id:true,name:true,slug:true,category:true}},
+        tenant:{select:{id:true,name:true,slug:true,domain:true}}
+      },orderBy:{installedAt:'desc'},skip:(page-1)*limit,take:limit}),
+      this.prisma.appInstallation.count({where})
+    ]);
+    return {items,total,page,limit,pages:Math.max(1,Math.ceil(total/limit))};
   }
 
   private appMarketplaceMeta(body:any){
@@ -694,7 +715,7 @@ export class SuperAdminService {
     if(body.integrationType!==undefined)data.integrationType=body.integrationType||null;
     if(body.settingsSchema!==undefined)data.settingsSchema=body.settingsSchema;
     if(['logoUrl','usageGuide','screenshots','translations','categoryId','planTrials'].some(k=>body[k]!==undefined)){
-      const currentSchema:any=current.settingsSchema&&typeof current.settingsSchema==='object'&&!Array.isArray(current.settingsSchema)?current.settingsSchema:{};
+      const currentSchema:any=data.settingsSchema&&typeof data.settingsSchema==='object'&&!Array.isArray(data.settingsSchema)?data.settingsSchema:(current.settingsSchema&&typeof current.settingsSchema==='object'&&!Array.isArray(current.settingsSchema)?current.settingsSchema:{});
       data.settingsSchema={...currentSchema,marketplace:{...(currentSchema.marketplace||{}),...this.appMarketplaceMeta({...currentSchema.marketplace,...body})}};
     }
     for(const k of ['isActive','isFeatured']) if(body[k]!==undefined)data[k]=!!body[k];
@@ -785,7 +806,7 @@ export class SuperAdminService {
   async updateThemeSkinCatalog(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const exists=ticartiSkinCatalog().some((x:any)=>x.slug===slug);if(!exists)throw new NotFoundException('Skin bulunamadı');const config:any=this.themeConfig(theme);const skinMeta:any={...(config.skinMeta||{})};const current:any=skinMeta[slug]||{};skinMeta[slug]={...current,name:body.name!==undefined?String(body.name):current.name,groupId:body.groupId!==undefined?String(body.groupId):current.groupId,previewImageUrl:body.previewImageUrl!==undefined?String(body.previewImageUrl):current.previewImageUrl,translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY')})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive,isFeatured:body.isFeatured!==undefined?!!body.isFeatured:current.isFeatured};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinMeta}}});return this.themeWorkspace(themeId);}
   async updateThemeSkinSource(themeId:string,skinValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const source=body?.rawJson;if(!source||typeof source!=='object'||Array.isArray(source))throw new BadRequestException('Geçerli ham tema JSON gerekli');if(String(source.slug||slug)!==slug)throw new BadRequestException('JSON slug seçili skin ile aynı olmalı');const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};rows[slug]=source;await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
   async resetThemeSkinSource(themeId:string,skinValue:string){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const slug=normalizeTicartiSkinSlug(skinValue);const config:any=this.themeConfig(theme);const rows:any={...(config.skinSourceOverrides||{})};delete rows[slug];await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,skinSourceOverrides:rows}}});return this.themeWorkspace(themeId);}
-  async updateThemeModuleCatalog(themeId:string,typeValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const type=String(typeValue||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');const config:any=this.themeConfig(theme);const moduleCatalog:any={...(config.moduleCatalog||{})};const current:any=moduleCatalog[type]||{};moduleCatalog[type]={...current,name:body.name!==undefined?String(body.name):current.name,categoryId:'',groupId:'',translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,screenshots:Array.isArray(body.screenshots)?body.screenshots.map(String).slice(0,24):current.screenshots,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY'),trialDays:Math.max(0,Number(x.trialDays||0))})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,moduleCatalog}}});return this.themeWorkspace(themeId);}
+  async updateThemeModuleCatalog(themeId:string,typeValue:string,body:any){const theme:any=await this.prisma.themeDefinition.findUnique({where:{id:themeId}});if(!theme)throw new NotFoundException('Tema bulunamadı');const type=String(typeValue||'').trim();if(!type)throw new BadRequestException('Modül tipi gerekli');const config:any=this.themeConfig(theme);const moduleCatalog:any={...(config.moduleCatalog||{})};const current:any=moduleCatalog[type]||{};moduleCatalog[type]={...current,name:body.name!==undefined?String(body.name):current.name,categoryId:body.categoryId!==undefined?String(body.categoryId):current.categoryId,groupId:body.categoryId!==undefined?String(body.categoryId):current.groupId,translations:body.translations!==undefined?this.cleanTranslations(body.translations):current.translations,screenshots:Array.isArray(body.screenshots)?body.screenshots.map(String).slice(0,24):current.screenshots,planPricing:Array.isArray(body.planPricing)?body.planPricing.map((x:any)=>({planId:String(x.planId),enabled:x.enabled!==false,included:!!x.included,price:x.price===''||x.price===null||x.price===undefined?null:Number(x.price),currency:String(x.currency||'TRY'),trialDays:Math.max(0,Number(x.trialDays||0))})):current.planPricing,isActive:body.isActive!==undefined?!!body.isActive:current.isActive};await this.prisma.themeDefinition.update({where:{id:themeId},data:{config:{...config,moduleCatalog}}});return this.themeWorkspace(themeId);}
 
   async geoNodes(query:any){
     const where:any={};
