@@ -1,3 +1,3 @@
-import { NotificationRulesPage } from '../components/platform-settings-ui';
+import { PlatformNotificationRulesPage } from '../components/communication-settings';
 
-export default function Page(){ return <NotificationRulesPage/>; }
+export default function Page(){ return <PlatformNotificationRulesPage/>; }
