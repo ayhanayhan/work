@@ -61,6 +61,7 @@ type PlatformCompany = {
   logoUrl?: string;
   logoDarkUrl?: string;
   faviconUrl?: string;
+  socialLinks?: Array<{ platform: string; url: string }>;
 };
 
 type PlatformSettings = {
@@ -143,6 +144,20 @@ const CURRENCY_CATALOG = [
   ['DKK', 'Danimarka Kronu', 'kr', 'AFTER'],
   ['CZK', 'Çek Korunası', 'Kč', 'AFTER'],
   ['HUF', 'Macar Forinti', 'Ft', 'AFTER'],
+] as const;
+
+const SOCIAL_PLATFORMS = [
+  'Instagram',
+  'Facebook',
+  'X / Twitter',
+  'TikTok',
+  'YouTube',
+  'LinkedIn',
+  'Pinterest',
+  'WhatsApp',
+  'Telegram',
+  'Threads',
+  'Diğer',
 ] as const;
 
 const TIMEZONES = [
@@ -316,6 +331,24 @@ export function PlatformGeneralPage() {
         <Field label="Vergi numarası"><Input value={company.taxNumber || ''} onChange={e => patchCompany({ taxNumber: e.target.value })}/></Field>
       </div>
       <Field label="Adres"><Textarea rows={4} value={company.address || ''} onChange={e => patchCompany({ address: e.target.value })}/></Field>
+    </Box>
+
+    <Box title="Sosyal Medya Hesapları" description="Ticarti'nin kurumsal sosyal medya hesaplarını ekleyin. İstediğiniz kadar hesap tanımlayabilirsiniz.">
+      <div className="grid gap-3">
+        {(company.socialLinks || []).map((row,index)=><div key={`${row.platform}-${index}`} className="grid gap-3 rounded-lg border p-4 md:grid-cols-[220px_1fr_auto] md:items-end">
+          <Field label="Platform">
+            <Select value={row.platform || 'Instagram'} onValueChange={platform=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,platform}:x)})}>
+              <SelectTrigger><SelectValue/></SelectTrigger>
+              <SelectContent>{SOCIAL_PLATFORMS.map(platform=><SelectItem key={platform} value={platform}>{platform}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field label="Hesap URL">
+            <Input type="url" value={row.url || ''} placeholder="https://..." onChange={e=>patchCompany({socialLinks:(company.socialLinks||[]).map((x,i)=>i===index?{...x,url:e.target.value}:x)})}/>
+          </Field>
+          <Button variant="outline" size="icon" onClick={()=>patchCompany({socialLinks:(company.socialLinks||[]).filter((_,i)=>i!==index)})}><Trash2 className="size-4"/></Button>
+        </div>)}
+        <div><Button variant="outline" onClick={()=>patchCompany({socialLinks:[...(company.socialLinks||[]),{platform:'Instagram',url:''}]})}><Plus className="size-4"/>Hesap ekle</Button></div>
+      </div>
     </Box>
 
     <Box title="Varsayılanlar" description="Seçenekler yalnızca platformda aktif tanımlardan gelir.">
