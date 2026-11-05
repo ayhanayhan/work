@@ -7,7 +7,7 @@ Bu klasör ana Ticarti tanıtım sitesinin (ayrı HTML/Next.js proje) dosyaları
 - POST /v1/public/contact kayıt oluşturur.
 - Master panelde /contact sayfasında listelenir.
 - Panelde durum, iç not ve yanıt taslağı düzenlenir. **Yanıt e-postası otomatik gönderilmez.** E-postada Aç, e-posta istemcisini açar.
-- Kayıtlar ContactInquiry tablosundadır. API açılmadan önce Prisma şema uygulaması gerekir.
+- Kayıtlar ContactInquiry tablosundadır. API, tabloyu ilk açılışında idempotent biçimde oluşturur; Prisma şeması da modele sahiptir. Mevcut veriler silinmez.
 - 3 başvuru / 10 dakika / IP, honeypot ve içerik doğrulama mevcuttur. Redis yoksa limit uygulama instance'ı kapsamındadır.
 
 ## Form HTML gereksinimleri
@@ -33,7 +33,6 @@ Kaynak form dosyaları olmadan ana siteye bağlantı tamamlanmış sayılamaz. S
 
 ## Yayın sırası
 1. Master ve API build.
-2. Prisma db-init işi. Mevcut seed komutunun demo verisi oluşturmaması için TEST_DB_SEED=false ayarı kullanılmalı.
-3. Cloud Run API deploy.
-4. Master Firebase rollout.
-5. Gönderim, listeleme ve izinli erişim testleri.
+2. Cloud Run API deploy. Yeni tablo otomatik ve silmeden oluşturulur.
+3. Master Firebase rollout.
+4. Gönderim, listeleme ve izinli erişim testleri.
