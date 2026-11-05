@@ -65,7 +65,7 @@ export class MediaService {
   private async removeObject(key:string){const bucket=this.bucketName();if(bucket)return this.storage.bucket(bucket).file(key).delete({ignoreNotFound:true}).catch(()=>undefined);return unlink(join(this.localRoot(),key)).catch(()=>undefined)}
 
   private async optimize(store:any, id:string, source:Buffer){
-    let pipeline:sharp.Sharp;
+    let pipeline: ReturnType<typeof sharp>;
     try{pipeline=sharp(source,{failOn:'error'}).rotate()}catch{throw new BadRequestException('Görsel işlenemedi')}
     const meta=await pipeline.metadata().catch(()=>null);if(!meta?.width||!meta?.height)throw new BadRequestException('Görsel boyutları okunamadı');
     const settings:any=store.settings||{};const quality=clamp(settings?.imageProcessing?.webpQuality,50,95,82);const avifQuality=clamp(settings?.imageProcessing?.avifQuality,35,90,60);const maxMaster=clamp(settings?.imageProcessing?.masterMax,1200,4000,2400);
