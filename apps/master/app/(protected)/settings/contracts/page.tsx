@@ -1,3 +1,3 @@
-import { ContractsPage } from '../components/platform-settings-ui';
+import { PlatformContractsSettingsPage } from '../components/contracts-settings';
 
-export default function Page(){ return <ContractsPage/>; }
+export default function Page(){ return <PlatformContractsSettingsPage/>; }
