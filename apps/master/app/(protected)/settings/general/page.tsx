@@ -1,3 +1,3 @@
-import { GeneralSettingsPage } from '../components/platform-settings-ui';
+import { PlatformGeneralPage } from '../components/platform-core-settings';
 
-export default function Page(){ return <GeneralSettingsPage/>; }
+export default function Page(){ return <PlatformGeneralPage/>; }
