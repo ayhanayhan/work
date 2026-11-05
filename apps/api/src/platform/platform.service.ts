@@ -14,9 +14,27 @@ export class PlatformService {
         trialDays:true,maxStaff:true,maxProducts:true,maxOrdersPerMonth:true,features:true,sortOrder:true,
       },
     });
+    const now=Date.now();
     return rows.filter(row=>{
       const features:any=row?.features&&typeof row.features==='object'&&!Array.isArray(row.features)?row.features:{};
       return features?._meta?.frontendVisible!==false;
+    }).map(row=>{
+      const features:any=row?.features&&typeof row.features==='object'&&!Array.isArray(row.features)?row.features:{};
+      const fallback=[
+        {period:'MONTHLY',label:'Aylık',enabled:Number(row.monthlyPrice||0)>0,price:Number(row.monthlyPrice||0),salePrice:null,saleStartAt:'',saleEndAt:''},
+        {period:'YEARLY',label:'Yıllık',enabled:row.yearlyPrice!==null&&row.yearlyPrice!==undefined&&Number(row.yearlyPrice||0)>0,price:Number(row.yearlyPrice||0),salePrice:null,saleStartAt:'',saleEndAt:''},
+      ];
+      const source=Array.isArray(features?._pricing)?features._pricing:fallback;
+      const pricing=source.filter((x:any)=>x.enabled===true).map((x:any)=>{
+        const start=x.saleStartAt?new Date(x.saleStartAt).getTime():null;
+        const end=x.saleEndAt?new Date(x.saleEndAt).getTime():null;
+        const sale=Number(x.salePrice);
+        const hasSale=x.salePrice!==null&&x.salePrice!==undefined&&x.salePrice!==''&&Number.isFinite(sale)&&sale>=0;
+        const inWindow=(!start||now>=start)&&(!end||now<=end);
+        const isDiscountActive=hasSale&&inWindow;
+        return {period:x.period,label:x.label||x.period,normalPrice:Number(x.price||0),salePrice:hasSale?sale:null,saleStartAt:x.saleStartAt||'',saleEndAt:x.saleEndAt||'',isDiscountActive,effectivePrice:isDiscountActive?sale:Number(x.price||0)};
+      });
+      return {...row,pricing};
     });
   }
 
