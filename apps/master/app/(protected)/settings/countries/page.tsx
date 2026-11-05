@@ -1,3 +1,3 @@
-import { CountriesPage } from '../components/platform-settings-ui';
+import { PlatformCountriesPage } from '../components/platform-core-settings';
 
-export default function Page(){ return <CountriesPage/>; }
+export default function Page(){ return <PlatformCountriesPage/>; }
