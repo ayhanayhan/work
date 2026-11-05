@@ -765,6 +765,27 @@ export class SuperAdminService {
     if(!body.planId)throw new BadRequestException('Paket gerekli');
     return this.prisma.themePlanPrice.upsert({where:{themeId_planId:{themeId,planId:String(body.planId)}},create:{themeId,planId:String(body.planId),price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,included:!!body.included,isActive:body.isActive!==false},update:{price:body.price===''||body.price===null||body.price===undefined?null:Number(body.price),currency:body.currency?String(body.currency):null,included:!!body.included,isActive:body.isActive!==false}});
   }
+
+  async themeInstallations(query:any){
+    const page=Math.max(1,Number(query?.page)||1);
+    const limit=Math.min(100,Math.max(1,Number(query?.limit)||30));
+    const q=String(query?.q||'').trim().slice(0,120);
+    const where:any=q?{OR:[
+      {theme:{name:{contains:q,mode:'insensitive'}}},
+      {theme:{slug:{contains:q,mode:'insensitive'}}},
+      {tenant:{name:{contains:q,mode:'insensitive'}}},
+      {tenant:{slug:{contains:q,mode:'insensitive'}}}
+    ]}:{};
+    const [items,total]=await Promise.all([
+      this.prisma.themeInstallation.findMany({where,include:{
+        theme:{select:{id:true,name:true,slug:true,previewImageUrl:true}},
+        tenant:{select:{id:true,name:true,slug:true,domain:true}}
+      },orderBy:{installedAt:'desc'},skip:(page-1)*limit,take:limit}),
+      this.prisma.themeInstallation.count({where})
+    ]);
+    return {items,total,page,limit,pages:Math.max(1,Math.ceil(total/limit))};
+  }
+
   async grantTheme(tenantId:string,themeId:string){
     const [tenant,theme]=await Promise.all([this.prisma.tenant.findUnique({where:{id:tenantId}}),this.prisma.themeDefinition.findUnique({where:{id:themeId}})]);if(!tenant||!theme)throw new NotFoundException('Mağaza veya tema bulunamadı');
     return this.prisma.themeInstallation.upsert({where:{tenantId_themeId:{tenantId,themeId}},create:{tenantId,themeId,status:'ACTIVE',source:'SUPERADMIN',purchasedPrice:0,currency:theme.currency,activatedAt:null},update:{status:'ACTIVE',source:'SUPERADMIN'}});
