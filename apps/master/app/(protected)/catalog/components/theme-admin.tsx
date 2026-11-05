@@ -17,7 +17,7 @@ import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/compon
 import {Currency,Field,Locale,MediaField,Plan,PriceMatrix,PriceRow,Translations,TranslationFields,localeText} from './catalog-fields';
 
 type ThemePackage={id:string;name:string;slug:string;description?:string|null;category:string;previewImageUrl?:string|null;version:string;basePrice:any;currency:string;billingType:string;isActive:boolean;isFeatured:boolean;isDefault:boolean;sortOrder:number;config:any;planPrices:any[];_count?:{installations:number}};
-type Skin={slug:string;name:string;sourceName:string;previewImageUrl:string;translations:Translations;planPricing:any[];isActive:boolean;isFeatured:boolean;verifiedFromDemo:boolean;rawJson:any};
+type Skin={slug:string;name:string;sourceName:string;groupId:string;previewImageUrl:string;translations:Translations;planPricing:any[];isActive:boolean;isFeatured:boolean;verifiedFromDemo:boolean;rawJson:any};
 type Module={type:string;name:string;categoryId:string;translations:Translations;screenshots:string[];planPricing:any[];isActive:boolean};
 type Category={id:string;translations:Translations;sortOrder:number;isActive:boolean};
 type Workspace={theme:{id:string;name:string;slug:string};skins:Skin[];modules:Module[];moduleCategories:Category[]};
@@ -106,7 +106,7 @@ export default function ThemeAdminPage(){
 }
 
 function SkinEditor({skin,themeId,ctx,categories,request,onClose,onSaved,onSourceSaved}:{skin:Skin;themeId:string;ctx:Context;categories:Category[];request:Request;onClose:()=>void;onSaved:()=>Promise<void>;onSourceSaved:()=>Promise<void>}){
-  const [form,setForm]=useState<any>({name:skin.name,previewImageUrl:skin.previewImageUrl||'',groupId:'',translations:skin.translations||{},isActive:skin.isActive,isFeatured:skin.isFeatured});
+  const [form,setForm]=useState<any>({name:skin.name,previewImageUrl:skin.previewImageUrl||'',groupId:skin.groupId||'',translations:skin.translations||{},isActive:skin.isActive,isFeatured:skin.isFeatured});
   const [pricing,setPricing]=useState(toPricing(skin.planPricing,ctx.currencies[0]?.code||'TRY'));
   const [source,setSource]=useState(JSON.stringify(skin.rawJson||{},null,2));
   const [pane,setPane]=useState<'content'|'price'|'source'>('content');
