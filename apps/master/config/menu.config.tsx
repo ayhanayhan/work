@@ -75,15 +75,18 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Log Kayıtları', i18nKey: 'navigation.activity_logs', path: '/users/activity' },
     ],
   },
-  { title: 'Tasarım', i18nKey: 'navigation.design', icon: Palette, path: '/themes' },
+  { title: 'Temalar', icon: Palette, children: [
+    { title: 'Tema Kataloğu', path: '/themes' },
+    { title: 'Tema Kurulumları', path: '/themes/installations' },
+  ] },
   { title: 'Raporlar', i18nKey: 'navigation.reports', icon: TrendingUp, path: '/reports' },
   { title: 'SEO', i18nKey: 'navigation.seo', icon: FileText, path: '/seo' },
   { title: 'Destek', i18nKey: 'navigation.support', icon: LifeBuoy, path: '/support' },
   { title: 'İletişim Mesajları', icon: FileText, path: '/contact' },
   {
-    title: 'Eklentiler', i18nKey: 'navigation.extensions', icon: Plug, children: [
-      { title: 'Eklenti Marketi', i18nKey: 'navigation.extension_market', path: '/extensions/market' },
-      { title: 'Eklentilerim', i18nKey: 'navigation.installed_extensions', path: '/extensions/installed' },
+    title: 'Uygulamalar', icon: Plug, children: [
+      { title: 'Uygulama Kataloğu', path: '/extensions/market' },
+      { title: 'Mağaza Kurulumları', path: '/extensions/installed' },
     ],
   },
   { title: 'Ayarlar', i18nKey: 'navigation.settings', icon: Settings, path: '/settings' }];
