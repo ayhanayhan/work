@@ -1,10 +1,3 @@
-'use client';
+import { PackageEditorPage } from '../components/package-manager';
 
-import { useRouter } from 'next/navigation';
-import { Container } from '@/components/common/container';
-import { ProductEditorPageForm } from '../components/product-editor-page';
-
-export default function NewProductPage(){
-  const router=useRouter();
-  return <Container><ProductEditorPageForm mode="new" onClose={()=>router.push('/products')}/></Container>;
-}
+export default function Page(){ return <PackageEditorPage/>; }
