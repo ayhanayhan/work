@@ -1,3 +1,3 @@
-import { TemplateVariablesPage } from '../components/platform-settings-ui';
+import { PlatformTemplateVariablesPage } from '../components/communication-settings';
 
-export default function Page(){ return <TemplateVariablesPage/>; }
+export default function Page(){ return <PlatformTemplateVariablesPage/>; }
