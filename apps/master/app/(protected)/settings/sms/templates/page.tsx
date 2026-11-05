@@ -1,3 +1,3 @@
-import { SmsTemplatesPage } from '../../components/platform-settings-ui';
+import { PlatformSmsTemplatesPage } from '../../components/communication-settings';
 
-export default function Page(){ return <SmsTemplatesPage/>; }
+export default function Page(){ return <PlatformSmsTemplatesPage/>; }
