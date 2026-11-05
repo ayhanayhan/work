@@ -1,22 +1,146 @@
 'use client';
+
 import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
 import {Toolbar,ToolbarActions,ToolbarDescription,ToolbarHeading} from '@/partials/common/toolbar';
-import {Badge} from '@/components/ui/badge';import {Button} from '@/components/ui/button';import {Card,CardContent,CardHeader,CardHeading,CardTable} from '@/components/ui/card';
-import {Dialog,DialogBody,DialogContent,DialogFooter,DialogHeader,DialogTitle} from '@/components/ui/dialog';import {Input} from '@/components/ui/input';import {Textarea} from '@/components/ui/textarea';
+import {Badge} from '@/components/ui/badge';
+import {Button} from '@/components/ui/button';
+import {Card,CardContent,CardHeader,CardHeading} from '@/components/ui/card';
+import {Dialog,DialogBody,DialogContent,DialogFooter,DialogHeader,DialogTitle} from '@/components/ui/dialog';
+import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
+import {Switch} from '@/components/ui/switch';
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
-import {AlertTriangle,Clock3,LifeBuoy,LoaderCircle,MessageSquare,Plus,RefreshCw,Search} from 'lucide-react';
-import {useAdminSession} from '@/app/components/AdminSession';import {TicartiMediaDropzone} from '../components/ticarti-media-dropzone';
-const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
-const STATUSES:any={OPEN:['Açık','warning'],IN_PROGRESS:['İşlemde','info'],WAITING_CUSTOMER:['Yanıtınız bekleniyor','primary'],RESOLVED:['Çözüldü','success'],CLOSED:['Kapalı','secondary']};
-const PRIORITIES:any={LOW:'Düşük',NORMAL:'Normal',HIGH:'Yüksek',URGENT:'Acil'};
-function Field({label,hint,required,children}:{label:string;hint?:string;required?:boolean;children:any}){return <label className="grid gap-1.5 text-sm"><span className="font-medium">{label}{required&&<span className="text-destructive"> *</span>}</span>{children}{hint&&<span className="text-xs text-muted-foreground">{hint}</span>}</label>}
-function dt(v:any){return v?new Date(v).toLocaleString('tr-TR'):'—'}
-export default function Page(){const{session}=useAdminSession();const[rows,setRows]=useState<any[]>([]),[summary,setSummary]=useState<any>({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[q,setQ]=useState(''),[status,setStatus]=useState(''),[priority,setPriority]=useState(''),[page,setPage]=useState(1),[pages,setPages]=useState(1),[createOpen,setCreateOpen]=useState(false),[detail,setDetail]=useState<any>(null);
- const headers=useMemo(()=>session?{authorization:`Bearer ${session.accessToken}`,'x-tenant-id':session.tenantId}:{},[session]);
- const load=useCallback(async()=>{if(!session)return;setLoading(true);setError('');try{const p=new URLSearchParams({page:String(page),limit:'25'});if(q)p.set('q',q);if(status)p.set('status',status);if(priority)p.set('priority',priority);const r=await fetch(`${API}/admin/support/tickets?${p}`,{credentials:'include',headers});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.message||'Destek talepleri alınamadı.');setRows(j.items||[]);setSummary(j.summary||{});setPages(j.pages||1)}catch(e:any){setError(e.message)}finally{setLoading(false)}},[session,headers,page,q,status,priority]);
- useEffect(()=>{const t=setTimeout(()=>void load(),q?250:0);return()=>clearTimeout(t)},[load]);useEffect(()=>setPage(1),[q,status,priority]);
- const openDetail=async(id:string)=>{if(!session)return;const r=await fetch(`${API}/admin/support/tickets/${id}`,{credentials:'include',headers});const j=await r.json().catch(()=>({}));if(r.ok)setDetail(j);else setError(j?.message||'Talep açılamadı.')};
- return <><Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Destek</h1><ToolbarDescription>Destek talepleri, yanıtlar, öncelikler ve SLA durumunu tek merkezden yönetin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button onClick={()=>setCreateOpen(true)}><Plus className="size-4"/>Yeni Destek Talebi</Button></ToolbarActions></Toolbar></Container><Container><div className="grid gap-5"><div className="grid md:grid-cols-5 gap-4">{[[summary.open||0,'Açık','warning'],[summary.inProgress||0,'İşlemde','info'],[summary.waiting||0,'Yanıtınız Bekleniyor','primary'],[summary.resolvedThisMonth||0,'Bu Ay Çözülen','success'],[summary.overdue||0,'SLA Aşıldı','destructive']].map(([n,l,v]:any)=><Card key={l}><CardContent className="p-5"><div className="text-sm text-muted-foreground">{l}</div><div className="mt-2 flex items-center gap-2"><span className="text-2xl font-semibold">{n}</span>{v==='destructive'&&Number(n)>0?<AlertTriangle className="size-4 text-destructive"/>:null}</div></CardContent></Card>)}</div><Card><CardContent className="p-4 grid md:grid-cols-[1fr_210px_180px_auto] gap-3"><div className="relative"><Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"/><Input className="ps-9" value={q} onChange={e=>setQ(e.target.value)} placeholder="Talep no, konu veya kategori ara..."/></div><select className="h-10 rounded-md border bg-background px-3 text-sm" value={status} onChange={e=>setStatus(e.target.value)}><option value="">Tüm durumlar</option>{Object.entries(STATUSES).map(([k,v]:any)=><option key={k} value={k}>{v[0]}</option>)}</select><select className="h-10 rounded-md border bg-background px-3 text-sm" value={priority} onChange={e=>setPriority(e.target.value)}><option value="">Tüm öncelikler</option>{Object.entries(PRIORITIES).map(([k,v]:any)=><option key={k} value={k}>{v}</option>)}</select><Button variant="outline" onClick={()=>{setQ('');setStatus('');setPriority('')}}>Temizle</Button></CardContent></Card>{error&&<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}<Card><CardHeader><CardHeading>Destek Talepleri</CardHeading></CardHeader><CardTable>{loading?<div className="grid min-h-52 place-items-center"><LoaderCircle className="size-6 animate-spin"/></div>:<Table><TableHeader><TableRow><TableHead>Talep</TableHead><TableHead>Kategori</TableHead><TableHead>Öncelik</TableHead><TableHead>Durum</TableHead><TableHead>SLA</TableHead><TableHead>Son Güncelleme</TableHead></TableRow></TableHeader><TableBody>{rows.map((x:any)=>{const st=STATUSES[x.status]||[x.status,'secondary'];const overdue=x.slaDueAt&&new Date(x.slaDueAt)<new Date()&&!['RESOLVED','CLOSED'].includes(x.status);return <TableRow key={x.id} className="cursor-pointer" onClick={()=>void openDetail(x.id)}><TableCell><div className="font-medium">{x.subject}</div><div className="text-xs text-muted-foreground">{x.ticketNumber||x.id.slice(0,8)}{x.messages?.[0]?.body?` · ${String(x.messages[0].body).slice(0,70)}`:''}</div></TableCell><TableCell>{x.category||'Genel'}</TableCell><TableCell><Badge appearance="light" variant={x.priority==='URGENT'?'destructive':x.priority==='HIGH'?'warning':'secondary'}>{PRIORITIES[x.priority]||x.priority}</Badge></TableCell><TableCell><Badge appearance="light" variant={st[1]}>{st[0]}</Badge></TableCell><TableCell>{x.slaDueAt?<span className={overdue?'text-destructive font-medium':''}>{overdue?'Aşıldı · ':''}{dt(x.slaDueAt)}</span>:'—'}</TableCell><TableCell>{dt(x.updatedAt)}</TableCell></TableRow>})}{!rows.length&&<TableRow><TableCell colSpan={6}><div className="py-12 text-center text-muted-foreground"><LifeBuoy className="mx-auto mb-3 size-8"/>Destek talebi bulunamadı.</div></TableCell></TableRow>}</TableBody></Table>}</CardTable></Card>{pages>1&&<div className="flex justify-end gap-2"><Button size="sm" variant="outline" disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Önceki</Button><Badge appearance="light">{page}/{pages}</Badge><Button size="sm" variant="outline" disabled={page>=pages} onClick={()=>setPage(p=>p+1)}>Sonraki</Button></div>}</div></Container><CreateTicket open={createOpen} setOpen={setCreateOpen} session={session} headers={headers} onSaved={load}/><TicketDetail ticket={detail} setTicket={setDetail} session={session} headers={headers} onSaved={async()=>{if(detail?.id)await openDetail(detail.id);await load()}}/></>}
-function CreateTicket({open,setOpen,session,headers,onSaved}:any){const[subject,setSubject]=useState(''),[category,setCategory]=useState('Genel'),[priority,setPriority]=useState('NORMAL'),[message,setMessage]=useState(''),[orderId,setOrderId]=useState(''),[integrationId,setIntegrationId]=useState(''),[attachments,setAttachments]=useState<string[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState('');useEffect(()=>{if(!open){setSubject('');setCategory('Genel');setPriority('NORMAL');setMessage('');setOrderId('');setIntegrationId('');setAttachments([]);setError('')}},[open]);const save=async()=>{if(!session)return;if(!subject.trim()||!message.trim()){setError('Konu ve açıklama zorunlu.');return}setBusy(true);setError('');try{const r=await fetch(`${API}/admin/support/tickets`,{method:'POST',credentials:'include',headers:{...headers,'content-type':'application/json'},body:JSON.stringify({storeId:session.storeId,subject,category,priority,message,relatedOrderId:orderId||null,relatedIntegrationId:integrationId||null,attachments:attachments.map(url=>({url,name:url.split('/').pop()}))})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.message||'Talep oluşturulamadı.');setOpen(false);await onSaved()}catch(e:any){setError(e.message)}finally{setBusy(false)}};return <Dialog open={open} onOpenChange={setOpen}><DialogContent className="sm:max-w-4xl"><DialogHeader><DialogTitle>Yeni Destek Talebi</DialogTitle></DialogHeader><DialogBody className="grid gap-5 max-h-[75vh] overflow-y-auto">{error&&<div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}<div className="grid md:grid-cols-2 gap-4"><Field label="Konu" required><Input value={subject} onChange={e=>setSubject(e.target.value)} placeholder="Sorunu kısa ve net özetleyin"/></Field><Field label="Kategori" required><select className="h-10 rounded-md border bg-background px-3" value={category} onChange={e=>setCategory(e.target.value)}><option>Genel</option><option>Teknik</option><option>Ödeme</option><option>Kargo</option><option>Entegrasyon</option><option>Domain</option><option>Faturalama</option><option>Güvenlik</option></select></Field><Field label="Öncelik"><select className="h-10 rounded-md border bg-background px-3" value={priority} onChange={e=>setPriority(e.target.value)}><option value="LOW">Düşük</option><option value="NORMAL">Normal</option><option value="HIGH">Yüksek</option><option value="URGENT">Acil</option></select></Field><div/></div><Field label="Talep açıklaması" required hint="Hata adımları, beklenen sonuç ve varsa hata mesajını ekleyin."><Textarea rows={8} value={message} onChange={e=>setMessage(e.target.value)}/></Field><div className="grid md:grid-cols-2 gap-4"><Field label="İlgili sipariş ID" hint="Varsa siparişi ilişkilendirin."><Input value={orderId} onChange={e=>setOrderId(e.target.value)}/></Field><Field label="İlgili entegrasyon ID" hint="Varsa entegrasyon bağlantısını ilişkilendirin."><Input value={integrationId} onChange={e=>setIntegrationId(e.target.value)}/></Field></div><TicartiMediaDropzone label="Ekran görüntüsü / ek ekle" multiple value={attachments} onChange={v=>setAttachments(Array.isArray(v)?v:[String(v)])}/></DialogBody><DialogFooter><Button variant="outline" onClick={()=>setOpen(false)}>İptal</Button><Button disabled={busy} onClick={()=>void save()}>{busy?'Gönderiliyor…':'Talebi Gönder'}</Button></DialogFooter></DialogContent></Dialog>}
-function TicketDetail({ticket,setTicket,session,headers,onSaved}:any){const[message,setMessage]=useState(''),[attachments,setAttachments]=useState<string[]>([]),[busy,setBusy]=useState(false);if(!ticket)return null;const st=STATUSES[ticket.status]||[ticket.status,'secondary'];const send=async()=>{if(!message.trim())return;setBusy(true);try{const r=await fetch(`${API}/admin/support/tickets/${ticket.id}/messages`,{method:'POST',credentials:'include',headers:{...headers,'content-type':'application/json'},body:JSON.stringify({message,attachments:attachments.map(url=>({url,name:url.split('/').pop()}))})});if(r.ok){setMessage('');setAttachments([]);await onSaved()}}finally{setBusy(false)}};const action=async(a:string)=>{const r=await fetch(`${API}/admin/support/tickets/${ticket.id}`,{method:'PATCH',credentials:'include',headers:{...headers,'content-type':'application/json'},body:JSON.stringify({action:a})});if(r.ok)await onSaved()};return <Dialog open onOpenChange={v=>!v&&setTicket(null)}><DialogContent className="sm:max-w-5xl"><DialogHeader><DialogTitle>{ticket.ticketNumber||'Destek Talebi'} · {ticket.subject}</DialogTitle></DialogHeader><DialogBody className="max-h-[78vh] overflow-y-auto"><div className="grid lg:grid-cols-[1fr_280px] gap-5"><div className="grid gap-4"><div className="rounded-xl border bg-muted/20 p-4 min-h-80"><div className="grid gap-4">{(ticket.messages||[]).map((m:any)=><div key={m.id} className={`flex ${m.authorType==='merchant'?'justify-end':'justify-start'}`}><div className={`max-w-[82%] rounded-xl border p-3 ${m.authorType==='merchant'?'bg-primary/5':'bg-background'}`}><div className="mb-1 text-xs font-medium">{m.authorType==='merchant'?(m.user?.name||'Siz'):(m.superAdmin?.name||'Ticarti Destek')}</div><div className="whitespace-pre-wrap text-sm">{m.body}</div>{m.attachments?.length?<div className="mt-3 flex flex-wrap gap-2">{m.attachments.map((a:any)=><a key={a.id} className="text-xs text-primary underline" href={a.url} target="_blank" rel="noreferrer">{a.name||'Ek dosya'}</a>)}</div>:null}<div className="mt-2 text-[11px] text-muted-foreground">{dt(m.createdAt)}</div></div></div>)}{!ticket.messages?.length&&<div className="text-center text-sm text-muted-foreground py-12">Henüz mesaj yok.</div>}</div></div>{ticket.status!=='CLOSED'&&<div className="grid gap-3"><Field label="Yanıtınız"><Textarea rows={5} value={message} onChange={e=>setMessage(e.target.value)} placeholder="Destek ekibine mesaj yazın..."/></Field><TicartiMediaDropzone label="Yanıta ekran görüntüsü ekle" multiple value={attachments} onChange={v=>setAttachments(Array.isArray(v)?v:[String(v)])}/><div className="flex justify-end"><Button disabled={busy||!message.trim()} onClick={()=>void send()}><MessageSquare className="size-4"/>Yanıtla</Button></div></div>}</div><aside className="grid content-start gap-4"><Card><CardContent className="p-4 grid gap-3"><div><div className="text-xs text-muted-foreground">Durum</div><Badge className="mt-1" appearance="light" variant={st[1]}>{st[0]}</Badge></div><div><div className="text-xs text-muted-foreground">Öncelik</div><div className="font-medium">{PRIORITIES[ticket.priority]||ticket.priority}</div></div><div><div className="text-xs text-muted-foreground">Kategori</div><div className="font-medium">{ticket.category||'Genel'}</div></div><div><div className="text-xs text-muted-foreground">SLA hedefi</div><div className="font-medium flex items-center gap-1"><Clock3 className="size-3"/>{dt(ticket.slaDueAt)}</div></div>{ticket.relatedOrderId&&<div><div className="text-xs text-muted-foreground">Sipariş</div><div className="break-all text-sm">{ticket.relatedOrderId}</div></div>}{ticket.relatedIntegrationId&&<div><div className="text-xs text-muted-foreground">Entegrasyon</div><div className="break-all text-sm">{ticket.relatedIntegrationId}</div></div>}<div><div className="text-xs text-muted-foreground">Oluşturuldu</div><div className="text-sm">{dt(ticket.createdAt)}</div></div></CardContent></Card>{ticket.status==='CLOSED'?<Button variant="outline" onClick={()=>void action('reopen')}>Talebi Yeniden Aç</Button>:<Button variant="outline" onClick={()=>void action('close')}>Talebi Kapat</Button>}</aside></div></DialogBody></DialogContent></Dialog>}
+import {LifeBuoy,LoaderCircle,MessageSquare,RefreshCw,Search} from 'lucide-react';
+
+type TicketMessage={id:string;body:string;authorType:string;isInternal?:boolean;createdAt:string};
+type Ticket={id:string;subject:string;ticketNumber?:string;category?:string;priority:string;status:string;assignedTo?:string|null;updatedAt:string;createdAt:string;tenant?:{id:string;name?:string;slug?:string};messages:TicketMessage[]};
+const STATUSES:Record<string,string>={OPEN:'Açık',IN_PROGRESS:'İşlemde',WAITING_CUSTOMER:'Müşteri Yanıtı Bekleniyor',RESOLVED:'Çözüldü',CLOSED:'Kapalı'};
+const PRIORITIES:Record<string,string>={LOW:'Düşük',NORMAL:'Normal',HIGH:'Yüksek',URGENT:'Acil'};
+const fmt=(date?:string)=>date?new Date(date).toLocaleString('tr-TR'):'—';
+const messageError=(e:unknown)=>e instanceof Error?e.message:'İşlem gerçekleştirilemedi.';
+
+export default function Page(){
+  const {request,restoring}=useMasterSession();
+  const [tickets,setTickets]=useState<Ticket[]>([]);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState('');
+  const [query,setQuery]=useState('');
+  const [status,setStatus]=useState('ALL');
+  const [priority,setPriority]=useState('ALL');
+  const [selectedId,setSelectedId]=useState<string|null>(null);
+  const [message,setMessage]=useState('');
+  const [internal,setInternal]=useState(false);
+  const [editStatus,setEditStatus]=useState('OPEN');
+  const [editPriority,setEditPriority]=useState('NORMAL');
+  const [busy,setBusy]=useState(false);
+
+  const load=useCallback(async()=>{
+    if(restoring)return;
+    setLoading(true);setError('');
+    try{
+      const result=await request('/superadmin/support/tickets');
+      setTickets(Array.isArray(result)?result:[]);
+    }catch(e){setError(messageError(e))}
+    finally{setLoading(false)}
+  },[request,restoring]);
+  useEffect(()=>{void load()},[load]);
+
+  const selected=tickets.find(x=>x.id===selectedId)||null;
+  const open=(ticket:Ticket)=>{
+    setSelectedId(ticket.id);setEditStatus(ticket.status);setEditPriority(ticket.priority);
+    setMessage('');setInternal(false);setError('');
+  };
+  const filtered=useMemo(()=>tickets.filter(ticket=>{
+    if(status!=='ALL'&&ticket.status!==status)return false;
+    if(priority!=='ALL'&&ticket.priority!==priority)return false;
+    const needle=query.trim().toLocaleLowerCase('tr');
+    if(!needle)return true;
+    return [ticket.subject,ticket.ticketNumber,ticket.category,ticket.id,ticket.tenant?.name,ticket.tenant?.slug].some(v=>String(v||'').toLocaleLowerCase('tr').includes(needle));
+  }),[tickets,query,status,priority]);
+  const counts=useMemo(()=>({
+    all:tickets.length,open:tickets.filter(x=>x.status==='OPEN').length,
+    inProgress:tickets.filter(x=>x.status==='IN_PROGRESS').length,
+    waiting:tickets.filter(x=>x.status==='WAITING_CUSTOMER').length,
+    resolved:tickets.filter(x=>['RESOLVED','CLOSED'].includes(x.status)).length,
+  }),[tickets]);
+
+  const save=async()=>{
+    if(!selected)return;
+    if(!message.trim()&&editStatus===selected.status&&editPriority===selected.priority){setError('Yanıt yazın veya durum / öncelik değiştirin.');return;}
+    if(message.length>10000){setError('Yanıt en fazla 10.000 karakter olabilir.');return;}
+    setBusy(true);setError('');
+    try{
+      const updated=await request('/superadmin/support/tickets/'+encodeURIComponent(selected.id),{
+        method:'PATCH',
+        body:JSON.stringify({status:editStatus,priority:editPriority,...(message.trim()?{message:message.trim(),isInternal:internal}:{})}),
+      });
+      setTickets(current=>current.map(x=>x.id===updated.id?updated:x));
+      setMessage('');setInternal(false);
+    }catch(e){setError(messageError(e))}
+    finally{setBusy(false)}
+  };
+  return <>
+    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Mağaza Destek Talepleri</h1><ToolbarDescription>Mağazalardan gelen destek kayıtlarını ve yanıtlarını tek merkezden yönetin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button></ToolbarActions></Toolbar></Container>
+    <Container className="grid gap-5 pb-10">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {[[counts.all,'Toplam'],[counts.open,'Açık'],[counts.inProgress,'İşlemde'],[counts.waiting,'Yanıt Bekleyen'],[counts.resolved,'Çözülen']].map(([value,label])=><Card key={label}><CardContent className="p-5"><div className="text-sm text-muted-foreground">{label}</div><div className="mt-2 text-2xl font-semibold">{value}</div></CardContent></Card>)}
+      </div>
+      <Card>
+        <CardContent className="grid gap-3 p-5 md:grid-cols-[1fr_190px_170px]">
+          <div className="relative"><Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input className="ps-9" placeholder="Talep numarası, mağaza veya konu ara" value={query} onChange={e=>setQuery(e.target.value)}/></div>
+          <Select value={status} onValueChange={setStatus}><SelectTrigger><SelectValue placeholder="Durum"/></SelectTrigger><SelectContent><SelectItem value="ALL">Tüm durumlar</SelectItem>{Object.entries(STATUSES).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select>
+          <Select value={priority} onValueChange={setPriority}><SelectTrigger><SelectValue placeholder="Öncelik"/></SelectTrigger><SelectContent><SelectItem value="ALL">Tüm öncelikler</SelectItem>{Object.entries(PRIORITIES).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select>
+        </CardContent>
+      </Card>
+      {error&&!selected?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>:null}
+      <Card><CardHeader><CardHeading>Destek Listesi</CardHeading></CardHeader><CardContent className="overflow-x-auto p-0">
+        {loading?<div className="grid min-h-56 place-items-center"><LoaderCircle className="animate-spin"/></div>:
+        <Table><TableHeader><TableRow><TableHead>Talep</TableHead><TableHead>Mağaza</TableHead><TableHead>Öncelik</TableHead><TableHead>Durum</TableHead><TableHead>Güncellendi</TableHead><TableHead className="text-end">İşlem</TableHead></TableRow></TableHeader>
+        <TableBody>{filtered.map(ticket=><TableRow key={ticket.id}>
+          <TableCell><div className="font-medium">{ticket.subject}</div><div className="text-xs text-muted-foreground">{ticket.ticketNumber||ticket.id.slice(0,8)} · {ticket.category||'Genel'}</div></TableCell>
+          <TableCell>{ticket.tenant?.name||ticket.tenant?.slug||ticket.tenant?.id||'—'}</TableCell>
+          <TableCell><Badge appearance="light" variant={ticket.priority==='URGENT'?'destructive':ticket.priority==='HIGH'?'warning':'secondary'}>{PRIORITIES[ticket.priority]||ticket.priority}</Badge></TableCell>
+          <TableCell><Badge appearance="light" variant={ticket.status==='RESOLVED'?'success':ticket.status==='CLOSED'?'secondary':'warning'}>{STATUSES[ticket.status]||ticket.status}</Badge></TableCell>
+          <TableCell>{fmt(ticket.updatedAt)}</TableCell>
+          <TableCell className="text-end"><Button size="sm" variant="outline" onClick={()=>open(ticket)}>Aç / Yanıtla</Button></TableCell>
+        </TableRow>)}{!filtered.length?<TableRow><TableCell colSpan={6}><div className="grid justify-items-center gap-2 py-12 text-sm text-muted-foreground"><LifeBuoy className="size-7"/>Destek kaydı bulunamadı.</div></TableCell></TableRow>:null}</TableBody></Table>}
+      </CardContent></Card>
+    </Container>
+    <Dialog open={!!selected} onOpenChange={visible=>{if(!visible){setSelectedId(null);setMessage('');setError('')}}}>
+      <DialogContent className="sm:max-w-5xl">
+        <DialogHeader><DialogTitle>{selected?.ticketNumber||'Destek Talebi'} · {selected?.subject}</DialogTitle></DialogHeader>
+        <DialogBody className="max-h-[76vh] overflow-y-auto">
+          {selected?<div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
+            <div className="grid content-start gap-4">
+              <div className="grid min-h-64 gap-3 rounded-lg border bg-muted/20 p-4">
+                {(selected.messages||[]).filter(x=>!!x.body).map(entry=><div key={entry.id} className={'rounded-lg border bg-background p-3 '+(entry.isInternal?'border-warning/50':'')}>
+                  <div className="mb-1 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+                    <span className="font-medium">{entry.authorType==='merchant'?'Mağaza':entry.authorType==='support'?'Ticarti Destek':entry.authorType}{entry.isInternal?' · İç not':''}</span><span>{fmt(entry.createdAt)}</span>
+                  </div>
+                  <div className="whitespace-pre-wrap break-words text-sm">{entry.body}</div>
+                </div>)}
+                {!selected.messages?.length?<p className="text-sm text-muted-foreground">Henüz mesaj yok.</p>:null}
+              </div>
+              <label className="grid gap-2 text-sm font-medium">Yanıt / not<Textarea rows={5} maxLength={10000} value={message} onChange={e=>setMessage(e.target.value)} placeholder="Mağazaya yanıt yazın..."/></label>
+              <label className="flex items-center gap-2 text-sm"><Switch checked={internal} onCheckedChange={setInternal}/>Yalnızca ekip içi not (mağazaya gösterilmez)</label>
+            </div>
+            <div className="grid content-start gap-4">
+              <Card><CardContent className="grid gap-4 p-4">
+                <div><div className="text-xs text-muted-foreground">Mağaza</div><div className="font-medium">{selected.tenant?.name||selected.tenant?.slug||'—'}</div></div>
+                <div><div className="text-xs text-muted-foreground">Kategori</div><div>{selected.category||'Genel'}</div></div>
+                <label className="grid gap-2 text-sm">Durum<Select value={editStatus} onValueChange={setEditStatus}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{Object.entries(STATUSES).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
+                <label className="grid gap-2 text-sm">Öncelik<Select value={editPriority} onValueChange={setEditPriority}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{Object.entries(PRIORITIES).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
+                <div className="text-xs text-muted-foreground">Oluşturuldu: {fmt(selected.createdAt)}</div>
+              </CardContent></Card>
+            </div>
+          </div>:null}
+          {error?<p className="mt-3 text-sm text-destructive">{error}</p>:null}
+        </DialogBody>
+        <DialogFooter><Button variant="outline" onClick={()=>setSelectedId(null)}>Kapat</Button><Button disabled={busy} onClick={()=>void save()}>{busy?<LoaderCircle className="size-4 animate-spin"/>:<MessageSquare className="size-4"/>}Kaydet / Gönder</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </>;
+}
