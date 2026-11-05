@@ -1,3 +1,3 @@
-import { WhatsappSettingsPage } from '../components/platform-settings-ui';
+import { PlatformWhatsappSettingsPage } from '../components/communication-settings';
 
-export default function Page(){ return <WhatsappSettingsPage/>; }
+export default function Page(){ return <PlatformWhatsappSettingsPage/>; }
