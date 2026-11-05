@@ -382,7 +382,7 @@ export function PlatformGeneralPage() {
       </div>
       <Field label="Telefon">
         <div className="flex gap-2">
-          <Select value={selectedCountry?.code||''} onValueChange={code=>{const hit=data.countries.find(x=>x.code===code);if(hit)patchCompany({phoneCountry:code,phone:hit.phoneCode+localPhone.replace(/\D/g,'').replace(/^0+/,'')})}}>
+          <Select value={selectedCountry?.code||''} onValueChange={code=>{const hit=data.countries.find(x=>x.code===code);if(hit){const digits=localPhone.replace(/\D/g,'').replace(/^0+/,'');patchCompany({phoneCountry:code,phone:digits?hit.phoneCode+digits:''})}}}>
             <SelectTrigger className="w-44 shrink-0"><SelectValue placeholder="Alan kodu"/></SelectTrigger>
             <SelectContent>{data.countries.filter(x=>x.isActive).map(x=><SelectItem key={x.code} value={x.code}>{x.flag} {x.phoneCode} · {x.name}</SelectItem>)}</SelectContent>
           </Select>
