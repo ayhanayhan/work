@@ -1,4 +1,5 @@
 import {
+  Boxes,
   FileText,
   LayoutGrid,
   LifeBuoy,
@@ -15,16 +16,11 @@ import { type MenuConfig } from './types';
 export const MENU_SIDEBAR: MenuConfig = [
   { title: 'Kontrol Paneli', i18nKey: 'navigation.dashboard', icon: LayoutGrid, path: '/dashboard' },
   {
-    title: 'Ürünler', i18nKey: 'navigation.products', icon: ShoppingCart, children: [
-      { title: 'Tüm Ürünler', i18nKey: 'navigation.all_products', path: '/products' },
-      { title: 'Yeni Ürün', i18nKey: 'navigation.new_product', path: '/products/new' },
-      { title: 'Kategoriler', i18nKey: 'navigation.categories', path: '/products/categories' },
-      { title: 'Markalar', i18nKey: 'navigation.brands', path: '/products/brands' },
-      { title: 'Koleksiyonlar', i18nKey: 'navigation.collections', path: '/products/collections' },
-      { title: 'Seçenekler & Varyantlar', i18nKey: 'navigation.options_variants', path: '/products/options' },
-      { title: 'Ürün Özellikleri', i18nKey: 'navigation.attributes', path: '/products/attributes' },
-      { title: 'Stok Yönetimi', i18nKey: 'navigation.inventory', path: '/products/inventory' },
-      { title: 'Stok Hareket Defteri', path: '/products/inventory/ledger' },
+    title: 'Paketler', icon: Boxes, children: [
+      { title: 'Tüm Paketler', path: '/products' },
+      { title: 'Yeni Paket', path: '/products/new' },
+      { title: 'Paket Özellikleri', path: '/products/features' },
+      { title: 'Özellik Kategorileri', path: '/products/feature-categories' },
     ],
   },
   {
