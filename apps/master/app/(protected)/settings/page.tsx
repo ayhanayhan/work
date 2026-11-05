@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import {
   Bot,
-  Braces,
   ChevronRight,
   FileText,
   Globe2,
@@ -82,9 +81,7 @@ const groups = [
     title: 'Yapay Zeka',
     description: 'TicAi ve platform genelindeki AI servislerinin merkezi model ve kullanım ayarları.',
     items: [
-      ['AI Ayarları', 'Provider, varsayılan model, API bağlantısı, aktiflik ve genel davranış ayarları.', '/settings/ai', Bot],
-      ['Model Tanımları', 'Kullanılabilir modelleri, görev tiplerini, sıcaklık ve token limitlerini tanımlayın.', '/settings/ai/models', Braces],
-      ['AI Kullanım Politikaları', 'Kota, kullanım sınırı, loglama ve özellik bazlı erişim kurallarını yönetin.', '/settings/ai/policies', ShieldCheck],
+      ['AI Servisleri', 'Metin, görsel, embedding, vision, ses, moderasyon ve video modellerini yönetin.', '/settings/ai', Bot],
     ],
   },
 ] as const;
