@@ -290,7 +290,7 @@ export class SuperAdminService {
 
   private defaultPlatformSettings(){
     return {
-      company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:'',socialLinks:[]},
+      company:{name:'Ticarti',legalName:'',email:'',phone:'',phoneCountry:'TR',website:'',taxOffice:'',taxNumber:'',address:'',country:'',city:'',district:'',postalCode:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:'',socialLinks:[]},
       locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
       countries:[{code:'TR',name:'Türkiye',phoneCode:'+90',flag:'🇹🇷',isActive:true},{code:'DE',name:'Almanya',phoneCode:'+49',flag:'🇩🇪',isActive:true},{code:'GB',name:'Birleşik Krallık',phoneCode:'+44',flag:'🇬🇧',isActive:true}],
       currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
@@ -308,7 +308,11 @@ export class SuperAdminService {
 
   async updatePlatformSettings(body:any){
     const current=await this.platformSettings();
-    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();if(Array.isArray(body?.company?.socialLinks))company.socialLinks=body.company.socialLinks.slice(0,50).map((x:any)=>({platform:String(x.platform||'').trim(),url:String(x.url||'').trim()})).filter((x:any)=>x.platform&&x.url);
+    const company={...current.company};for(const k of ['name','legalName','email','phone','phoneCountry','website','taxOffice','taxNumber','address','country','city','district','postalCode','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();if(Array.isArray(body?.company?.socialLinks))company.socialLinks=body.company.socialLinks.slice(0,50).map((x:any)=>({platform:String(x.platform||'').trim(),url:String(x.url||'').trim()})).filter((x:any)=>x.platform&&x.url);
+    if(company.phone && !/^\\+[1-9]\\d{6,14}$/.test(company.phone))throw new BadRequestException('Geçersiz telefon numarası. Ülke koduyla E.164 biçimi kullanın.');
+    if(company.phone?.startsWith('+90') && !/^\\+90[2-5]\\d{9}$/.test(company.phone))throw new BadRequestException('Türkiye telefon numarası 10 haneli olmalıdır.');
+    if(company.email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(company.email))throw new BadRequestException('Geçersiz e-posta adresi.');
+    if(company.timezone){try{new Intl.DateTimeFormat('en-US',{timeZone:company.timezone})}catch{throw new BadRequestException('Geçersiz saat dilimi.');}}
     const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,100).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim().toLowerCase(),label:String(x.label||x.name||x.locale||'').trim(),flag:String(x.flag||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
     const currencies=(Array.isArray(body?.currencies)?body.currencies:current.currencies).slice(0,100).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),symbol:String(x.symbol||'').trim(),symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE',isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
     if(!locales.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif dil gerekli');
