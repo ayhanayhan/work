@@ -195,6 +195,106 @@ export class SuperAdminService {
     return value;
   }
 
+  private defaultContractSettings(){
+    return {
+      contracts:[
+        {key:'TERMS_OF_SERVICE',label:'Kullanım Koşulları',contentKey:'terms-of-service',isActive:true,placements:['FOOTER','REGISTER_TERMS','LOGIN_SOCIAL']},
+        {key:'MEMBERSHIP_AGREEMENT',label:'Üyelik Sözleşmesi',contentKey:'membership-agreement',isActive:true,placements:['REGISTER_TERMS']},
+        {key:'PRIVACY_POLICY',label:'Gizlilik Politikası',contentKey:'privacy-policy',isActive:true,placements:['FOOTER','REGISTER_PRIVACY','LOGIN_SOCIAL','CHECKOUT_PRIVACY','CONTACT_FORM']},
+        {key:'KVKK_NOTICE',label:'KVKK Aydınlatma Metni',contentKey:'kvkk-notice',isActive:true,placements:['FOOTER','REGISTER_KVKK','CHECKOUT_PRIVACY','CONTACT_FORM']},
+        {key:'EXPLICIT_CONSENT',label:'Açık Rıza Metni',contentKey:'explicit-consent',isActive:true,placements:['REGISTER_KVKK']},
+        {key:'COMMERCIAL_COMMUNICATION',label:'Ticari Elektronik İleti Onayı',contentKey:'commercial-communication-consent',isActive:true,placements:['REGISTER_MARKETING','NEWSLETTER']},
+        {key:'COOKIE_POLICY',label:'Çerez Politikası',contentKey:'cookie-policy',isActive:true,placements:['FOOTER','COOKIE_BANNER']},
+        {key:'SUBSCRIPTION_AGREEMENT',label:'Abonelik / Hizmet Sözleşmesi',contentKey:'subscription-agreement',isActive:true,placements:['CHECKOUT_TERMS']},
+        {key:'PRE_INFORMATION',label:'Ön Bilgilendirme Formu',contentKey:'pre-information',isActive:true,placements:['CHECKOUT_PREINFO']},
+        {key:'DISTANCE_SALES',label:'Mesafeli Satış Sözleşmesi',contentKey:'distance-sales-agreement',isActive:true,placements:['CHECKOUT_DISTANCE_SALES']},
+        {key:'CANCELLATION_REFUND',label:'İptal / İade Koşulları',contentKey:'cancellation-refund-policy',isActive:true,placements:['FOOTER','CHECKOUT_TERMS']},
+        {key:'PAYMENT_BILLING',label:'Ödeme ve Faturalandırma Koşulları',contentKey:'payment-billing-terms',isActive:true,placements:['CHECKOUT_TERMS']},
+        {key:'DATA_PROCESSING',label:'Kişisel Verilerin İşlenmesi ve Saklanması',contentKey:'data-processing-policy',isActive:true,placements:['FOOTER','REGISTER_KVKK','ACCOUNT']},
+      ],
+      contentOptions:[
+        {key:'terms-of-service',label:'Kullanım Koşulları'},
+        {key:'membership-agreement',label:'Üyelik Sözleşmesi'},
+        {key:'privacy-policy',label:'Gizlilik Politikası'},
+        {key:'kvkk-notice',label:'KVKK Aydınlatma Metni'},
+        {key:'explicit-consent',label:'Açık Rıza Metni'},
+        {key:'commercial-communication-consent',label:'Ticari Elektronik İleti Onayı'},
+        {key:'cookie-policy',label:'Çerez Politikası'},
+        {key:'subscription-agreement',label:'Abonelik / Hizmet Sözleşmesi'},
+        {key:'pre-information',label:'Ön Bilgilendirme Formu'},
+        {key:'distance-sales-agreement',label:'Mesafeli Satış Sözleşmesi'},
+        {key:'cancellation-refund-policy',label:'İptal / İade Koşulları'},
+        {key:'payment-billing-terms',label:'Ödeme ve Faturalandırma Koşulları'},
+        {key:'data-processing-policy',label:'Kişisel Verilerin İşlenmesi ve Saklanması'},
+      ]
+    };
+  }
+
+  async contractSettings(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'platform_contracts'}});
+    const base:any=this.defaultContractSettings();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    return {
+      contracts:Array.isArray(value.contracts)&&value.contracts.length?value.contracts:base.contracts,
+      contentOptions:Array.isArray(value.contentOptions)&&value.contentOptions.length?value.contentOptions:base.contentOptions,
+    };
+  }
+
+  async updateContractSettings(body:any){
+    const current:any=await this.contractSettings();
+    const allowedPlacements=new Set(['FOOTER','REGISTER_TERMS','REGISTER_PRIVACY','REGISTER_KVKK','REGISTER_MARKETING','LOGIN_SOCIAL','CHECKOUT_TERMS','CHECKOUT_PREINFO','CHECKOUT_DISTANCE_SALES','CHECKOUT_PRIVACY','NEWSLETTER','COOKIE_BANNER','CONTACT_FORM','SUPPORT_FORM','ACCOUNT','MOBILE_APP']);
+    const contracts=(Array.isArray(body?.contracts)?body.contracts:current.contracts).slice(0,100).map((x:any,i:number)=>({
+      key:String(x.key||'CONTRACT_'+i).trim().toUpperCase(),
+      label:String(x.label||x.key||'Sözleşme').trim(),
+      contentKey:String(x.contentKey||'').trim(),
+      isActive:x.isActive!==false,
+      placements:(Array.isArray(x.placements)?x.placements:[]).map((p:any)=>String(p).trim().toUpperCase()).filter((p:string)=>allowedPlacements.has(p)),
+      sortOrder:Number(x.sortOrder??i),
+    })).filter((x:any)=>x.key);
+    const contentOptions=(Array.isArray(body?.contentOptions)?body.contentOptions:current.contentOptions).slice(0,200).map((x:any,i:number)=>({
+      key:String(x.key||'').trim(),
+      label:String(x.label||x.key||'').trim(),
+      sortOrder:Number(x.sortOrder??i),
+    })).filter((x:any)=>x.key);
+    const value={contracts,contentOptions};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'platform_contracts'},create:{key:'platform_contracts',value},update:{value}});
+    return value;
+  }
+
+  private defaultAuthProviders(){
+    return {
+      providers:[
+        {key:'GOOGLE',label:'Google ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-google-oauth-client-secret',scopes:['openid','email','profile']},
+        {key:'FACEBOOK',label:'Facebook ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-facebook-oauth-client-secret',scopes:['email','public_profile']},
+        {key:'APPLE',label:'Apple ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-apple-oauth-client-secret',scopes:['name','email']},
+        {key:'MICROSOFT',label:'Microsoft ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-microsoft-oauth-client-secret',scopes:['openid','email','profile']},
+      ]
+    };
+  }
+
+  async authProviders(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'auth_providers'}});
+    const base:any=this.defaultAuthProviders();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    return {providers:Array.isArray(value.providers)&&value.providers.length?value.providers:base.providers};
+  }
+
+  async updateAuthProviders(body:any){
+    const current:any=await this.authProviders();
+    const providers=(Array.isArray(body?.providers)?body.providers:current.providers).slice(0,20).map((x:any,i:number)=>({
+      key:String(x.key||'PROVIDER_'+i).trim().toUpperCase(),
+      label:String(x.label||x.key||'Provider').trim(),
+      enabled:x.enabled===true,
+      clientId:String(x.clientId||'').trim(),
+      clientSecretRef:String(x.clientSecretRef||'').trim(),
+      scopes:(Array.isArray(x.scopes)?x.scopes:String(x.scopes||'').split(',')).map((s:any)=>String(s).trim()).filter(Boolean),
+      sortOrder:Number(x.sortOrder??i),
+    })).filter((x:any)=>x.key);
+    const value={providers};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'auth_providers'},create:{key:'auth_providers',value},update:{value}});
+    return value;
+  }
+
   private defaultAiServices(){
     const baseUrl='https://api.openai.com/v1';
     return {
