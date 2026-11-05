@@ -1,3 +1,3 @@
-import { CurrenciesPage } from '../components/platform-settings-ui';
+import { PlatformCurrenciesPage } from '../components/platform-core-settings';
 
-export default function Page(){ return <CurrenciesPage/>; }
+export default function Page(){ return <PlatformCurrenciesPage/>; }
