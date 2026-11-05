@@ -167,7 +167,7 @@ export class SuperAdminService {
 
   private defaultPlatformSettings(){
     return {
-      company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:''},
+      company:{name:'Ticarti',legalName:'',email:'',phone:'',website:'',taxOffice:'',taxNumber:'',address:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:'',socialLinks:[]},
       locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
       currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
     };
@@ -183,7 +183,7 @@ export class SuperAdminService {
 
   async updatePlatformSettings(body:any){
     const current=await this.platformSettings();
-    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();
+    const company={...current.company};for(const k of ['name','legalName','email','phone','website','taxOffice','taxNumber','address','timezone','logoUrl','logoDarkUrl','faviconUrl'])if(body?.company?.[k]!==undefined)company[k]=String(body.company[k]||'').trim();if(Array.isArray(body?.company?.socialLinks))company.socialLinks=body.company.socialLinks.slice(0,50).map((x:any)=>({platform:String(x.platform||'').trim(),url:String(x.url||'').trim()})).filter((x:any)=>x.platform&&x.url);
     const locales=(Array.isArray(body?.locales)?body.locales:current.locales).slice(0,100).map((x:any,i:number)=>({locale:String(x.locale||x.code||'').trim().toLowerCase(),label:String(x.label||x.name||x.locale||'').trim(),flag:String(x.flag||'').trim(),isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.locale);
     const currencies=(Array.isArray(body?.currencies)?body.currencies:current.currencies).slice(0,100).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),symbol:String(x.symbol||'').trim(),symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE',isActive:x.isActive!==false,isDefault:!!x.isDefault,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
     if(!locales.some((x:any)=>x.isActive))throw new BadRequestException('En az bir aktif dil gerekli');
@@ -317,6 +317,112 @@ export class SuperAdminService {
     const value={providers};
     await (this.prisma as any).platformSetting.upsert({where:{key:'auth_providers'},create:{key:'auth_providers',value},update:{value}});
     return value;
+  }
+
+  private defaultCommunicationSettings(){
+    return {
+      email:{
+        enabled:true,
+        provider:'AWS_SES',
+        region:'eu-central-1',
+        credentialMode:'ENVIRONMENT',
+        senderDomain:'ticarti.com',
+        defaultFromName:'Ticarti',
+        defaultFromEmail:'noreply@ticarti.com',
+        defaultReplyTo:'support@ticarti.com',
+        defaultLocale:'tr',
+        transactional:true,
+        marketing:true,
+        retryCount:3,
+        bounceHandling:true,
+        complaintHandling:true,
+        accessKeySecretRef:'',
+        secretKeySecretRef:'',
+      },
+      sms:{enabled:false,provider:'',senderId:'',apiBaseUrl:'',apiKeySecretRef:'',defaultLocale:'tr'},
+      whatsapp:{enabled:false,provider:'META',businessAccountId:'',phoneNumberId:'',apiVersion:'v21.0',accessTokenSecretRef:'',webhookTokenSecretRef:'',defaultLocale:'tr'},
+      notificationRules:[
+        {event:'USER_REGISTERED',label:'Yeni kullanıcı kaydı',email:true,sms:false,whatsapp:false,enabled:true},
+        {event:'EMAIL_VERIFY',label:'E-posta doğrulama',email:true,sms:false,whatsapp:false,enabled:true},
+        {event:'PASSWORD_RESET',label:'Şifre sıfırlama',email:true,sms:false,whatsapp:false,enabled:true},
+        {event:'PAYMENT_FAILED',label:'Ödeme başarısız',email:true,sms:false,whatsapp:false,enabled:true},
+        {event:'SUBSCRIPTION_STARTED',label:'Abonelik başladı',email:true,sms:false,whatsapp:false,enabled:true},
+        {event:'SUBSCRIPTION_CANCELLED',label:'Abonelik iptal edildi',email:true,sms:false,whatsapp:false,enabled:true},
+      ],
+      templateVariables:[
+        {key:'{{name}}',label:'Ad / kullanıcı adı',source:'user.name',enabled:true},
+        {key:'{{email}}',label:'E-posta',source:'user.email',enabled:true},
+        {key:'{{verification_url}}',label:'Doğrulama bağlantısı',source:'auth.verificationUrl',enabled:true},
+        {key:'{{reset_url}}',label:'Şifre sıfırlama bağlantısı',source:'auth.resetUrl',enabled:true},
+        {key:'{{store_name}}',label:'Mağaza adı',source:'store.name',enabled:true},
+        {key:'{{order_number}}',label:'Sipariş numarası',source:'order.number',enabled:true},
+        {key:'{{order_total}}',label:'Sipariş toplamı',source:'order.total',enabled:true},
+        {key:'{{tracking_url}}',label:'Kargo takip bağlantısı',source:'shipment.trackingUrl',enabled:true},
+      ],
+      templates:{email:[],sms:[],whatsapp:[]}
+    };
+  }
+
+  async communicationSettings(){
+    const [row,platform]:any=await Promise.all([
+      (this.prisma as any).platformSetting.findUnique({where:{key:'communication_settings'}}),
+      this.platformSettings()
+    ]);
+    const base:any=this.defaultCommunicationSettings();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    const activeLocales=(platform.locales||[]).filter((x:any)=>x.isActive!==false).map((x:any)=>({locale:String(x.locale),label:String(x.label||x.locale),flag:String(x.flag||'')}));
+    const fallbackLocale=activeLocales.find((x:any)=>platform.locales.find((r:any)=>r.locale===x.locale)?.isDefault)?.locale||activeLocales[0]?.locale||'tr';
+    const email={...base.email,...(value.email||{})};if(!activeLocales.some((x:any)=>x.locale===email.defaultLocale))email.defaultLocale=fallbackLocale;
+    const sms={...base.sms,...(value.sms||{})};if(!activeLocales.some((x:any)=>x.locale===sms.defaultLocale))sms.defaultLocale=fallbackLocale;
+    const whatsapp={...base.whatsapp,...(value.whatsapp||{})};if(!activeLocales.some((x:any)=>x.locale===whatsapp.defaultLocale))whatsapp.defaultLocale=fallbackLocale;
+    return {
+      email,sms,whatsapp,activeLocales,
+      notificationRules:Array.isArray(value.notificationRules)?value.notificationRules:base.notificationRules,
+      templateVariables:Array.isArray(value.templateVariables)?value.templateVariables:base.templateVariables,
+      templates:{...base.templates,...(value.templates||{})},
+    };
+  }
+
+  async updateCommunicationSettings(body:any){
+    const current:any=await this.communicationSettings();
+    const localeSet=new Set((current.activeLocales||[]).map((x:any)=>String(x.locale)));
+    const normalizeLocale=(v:any,fallback:string)=>localeSet.has(String(v||''))?String(v):fallback;
+    const fallbackLocale=current.activeLocales?.[0]?.locale||'tr';
+    const email={
+      ...current.email,
+      ...(body?.email||{}),
+      provider:'AWS_SES',
+      enabled:body?.email?.enabled!==false,
+      region:String(body?.email?.region||current.email.region||'eu-central-1').trim(),
+      credentialMode:['ENVIRONMENT','SECRET_MANAGER'].includes(String(body?.email?.credentialMode||''))?String(body.email.credentialMode):'ENVIRONMENT',
+      senderDomain:String(body?.email?.senderDomain||'').trim(),
+      defaultFromName:String(body?.email?.defaultFromName||'').trim(),
+      defaultFromEmail:String(body?.email?.defaultFromEmail||'').trim(),
+      defaultReplyTo:String(body?.email?.defaultReplyTo||'').trim(),
+      defaultLocale:normalizeLocale(body?.email?.defaultLocale,current.email.defaultLocale||fallbackLocale),
+      transactional:body?.email?.transactional!==false,
+      marketing:body?.email?.marketing!==false,
+      retryCount:Math.max(0,Math.min(10,Number(body?.email?.retryCount??current.email.retryCount??3))),
+      bounceHandling:body?.email?.bounceHandling!==false,
+      complaintHandling:body?.email?.complaintHandling!==false,
+      accessKeySecretRef:String(body?.email?.accessKeySecretRef||'').trim(),
+      secretKeySecretRef:String(body?.email?.secretKeySecretRef||'').trim(),
+    };
+    const sms={...current.sms,...(body?.sms||{}),enabled:body?.sms?.enabled===true,defaultLocale:normalizeLocale(body?.sms?.defaultLocale,current.sms.defaultLocale||fallbackLocale)};
+    const whatsapp={...current.whatsapp,...(body?.whatsapp||{}),enabled:body?.whatsapp?.enabled===true,defaultLocale:normalizeLocale(body?.whatsapp?.defaultLocale,current.whatsapp.defaultLocale||fallbackLocale)};
+    const notificationRules=(Array.isArray(body?.notificationRules)?body.notificationRules:current.notificationRules).slice(0,100).map((x:any,i:number)=>({event:String(x.event||'EVENT_'+i).trim().toUpperCase(),label:String(x.label||x.event||'Olay').trim(),email:!!x.email,sms:!!x.sms,whatsapp:!!x.whatsapp,enabled:x.enabled!==false}));
+    const templateVariables=(Array.isArray(body?.templateVariables)?body.templateVariables:current.templateVariables).slice(0,200).map((x:any)=>({key:String(x.key||'').trim(),label:String(x.label||x.key||'').trim(),source:String(x.source||'').trim(),enabled:x.enabled!==false})).filter((x:any)=>x.key);
+    const cleanTemplates:any={};
+    for(const channel of ['email','sms','whatsapp']){
+      cleanTemplates[channel]=(Array.isArray(body?.templates?.[channel])?body.templates[channel]:current.templates?.[channel]||[]).slice(0,200).map((row:any,i:number)=>{
+        const translations:any={};const raw=row?.translations&&typeof row.translations==='object'&&!Array.isArray(row.translations)?row.translations:{};
+        for(const [locale,text] of Object.entries(raw)){if(!localeSet.has(String(locale)))continue;const t:any=text||{};translations[String(locale)]={subject:String(t.subject||''),body:String(t.body||'')};}
+        return {event:String(row.event||row.id||'TEMPLATE_'+i).trim(),name:String(row.name||row.event||'Şablon').trim(),enabled:row.enabled!==false,layout:String(row.layout||'minimal'),metaName:String(row.metaName||''),translations};
+      });
+    }
+    const value={email,sms,whatsapp,notificationRules,templateVariables,templates:cleanTemplates};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'communication_settings'},create:{key:'communication_settings',value},update:{value}});
+    return this.communicationSettings();
   }
 
   private defaultAiServices(){
