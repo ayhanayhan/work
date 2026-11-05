@@ -193,6 +193,53 @@ export class SuperAdminService {
     return value;
   }
 
+  private defaultAiServices(){
+    const baseUrl='https://api.openai.com/v1';
+    return {
+      services:{
+        text:{label:'Metin ve asistan',enabled:true,provider:'openai-compatible',model:'gpt-4.1-mini',baseUrl},
+        image:{label:'Görsel üretimi',enabled:true,provider:'openai-compatible',model:'gpt-image-1',baseUrl},
+        embedding:{label:'Arama ve embedding',enabled:false,provider:'openai-compatible',model:'text-embedding-3-small',baseUrl},
+        vision:{label:'Görsel analiz',enabled:false,provider:'openai-compatible',model:'gpt-4.1-mini',baseUrl},
+        speechToText:{label:'Ses yazıya çevirme',enabled:false,provider:'openai-compatible',model:'gpt-4o-mini-transcribe',baseUrl},
+        textToSpeech:{label:'Ses sentezi',enabled:false,provider:'openai-compatible',model:'gpt-4o-mini-tts',baseUrl},
+        moderation:{label:'Güvenlik ve moderasyon',enabled:false,provider:'openai-compatible',model:'omni-moderation-latest',baseUrl},
+        video:{label:'Video üretimi',enabled:false,provider:'openai-compatible',model:'',baseUrl},
+      },
+      creditPolicy:{enabled:true},
+    };
+  }
+
+  async aiServices(){
+    const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'ai_services'}});
+    const base:any=this.defaultAiServices();
+    const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
+    const services:any={...base.services};
+    for(const [key,def] of Object.entries(base.services as any)){
+      const current:any=value?.services?.[key]||{};
+      services[key]={...(def as any),...current};
+    }
+    return {services,creditPolicy:{...base.creditPolicy,...(value.creditPolicy||{})}};
+  }
+
+  async updateAiServices(body:any){
+    const current:any=await this.aiServices();
+    const services:any={};
+    for(const [key,def] of Object.entries(current.services||{})){
+      const row:any=body?.services?.[key]||def;
+      services[key]={
+        label:String(row.label||(def as any).label||key),
+        enabled:row.enabled!==false,
+        provider:String(row.provider||(def as any).provider||'openai-compatible').trim(),
+        model:String(row.model??(def as any).model??'').trim(),
+        baseUrl:String(row.baseUrl||(def as any).baseUrl||'').trim(),
+      };
+    }
+    const value={services,creditPolicy:{...current.creditPolicy,...(body?.creditPolicy||{})}};
+    await (this.prisma as any).platformSetting.upsert({where:{key:'ai_services'},create:{key:'ai_services',value},update:{value}});
+    return value;
+  }
+
   async platformLocales(){
     const settings:any=await this.platformSettings();
     return (settings.locales||[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)).map((x:any)=>({locale:String(x.locale),label:String(x.label||x.locale).trim()||String(x.locale).toUpperCase(),isDefault:!!x.isDefault}));
