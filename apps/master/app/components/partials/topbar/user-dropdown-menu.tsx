@@ -14,7 +14,7 @@ import {
   UserCircle,
   Users,
 } from 'lucide-react';
-import { useAdminSession } from '@/app/components/AdminSession';
+import { useMasterSession } from '@/app/components/MasterSession';
 import { useTheme } from 'next-themes';
 import { useLanguage } from '@/providers/i18n-provider';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 
 export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
-  const { session, logout } = useAdminSession();
+  const { logout } = useMasterSession();
   const { changeLanguage, language } = useLanguage();
   const { theme, setTheme } = useTheme();
 
@@ -63,13 +63,13 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
                 href="/account/home/get-started"
                 className="text-sm text-mono hover:text-primary font-semibold"
               >
-                {session?.storeName || session?.tenantName || 'Ticarti'}
+                'Ticarti Master'
               </Link>
               <Link
                 href="mailto:c.fisher@gmail.com"
                 className="text-xs text-muted-foreground hover:text-primary"
               >
-                {session?.role || ''}
+                'Super Admin'
               </Link>
             </div>
           </div>
