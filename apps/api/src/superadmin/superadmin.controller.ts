@@ -33,6 +33,8 @@ export class SuperAdminController {
   @Get('contract-settings') contractSettings() { return this.svc.contractSettings(); }
   @Patch('contract-settings') updateContractSettings(@Body() b:any) { return this.svc.updateContractSettings(b); }
   @Get('auth-providers') authProviders() { return this.svc.authProviders(); }
+  @Get('communication-settings') communicationSettings() { return this.svc.communicationSettings(); }
+  @Patch('communication-settings') updateCommunicationSettings(@Body() b:any) { return this.svc.updateCommunicationSettings(b); }
   @Patch('auth-providers') updateAuthProviders(@Body() b:any) { return this.svc.updateAuthProviders(b); }
   @Get('ai-services') aiServices() { return this.svc.aiServices(); }
   @Patch('ai-services') updateAiServices(@Body() b:any) { return this.svc.updateAiServices(b); }
