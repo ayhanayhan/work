@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import { useSettings } from '@/providers/settings-provider';
 import { SidebarHeader } from './sidebar-header';
 import { SidebarMenu } from './sidebar-menu';
-import { SalesChannelSwitcher } from './sales-channel-switcher';
 
 export function Sidebar() {
   const { settings } = useSettings();
@@ -25,9 +24,6 @@ export function Sidebar() {
         <div className="h-full w-(--sidebar-default-width)">
           <SidebarMenu />
         </div>
-      </div>
-      <div className="w-(--sidebar-default-width) shrink-0 border-t border-border bg-background">
-        <SalesChannelSwitcher />
       </div>
     </div>
   );

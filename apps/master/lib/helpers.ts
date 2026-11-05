@@ -66,7 +66,7 @@ export function getInitials(
 }
 
 export function toAbsoluteUrl(pathname: string): string {
-  const configuredBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '/admin';
+  const configuredBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const basePath = configuredBasePath === '/' ? '' : configuredBasePath.replace(/\/$/, '');
   const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
 
