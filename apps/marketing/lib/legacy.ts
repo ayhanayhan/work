@@ -22,6 +22,19 @@ function extract(html:string):PageData{
 }
 const supportedLocales=new Set(['tr','en','pt','ru']);
 
+/** Hide links to missing translations and prevent the footer from leading to a 404. */
+function hideUnpublishedBlogLinks(html:string,posts:BlogPost[],locale:BlogLocale){
+  const listing=blogPath(locale);
+  const known=new Set(posts.map(p=>blogPath(locale,p.slug)));
+  return html.replace(/<li\b[^>]*>\s*<a\b[^>]*href="([^"]+)"[^>]*>[\s\S]*?<\/a>\s*<\/li>/gi,(whole,href:string)=>{
+    const pathname=href.split(/[?#]/)[0];
+    if(pathname===listing&&!posts.length)return '';
+    if(pathname.startsWith(listing+'/')&&!known.has(pathname))return '';
+    return whole;
+  });
+}
+
+
 /** Preserve original HTML and CSS while fixing template-era relative navigation. */
 function normalizeLegacyLinks(html:string,source:string,locale:BlogLocale){
   const prefix=locale==='tr'?'':'/'+locale;
@@ -78,7 +91,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   try{raw=await readFile(path.join(process.cwd(),'templates',source),'utf8')}
   catch{notFound();}
   const data=extract(raw!);data.locale=lang;
-  const posts= isBlog||isHome ? await getBlogPosts(lang) : [];
+  const posts=await getBlogPosts(lang);
   if(isBlog&&!posts.length)notFound();
   if(isBlogList)data.posts=posts;
   if(isBlogList){
@@ -133,6 +146,6 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   }
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
-  data.html=normalizeLegacyLinks(data.html,source,lang);
+  data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
   return data;
 }
