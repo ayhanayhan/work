@@ -67,6 +67,18 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
       ]}
     ];
   }
+  if(page.isHome){
+    const url=absolute(lang==='tr'?'/':'/'+lang+'/');
+    return [
+      {'@context':'https://schema.org','@type':'Organization','@id':BASE+'#organization',
+        name:'Ticarti',url:BASE,logo:{'@type':'ImageObject',url:absolute('/assets/images/ticarti-logo.svg')}},
+      {'@context':'https://schema.org','@type':'WebSite','@id':BASE+'#website',
+        name:'Ticarti',url:BASE,inLanguage:lang,publisher:{'@id':BASE+'#organization'}},
+      {'@context':'https://schema.org','@type':'WebPage','@id':url+'#webpage',
+        url,name:page.title,description:page.description,inLanguage:lang,
+        isPartOf:{'@id':BASE+'#website'}}
+    ];
+  }
   return [];
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
