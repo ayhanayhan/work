@@ -120,6 +120,18 @@ async function test(){
   assert.equal((await svc.publicBlog('de')).posts[0].title,'Deutscher Beitrag');
   assert.equal((await svc.publicBlog('en')).posts.length,0,'Disabled platform language must not publish');
   assert.deepEqual((await svc.publicBlog('de')).posts[0].availableLocales,['de']);
-  console.log('PASS: active platform locales, preserved inactive translations, blog publishing and SEO');
+  // FAQ uses the homepage CMS module, never a second seeded datastore.
+  const faqSaved=await svc.updateModule('faq',{version:0,enabled:true,fields:{
+    heading:{tr:'Sıkça Sorulan Sorular',de:'Häufige Fragen'}
+  },items:[{id:'faq-1',enabled:true,fields:{
+    question:{tr:'Nasıl başlarım?',de:'Wie beginne ich?'},
+    answer:{tr:'Hesabını oluştur.',de:'Erstelle ein Konto.'}
+  }}]});
+  assert.equal(faqSaved.module.items.length,1);
+  assert.equal((await svc.publicFaq('de')).items[0].fields.question.de,'Wie beginne ich?');
+  assert.equal((await svc.publicFaq('en')).enabled,false,'Inactive language cannot publish FAQ');
+  await svc.updateModule('faq',{version:1,enabled:false,fields:faqSaved.module.fields,items:faqSaved.module.items});
+  assert.equal((await svc.publicFaq('tr')).enabled,false,'Disabled FAQ module stays disabled in public endpoint');
+  console.log('PASS: active locales, preserved translations, blog and authoritative FAQ module');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
