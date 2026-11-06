@@ -10,3 +10,6 @@ env:
     value: "https://commerce-api-ynhobkprgq-ew.a.run.app"
   - variable: NEXT_PUBLIC_API_URL
     value: "/api/v1"
+
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: "https://ticarti.com"
