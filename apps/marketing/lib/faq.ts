@@ -9,18 +9,18 @@ const empty: FaqContent={enabled:true,configured:false,heading:'',description:''
 export async function getHomepageFaq(lang:string):Promise<FaqContent>{
   if(!API_ORIGIN)return empty;
   try{
-    const r=await fetch(API_ORIGIN+'/v1/public/website/home?lang='+encodeURIComponent(lang),
+    const r=await fetch(API_ORIGIN+'/v1/public/website/faq?lang='+encodeURIComponent(lang),
       {next:{revalidate:30},signal:AbortSignal.timeout(3500)});
     if(!r.ok)return empty;
     const data=await r.json();
-    const faq=Array.isArray(data?.modules)?data.modules.find((x:any)=>x?.id==='faq'):null;
+    const faq=data;
     if(!faq)return empty;
     const localized=(field:any)=>typeof field?.[lang]==='string'?field[lang].trim():'';
     const items:Array<FaqEntry>=Array.isArray(faq.items)?faq.items
       .filter((item:any)=>item?.enabled!==false)
       .map((item:any)=>({id:String(item.id||''),question:localized(item.fields?.question),answer:localized(item.fields?.answer)}))
       .filter(item=>!!item.question&&!!item.answer):[];
-    return {enabled:faq.enabled!==false,configured:Number(data.version)>0&&Array.isArray(faq.items)&&faq.items.length>0,
+    return {enabled:faq.enabled!==false,configured:faq.configured===true,
       heading:localized(faq.fields?.heading),description:localized(faq.fields?.description),items};
   }catch{return empty}
 }
