@@ -87,6 +87,21 @@ export class WebsiteService{
     await this.put(HOME_KEY,{version,modules});
     return {version,module};
   }
+  async importHome(body:any){
+    if(!Array.isArray(body?.modules))throw new BadRequestException('Anasayfa içerik dosyası geçersiz.');
+    const snapshot=await this.home();
+    if(body.version!==undefined&&Number(body.version)!==snapshot.version)throw new ConflictException('İçerik güncellenmiş. İçe aktarmadan önce sayfayı yenileyin.');
+    const inputs=body.modules;
+    if(inputs.length!==MODULE_IDS.length || new Set(inputs.map((x:any)=>x?.id)).size!==MODULE_IDS.length)throw new BadRequestException('İçe aktarma dosyası 10 farklı anasayfa modülünü içermeli.');
+    const modules=snapshot.modules.map(m=>{
+      const input=inputs.find((x:any)=>x.id===m.id);
+      if(!input)throw new BadRequestException('Eksik modül: '+m.id);
+      return {...m,enabled:input.enabled!==false,fields:safeFields(input.fields,MODULE_FIELDS[m.id]),items:safeItems(m.id,input.items||[])};
+    });
+    const version=snapshot.version+1;
+    await this.put(HOME_KEY,{version,modules});
+    return {version,modules};
+  }
   async blog(){
     const data=await this.get(BLOG_KEY);
     return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[]};
