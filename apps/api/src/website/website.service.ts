@@ -126,7 +126,7 @@ export class WebsiteService{
       throw new BadRequestException('Yayınlamak için en az bir dilde başlık ve içerik gerekir.');
     }
     return {
-      id:str(raw?.id,90)||slug,slug,status,
+      id:str(raw?.id,90)||slug,slug,status,categoryId:str(raw?.categoryId,90)||null,
       featuredImage:url(raw?.featuredImage),authorName:str(raw?.authorName,160).trim()||'Ticarti',
       sortOrder:index,translations
     };
@@ -140,7 +140,7 @@ export class WebsiteService{
       const cleaned=this.cleanPost(post,i);
       const previous=existing.posts.find((x:any)=>x.id===cleaned.id||x.slug===cleaned.slug);
       const prevComparable=previous?{
-        id:previous.id,slug:previous.slug,status:previous.status,
+        id:previous.id,slug:previous.slug,status:previous.status,categoryId:previous.categoryId||null,
         featuredImage:previous.featuredImage||'',authorName:previous.authorName||'Ticarti',
         sortOrder:previous.sortOrder,translations:previous.translations
       }:null;
@@ -186,6 +186,9 @@ export class WebsiteService{
         if(!current)break;
       }
     }
+    for(const post of posts){
+      if(post.categoryId&&!categoryIds.has(post.categoryId))throw new BadRequestException('Yazının blog kategorisi bulunamadı.');
+    }
     const version=existing.version+1;
     const payload={version,posts,categories};
     if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
@@ -201,7 +204,7 @@ export class WebsiteService{
       return {
         slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
         title:t.title,excerpt:t.excerpt||'',content:t.content,
-        category:t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
+        category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
         publishedAt:x.publishedAt||null,updatedAt:x.updatedAt||null,
         availableLocales:['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code]))
