@@ -28,16 +28,20 @@ export function TicartiRichTextEditor({
   const [sourceMode,setSourceMode]=useState<'visual'|'markdown'|'html'>('visual');
   const [htmlDraft,setHtmlDraft]=useState('');
   const previousSourceMode=useRef<'visual'|'markdown'|'html'>('visual');
+  const lastIncomingValue=useRef(initialValue);
+  const lastEmittedValue=useRef<string|null>(null);
   const selection=useRef<Range|null>(null);
   useEffect(()=>{
     if(sourceMode==='visual'&&ref.current){
       const html=previousSourceMode.current==='html'&&htmlToSafeHtml?htmlToSafeHtml(htmlDraft):
         previousSourceMode.current==='markdown'&&sourceToHtml?sourceToHtml(sourceValue||''):initialValue;
-      if(previousSourceMode.current!=='visual'||!ref.current.innerHTML)ref.current.innerHTML=html;
+      const changedExternally=initialValue!==lastIncomingValue.current&&initialValue!==lastEmittedValue.current;
+      if(previousSourceMode.current!=='visual'||!ref.current.innerHTML||changedExternally)ref.current.innerHTML=html;
     }
+    lastIncomingValue.current=initialValue;
     previousSourceMode.current=sourceMode;
   },[sourceMode,initialValue,sourceValue,sourceToHtml,htmlToSafeHtml,htmlDraft]);
-  const emit=()=>onChange?.(ref.current?.innerHTML??'');
+  const emit=()=>{const html=ref.current?.innerHTML??'';lastEmittedValue.current=html;onChange?.(html)};
   const switchMode=(next:'visual'|'markdown'|'html')=>{
     if(next===sourceMode)return;
     if(sourceMode==='html'&&onHtmlSourceChange)onHtmlSourceChange(htmlDraft);
