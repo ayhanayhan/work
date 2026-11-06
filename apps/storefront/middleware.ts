@@ -2,6 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const PLATFORM_DOMAIN='ticarti.com';
 
+/** Public corporate routes served by Marketing without cross-backend middleware rewrites. */
+const MARKETING_PAGES=new Set([
+  '/','/index.html','/robots.txt','/sitemap.xml',
+  '/paketler.html','/contacto.html','/login.html','/register.html',
+  '/kvkk.html','/gizlilik-politikasi.html','/uyelik-sozlesmesi.html',
+  '/companies/enterprise.html','/success-stories','/success-stories/',
+  '/success-stories/index.html','/success-stories/crowdy.html',
+  '/blog','/blog/','/blog/index.html'
+]);
+function marketingPage(pathname:string){
+  if(MARKETING_PAGES.has(pathname))return true;
+  return pathname.startsWith('/assets/')||
+    pathname.startsWith('/blog/')||
+    pathname.startsWith('/en/')||pathname==='/en'||
+    pathname.startsWith('/pt/')||pathname==='/pt'||
+    pathname.startsWith('/ru/')||pathname==='/ru';
+}
+function proxyMarketing(req:NextRequest){
+  const url=req.nextUrl.clone();
+  url.pathname='/ticarti-marketing-proxy'+(url.pathname==='/'?'':url.pathname);
+  return NextResponse.rewrite(url);
+}
+
+
 function cleanHost(raw:string|null|undefined){
   return String(raw||'').split(',')[0].trim().toLowerCase().replace(/:\d+$/,'').replace(/\.$/,'');
 }
@@ -85,8 +109,15 @@ export function middleware(req:NextRequest){
   }
 
   if(host===PLATFORM_DOMAIN||host===`www.${PLATFORM_DOMAIN}`){
+    // Preserve authenticated APIs, tenant creation and dynamic package checkout.
+    if(path.startsWith('/api/')||path.startsWith('/__proxy-api/')||path.startsWith('/ticarti-platform'))return NextResponse.next();
+    if(path==='/paketler'||path.startsWith('/paketler/')||
+       path==='/ucretsiz-dene'||path.startsWith('/ucretsiz-dene/')||
+       path==='/magaza-ac'||path.startsWith('/magaza-ac/')){
+      return internal(req,'/ticarti-platform','platform');
+    }
+    if(marketingPage(path))return proxyMarketing(req);
     if(assetOrApi(path))return NextResponse.next();
-    if(path.startsWith('/ticarti-platform'))return NextResponse.next();
     return internal(req,'/ticarti-platform','platform');
   }
 
