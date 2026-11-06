@@ -12,7 +12,13 @@ import { useRouter } from 'next/navigation';
 
 const API = '/api/v1';
 
+export type MasterLocale = {locale: string; label: string; isDefault: boolean};
+
 type Ctx = {
+  locales: MasterLocale[];
+  localesLoading: boolean;
+  localesError: string | null;
+  reloadLocales: () => Promise<void>;
   token: string;
   restoring: boolean;
   request: (path: string, init?: RequestInit) => Promise<any>;
@@ -29,6 +35,9 @@ export function MasterSessionProvider({
   const router = useRouter();
   const [token, setToken] = useState('');
   const [restoring, setRestoring] = useState(true);
+  const [locales, setLocales] = useState<MasterLocale[]>([]);
+  const [localesLoading, setLocalesLoading] = useState(true);
+  const [localesError, setLocalesError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -127,6 +136,37 @@ export function MasterSessionProvider({
     [token, router],
   );
 
+  const reloadLocales = useCallback(async () => {
+    if (restoring || !token) {
+      setLocalesLoading(false);
+      return;
+    }
+    setLocalesLoading(true);
+    setLocalesError(null);
+    try {
+      const rows = await request('/superadmin/platform-locales');
+      if (!Array.isArray(rows)) throw new Error('Aktif diller alınamadı.');
+      const seen = new Set<string>();
+      const normalized = rows.map((x: any) => ({
+        locale: String(x.locale || '').toLowerCase(),
+        label: String(x.label || x.locale || ''),
+        isDefault: x.isDefault === true,
+      })).filter((x: MasterLocale) => {
+        if (!x.locale || seen.has(x.locale)) return false;
+        seen.add(x.locale);
+        return true;
+      });
+      if (!normalized.length) throw new Error('Sitede aktif dil bulunamadı.');
+      setLocales(normalized);
+    } catch (error: any) {
+      setLocalesError(error?.message || 'Aktif diller yüklenemedi.');
+    } finally {
+      setLocalesLoading(false);
+    }
+  }, [request, restoring, token]);
+
+  useEffect(() => { void reloadLocales(); }, [reloadLocales]);
+
   const logout = useCallback(async () => {
     try {
       await fetch(API + '/superadmin-auth/logout', {
@@ -150,8 +190,12 @@ export function MasterSessionProvider({
       restoring,
       request,
       logout,
+      locales,
+      localesLoading,
+      localesError,
+      reloadLocales,
     }),
-    [token, restoring, request, logout],
+    [token, restoring, request, logout, locales, localesLoading, localesError, reloadLocales],
   );
 
   return (
