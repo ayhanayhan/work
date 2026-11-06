@@ -139,7 +139,7 @@ export class WebsiteService{
       throw new BadRequestException('Yayınlamak için en az bir dilde başlık ve içerik gerekir.');
     }
     return {
-      id:str(raw?.id,90)||slug,slug,status,categoryId:str(raw?.categoryId,90)||null,
+      id:str(raw?.id,90)||slug,slug,status,categoryId:str(raw?.categoryId,90)||null,authorId:str(raw?.authorId,90)||null,
       featuredImage:url(raw?.featuredImage),authorName:str(raw?.authorName,160).trim()||'Ticarti',
       sortOrder:index,translations,
       tags:Array.isArray(raw?.tags)?raw.tags.slice(0,30).map((x:any)=>str(x,80).trim()).filter(Boolean):[],
@@ -159,7 +159,7 @@ export class WebsiteService{
       const previous=existing.posts.find((x:any)=>x.id===cleaned.id||x.slug===cleaned.slug);
       const prevComparable=previous?{
         id:previous.id,slug:previous.slug,status:previous.status,categoryId:previous.categoryId||null,
-        featuredImage:previous.featuredImage||'',authorName:previous.authorName||'Ticarti',
+        featuredImage:previous.featuredImage||'',authorName:previous.authorName||'Ticarti',authorId:previous.authorId||null,
         sortOrder:previous.sortOrder,translations:previous.translations,
         tags:previous.tags||[],relatedPostIds:previous.relatedPostIds||[],
         scheduledAt:previous.scheduledAt||null,isFeatured:previous.isFeatured===true,
@@ -186,7 +186,7 @@ export class WebsiteService{
       if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id))throw new BadRequestException('Kategori kimliği geçersiz.');
       const translations:Record<string,any>={};
       for(const [lang,value] of Object.entries(raw?.translations||{})){
-        if(!/^(tr|en|pt|ru)$/.test(lang))continue;
+        if(!/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(lang))continue;
         const t:any=value||{};
         translations[lang]={
           title:str(t.title,160).trim(),slug:str(t.slug,160).trim().toLowerCase(),
