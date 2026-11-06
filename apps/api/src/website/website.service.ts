@@ -1,5 +1,6 @@
 import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
+import {activePlatformLocales} from '../common/platform-locales';
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
@@ -111,7 +112,7 @@ export class WebsiteService{
     if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw new BadRequestException('Blog URL kodu geçersiz.');
     const translations:Record<string,any>={};
     for(const [lang,translation] of Object.entries(raw?.translations||{})){
-      if(!/^(tr|en|pt|ru)$/.test(lang))continue;
+      if(!/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(lang))continue;
       const t:any=translation||{};
       translations[lang]={
         title:str(t.title,220).trim(),slug:str(t.slug,150).trim().toLowerCase(),excerpt:str(t.excerpt,1200).trim(),
@@ -163,7 +164,7 @@ export class WebsiteService{
       };
     });
     if(new Set(posts.map((x:any)=>x.slug)).size!==posts.length)throw new BadRequestException('Blog URL kodları tekrar ediyor.');
-    for(const locale of ['tr','en','pt','ru']){
+    for(const locale of new Set(posts.flatMap((p:any)=>Object.keys(p.translations||{})))){
       const slugs=posts.map((p:any)=>p.translations?.[locale]?.slug||p.slug);
       if(new Set(slugs).size!==slugs.length)throw new BadRequestException(locale+' dilinde tekrarlanan blog URL kodu var.');
     }
@@ -217,21 +218,22 @@ export class WebsiteService{
   }
   async publicBlog(lang='tr'){
     const data=await this.blog();
-    const locale=/^(tr|en|pt|ru)$/.test(lang)?lang:'';
+    const activeLocales=(await activePlatformLocales(this.prisma)).map(x=>x.locale);
+    const locale=activeLocales.includes(lang.toLowerCase())?lang.toLowerCase():'';
     const hasContent=(t:any)=>t?.enabled!==false&&typeof t?.title==='string'&&!!t.title.trim()&&typeof t?.content==='string'&&!!t.content.trim();
     const now=Date.now();
     const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&(!x.scheduledAt||Date.parse(x.scheduledAt)<=now)&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
       return {
         id:x.id,slug:t.slug||x.slug,status:x.status,featuredImage:x.featuredImage||'',
-        localeSlugs:Object.fromEntries(['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code])).map(code=>[code,x.translations?.[code]?.slug||x.slug])),
+        localeSlugs:Object.fromEntries(activeLocales.filter(code=>hasContent(x.translations?.[code])).map(code=>[code,x.translations?.[code]?.slug||x.slug])),
         title:t.title,excerpt:t.excerpt||'',content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
         tags:x.tags||[],isFeatured:x.isFeatured===true,relatedPostIds:x.relatedPostIds||[],
         ogImage:x.ogImage||'',canonicalUrl:x.canonicalUrl||'',noIndex:x.noIndex===true,
         publishedAt:x.publishedAt||null,updatedAt:x.updatedAt||null,
-        availableLocales:['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code]))
+        availableLocales:activeLocales.filter(code=>hasContent(x.translations?.[code]))
       };
     });
     posts.sort((a:any,b:any)=>Number(b.isFeatured===true)-Number(a.isFeatured===true));
