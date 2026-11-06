@@ -26,11 +26,12 @@ const errorText=(e:any)=>e?.message||'İşlem başarısız.';
 const newItem=():Entry=>({id:'item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{},assets:{image:''},links:{href:''}});
 
 export default function HomepageEditor(){
-  const {request,restoring}=useMasterSession();
+  const {request,restoring,locales:languageList,localesLoading,localesError}=useMasterSession();
   const [data,setData]=useState<Snapshot|null>(null);
   const [active,setActive]=useState('');
-  const [lang,setLang]=useState('tr');
-  const [languageList,setLanguageList]=useState<{locale:string;label:string;isDefault?:boolean}[]>([{locale:'tr',label:'Türkçe',isDefault:true},{locale:'en',label:'English'}]);
+  const [lang,setLang]=useState('');
+  useEffect(()=>{if(languageList.length)setLang(old=>languageList.some(x=>x.locale===old)?old:(languageList.find(x=>x.isDefault)?.locale||languageList[0].locale))},[languageList]);
+
   const [working,setWorking]=useState<Module|null>(null);
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState(''),[message,setMessage]=useState('');
@@ -40,14 +41,8 @@ export default function HomepageEditor(){
     if(restoring)return;
     setLoading(true);setError('');
     try{
-      const [home,locales]=await Promise.all([request('/superadmin/website/home'),request('/superadmin/platform-locales')]);
+      const home=await request('/superadmin/website/home');
       setData(home);
-      if(Array.isArray(locales)&&locales.length){
-        const names=new Set<string>();const list:any[]=[];
-        for(const x of locales){const code=String(x.locale||'').split('-')[0].toLowerCase();if(!code||names.has(code))continue;names.add(code);list.push({...x,locale:code})}
-        if(!names.has('tr'))list.unshift({locale:'tr',label:'Türkçe'});
-        setLanguageList(list);
-      }
       setActive(prev=>home.modules.some((x:Module)=>x.id===prev)?prev:(home.modules[0]?.id||''));
     }catch(e){setError(errorText(e))}
     finally{setLoading(false)}
@@ -65,7 +60,7 @@ export default function HomepageEditor(){
     setWorking(x=>{if(!x||to<0||to>=x.items.length||from===to)return x;const items=[...x.items];const [item]=items.splice(from,1);items.splice(to,0,item);return {...x,items}});
   };
   const save=async()=>{
-    if(!working||!data)return;
+    if(!working||!data||localesLoading||localesError||!languageList.length)return;
     setSaving(true);setError('');setMessage('');
     try{
       const response=await request('/superadmin/website/home/'+encodeURIComponent(working.id),{
@@ -104,6 +99,7 @@ export default function HomepageEditor(){
         <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Orijinal HTML, animasyonlar, butonlar ve CSS değişmez. İçe aktarma yalnızca içerik verilerini yükler.</p></div>
         <Button size="sm" variant="outline" asChild><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Site İçeriğini İçe Aktar<input type="file" hidden accept=".json,application/json" disabled={saving} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button>
       </CardContent></Card>
+      {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
       {error?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>:null}
       {message?<div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{message}</div>:null}
       {loading?<div className="grid min-h-64 place-items-center"><LoaderCircle className="animate-spin"/></div>:<div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)]">
