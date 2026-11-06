@@ -3,7 +3,7 @@ import {escapeHtml} from './blog';
 export type FaqEntry={id:string;question:string;answer:string};
 export type FaqContent={enabled:boolean;configured:boolean;heading:string;description:string;items:FaqEntry[]};
 const API_ORIGIN=(process.env.API_ORIGIN||'').replace(/\/$/,'');
-const empty: FaqContent={enabled:true,configured:false,heading:'',description:'',items:[]};
+const empty: FaqContent={enabled:true,configured:true,heading:'',description:'',items:[]};
 
 /** All visible FAQ answers and the FAQPage schema must use this exact content. */
 export async function getHomepageFaq(lang:string):Promise<FaqContent>{
@@ -20,7 +20,7 @@ export async function getHomepageFaq(lang:string):Promise<FaqContent>{
       .filter((item:any)=>item?.enabled!==false)
       .map((item:any)=>({id:String(item.id||''),question:localized(item.fields?.question),answer:localized(item.fields?.answer)}))
       .filter(item=>!!item.question&&!!item.answer):[];
-    return {enabled:faq.enabled!==false,configured:faq.configured===true,
+    return {enabled:faq.enabled!==false,configured:true,
       heading:localized(faq.fields?.heading),description:localized(faq.fields?.description),items};
   }catch{return empty}
 }
@@ -36,7 +36,7 @@ function findClosingDiv(html:string,from:number):number{
 }
 export function applyHomepageFaq(html:string,faq:FaqContent):string{
   if(!faq.enabled)return html.replace(/<section\b(?=[^>]*\bid="tc-faq")[^>]*>[\s\S]*?<\/section>/i,'');
-  if(!faq.configured)return html; // Original site remains if no real CMS data was saved.
+  if(!faq.configured)return html;
   const start=html.indexOf('<section class="tc-faq" id="tc-faq">');
   if(start<0)return html;
   const close=html.indexOf('</section>',start);
