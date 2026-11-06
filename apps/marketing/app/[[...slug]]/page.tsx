@@ -48,7 +48,7 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
         ...(post.updatedAt?{dateModified:post.updatedAt}:{}),
         author:post.author?{
           '@type':'Person',name:post.author.name,
-          ...(post.author.bio?{description:post.author.bio}:{}),
+          ...(post.author.seoDescription||post.author.bio?{description:post.author.seoDescription||post.author.bio}:{}),
           ...(post.author.avatar?{image:safeImage(post.author.avatar)}:{}),
           ...(Object.values(post.author.socials||{}).length?{sameAs:Object.values(post.author.socials||{})}:{}),
         }:{'@type':post.authorName==='Ticarti'?'Organization':'Person',name:post.authorName},
