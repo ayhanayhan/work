@@ -26,7 +26,7 @@ export default function WebsiteBlogEditor(){
     finally{setLoading(false)}
   },[request,restoring]);
   useEffect(()=>{void load()},[load]);
-  const primary=locales.find(x=>x.isDefault)?.locale||locales[0]?.locale;
+  const primary=locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'';
   const title=(post:Post)=>post.translations?.[primary]?.title||
     Object.values(post.translations||{}).find(x=>x.title?.trim())?.title||post.slug||'Başlıksız yazı';
   const shown=useMemo(()=>data.posts.filter(post=>[post.slug,...Object.values(post.translations||{}).map(x=>x.title)].join(' ').toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))),[data.posts,query]);
