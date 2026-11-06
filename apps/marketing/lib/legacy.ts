@@ -3,8 +3,9 @@ import {readFile} from 'node:fs/promises';
 import {notFound} from 'next/navigation';
 import {archiveCard,BlogLocale,BlogPost,blogLabel,blogPath,escapeHtml,getBlogPosts,getWebsiteLocales,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
+import {applyHomepageFaq,FaqContent,getHomepageFaq} from './faq';
 
-export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean};
+export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean;faq?:FaqContent};
 function extract(html:string):PageData{
   const body=html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1];
   if(!body)throw new Error('Source page missing body');
@@ -144,7 +145,10 @@ export async function renderPage(segments:string[],search:Record<string,string|u
       data.html=data.html.replace('href="blog/index.html"','href="'+blogPath(lang)+'"');
       data.html=data.html.replace('Tüm yazılar →',blogLabel(lang).all+' →');
     }
-    // The original CMS binder remains available for homepage modules, not for blog posts.
+    // FAQ visible markup and SEO structured data are built from this same locale-specific CMS snapshot.
+    data.faq=await getHomepageFaq(lang);
+    data.html=applyHomepageFaq(data.html,data.faq);
+    // Other homepage modules still use the existing integration.
     data.scripts.push('/assets/js/pages/website-home-cms.js');
   }
   const id=pageKey(source);
