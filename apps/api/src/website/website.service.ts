@@ -160,7 +160,7 @@ export class WebsiteService{
   }
   async publicBlog(lang='tr'){
     const data=await this.blog();
-    const locale=/^(tr|en|pt|ru)$/.test(lang)?lang:'tr';
+    const locale=/^(tr|en|pt|ru)$/.test(lang)?lang:'';
     const hasContent=(t:any)=>t?.enabled!==false&&typeof t?.title==='string'&&!!t.title.trim()&&typeof t?.content==='string'&&!!t.content.trim();
     const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
