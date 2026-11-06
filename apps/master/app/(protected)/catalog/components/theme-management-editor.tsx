@@ -2,6 +2,7 @@
 
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
+import {useSearchParams} from 'next/navigation';
 import {ArrowDown,ArrowLeft,ArrowUp,CheckCircle2,Code2,Copy,FileJson2,Layers,LoaderCircle,Plus,RefreshCw,Save,Settings2,Trash2} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
@@ -38,13 +39,14 @@ function normalizeJson(value:string,subject='JSON'){
 
 export default function ThemeManagementEditor({themeId}:{themeId:string}){
   const {request,restoring}=useMasterSession();
+  const querySkin=useSearchParams().get('skin')||'';
   const [theme,setTheme]=useState<Theme|null>(null);
   const [workspace,setWorkspace]=useState<Workspace|null>(null);
   const [ctx,setCtx]=useState<Context>({plans:[],locales:[],currencies:[]});
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
   const [message,setMessage]=useState('');
-  const [view,setView]=useState<View>('overview');
+  const [view,setView]=useState<View>(querySkin?'skins':'overview');
   const [skinSlug,setSkinSlug]=useState('');
   const [moduleType,setModuleType]=useState('');
   const load=useCallback(async()=>{
@@ -61,11 +63,11 @@ export default function ThemeManagementEditor({themeId}:{themeId:string}){
       setTheme(selected);
       setWorkspace(space);
       setCtx({plans:Array.isArray(plans)?plans:[],locales:Array.isArray(locales)?locales:[],currencies:(settings?.currencies||[]).filter((x:any)=>x.isActive!==false)});
-      setSkinSlug(old=>space.skins?.some((s:Skin)=>s.slug===old)?old:(space.skins?.[0]?.slug||''));
+      setSkinSlug(old=>space.skins?.some((s:Skin)=>s.slug===old)?old:(space.skins?.some((s:Skin)=>s.slug===querySkin)?querySkin:(space.skins?.[0]?.slug||'')));
       setModuleType(old=>space.modules?.some((m:Module)=>m.type===old)?old:(space.modules?.[0]?.type||''));
     }catch(e){setError(showError(e))}
     finally{setLoading(false)}
-  },[request,restoring,themeId]);
+  },[request,restoring,themeId,querySkin]);
   useEffect(()=>{void load()},[load]);
   const saved=useCallback(async(note:string)=>{await load();setMessage(note)},[load]);
   const currentSkin=workspace?.skins.find(x=>x.slug===skinSlug);
