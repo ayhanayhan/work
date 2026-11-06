@@ -132,6 +132,24 @@ async function test(){
   assert.equal((await svc.publicFaq('en')).enabled,false,'Inactive language cannot publish FAQ');
   await svc.updateModule('faq',{version:1,enabled:false,fields:faqSaved.module.fields,items:faqSaved.module.items});
   assert.equal((await svc.publicFaq('tr')).enabled,false,'Disabled FAQ module stays disabled in public endpoint');
-  console.log('PASS: active locales, preserved translations, blog and authoritative FAQ module');
+  const author={
+    id:'author-1',slug:'ticarti-uzmani',avatar:'https://example.com/avatar.webp',isActive:true,
+    socials:{linkedin:'https://www.linkedin.com/in/ticarti'},translations:{
+      tr:{name:'Ticarti Uzmanı',bio:'E-ticaret uzmanı',seoTitle:'Uzman',seoDescription:'Yazar profili'},
+      de:{name:'Ticarti Fachperson',bio:'E-Commerce Spezialist',seoTitle:'Experte',seoDescription:'Autorprofil'}
+    }
+  };
+  const authored=await svc.updateBlog({version:9,posts:[{...germanPost,authorId:author.id}],
+    categories:afterCategoryEdit.categories,authors:[author]});
+  assert.equal(authored.authors.length,1,'Author record persisted in same blog snapshot');
+  const germanArticle=(await svc.publicBlog('de')).posts[0];
+  assert.equal(germanArticle.author?.name,'Ticarti Fachperson');
+  assert.equal(germanArticle.author?.bio,'E-Commerce Spezialist');
+  assert.equal(germanArticle.author?.socials.linkedin,author.socials.linkedin);
+  assert.equal(germanArticle.excerpt,'Echter Inhalt','Public summary derives from actual content');
+  await assert.rejects(svc.updateBlog({version:10,posts:[{...germanPost,authorId:author.id}],
+    categories:afterCategoryEdit.categories,authors:[]}),
+    'Deleting an author referenced by a post must fail');
+  console.log('PASS: active locales, blog authors, generated summaries, FAQ and SEO data');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
