@@ -9,7 +9,8 @@ const PLATFORM_DOMAIN='ticarti.com';
  */
 const MARKETING_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
 const MARKETING_PAGES=new Set([
-  '/','/index.html','/paketler.html','/contacto.html','/login.html','/register.html',
+  '/','/index.html','/robots.txt','/sitemap.xml',
+  '/paketler.html','/contacto.html','/login.html','/register.html',
   '/kvkk.html','/gizlilik-politikasi.html','/uyelik-sozlesmesi.html',
   '/companies/enterprise.html','/success-stories','/success-stories/',
   '/success-stories/index.html','/success-stories/crowdy.html',
