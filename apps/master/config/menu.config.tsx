@@ -77,6 +77,7 @@ export const MENU_SIDEBAR: MenuConfig = [
   },
   { title: 'Temalar', icon: Palette, children: [
     { title: 'Tema Kataloğu', path: '/themes' },
+    { title: 'Tema Düzenleme', path: '/themes/manage' },
     { title: 'Tema Kurulumları', path: '/themes/installations' },
   ] },
   { title: 'Raporlar', i18nKey: 'navigation.reports', icon: TrendingUp, path: '/reports' },
