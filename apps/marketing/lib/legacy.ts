@@ -153,6 +153,11 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
   data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
-  if(isHome&&data.faq)data.html=applyHomepageFaq(data.html,data.faq);
+  if(isHome&&data.faq){
+    data.html=applyHomepageFaq(data.html,data.faq);
+    // Do not advertise FAQ structured data if the live HTML template did not accept the content.
+    if(data.faq.items.length&&!data.html.includes('data-tc-ssr-faq="1"'))
+      data.faq={...data.faq,items:[]};
+  }
   return data;
 }
