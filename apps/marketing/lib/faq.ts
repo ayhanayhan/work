@@ -19,7 +19,7 @@ export async function getHomepageFaq(lang:string):Promise<FaqContent>{
     const items:Array<FaqEntry>=Array.isArray(faq.items)?faq.items
       .filter((item:any)=>item?.enabled!==false)
       .map((item:any)=>({id:String(item.id||''),question:localized(item.fields?.question),answer:localized(item.fields?.answer)}))
-      .filter(item=>!!item.question&&!!item.answer):[];
+      .filter((item:FaqEntry)=>!!item.question&&!!item.answer):[];
     return {enabled:faq.enabled!==false,configured:true,
       heading:localized(faq.fields?.heading),description:localized(faq.fields?.description),items};
   }catch{return empty}
