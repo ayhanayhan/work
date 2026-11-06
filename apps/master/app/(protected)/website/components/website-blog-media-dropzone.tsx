@@ -36,6 +36,26 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
     return ()=>{window.removeEventListener('dragover',protect);window.removeEventListener('drop',protect)};
   },[]);
   const filtered=useMemo(()=>assets.filter(x=>!q||String(x.fileName||'').toLocaleLowerCase('tr').includes(q.toLocaleLowerCase('tr'))),[assets,q]);
+  const optimize=async(file:File):Promise<File>=>{
+    // Normalize EXIF orientation and large browser-decoded files before upload;
+    // the API still verifies and converts the result to its canonical WebP.
+    if(!('createImageBitmap' in window))return file;
+    const bitmap=await createImageBitmap(file);
+    try{
+      const ratio=Math.min(1,2400/Math.max(bitmap.width,bitmap.height));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(bitmap.width*ratio));
+      canvas.height=Math.max(1,Math.round(bitmap.height*ratio));
+      const ctx=canvas.getContext('2d');
+      if(!ctx)throw new Error('Görsel işleme başlatılamadı.');
+      ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+      const blob=await new Promise<Blob>((resolve,reject)=>{
+        canvas.toBlob(b=>b?resolve(b):reject(new Error('WebP dönüştürülemedi.')),'image/webp',0.84);
+      });
+      if(blob.type!=='image/webp')throw new Error('Bu tarayıcı WebP dönüştürmesini desteklemiyor.');
+      return new File([blob],file.name.replace(/\.[^.]+$/,'')+'.webp',{type:'image/webp'});
+    }finally{bitmap.close()}
+  };
   const upload=async(files:FileList|File[])=>{
     if(!files?.length)return;
     setBusy(true);setError('');
@@ -43,8 +63,11 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
       for(const file of Array.from(files)){
         if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))
           throw new Error('JPEG, PNG, WEBP veya AVIF görsel seçin.');
-        if(file.size>8*1024*1024)throw new Error('En fazla 8 MB görsel yükleyebilirsiniz.');
-        const form=new FormData();form.append('file',file);
+        let processed:File;
+        try{processed=await optimize(file)}
+        catch(e:any){throw new Error('Görsel tarayıcıda işlenemedi: '+(e?.message||'Desteklenmeyen veya bozuk görsel.'))}
+        if(processed.size>8*1024*1024)throw new Error('Sıkıştırılmış görsel bile 8 MB sınırını aşıyor.');
+        const form=new FormData();form.append('file',processed);
         const item=await request('/superadmin/media/upload',{method:'POST',body:form}) as Asset;
         if(!item?.publicUrl)throw new Error('Yükleme tamamlandı ancak medya URL alınamadı.');
         setAssets(old=>[item,...old.filter(x=>x.id!==item.id)]);
