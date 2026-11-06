@@ -165,7 +165,7 @@ export class WebsiteService{
       };
     });
     if(new Set(posts.map((x:any)=>x.slug)).size!==posts.length)throw new BadRequestException('Blog URL kodları tekrar ediyor.');
-    for(const locale of new Set(posts.flatMap((p:any)=>Object.keys(p.translations||{})))){
+    for(const locale of new Set<string>(posts.flatMap((p:any):string[]=>Object.keys(p.translations||{})))){
       const slugs=posts.map((p:any)=>p.translations?.[locale]?.slug||p.slug);
       if(new Set(slugs).size!==slugs.length)throw new BadRequestException(locale+' dilinde tekrarlanan blog URL kodu var.');
     }
