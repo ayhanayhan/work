@@ -20,8 +20,8 @@ type Entry={id:string;enabled:boolean;sortOrder?:number;fields:Values;assets:{im
 type Module={id:string;title:string;selector:string;enabled:boolean;sortOrder:number;fields:Values;items:Entry[]};
 type Snapshot={version:number;modules:Module[]};
 const FIELD_LABELS:Record<string,string>={heading:'Başlık',description:'Açıklama',offer:'Kampanya metni',role:'Alt başlık',button:'Buton yazısı',question:'Soru',answer:'Yanıt'};
-const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
-const ENTRY_FIELDS:Record<string,string[]>={builder:['heading','description'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
+const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
+const ENTRY_FIELDS:Record<string,string[]>={animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
 const newItem=():Entry=>({id:'item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{},assets:{image:''},links:{href:''}});
 
