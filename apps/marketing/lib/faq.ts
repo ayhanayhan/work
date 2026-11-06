@@ -57,7 +57,7 @@ export function applyHomepageFaq(html:string,faq:FaqContent):string{
       '<div class="tc-faq__panel" id="'+id+'-panel" aria-labelledby="'+id+'-heading" role="region">'+
       '<div class="tc-faq__answer"><p>'+escapeHtml(item.answer)+'</p></div></div></div>';
   }).join('');
-  section=section.slice(0,listStart+listTag.length)+records+section.slice(listEnd-listTag.length);
+  section=section.slice(0,listStart+listTag.length)+records+'</div>'+section.slice(listEnd);
   if(faq.heading)section=section.replace(/(<h2\b[^>]*class="tc-faq__title"[^>]*>)[\s\S]*?(<\/h2>)/,'$1'+escapeHtml(faq.heading)+'$2');
   if(faq.description)section=section.replace(/(<p\b[^>]*class="tc-faq__subtitle"[^>]*>)[\s\S]*?(<\/p>)/,'$1'+escapeHtml(faq.description)+'$2');
   section=section.replace('id="tc-faq"','id="tc-faq" data-tc-ssr-faq="1"');
