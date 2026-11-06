@@ -10,12 +10,17 @@ IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/cloud-run-source-deploy/${SERVICE}:we
 echo "=== LOCAL SOURCE ==="
 git rev-parse --short HEAD
 git status --short
-echo "=== BUILD & TEST ==="
+echo "=== API & MARKETING CONTRACT TESTS ==="
 npm --workspace @commerce/api run test:website-blog
-npm --workspace @commerce/api run build
-npm --workspace @commerce/master run build
 npm --workspace @commerce/marketing run test:blog
-npm --workspace @commerce/marketing run build
+if [ "${FAST:-0}" != "1" ]; then
+  echo "=== OPTIONAL LOCAL BUILDS ==="
+  npm --workspace @commerce/api run build
+  npm --workspace @commerce/master run build
+  npm --workspace @commerce/marketing run build
+else
+  echo "FAST=1: local builds skipped. Cloud Build and Firebase App Hosting still build source before serving it."
+fi
 
 echo "=== EXISTING LIVE API REVISION ==="
 OLD="$(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$REGION" --format=json |
