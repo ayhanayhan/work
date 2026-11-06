@@ -1,6 +1,6 @@
 import {BadRequestException,ConflictException,Injectable,NotFoundException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
-import pageSchema from './website-page-fields.json';
+import * as pageSchema from './website-page-fields.json';
 
 type Localization=Record<string,string>;
 type PageRecord={version:number;values:Record<string,Localization>};
