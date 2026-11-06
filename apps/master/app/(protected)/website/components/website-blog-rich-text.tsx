@@ -1,5 +1,5 @@
 'use client';
-import {useMemo} from 'react';
+import {useEffect,useMemo,useRef} from 'react';
 import {TicartiRichTextEditor} from '@/app/(protected)/components/ticarti-rich-text-editor';
 
 const escape=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -80,8 +80,14 @@ function htmlToMarkdown(html:string){
   };
   return Array.from(body.childNodes).map(walk).join('').replace(/\n{3,}/g,'\n\n').trim();
 }
+const looksLikeStoredHtml=(value:string)=>/^\s*<(?:h[1-6]|p|div|ul|ol|table|blockquote|section|article|figure|pre)\b/i.test(value)&&/<\/[a-z][a-z0-9]*>/i.test(value);
 export function WebsiteBlogRichText({value,onChange,editorKey}:{value:string;onChange:(value:string)=>void;editorKey:string}){
-  const initial=useMemo(()=>markdownToHtml(value),[editorKey]);
+  const original=useRef(value);
+  const converted=useMemo(()=>looksLikeStoredHtml(original.current)?htmlToMarkdown(original.current):original.current,[editorKey]);
+  const initial=useMemo(()=>markdownToHtml(converted),[editorKey]);
+  useEffect(()=>{
+    if(converted!==original.current)onChange(converted);
+  },[converted,onChange]);
   return <TicartiRichTextEditor key={editorKey} initialValue={initial}
     sourceValue={value} onSourceChange={onChange} sourceToHtml={markdownToHtml}
     onHtmlSourceChange={html=>onChange(htmlToMarkdown(html))}
