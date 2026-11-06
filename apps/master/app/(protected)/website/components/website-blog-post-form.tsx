@@ -53,7 +53,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
         const raw=window.sessionStorage.getItem(draftKey);
         if(raw){
           const saved=JSON.parse(raw);
-          if(saved?.post?.translations&&saved?.post?.id===next.id&&
+          if(saved?.post?.translations&&(!postId||saved?.post?.id===next.id)&&
              window.confirm('Bu yazı için kaydedilmemiş bir taslak bulundu. Kaldığınız yerden devam etmek ister misiniz?')){
             next=saved.post;restored=true;
           }
@@ -100,6 +100,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       // Refuse stale writes: PATCH checks the version of the entire CMS snapshot.
       const posts=postId?data.posts.map(x=>x.id===editing.id?editing:x):[...data.posts,editing];
       await saveWebsiteBlog<Post,BlogCategory>(request,{version:data.version,posts,categories:data.categories});
+      draftReady.current=false;
       try{window.sessionStorage.removeItem(draftKey)}catch{}
       router.push('/website/blog');router.refresh();
       return true;
