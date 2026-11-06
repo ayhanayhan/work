@@ -2,15 +2,15 @@ import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
 import BlogInteractions from '@/components/blog-interactions';
-import {BLOG_LOCALES,BlogLocale,BlogPost,blogLabels,blogPath,getBlogPosts,isBlogLocale,safeImage} from '@/lib/blog';
+import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
 
 type Props={params:Promise<{slug?:string[]}>;searchParams:Promise<{slug?:string}>};
 export const dynamic='force-dynamic';
 const BASE=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
 const absolute=(path:string)=>BASE+path;
-const resolveLang=(slug:string[]):BlogLocale=>slug.length&&isBlogLocale(slug[0])?slug[0]:'tr';
-const localeLabel:Record<BlogLocale,string>={tr:'tr_TR',en:'en_US',pt:'pt_PT',ru:'ru_RU'};
+const resolveLang=async(slug:string[]):Promise<BlogLocale>=>slug.length&&(await getWebsiteLocales()).includes(slug[0])?slug[0]:'tr';
+const localeLabel:Record<string,string>={tr:'tr_TR',en:'en_US',pt:'pt_PT',ru:'ru_RU'};
 async function previewHost(){
   const h=await headers();
   if(h.get('x-ticarti-site-proxy')==='1'&&h.get('x-forwarded-host')==='ticarti.com')return false;
@@ -60,7 +60,7 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
   if(page.isBlogList){
     return [
       {'@context':'https://schema.org','@type':'Blog',
-        name:'Ticarti Blog',description:blogLabels[lang].blogDescription,
+        name:'Ticarti Blog',description:blogLabel(lang).blogDescription,
         url:absolute(blogPath(lang)),inLanguage:lang,
         blogPost:(page.posts||[]).map(p=>({'@type':'BlogPosting',url:absolute(blogPath(lang,p.slug)),headline:p.title}))},
       {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
@@ -85,12 +85,12 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
-  const lang=resolveLang(slug),page=await renderPage(slug,await searchParams);
+  const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const configuredCanonical=page.post?.canonicalUrl||'';
   const canonical=configuredCanonical?(configuredCanonical.startsWith('/')?absolute(configuredCanonical):configuredCanonical):absolute(normalPath(slug,lang,page));
   const preview=await previewHost();
   const languages=page.post?alternatesForPost(page.post):page.isBlogList?
-    Object.fromEntries((await Promise.all(BLOG_LOCALES.map(async code=>({
+    Object.fromEntries((await Promise.all((await getWebsiteLocales()).map(async code=>({
       code,count:(await getBlogPosts(code)).length
     })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):undefined;
   const picture=page.post?.ogImage?safeImage(page.post.ogImage):page.post?imageUrl(page.post):undefined;
@@ -101,7 +101,7 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
     robots:noindex?{index:false,follow:false}:{index:true,follow:true},
     openGraph:{
       title:page.title,description:page.description,url:canonical,
-      siteName:'Ticarti',locale:localeLabel[lang],
+      siteName:'Ticarti',locale:localeLabel[lang]||lang.replace('-','_'),
       ...(picture?{images:[{url:picture,alt:page.post?.imageAlt||page.title}]}:{})
     },
     twitter:{card:picture?'summary_large_image' as const:'summary' as const,title:page.title,
@@ -116,7 +116,7 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 }
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
-  const lang=resolveLang(slug),page=await renderPage(slug,await searchParams);
+  const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const schemas=jsonLd(page,lang);
   return <>
     <div className={page.classes} dangerouslySetInnerHTML={{__html:page.html}}/>
