@@ -7,11 +7,11 @@ const empty: FaqContent={enabled:true,configured:true,heading:'',description:'',
 
 /** All visible FAQ answers and the FAQPage schema must use this exact content. */
 export async function getHomepageFaq(lang:string):Promise<FaqContent>{
-  if(!API_ORIGIN)return empty;
+  if(!API_ORIGIN){console.error('[website-faq] Missing API_ORIGIN; FAQ content cannot load');return empty;}
   try{
     const r=await fetch(API_ORIGIN+'/v1/public/website/faq?lang='+encodeURIComponent(lang),
-      {next:{revalidate:30},signal:AbortSignal.timeout(3500)});
-    if(!r.ok)return empty;
+      {cache:'no-store',signal:AbortSignal.timeout(7000)});
+    if(!r.ok){console.error('[website-faq] API HTTP status:',r.status);return empty;}
     const data=await r.json();
     const faq=data;
     if(!faq)return empty;
@@ -22,7 +22,7 @@ export async function getHomepageFaq(lang:string):Promise<FaqContent>{
       .filter((item:FaqEntry)=>!!item.question&&!!item.answer):[];
     return {enabled:faq.enabled!==false,configured:true,
       heading:localized(faq.fields?.heading),description:localized(faq.fields?.description),items};
-  }catch{return empty}
+  }catch(e){console.error('[website-faq] Unable to load localized FAQ:',e);return empty}
 }
 function findClosingDiv(html:string,from:number):number{
   const tags=/<\/?div\b[^>]*>/gi;tags.lastIndex=from;
