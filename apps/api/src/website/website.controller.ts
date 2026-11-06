@@ -1,0 +1,26 @@
+import {Body,Controller,Get,Headers,Param,Patch,Query,UseGuards} from '@nestjs/common';
+import {SuperAdminAuthGuard} from '../superadmin-auth/superadmin-auth.guard';
+import {WebsiteService} from './website.service';
+
+@Controller()
+export class WebsiteController {
+  constructor(private readonly svc:WebsiteService){}
+  @Get('public/website/home')
+  publicHome(@Query('lang') lang?:string){return this.svc.publicHome(lang||'tr')}
+  @Get('public/website/blog')
+  publicBlog(@Query('lang') lang?:string){return this.svc.publicBlog(lang||'tr')}
+  @Get('public/website/blog/:slug')
+  publicBlogPost(@Param('slug') slug:string,@Query('lang') lang?:string){return this.svc.publicBlogPost(slug,lang||'tr')}
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/home')
+  home(){return this.svc.home()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/home/:id')
+  updateModule(@Param('id') id:string,@Body() body:any){return this.svc.updateModule(id,body)}
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/blog')
+  blog(){return this.svc.blog()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/blog')
+  updateBlog(@Body() body:any){return this.svc.updateBlog(body)}
+}
