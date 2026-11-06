@@ -15,3 +15,33 @@
 @media(max-width:767px){.tc-marketing-blog .tc-blog-article{padding:0 16px 45px}.tc-marketing-blog .tc-blog-article-copy{font-size:16px}}
 
 .tc-marketing-blog .featured-case[hidden]{display:none!important}
+
+/* Rich CMS article elements: keep site typography, support WordPress-style content. */
+.tc-marketing-blog .tc-blog-article-copy h1,
+.tc-marketing-blog .tc-blog-article-copy h2,
+.tc-marketing-blog .tc-blog-article-copy h3,
+.tc-marketing-blog .tc-blog-article-copy h4,
+.tc-marketing-blog .tc-blog-article-copy h5,
+.tc-marketing-blog .tc-blog-article-copy h6{font-family:var(--tc-font-display);line-height:1.28;color:#181b1a;margin:1.6em 0 .7em;font-weight:600}
+.tc-marketing-blog .tc-blog-article-copy h1{font-size:clamp(30px,4vw,42px)}
+.tc-marketing-blog .tc-blog-article-copy h2{font-size:clamp(27px,3vw,34px)}
+.tc-marketing-blog .tc-blog-article-copy h3{font-size:26px}
+.tc-marketing-blog .tc-blog-article-copy h4{font-size:22px}
+.tc-marketing-blog .tc-blog-article-copy h5{font-size:19px}
+.tc-marketing-blog .tc-blog-article-copy h6{font-size:17px}
+.tc-marketing-blog .tc-blog-article-copy ul,
+.tc-marketing-blog .tc-blog-article-copy ol{margin:0 0 26px;padding-left:28px}
+.tc-marketing-blog .tc-blog-article-copy li{margin:7px 0}
+.tc-marketing-blog .tc-blog-article-copy a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.tc-marketing-blog .tc-blog-article-copy blockquote{margin:22px 0;padding:12px 22px;border-left:4px solid #8ec03f;background:#f6f8f3}
+.tc-marketing-blog .tc-blog-article-copy hr{height:1px;border:0;background:#dde1da;margin:34px 0}
+.tc-marketing-blog .tc-blog-article-copy figure{margin:26px 0}
+.tc-marketing-blog .tc-blog-article-copy figure img{max-width:100%;height:auto;display:block}
+.tc-marketing-blog .tc-blog-article-copy .tc-blog-table-wrap{width:100%;overflow-x:auto;margin:28px 0}
+.tc-marketing-blog .tc-blog-article-copy table{width:100%;border-collapse:collapse;min-width:440px;font-size:15px;line-height:1.5}
+.tc-marketing-blog .tc-blog-article-copy th,
+.tc-marketing-blog .tc-blog-article-copy td{border:1px solid #d9ded6;padding:11px 14px;text-align:left;vertical-align:top}
+.tc-marketing-blog .tc-blog-article-copy th{background:#f4f6f1;font-weight:600}
+.tc-marketing-blog .tc-blog-article-copy pre{overflow:auto;padding:20px;margin:24px 0;border-radius:6px;background:#17201d;color:#f5f7f3;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+.tc-marketing-blog .tc-blog-article-copy code{padding:2px 5px;border-radius:3px;background:#f0f2ed;font:0.88em ui-monospace,SFMono-Regular,Consolas,monospace}
+.tc-marketing-blog .tc-blog-article-copy pre code{padding:0;background:transparent;color:inherit;font:inherit}
