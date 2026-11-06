@@ -264,7 +264,7 @@ export class WebsiteService{
       return {
         id:x.id,slug:t.slug||x.slug,status:x.status,featuredImage:x.featuredImage||'',
         localeSlugs:Object.fromEntries(activeLocales.filter(code=>hasContent(x.translations?.[code])).map(code=>[code,x.translations?.[code]?.slug||x.slug])),
-        title:t.title,excerpt:t.excerpt||str(t.content||'',800).replace(/```[\s\S]*?```/g,' ').replace(/!?\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/<[^>]*>/g,' ').replace(/[#*_>~|`]/g,' ').replace(/\s+/g,' ').trim().slice(0,240),content:t.content,
+        title:t.title,excerpt:str(t.content||'',800).replace(/```[\s\S]*?```/g,' ').replace(/!?\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/<[^>]*>/g,' ').replace(/[#*_>~|`]/g,' ').replace(/\s+/g,' ').trim().slice(0,240),content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:(data.authors.find((a:any)=>a.id===x.authorId&&a.isActive!==false)?.translations?.[locale]?.name)||x.authorName||'Ticarti',
         author:(()=>{const a=data.authors.find((v:any)=>v.id===x.authorId&&v.isActive!==false);if(!a)return null;const tr=a.translations?.[locale];return tr?.name?{slug:a.slug,name:tr.name,bio:tr.bio||'',seoTitle:tr.seoTitle||'',seoDescription:tr.seoDescription||'',avatar:a.avatar||'',socials:a.socials||{}}:null;})(),
