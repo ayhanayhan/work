@@ -13,6 +13,7 @@ import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/compo
 import {Switch} from '@/components/ui/switch';
 import {Textarea} from '@/components/ui/textarea';
 import {MediaField} from '@/app/(protected)/catalog/components/catalog-fields';
+import originalFaq from './website-faq-original.json';
 
 type Localized=Record<string,string>;
 type Values=Record<string,Localized>;
@@ -86,6 +87,17 @@ export default function HomepageEditor(){
     }catch(e){setError(errorText(e))}
     finally{setSaving(false)}
   };
+  const importOriginalFaq=()=>{
+    if(!working||working.id!=='faq'||working.items.length)return;
+    if(!window.confirm('Mevcut sitedeki 30 SSS kaydı Türkçe olarak düzenleme ekranına alınacak. Eski paket ve fiyat ifadelerini kontrol etmeden yayımlamayın. Devam edilsin mi?'))return;
+    const items=originalFaq.items.map(row=>({
+      id:row.id,enabled:true,sortOrder:0,
+      fields:{question:{[originalFaq.locale]:row.question},answer:{[originalFaq.locale]:row.answer}},
+      assets:{image:''},links:{href:''}
+    }));
+    patch({items});
+    setMessage('Mevcut site soruları içe alındı. Metinleri gözden geçirdikten sonra Modülü Kaydet ile yayımlayabilirsiniz.');
+  };
   const fields=working?MODULE_FIELDS[working.id]||[]:[];
   const entries=working?ENTRY_FIELDS[working.id]||[]:[];
   const hasImage=['builder','showcase','references'].includes(working?.id||'');
@@ -121,6 +133,10 @@ export default function HomepageEditor(){
                 {hasLink?<label className="grid gap-2 text-sm"><span className="font-medium">Bağlantı adresi</span><Input value={entry.links?.href||''} placeholder="https:// veya sayfa bağlantısı" onChange={e=>patchItem(entry.id,x=>({...x,links:{...x.links,href:e.target.value}}))}/></label>:null}
               </div>
             </div>)}{!working.items.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
+          </div>:null}
+          {working.id==='faq'&&!working.items.length?<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4 text-sm">
+            <div><b>Mevcut SSS içeriklerini taşı</b><p className="mt-1 text-muted-foreground">Sitedeki orijinal Türkçe 30 soru-cevap, yalnızca düzenlemeye alınır. Eski paket/fiyat bilgilerini mutlaka kontrol edin; otomatik yayımlanmaz.</p></div>
+            <Button size="sm" variant="outline" onClick={importOriginalFaq}><Upload className="size-4"/>Mevcut SSS'yi İçe Aktar</Button>
           </div>:null}
           {working.id==='faq'?<div className="rounded-lg border p-4 text-sm">
             <b>SEO / FAQPage</b>
