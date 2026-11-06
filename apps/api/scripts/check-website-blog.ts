@@ -67,6 +67,27 @@ async function test(){
   assert.equal(afterCategoryEdit.posts.length,1,'Editing a category must preserve articles');
   assert.equal((await svc.publicBlog('tr')).posts[0].category,'Eğitim');
   assert.equal((await svc.blog()).categories.length,1);
+  const related={
+    ...post,id:'related-post',slug:'ilgili-yazi',status:'PUBLISHED',
+    translations:{tr:{title:'İlgili makale',content:'İçerik'}}
+  };
+  const enhanced={
+    ...withCategory,tags:['e-ticaret','rehber'],relatedPostIds:[related.id],
+    isFeatured:true,ogImage:'https://cdn.example.com/og.webp',
+    canonicalUrl:'https://ticarti.com/blog/ornek-yazi',noIndex:true,
+    scheduledAt:new Date(Date.now()+86_400_000).toISOString()
+  };
+  const scheduled=await svc.updateBlog({version:6,posts:[enhanced,related],
+    categories:afterCategoryEdit.categories});
+  assert.equal(scheduled.posts.length,2);
+  assert.deepEqual(scheduled.posts[0].tags,['e-ticaret','rehber']);
+  assert.equal(scheduled.posts[0].ogImage,enhanced.ogImage);
+  assert.equal(scheduled.posts[0].noIndex,true);
+  assert.deepEqual(scheduled.posts[0].relatedPostIds,[related.id]);
+  assert.equal((await svc.publicBlog('tr')).posts.length,1,'Future publication is hidden');
+  assert.equal((await svc.publicBlog('tr')).posts[0].slug,'ilgili-yazi');
+  await assert.rejects(svc.updateBlog({version:7,posts:[{...enhanced,relatedPostIds:['missing']}],
+    categories:afterCategoryEdit.categories}),'Unknown related posts must fail validation');
   console.log('PASS: blog language isolation, publishing, dates, drafts and SEO alternate locales');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
