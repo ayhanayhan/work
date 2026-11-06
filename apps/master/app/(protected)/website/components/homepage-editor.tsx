@@ -68,7 +68,15 @@ export default function HomepageEditor(){
         method:'PATCH',body:JSON.stringify({version:data.version,enabled:working.enabled,fields:working.fields,items:working.items})
       });
       setData(old=>old?{version:response.version,modules:old.modules.map(x=>x.id===working.id?response.module:x)}:old);
-      setMessage('Modül kaydedildi. Ticarti.com entegrasyonu yayınlandığında içerik burada tanımlandığı gibi gösterilecek.');
+      if(working.id==='faq'){
+        try{
+          const publicFaq=await request('/public/website/faq?lang='+encodeURIComponent(lang));
+          const valid=(Array.isArray(publicFaq.items)?publicFaq.items:[]).filter((item:any)=>
+            item.enabled!==false&&String(item.fields?.question?.[lang]||'').trim()&&String(item.fields?.answer?.[lang]||'').trim());
+          setMessage('SSS kaydedildi. '+lang.toUpperCase()+' dilinde yayına hazır soru sayısı: '+(publicFaq.enabled?valid.length:0)+
+            '. '+(!publicFaq.enabled?'SSS modülü pasif.':valid.length===0?'Aktif sorular için bu dilde hem soru hem cevap doldurulmalı.':'Bu sorular anasayfada gösterilmelidir.'));
+        }catch(e:any){setMessage('SSS kaydedildi ancak yayın API kontrolü başarısız: '+(e?.message||'Bilinmeyen hata'));}
+      }else setMessage('Modül kaydedildi.');
     }catch(e){setError(errorText(e))}
     finally{setSaving(false)}
   };
