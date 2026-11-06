@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 import {archiveCard,BlogLocale,BlogPost,blogLabels,blogPath,escapeHtml,getBlogPosts,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 
-export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale};
+export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean};
 function extract(html:string):PageData{
   const body=html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1];
   if(!body)throw new Error('Source page missing body');
@@ -90,7 +90,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   let raw:string;
   try{raw=await readFile(path.join(process.cwd(),'templates',source),'utf8')}
   catch{notFound();}
-  const data=extract(raw!);data.locale=lang;
+  const data=extract(raw!);data.locale=lang;data.isHome=isHome;
   const posts=await getBlogPosts(lang);
   if(isBlog&&!posts.length)notFound();
   if(isBlogList)data.posts=posts;
