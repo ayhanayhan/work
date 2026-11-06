@@ -1,5 +1,5 @@
 export const BLOG_LOCALES=['tr','en','pt','ru'] as const;
-export type BlogLocale=typeof BLOG_LOCALES[number];
+export type BlogLocale=string;
 export type BlogPost={
   id:string;slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
   seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
@@ -7,7 +7,19 @@ export type BlogPost={
   tags:string[];isFeatured:boolean;relatedPostIds:string[];ogImage:string;canonicalUrl:string;noIndex:boolean;
   localeSlugs:Partial<Record<BlogLocale,string>>;
 };
-export const isBlogLocale=(lang:string):lang is BlogLocale=>(BLOG_LOCALES as readonly string[]).includes(lang);
+export const isBlogLocale=(lang:string):lang is BlogLocale=>/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(lang);
+export async function getWebsiteLocales():Promise<string[]>{
+  const api=(process.env.API_ORIGIN||'').replace(/\/$/,'');
+  if(!api)return [];
+  try{
+    const res=await fetch(api+'/v1/public/website/locales',{next:{revalidate:60},signal:AbortSignal.timeout(4000)});
+    if(!res.ok)return [];
+    const rows=await res.json();
+    if(!Array.isArray(rows))return [];
+    return rows.map((x:any)=>String(x.locale||'').toLowerCase()).filter(isBlogLocale);
+  }catch{return [];}
+}
+
 export const escapeHtml=(value:string)=>String(value||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[x]);
 export const slugValid=(value:string)=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 export const safeImage=(value:string)=>{
@@ -18,12 +30,13 @@ export const safeImage=(value:string)=>{
 };
 export const blogRoot=(lang:BlogLocale)=>lang==='tr'?'':'/'+lang;
 export const blogPath=(lang:BlogLocale,slug?:string)=>blogRoot(lang)+'/blog'+(slug?'/'+encodeURIComponent(slug):'');
-export const blogLabels:Record<BlogLocale,{read:string;all:string;related:string;featured:string;filter:string;blogDescription:string}>={
+export const blogLabels:Record<string,{read:string;all:string;related:string;featured:string;filter:string;blogDescription:string}>={
   tr:{read:'Yazıyı oku',all:'Tüm yazılar',related:'Diğer yazılar',featured:'ÖNE ÇIKAN YAZI',filter:'Tümü',blogDescription:'E-ticaret ve mağaza yönetimi üzerine yazılar.'},
   en:{read:'Read article',all:'All articles',related:'Other articles',featured:'FEATURED ARTICLE',filter:'All',blogDescription:'Articles about e-commerce and store management.'},
   pt:{read:'Ler artigo',all:'Todos os artigos',related:'Outros artigos',featured:'ARTIGO EM DESTAQUE',filter:'Todos',blogDescription:'Artigos sobre comércio eletrónico e gestão de lojas.'},
   ru:{read:'Читать статью',all:'Все статьи',related:'Другие статьи',featured:'ИЗБРАННАЯ СТАТЬЯ',filter:'Все',blogDescription:'Статьи об электронной коммерции и управлении магазином.'}
 };
+export const blogLabel=(lang:string)=>blogLabels[lang]||blogLabels.en;
 const validDate=(v:unknown)=>typeof v==='string'&&!Number.isNaN(Date.parse(v))?v:null;
 /** Never use seed content, and never fall back to Turkish for missing locales. */
 export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
@@ -46,7 +59,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
       seoDescription:String(entry.seoDescription||'').trim(),imageAlt:String(entry.imageAlt||entry.title),
       authorName:String(entry.authorName||'Ticarti'),
-      availableLocales:BLOG_LOCALES.filter(code=>entry.availableLocales.includes(code)),
+      availableLocales:entry.availableLocales.filter((code:unknown):code is string=>typeof code==='string'&&isBlogLocale(code)),
       tags:Array.isArray(entry.tags)?entry.tags.filter((x:any)=>typeof x==='string'):[],
       isFeatured:entry.isFeatured===true,relatedPostIds:Array.isArray(entry.relatedPostIds)?entry.relatedPostIds:[],
       ogImage:String(entry.ogImage||''),canonicalUrl:String(entry.canonicalUrl||''),noIndex:entry.noIndex===true,
@@ -86,7 +99,7 @@ export function archiveCard(post:BlogPost,lang:BlogLocale='tr'){
     '<a href="'+href+'" aria-label="'+escapeHtml(post.title)+'" class="tc-blog-card-link"></a>'+
     '<div class="bg-imge tc-stories-backdrop"><div class="img tc-stories-img-div"><img src="'+escapeHtml(img)+'" alt="'+escapeHtml(post.imageAlt)+'" loading="lazy" /></div></div>'+
     '<div class="card-body"><div class="title"><p>'+escapeHtml(post.category)+'</p></div><div class="content"><p>'+escapeHtml(post.title)+'</p></div>'+
-    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabels[lang].read+'</span></div></div>'+
+    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabel(lang).read+'</span></div></div>'+
     '<p class="theme"><span>'+escapeHtml(post.category)+'</span></p></div></div>';
 }
 export function homeCard(post:BlogPost,lang:BlogLocale='tr'){
@@ -94,7 +107,7 @@ export function homeCard(post:BlogPost,lang:BlogLocale='tr'){
     '<a class="tc-blog__card-link" href="'+blogPath(lang,post.slug)+'" aria-label="'+escapeHtml(post.title)+'">'+
     '<div class="bg-imge"><div class="img"><img loading="lazy" width="800" height="640" alt="'+escapeHtml(post.imageAlt)+'" src="'+escapeHtml(safeImage(post.featuredImage))+'"/></div></div>'+
     '<div class="card-body"><div class="title"><p>'+escapeHtml(post.category)+'</p></div><div class="content"><h4>'+escapeHtml(post.title)+'</h4></div>'+
-    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabels[lang].read+'</span></div></div></a></div></article>';
+    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabel(lang).read+'</span></div></div></a></div></article>';
 }
 export function replaceMarker(body:string,start:string,end:string,replacement:string){
   const begin='<!-- '+start+' -->',finish='<!-- '+end+' -->';
