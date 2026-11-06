@@ -216,7 +216,7 @@ export class WebsiteService{
     const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&(!x.scheduledAt||Date.parse(x.scheduledAt)<=now)&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
       return {
-        slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
+        id:x.id,slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
         title:t.title,excerpt:t.excerpt||'',content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
@@ -226,6 +226,7 @@ export class WebsiteService{
         availableLocales:['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code]))
       };
     });
+    posts.sort((a:any,b:any)=>Number(b.isFeatured===true)-Number(a.isFeatured===true));
     return {version:data.version,locale,posts};
   }
   async publicBlogPost(slug:string,lang='tr'){
