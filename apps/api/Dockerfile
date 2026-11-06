@@ -11,7 +11,7 @@ RUN npx prisma generate
 
 COPY nest-cli.json tsconfig.json ./
 COPY src ./src
-RUN npm run build && test -f dist/main.js
+RUN npm run build && test -f dist/main.js && node -e "require('./dist/website/website-pages.service.js'); console.log('Website pages module import OK')"
 
 COPY docker-entrypoint.sh db-init.sh ./
 RUN chmod +x ./docker-entrypoint.sh ./db-init.sh
