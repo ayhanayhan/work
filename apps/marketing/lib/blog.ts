@@ -70,29 +70,72 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
   }catch{return [];}
 }
 function inlineMarkdown(raw:string){
-  return escapeHtml(raw)
+  const tokens:string[]=[];
+  // Escape before adding a strictly limited set of Markdown formatting.
+  let result=escapeHtml(raw);
+  result=result.replace(/`([^`]+)`/g,(_m,code)=>{
+    const marker='%%CODE'+tokens.length+'%%';
+    tokens.push('<code>'+code+'</code>');return marker;
+  });
+  result=result
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g,'<em>$1</em>')
-    .replace(/\[([^\]]+)\]\((https:\/\/[a-zA-Z0-9._~:/?#@!$&()*+,;=%-]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    .replace(/~~([^~]+)~~/g,'<del>$1</del>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/assets\/[^\s)]+)\)/g,
+      (_m,title,href)=>'<a href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">'+title+'</a>');
+  return result.replace(/%%CODE(\d+)%%/g,(_m,n)=>tokens[Number(n)]||'');
 }
-/** Safe limited Markdown: titles, lists and paragraphs; never execute stored HTML. */
+const tableCells=(line:string)=>line.replace(/^\||\|$/g,'').split(/(?<!\\)\|/).map(x=>x.trim().replace(/\\\|/g,'|'));
+/** Strict Markdown renderer: content is escaped; only known safe elements are emitted. */
 export function renderBlogContent(content:string):string{
   const lines=content.replace(/\r\n?/g,'\n').split('\n');
   const out:string[]=[];let paragraph:string[]=[];let list:string[]=[];let numbered=false;
-  function flushParagraph(){if(paragraph.length){out.push('<p>'+paragraph.map(inlineMarkdown).join(' ')+'</p>');paragraph=[];}}
-  function flushList(){if(list.length){const tag=numbered?'ol':'ul';out.push('<'+tag+'>'+list.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+tag+'>');list=[];numbered=false;}}
-  for(const raw of lines){
-    const line=raw.trim();
-    if(!line){flushParagraph();flushList();continue;}
-    const header=line.match(/^(#{2,4})\s+(.+)$/);
-    if(header){flushParagraph();flushList();out.push('<h'+header[1].length+'>'+inlineMarkdown(header[2])+'</h'+header[1].length+'>');continue;}
-    const bullet=line.match(/^[-*]\s+(.+)$/);
-    const ordered=line.match(/^\d+\.\s+(.+)$/);
-    if(bullet){flushParagraph();if(numbered)flushList();list.push(bullet[1]);continue;}
-    if(ordered){flushParagraph();if(list.length&&!numbered)flushList();numbered=true;list.push(ordered[1]);continue;}
+  let code:string[]|null=null,lang='';
+  const flushParagraph=()=>{if(paragraph.length){out.push('<p>'+paragraph.map(inlineMarkdown).join(' ')+'</p>');paragraph=[]}};
+  const flushList=()=>{if(list.length){const tag=numbered?'ol':'ul';out.push('<'+tag+'>'+list.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+tag+'>');list=[];numbered=false}};
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i].trim();
+    if(code){
+      if(/^```\s*$/.test(line)){
+        out.push('<pre'+(lang?' data-language="'+escapeHtml(lang)+'"':'')+'><code>'+escapeHtml(code.join('\n'))+'</code></pre>');
+        code=null;lang='';
+      }else code.push(lines[i]);
+      continue;
+    }
+    const fence=/^```([a-zA-Z0-9+#-]*)\s*$/.exec(line);
+    if(fence){flushParagraph();flushList();code=[];lang=fence[1];continue}
+    if(!line){flushParagraph();flushList();continue}
+    const header=/^(#{1,6})\s+(.+)$/.exec(line);
+    if(header){flushParagraph();flushList();out.push('<h'+header[1].length+'>'+inlineMarkdown(header[2])+'</h'+header[1].length+'>');continue}
+    const image=/^!\[([^\]]*)\]\((https?:\/\/[^\s)]+|\/assets\/[^\s)]+)\)$/.exec(line);
+    if(image){
+      flushParagraph();flushList();
+      out.push('<figure><img loading="lazy" alt="'+escapeHtml(image[1])+'" src="'+escapeHtml(image[2])+'"/></figure>');
+      continue;
+    }
+    const tableSep=/^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test((lines[i+1]||'').trim());
+    if(line.includes('|')&&tableSep){
+      flushParagraph();flushList();const headings=tableCells(line);
+      out.push('<div class="tc-blog-table-wrap"><table><thead><tr>'+headings.map(h=>'<th>'+inlineMarkdown(h)+'</th>').join('')+'</tr></thead><tbody>');
+      i++;
+      while(i+1<lines.length&&lines[i+1].includes('|')&&lines[i+1].trim()){
+        i++;const row=tableCells(lines[i]);
+        out.push('<tr>'+headings.map((_,n)=>'<td>'+inlineMarkdown(row[n]||'')+'</td>').join('')+'</tr>');
+      }
+      out.push('</tbody></table></div>');continue;
+    }
+    const bullet=/^[-*]\s+(.+)$/.exec(line),ordered=/^\d+\.\s+(.+)$/.exec(line);
+    if(bullet||ordered){
+      flushParagraph();
+      if(list.length&&numbered!==!!ordered)flushList();
+      numbered=!!ordered;list.push((bullet||ordered)![1]);continue;
+    }
+    if(/^>\s?/.test(line)){flushParagraph();flushList();out.push('<blockquote>'+inlineMarkdown(line.replace(/^>\s?/,''))+'</blockquote>');continue}
+    if(/^(-{3,}|\*{3,})$/.test(line)){flushParagraph();flushList();out.push('<hr/>');continue}
     flushList();paragraph.push(line);
   }
   flushParagraph();flushList();
+  if(code)out.push('<pre'+(lang?' data-language="'+escapeHtml(lang)+'"':'')+'><code>'+escapeHtml(code.join('\n'))+'</code></pre>');
   return out.join('\n');
 }
 export function archiveCard(post:BlogPost,lang:BlogLocale='tr'){
