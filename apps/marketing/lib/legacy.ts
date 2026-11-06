@@ -1,7 +1,7 @@
 import path from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {notFound} from 'next/navigation';
-import {archiveCard,BlogLocale,BlogPost,blogLabels,blogPath,escapeHtml,getBlogPosts,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
+import {archiveCard,BlogLocale,BlogPost,blogLabel,blogPath,escapeHtml,getBlogPosts,getWebsiteLocales,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 
 export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean};
@@ -20,7 +20,6 @@ function extract(html:string):PageData{
   const markup=raw.replace(/(?:\.\.\/)+assets\//g,'/assets/').replace(/(?<![\w/])assets\//g,'/assets/');
   return {html:markup,classes,title:title.replace(/<[^>]+>/g,''),description,scripts,isBlogList:false};
 }
-const supportedLocales=new Set(['tr','en','pt','ru']);
 
 /** Hide links to missing translations and prevent the footer from leading to a 404. */
 function hideUnpublishedBlogLinks(html:string,posts:BlogPost[],locale:BlogLocale){
@@ -75,6 +74,7 @@ function pageKey(source:string):string{
   return map[source]||'';
 }
 export async function renderPage(segments:string[],search:Record<string,string|undefined>={}):Promise<PageData>{
+  const supportedLocales=new Set(await getWebsiteLocales());
   const lang:BlogLocale=segments.length&&supportedLocales.has(segments[0])?segments[0] as BlogLocale:'tr';
   const route=['en',...(segments.length&&supportedLocales.has(segments[0])?segments.slice(1):segments)];
   const isHome=route.join('/')==='en'||route.join('/')==='en/index.html';
@@ -96,7 +96,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   if(isBlogList)data.posts=posts;
   if(isBlogList){
     data.isBlogList=true;
-    const categories=[blogLabels[lang].filter,...new Set(posts.map(p=>p.category))];
+    const categories=[blogLabel(lang).filter,...new Set(posts.map(p=>p.category))];
     data.html=replaceMarker(data.html,'TICARTI_BLOG_FILTERS_START','TICARTI_BLOG_FILTERS_END',categories.map((name,i)=>{
       const id='tc-blog-category-'+i;
       return `<li><input type="radio" name="tc-blog-category" id="${id}" value="${i===0?'all':escapeHtml(name)}" ${i===0?'checked':''}/><label for="${id}">${escapeHtml(name)}</label></li>`;
@@ -108,8 +108,8 @@ export async function renderPage(segments:string[],search:Record<string,string|u
       data.html=data.html.replace(/<img([^>]*?)src="\/assets\/images\/blog\/[^\"]+"([^>]*?)>/,`<img alt="${escapeHtml(first.title)}" loading="lazy" src="${escapeHtml(safeImage(first.featuredImage))}"/>`);
       data.html=data.html.replace(/class="tc-blog-featured-link" href="[^"]*"/,`class="tc-blog-featured-link" href="${blogPath(lang,first.slug)}"`);
     }
-    data.html=data.html.replace('ÖNE ÇIKAN YAZI',blogLabels[lang].featured).replace('Yazıyı oku</a>',blogLabels[lang].read+'</a>');
-    data.title='Blog | Ticarti';data.description=blogLabels[lang].blogDescription;
+    data.html=data.html.replace('ÖNE ÇIKAN YAZI',blogLabel(lang).featured).replace('Yazıyı oku</a>',blogLabel(lang).read+'</a>');
+    data.title='Blog | Ticarti';data.description=blogLabel(lang).blogDescription;
   }else if(isBlog){
     const post=posts.find(p=>p.slug===postSlug);
     if(!post)notFound();data.post=post;
@@ -124,7 +124,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     const available=posts.filter(x=>x.slug!==post.slug);
     const related=relatedIds.length?[...relatedIds.map(id=>available.find(x=>x.id===id)).filter((x):x is BlogPost=>!!x),...available.filter(x=>!relatedIds.includes(x.id))].slice(0,3):available.slice(0,3);
     data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',related.map(p=>archiveCard(p,lang)).join(''));
-    data.html=data.html.replace('Diğer yazılar',blogLabels[lang].related).replace('Tüm blog yazıları',blogLabels[lang].all).replace('Tüm yazılar',blogLabels[lang].all);
+    data.html=data.html.replace('Diğer yazılar',blogLabel(lang).related).replace('Tüm blog yazıları',blogLabel(lang).all).replace('Tüm yazılar',blogLabel(lang).all);
   }
   if(isHome){
     // Keep the exact original header, layout, animations and FAQ; only swap blog content.
@@ -142,7 +142,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     }
     if(posts.length){
       data.html=data.html.replace('href="blog/index.html"','href="'+blogPath(lang)+'"');
-      data.html=data.html.replace('Tüm yazılar →',blogLabels[lang].all+' →');
+      data.html=data.html.replace('Tüm yazılar →',blogLabel(lang).all+' →');
     }
     // The original CMS binder remains available for homepage modules, not for blog posts.
     data.scripts.push('/assets/js/pages/website-home-cms.js');
