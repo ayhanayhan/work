@@ -86,12 +86,7 @@ export default function HomepageEditor(){
       if(!modules.length)throw new Error('İçe aktarılacak bilinen modül bulunamadı.');
       const dataNow=await request('/superadmin/website/home');
       if(dataNow.version>0&&!window.confirm('Mevcut anasayfa içerikleri var. Arşivdeki verilerle değiştirmek istiyor musunuz?')){setSaving(false);return}
-      let version=dataNow.version;
-      for(const m of modules){
-        const result=await request('/superadmin/website/home/'+encodeURIComponent(m.id),{
-          method:'PATCH',body:JSON.stringify({version,enabled:m.enabled!==false,fields:m.fields||{},items:m.items||[]})
-        });version=result.version;
-      }
+      await request('/superadmin/website/home-import',{method:'PATCH',body:JSON.stringify({version:dataNow.version,modules})});
       await load();setMessage('Orijinal anasayfa metinleri ve tüm tekrar eden kayıtlar içe aktarıldı. Görsel tasarım değişmedi.');
     }catch(e){setError(errorText(e))}
     finally{setSaving(false)}
