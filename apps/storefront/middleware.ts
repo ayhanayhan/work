@@ -2,40 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const PLATFORM_DOMAIN='ticarti.com';
 
-/**
- * Ticarti.com remains on commerce-storefront. New marketing pages are served
- * through the existing frontend, never by moving DNS/custom domains.
- * Legacy store creation and package routes keep their original backend/data.
- */
-const MARKETING_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
-const MARKETING_PAGES=new Set([
-  '/','/index.html','/robots.txt','/sitemap.xml',
-  '/paketler.html','/contacto.html','/login.html','/register.html',
-  '/kvkk.html','/gizlilik-politikasi.html','/uyelik-sozlesmesi.html',
-  '/companies/enterprise.html','/success-stories','/success-stories/',
-  '/success-stories/index.html','/success-stories/crowdy.html',
-  '/blog','/blog/','/blog/index.html'
-]);
-function marketingPage(pathname:string){
-  if(MARKETING_PAGES.has(pathname))return true;
-  return pathname.startsWith('/assets/')||
-    pathname.startsWith('/blog/')||
-    pathname.startsWith('/en/')||pathname==='/en'||
-    pathname.startsWith('/pt/')||pathname==='/pt'||
-    pathname.startsWith('/ru/')||pathname==='/ru';
-}
-function proxyMarketing(req:NextRequest){
-  const upstream=new URL(req.nextUrl.pathname+req.nextUrl.search,MARKETING_ORIGIN);
-  // Corporate pages do not need storefront auth cookies or authorization tokens.
-  const safeHeaders=new Headers(req.headers);
-  safeHeaders.delete('cookie');
-  safeHeaders.delete('authorization');
-  safeHeaders.set('x-ticarti-site-proxy','1');
-  safeHeaders.set('x-forwarded-host','ticarti.com');
-  return NextResponse.rewrite(upstream,{request:{headers:safeHeaders}});
-}
-
-
 function cleanHost(raw:string|null|undefined){
   return String(raw||'').split(',')[0].trim().toLowerCase().replace(/:\d+$/,'').replace(/\.$/,'');
 }
@@ -119,16 +85,8 @@ export function middleware(req:NextRequest){
   }
 
   if(host===PLATFORM_DOMAIN||host===`www.${PLATFORM_DOMAIN}`){
-    // Existing authenticated API, store creation and dynamic plan routes are preserved.
-    if(path.startsWith('/api/')||path.startsWith('/__proxy-api/')||path.startsWith('/ticarti-platform'))return NextResponse.next();
-    if(path==='/paketler'||path.startsWith('/paketler/')||
-       path==='/ucretsiz-dene'||path.startsWith('/ucretsiz-dene/')||
-       path==='/magaza-ac'||path.startsWith('/magaza-ac/')){
-      return internal(req,'/ticarti-platform','platform');
-    }
-    // New Ticarti.com corporate design and language-aware blog.
-    if(marketingPage(path))return proxyMarketing(req);
     if(assetOrApi(path))return NextResponse.next();
+    if(path.startsWith('/ticarti-platform'))return NextResponse.next();
     return internal(req,'/ticarti-platform','platform');
   }
 
