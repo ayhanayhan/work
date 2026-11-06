@@ -1,4 +1,4 @@
-import {Body,Controller,Get,Headers,Param,Patch,Query,UseGuards} from '@nestjs/common';
+import {Body,Controller,Get,Headers,NotFoundException,Param,Patch,Query,UseGuards} from '@nestjs/common';
 import {SuperAdminAuthGuard} from '../superadmin-auth/superadmin-auth.guard';
 import {WebsiteService} from './website.service';
 
@@ -10,7 +10,11 @@ export class WebsiteController {
   @Get('public/website/blog')
   publicBlog(@Query('lang') lang?:string){return this.svc.publicBlog(lang||'tr')}
   @Get('public/website/blog/:slug')
-  publicBlogPost(@Param('slug') slug:string,@Query('lang') lang?:string){return this.svc.publicBlogPost(slug,lang||'tr')}
+  async publicBlogPost(@Param('slug') slug:string,@Query('lang') lang?:string){
+    const post=await this.svc.publicBlogPost(slug,lang||'tr');
+    if(!post)throw new NotFoundException('Bu dilde yayımlanmış blog yazısı bulunamadı.');
+    return post;
+  }
   @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/website/home')
   home(){return this.svc.home()}
