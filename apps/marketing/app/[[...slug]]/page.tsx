@@ -46,7 +46,12 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
         ...(image?{image:[image]}:{}),
         ...(post.publishedAt?{datePublished:post.publishedAt}:{}),
         ...(post.updatedAt?{dateModified:post.updatedAt}:{}),
-        author:{'@type':post.authorName==='Ticarti'?'Organization':'Person',name:post.authorName},
+        author:post.author?{
+          '@type':'Person',name:post.author.name,
+          ...(post.author.bio?{description:post.author.bio}:{}),
+          ...(post.author.avatar?{image:safeImage(post.author.avatar)}:{}),
+          ...(Object.values(post.author.socials||{}).length?{sameAs:Object.values(post.author.socials||{})}:{}),
+        }:{'@type':post.authorName==='Ticarti'?'Organization':'Person',name:post.authorName},
         publisher:{'@type':'Organization',name:'Ticarti',url:BASE,
           logo:{'@type':'ImageObject',url:absolute('/assets/images/ticarti-logo.svg')}}
       },
@@ -94,14 +99,13 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
-  const configuredCanonical=page.post?.canonicalUrl||'';
-  const canonical=configuredCanonical?(configuredCanonical.startsWith('/')?absolute(configuredCanonical):configuredCanonical):absolute(normalPath(slug,lang,page));
+  const canonical=absolute(normalPath(slug,lang,page));
   const preview=await previewHost();
   const languages=page.post?alternatesForPost(page.post):page.isBlogList?
     Object.fromEntries((await Promise.all((await getWebsiteLocales()).map(async code=>({
       code,count:(await getBlogPosts(code)).length
     })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):undefined;
-  const picture=page.post?.ogImage?safeImage(page.post.ogImage):page.post?imageUrl(page.post):undefined;
+  const picture=page.post?imageUrl(page.post):undefined;
   const noindex=preview||page.post?.noIndex===true||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
   const generic={
     title:page.title,description:page.description,metadataBase:new URL(BASE),
