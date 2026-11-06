@@ -11,6 +11,7 @@ import { CheckoutSessionModule } from './checkout-session/checkout-session.modul
 import { SuperAdminModule } from './superadmin/superadmin.module';
 import { SupportModule } from './support/support.module';
 import { ContactModule } from './contact/contact.module';
+import { WebsiteModule } from './website/website.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { RateLimitGuard } from './common/rate-limit.guard';
@@ -37,6 +38,7 @@ const jwtSecret = process.env.JWT_SECRET || 'dev-only-secret-change-in-productio
     SuperAdminModule,
     SupportModule,
     ContactModule,
+    WebsiteModule,
     IntegrationsModule,
     WebhooksModule,
     MediaModule,
