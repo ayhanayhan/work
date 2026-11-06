@@ -137,6 +137,8 @@
   function bindModule(module) {
     var root=document.querySelector(selectors[module.id]);
     if (!root) return;
+    // Server-rendered FAQ already matches JSON-LD; never replace or double-bind it.
+    if (module.id === 'faq' && root.hasAttribute('data-tc-ssr-faq')) return;
     // Existing design and DOM are preserved until admins explicitly change data.
     if (module.enabled === false) {root.hidden=true;return;}
     root.hidden=false;bindFields(root,module);
