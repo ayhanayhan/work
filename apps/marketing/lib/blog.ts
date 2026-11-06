@@ -1,8 +1,11 @@
-import {readFile} from 'node:fs/promises';
-import path from 'node:path';
-
-export type BlogPost={slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;seoTitle?:string;seoDescription?:string};
-type SeedPost={slug:string;category:string;title:string;excerpt:string;cover:string;paragraphs:string[]};
+export const BLOG_LOCALES=['tr','en','pt','ru'] as const;
+export type BlogLocale=typeof BLOG_LOCALES[number];
+export type BlogPost={
+  slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
+  seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
+  availableLocales:BlogLocale[];publishedAt:string|null;updatedAt:string|null
+};
+export const isBlogLocale=(lang:string):lang is BlogLocale=>(BLOG_LOCALES as readonly string[]).includes(lang);
 export const escapeHtml=(value:string)=>String(value||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[x]);
 export const slugValid=(value:string)=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 export const safeImage=(value:string)=>{
@@ -11,40 +14,83 @@ export const safeImage=(value:string)=>{
   if(/^(?:\.\.\/)+assets\/[a-zA-Z0-9_./-]+$/.test(value))return '/'+value.replace(/^(?:\.\.\/)+/,'');
   return '/assets/images/blog/store.svg';
 };
-export async function getBlogPosts(lang='tr'):Promise<BlogPost[]>{
-  const seed=JSON.parse(await readFile(path.join(process.cwd(),'public/assets/data/blog-posts.json'),'utf8')) as {posts:SeedPost[]};
-  const fallback=seed.posts.map(p=>({slug:p.slug,category:p.category,title:p.title,excerpt:p.excerpt,featuredImage:`/assets/images/blog/${p.cover}.svg`,content:p.paragraphs.join('\n\n')}));
+export const blogRoot=(lang:BlogLocale)=>lang==='tr'?'':'/'+lang;
+export const blogPath=(lang:BlogLocale,slug?:string)=>blogRoot(lang)+'/blog'+(slug?'/'+encodeURIComponent(slug):'');
+export const blogLabels:Record<BlogLocale,{read:string;all:string;related:string;featured:string;filter:string;blogDescription:string}>={
+  tr:{read:'Yazıyı oku',all:'Tüm yazılar',related:'Diğer yazılar',featured:'ÖNE ÇIKAN YAZI',filter:'Tümü',blogDescription:'E-ticaret ve mağaza yönetimi üzerine yazılar.'},
+  en:{read:'Read article',all:'All articles',related:'Other articles',featured:'FEATURED ARTICLE',filter:'All',blogDescription:'Articles about e-commerce and store management.'},
+  pt:{read:'Ler artigo',all:'Todos os artigos',related:'Outros artigos',featured:'ARTIGO EM DESTAQUE',filter:'Todos',blogDescription:'Artigos sobre comércio eletrónico e gestão de lojas.'},
+  ru:{read:'Читать статью',all:'Все статьи',related:'Другие статьи',featured:'ИЗБРАННАЯ СТАТЬЯ',filter:'Все',blogDescription:'Статьи об электронной коммерции и управлении магазином.'}
+};
+const validDate=(v:unknown)=>typeof v==='string'&&!Number.isNaN(Date.parse(v))?v:null;
+/** Never use seed content, and never fall back to Turkish for missing locales. */
+export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
+  if(!isBlogLocale(lang))return [];
   const api=(process.env.API_ORIGIN||'').replace(/\/$/,'');
-  if(!api)return fallback;
+  if(!api)return [];
   try{
-    const res=await fetch(`${api}/v1/public/website/blog?lang=${encodeURIComponent(lang)}`,{next:{revalidate:60},signal:AbortSignal.timeout(4000)});
-    if(!res.ok)throw new Error('Corporate CMS temporarily unavailable');
-    const data=await res.json() as {version?:number;posts?:any[]};
-    if(!data.version)return fallback;
-    return (data.posts||[]).filter(p=>p&&p.status==='PUBLISHED'&&slugValid(String(p.slug))).map(p=>({
-      slug:String(p.slug),category:String(p.category||'Blog'),title:String(p.title||''),excerpt:String(p.excerpt||''),
-      featuredImage:safeImage(String(p.featuredImage||'')),content:String(p.content||''),seoTitle:String(p.seoTitle||''),seoDescription:String(p.seoDescription||'')
-    })).filter(p=>p.title);
-  }catch{return fallback;}
+    const res=await fetch(api+'/v1/public/website/blog?lang='+encodeURIComponent(lang),{next:{revalidate:60},signal:AbortSignal.timeout(4000)});
+    if(!res.ok)return [];
+    const result=await res.json() as {posts?:unknown[]};
+    if(!Array.isArray(result.posts))return [];
+    return result.posts.filter((entry:any)=>entry&&entry.status==='PUBLISHED'&&
+      typeof entry.title==='string'&&entry.title.trim()&&
+      typeof entry.content==='string'&&entry.content.trim()&&
+      slugValid(String(entry.slug||''))&&Array.isArray(entry.availableLocales)&&entry.availableLocales.includes(lang)
+    ).map((entry:any)=>({
+      slug:String(entry.slug),category:String(entry.category||'Blog'),title:String(entry.title).trim(),
+      excerpt:String(entry.excerpt||'').trim(),featuredImage:String(entry.featuredImage||''),
+      content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
+      seoDescription:String(entry.seoDescription||'').trim(),imageAlt:String(entry.imageAlt||entry.title),
+      authorName:String(entry.authorName||'Ticarti'),
+      availableLocales:BLOG_LOCALES.filter(code=>entry.availableLocales.includes(code)),
+      publishedAt:validDate(entry.publishedAt),updatedAt:validDate(entry.updatedAt)
+    }));
+  }catch{return [];}
 }
-export function archiveCard(post:BlogPost,prefix=''){ 
-  const href=prefix+'/blog/'+encodeURIComponent(post.slug);
-  const img=safeImage(post.featuredImage);
-  return `<div class="card-items list-item box card-visible" data-tc-blog-category="${escapeHtml(post.category)}"><div class="card-wrap">
-    <a href="${href}" aria-label="${escapeHtml(post.title)}" class="tc-blog-card-link"></a>
-    <div class="bg-imge tc-stories-backdrop"><div class="img tc-stories-img-div"><img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy" /></div></div>
-    <div class="card-body"><div class="title"><p>${escapeHtml(post.category)}</p></div><div class="content"><p>${escapeHtml(post.title)}</p></div>
-    <div class="card-expand"><div class="card-expand-desc">${escapeHtml(post.excerpt)}</div><span class="card-expand-cta">Yazıyı oku</span></div></div>
-    <p class="theme"><span>${escapeHtml(post.category)}</span></p>
-  </div></div>`;
+function inlineMarkdown(raw:string){
+  return escapeHtml(raw)
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https:\/\/[a-zA-Z0-9._~:/?#@!$&()*+,;=%-]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 }
-export function homeCard(post:BlogPost,prefix=''){ 
-  const href=prefix+'/blog/'+encodeURIComponent(post.slug);
-  return `<article class="card-items list-item box card-visible tc-blog__card"><div class="card-wrap"><a class="tc-blog__card-link" href="${href}" aria-label="${escapeHtml(post.title)}"><div class="bg-imge"><div class="img"><img loading="lazy" width="800" height="640" alt="" src="${escapeHtml(safeImage(post.featuredImage))}"/></div></div><div class="card-body"><div class="title"><p>${escapeHtml(post.category)}</p></div><div class="content"><h4>${escapeHtml(post.title)}</h4></div><div class="card-expand"><div class="card-expand-desc">${escapeHtml(post.excerpt)}</div><span class="card-expand-cta">Yazıyı oku →</span></div></div></a></div></article>`;
+/** Safe limited Markdown: titles, lists and paragraphs; never execute stored HTML. */
+export function renderBlogContent(content:string):string{
+  const lines=content.replace(/\r\n?/g,'\n').split('\n');
+  const out:string[]=[];let paragraph:string[]=[];let list:string[]=[];
+  function flushParagraph(){if(paragraph.length){out.push('<p>'+paragraph.map(inlineMarkdown).join(' ')+'</p>');paragraph=[];}}
+  function flushList(){if(list.length){out.push('<ul>'+list.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</ul>');list=[];}}
+  for(const raw of lines){
+    const line=raw.trim();
+    if(!line){flushParagraph();flushList();continue;}
+    const header=line.match(/^(#{2,4})\s+(.+)$/);
+    if(header){flushParagraph();flushList();out.push('<h'+header[1].length+'>'+inlineMarkdown(header[2])+'</h'+header[1].length+'>');continue;}
+    const bullet=line.match(/^[-*]\s+(.+)$/);
+    if(bullet){flushParagraph();list.push(bullet[1]);continue;}
+    flushList();paragraph.push(line);
+  }
+  flushParagraph();flushList();
+  return out.join('\n');
+}
+export function archiveCard(post:BlogPost,lang:BlogLocale='tr'){
+  const href=blogPath(lang,post.slug),img=safeImage(post.featuredImage);
+  return '<div class="card-items list-item box card-visible" data-tc-blog-category="'+escapeHtml(post.category)+'"><div class="card-wrap">'+
+    '<a href="'+href+'" aria-label="'+escapeHtml(post.title)+'" class="tc-blog-card-link"></a>'+
+    '<div class="bg-imge tc-stories-backdrop"><div class="img tc-stories-img-div"><img src="'+escapeHtml(img)+'" alt="'+escapeHtml(post.imageAlt)+'" loading="lazy" /></div></div>'+
+    '<div class="card-body"><div class="title"><p>'+escapeHtml(post.category)+'</p></div><div class="content"><p>'+escapeHtml(post.title)+'</p></div>'+
+    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabels[lang].read+'</span></div></div>'+
+    '<p class="theme"><span>'+escapeHtml(post.category)+'</span></p></div></div>';
+}
+export function homeCard(post:BlogPost,lang:BlogLocale='tr'){
+  return '<article class="card-items list-item box card-visible tc-blog__card"><div class="card-wrap">'+
+    '<a class="tc-blog__card-link" href="'+blogPath(lang,post.slug)+'" aria-label="'+escapeHtml(post.title)+'">'+
+    '<div class="bg-imge"><div class="img"><img loading="lazy" width="800" height="640" alt="'+escapeHtml(post.imageAlt)+'" src="'+escapeHtml(safeImage(post.featuredImage))+'"/></div></div>'+
+    '<div class="card-body"><div class="title"><p>'+escapeHtml(post.category)+'</p></div><div class="content"><h4>'+escapeHtml(post.title)+'</h4></div>'+
+    '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabels[lang].read+'</span></div></div></a></div></article>';
 }
 export function replaceMarker(body:string,start:string,end:string,replacement:string){
   const begin='<!-- '+start+' -->',finish='<!-- '+end+' -->';
   const a=body.indexOf(begin),b=body.indexOf(finish,a+begin.length);
-  if(a<0||b<0)throw new Error(`Content marker missing: ${start}`);
+  if(a<0||b<0)throw new Error('Content marker missing: '+start);
   return body.slice(0,a)+replacement+body.slice(b+finish.length);
 }
