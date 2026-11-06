@@ -1,7 +1,7 @@
 export const BLOG_LOCALES=['tr','en','pt','ru'] as const;
 export type BlogLocale=typeof BLOG_LOCALES[number];
 export type BlogPost={
-  slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
+  id:string;slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
   seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
   availableLocales:BlogLocale[];publishedAt:string|null;updatedAt:string|null;
   tags:string[];isFeatured:boolean;relatedPostIds:string[];ogImage:string;canonicalUrl:string;noIndex:boolean;
@@ -39,7 +39,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       typeof entry.content==='string'&&entry.content.trim()&&
       slugValid(String(entry.slug||''))&&Array.isArray(entry.availableLocales)&&entry.availableLocales.includes(lang)
     ).map((entry:any)=>({
-      slug:String(entry.slug),category:String(entry.category||'Blog'),title:String(entry.title).trim(),
+      id:String(entry.id||entry.slug),slug:String(entry.slug),category:String(entry.category||'Blog'),title:String(entry.title).trim(),
       excerpt:String(entry.excerpt||'').trim(),featuredImage:String(entry.featuredImage||''),
       content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
       seoDescription:String(entry.seoDescription||'').trim(),imageAlt:String(entry.imageAlt||entry.title),
