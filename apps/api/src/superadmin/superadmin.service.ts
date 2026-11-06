@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {activePlatformLocales} from '../common/platform-locales';
 import { getTicartiSkinPreset, normalizeTicartiSkinSlug, ticartiSkinCatalog } from '../theme-presets/ticarti-skins';
 import { ticartiSourceDesignForSkin, ticartiSourceHomePreset } from '../theme-presets/ticarti-source-preset';
 import * as bcrypt from 'bcryptjs';
@@ -603,8 +604,7 @@ export class SuperAdminService {
   }
 
   async platformLocales(){
-    const settings:any=await this.platformSettings();
-    return (settings.locales||[]).filter((x:any)=>x.isActive!==false).sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0)).map((x:any)=>({locale:String(x.locale),label:String(x.label||x.locale).trim()||String(x.locale).toUpperCase(),isDefault:!!x.isDefault}));
+    return activePlatformLocales(this.prisma);
   }
 
   async appCategories(){
