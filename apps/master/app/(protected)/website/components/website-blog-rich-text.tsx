@@ -83,10 +83,11 @@ function htmlToMarkdown(html:string){
 const looksLikeStoredHtml=(value:string)=>/^\s*<(?:h[1-6]|p|div|ul|ol|table|blockquote|section|article|figure|pre)\b/i.test(value)&&/<\/[a-z][a-z0-9]*>/i.test(value);
 export function WebsiteBlogRichText({value,onChange,editorKey}:{value:string;onChange:(value:string)=>void;editorKey:string}){
   const original=useRef(value);
+  const migrated=useRef(false);
   const converted=useMemo(()=>looksLikeStoredHtml(original.current)?htmlToMarkdown(original.current):original.current,[editorKey]);
   const initial=useMemo(()=>markdownToHtml(converted),[editorKey]);
   useEffect(()=>{
-    if(converted!==original.current)onChange(converted);
+    if(!migrated.current&&converted!==original.current){migrated.current=true;onChange(converted)}
   },[converted,onChange]);
   return <TicartiRichTextEditor key={editorKey} initialValue={initial}
     sourceValue={value} onSourceChange={onChange} sourceToHtml={markdownToHtml}
