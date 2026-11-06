@@ -27,7 +27,7 @@ function normalPath(slug:string[],lang:BlogLocale,page:PageData){
   return prefix+'/'+suffix.replace(/\/index\.html$/,'/').replace(/^index\.html$/,'');
 }
 function alternatesForPost(post:BlogPost){
-  return Object.fromEntries(post.availableLocales.map(lang=>[lang,absolute(blogPath(lang,post.slug))]));
+  return Object.fromEntries(post.availableLocales.map(lang=>[lang,absolute(blogPath(lang,post.localeSlugs?.[lang]||post.slug))]));
 }
 function imageUrl(post:BlogPost){
   if(!post.featuredImage)return undefined;
