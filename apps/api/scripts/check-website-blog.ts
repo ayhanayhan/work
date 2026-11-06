@@ -51,6 +51,22 @@ async function test(){
   assert.equal((await svc.publicBlog('tr')).posts.length,0,'Draft must be hidden');
   assert.equal((await svc.publicBlog('en')).posts.length,0,'Draft must be hidden');
   await assert.rejects(svc.updateBlog({version:4,posts:[{...post,translations:{en:{title:'Only title'}}}]}));
+  const category={
+    id:'cat-guides',parentId:null,isActive:true,
+    translations:{tr:{title:'Rehberler',slug:'rehberler'},en:{title:'Guides',slug:'guides'}}
+  };
+  const withCategory={...both,status:'PUBLISHED',categoryId:'cat-guides'};
+  const categorized=await svc.updateBlog({version:4,posts:[withCategory],categories:[category]});
+  assert.equal(categorized.categories.length,1,'Categories must be saved alongside posts');
+  assert.equal((await svc.publicBlog('tr')).posts[0].category,'Rehberler');
+  assert.equal((await svc.publicBlog('en')).posts[0].category,'Guides');
+  await assert.rejects(svc.updateBlog({version:5,posts:[withCategory],categories:[]}),
+    'Cannot delete a category referenced by an article');
+  const afterCategoryEdit=await svc.updateBlog({version:5,posts:[withCategory],
+    categories:[{...category,translations:{...category.translations,tr:{title:'Eğitim',slug:'egitim'}}}]});
+  assert.equal(afterCategoryEdit.posts.length,1,'Editing a category must preserve articles');
+  assert.equal((await svc.publicBlog('tr')).posts[0].category,'Eğitim');
+  assert.equal((await svc.blog()).categories.length,1);
   console.log('PASS: blog language isolation, publishing, dates, drafts and SEO alternate locales');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
