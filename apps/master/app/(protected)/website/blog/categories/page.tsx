@@ -12,6 +12,7 @@ import {Dialog,DialogBody,DialogContent,DialogFooter,DialogHeader,DialogTitle} f
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
+import {readWebsiteBlog,saveWebsiteBlog} from '../../components/website-blog-resource';
 
 type Translation={title:string;slug:string;description:string;seoTitle:string;seoDescription:string};
 type Category={id:string;parentId:string|null;isActive:boolean;sortOrder:number;translations:Record<string,Translation>};
@@ -32,7 +33,7 @@ export default function WebsiteBlogCategories(){
     if(restoring)return;
     setLoading(true);setError('');
     try{
-      const result=await request('/superadmin/website/blog') as Snapshot;
+      const result=await readWebsiteBlog<any,Category>(request);
       setData({...result,categories:Array.isArray(result.categories)?result.categories:[]});
     }catch(e:any){setError(e?.message||'Kategoriler alınamadı.')}
     finally{setLoading(false)}
@@ -47,9 +48,7 @@ export default function WebsiteBlogCategories(){
   const save=async(categories:Category[])=>{
     setSaving(true);setError('');setMessage('');
     try{
-      const result=await request('/superadmin/website/blog',{method:'PATCH',body:JSON.stringify({
-        version:data.version,posts:data.posts,categories
-      })}) as Snapshot;
+      const result=await saveWebsiteBlog<any,Category>(request,{version:data.version,posts:data.posts,categories});
       setData({...result,categories:result.categories||[]});
       setMessage('Kategoriler kaydedildi.');
       return true;
