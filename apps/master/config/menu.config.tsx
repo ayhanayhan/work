@@ -75,6 +75,10 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Log Kayıtları', i18nKey: 'navigation.activity_logs', path: '/users/activity' },
     ],
   },
+  { title: 'Ticarti.com', icon: LayoutGrid, children: [
+    { title: 'Anasayfa', path: '/website/home' },
+    { title: 'Kurumsal Blog', path: '/website/blog' },
+  ] },
   { title: 'Temalar', icon: Palette, children: [
     { title: 'Tema Kataloğu', path: '/themes' },
     { title: 'Tema Düzenleme', path: '/themes/manage' },
