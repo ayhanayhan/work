@@ -18,17 +18,18 @@ import {readWebsiteBlog,saveWebsiteBlog} from './website-blog-resource';
 
 type Translation={title:string;slug?:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
 type TextField=Exclude<keyof Translation,'enabled'>;
-type Post={id:string;slug:string;status:string;categoryId?:string|null;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;tags?:string[];relatedPostIds?:string[];scheduledAt?:string|null;isFeatured?:boolean;ogImage?:string;canonicalUrl?:string;noIndex?:boolean;translations:Record<string,Translation>};
+type Post={id:string;slug:string;status:string;authorId?:string|null;categoryId?:string|null;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;tags?:string[];relatedPostIds?:string[];scheduledAt?:string|null;isFeatured?:boolean;ogImage?:string;canonicalUrl?:string;noIndex?:boolean;translations:Record<string,Translation>};
 type BlogCategory={id:string;isActive:boolean;parentId:string|null;translations:Record<string,{title:string}>};
-type Snapshot={version:number;posts:Post[];categories:BlogCategory[]};
+type BlogAuthor={id:string;slug:string;isActive:boolean;translations:Record<string,{name:string}>};
+type Snapshot={version:number;posts:Post[];categories:BlogCategory[];authors:BlogAuthor[]};
 const blank=():Translation=>({title:'',slug:'',excerpt:'',content:'',category:'',seoTitle:'',seoDescription:'',imageAlt:'',enabled:true});
-const newPost=():Post=>({id:'post-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),slug:'',status:'DRAFT',categoryId:null,featuredImage:'',authorName:'',sortOrder:0,tags:[],relatedPostIds:[],scheduledAt:null,isFeatured:false,ogImage:'',canonicalUrl:'',noIndex:false,translations:{}});
+const newPost=():Post=>({id:'post-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),slug:'',status:'DRAFT',authorId:null,categoryId:null,featuredImage:'',authorName:'',sortOrder:0,tags:[],relatedPostIds:[],scheduledAt:null,isFeatured:false,ogImage:'',canonicalUrl:'',noIndex:false,translations:{}});
 const err=(e:any)=>e?.message||'İşlem gerçekleştirilemedi.';
 
 export default function WebsiteBlogPostForm({postId}:{postId?:string}){
   const router=useRouter();
   const {request,restoring,locales,localesLoading,localesError,reloadLocales}=useMasterSession();
-  const [data,setData]=useState<Snapshot>({version:0,posts:[],categories:[]});
+  const [data,setData]=useState<Snapshot>({version:0,posts:[],categories:[],authors:[]});
   const [editing,setEditing]=useState<Post|null>(null);
   const [lang,setLang]=useState('');
   const [tab,setTab]=useState('content');
@@ -42,8 +43,8 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
     if(restoring)return;
     setLoading(true);setError('');
     try{
-      const snapshot=await readWebsiteBlog<Post,BlogCategory>(request);
-      const normalized={...snapshot,posts:Array.isArray(snapshot.posts)?snapshot.posts:[],categories:Array.isArray(snapshot.categories)?snapshot.categories:[]};
+      const snapshot=await readWebsiteBlog<Post,BlogCategory>(request) as Snapshot;
+      const normalized={...snapshot,posts:Array.isArray(snapshot.posts)?snapshot.posts:[],categories:Array.isArray(snapshot.categories)?snapshot.categories:[],authors:Array.isArray((snapshot as Snapshot).authors)?(snapshot as Snapshot).authors:[]};
       const post=postId?normalized.posts.find((x:Post)=>x.id===postId):newPost();
       if(!post)throw new Error('Blog yazısı bulunamadı.');
       setData(normalized);
@@ -74,13 +75,26 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
     try{window.sessionStorage.setItem(draftKey,JSON.stringify({post:editing,savedAt:Date.now()}))}catch{}
   },[draftKey,editing,saving]);
   const update=(id:string,fn:(p:Post)=>Post)=>setEditing(p=>p&&p.id===id?fn(p):p);
-  const field=(key:TextField,next:string)=>{if(!editing)return;update(editing.id,p=>({...p,translations:{...p.translations,[lang]:{...blank(),...(p.translations[lang]||{}),[key]:next}}}))};
+  const slugify=(v:string)=>v.toLocaleLowerCase('tr').normalize('NFKD').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const field=(key:TextField,next:string)=>{
+    if(!editing)return;
+    update(editing.id,p=>{
+      const before=p.translations[lang]||blank(),translations={...p.translations,[lang]:{...blank(),...before,[key]:next}};
+      if(key!=='title')return {...p,translations};
+      const previousAuto=slugify(before.title||''),nextAuto=slugify(next);
+      const existingSlug=before.slug||p.slug;
+      if(!existingSlug||existingSlug===previousAuto){
+        translations[lang].slug=nextAuto;
+        const defaultLang=locales.find(l=>l.isDefault)?.locale||locales[0]?.locale;
+        return {...p,slug:lang===defaultLang||!p.slug?nextAuto:p.slug,translations};
+      }
+      return {...p,translations};
+    });
+  };
   const value=(key:TextField)=>editing?.translations?.[lang]?.[key]||'';
   const changeSlug=(raw:string)=>{
     if(!editing)return;
-    const slug=raw.toLocaleLowerCase('tr').trim().normalize('NFKD')
-      .replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c')
-      .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const slug=slugify(raw);
     update(editing.id,p=>({...p,slug:lang===(locales.find(x=>x.isDefault)?.locale||locales[0]?.locale)||!p.slug?slug:p.slug,
       translations:{...p.translations,[lang]:{...blank(),...(p.translations[lang]||{}),slug}}}));
   };
@@ -136,7 +150,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
                   <label className="grid gap-2"><span className="text-sm font-medium">Başlık</span><Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
                   <label className="grid gap-2"><span className="text-sm font-medium">Slug</span><Input value={value('slug')||editing.slug} onChange={e=>changeSlug(e.target.value)}/></label>
                 </div>
-                <label className="grid gap-2"><span className="text-sm font-medium">Özet</span><Textarea rows={3} value={value('excerpt')} onChange={e=>field('excerpt',e.target.value)}/></label>
+                
                 <div className="grid gap-2"><span className="text-sm font-medium">İçerik</span>
                   <WebsiteBlogRichText editorKey={editing.id+'-'+lang} value={value('content')} onChange={v=>field('content',v)}/>
                 </div>
@@ -154,7 +168,11 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
                 </select>
               </label>
               <label className="grid gap-2"><span className="text-sm font-medium">Yazar</span>
-                <Input value={editing.authorName||''} placeholder="Yazar adı" onChange={e=>update(editing.id,p=>({...p,authorName:e.target.value}))}/>
+                <select className="h-10 rounded-md border bg-background px-3" value={editing.authorId||''} onChange={e=>update(editing.id,p=>({...p,authorId:e.target.value||null}))}>
+                  <option value="">Yazar seçilmedi</option>
+                  {data.authors.filter(a=>a.isActive||a.id===editing.authorId).map(a=><option key={a.id} value={a.id}>{a.translations?.[lang]?.name||Object.values(a.translations||{}).find(t=>t.name)?.name||a.slug}</option>)}
+                </select>
+                <a className="text-xs text-primary underline" href="/website/blog/authors" target="_blank" rel="noopener noreferrer">Yazarları yönet</a>
               </label>
             </div>
             <label className="grid gap-2"><span className="text-sm font-medium">Etiketler</span>
@@ -202,10 +220,8 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
                 <label className="grid gap-2"><span className="text-sm font-medium">Kapak görseli alternatif metni</span><Input value={value('imageAlt')} onChange={e=>field('imageAlt',e.target.value)}/></label>
               </TabsContent>
             </Tabs>
-            <label className="grid gap-2"><span className="text-sm font-medium">Canonical URL</span>
-              <Input value={editing.canonicalUrl||''} onChange={e=>update(editing.id,p=>({...p,canonicalUrl:e.target.value}))}/>
-            </label>
-            <WebsiteBlogMediaDropzone label="Open Graph görseli" value={editing.ogImage||''} onChange={ogImage=>update(editing.id,p=>({...p,ogImage}))}/>
+            
+            
             <label className="flex items-center justify-between rounded-lg border p-4">
               <span>Arama motorlarında indeksleme</span>
               <Switch checked={!editing.noIndex} onCheckedChange={v=>update(editing.id,p=>({...p,noIndex:!v}))}/>
