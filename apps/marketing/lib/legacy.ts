@@ -108,7 +108,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
       data.html=data.html.replace(/<img([^>]*?)src="\/assets\/images\/blog\/[^\"]+"([^>]*?)>/,`<img alt="${escapeHtml(first.title)}" loading="lazy" src="${escapeHtml(safeImage(first.featuredImage))}"/>`);
       data.html=data.html.replace(/class="tc-blog-featured-link" href="[^"]*"/,`class="tc-blog-featured-link" href="${blogPath(lang,first.slug)}"`);
     }
-    data.html=data.html.replace('ÖNE ÇIKAN YAZI',blogLabels[lang].featured);
+    data.html=data.html.replace('ÖNE ÇIKAN YAZI',blogLabels[lang].featured).replace('Yazıyı oku</a>',blogLabels[lang].read+'</a>');
     data.title='Blog | Ticarti';data.description=blogLabels[lang].blogDescription;
   }else if(isBlog){
     const post=posts.find(p=>p.slug===postSlug);
@@ -121,7 +121,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     const paragraphs=renderBlogContent(post.content);
     data.html=data.html.replace('<!-- TICARTI_POST_CONTENT -->',paragraphs);
     data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',posts.filter(x=>x.slug!==post.slug).slice(0,3).map(p=>archiveCard(p,lang)).join(''));
-    data.html=data.html.replace('Diğer yazılar',blogLabels[lang].related).replace('Tüm yazılar',blogLabels[lang].all);
+    data.html=data.html.replace('Diğer yazılar',blogLabels[lang].related).replace('Tüm blog yazıları',blogLabels[lang].all).replace('Tüm yazılar',blogLabels[lang].all);
   }
   if(isHome){
     // Keep the exact original header, layout, animations and FAQ; only swap blog content.
