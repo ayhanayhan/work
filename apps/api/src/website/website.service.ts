@@ -121,14 +121,19 @@ export class WebsiteService{
       };
     }
     if(!Object.values(translations).some((x:any)=>x.title))throw new BadRequestException('En az bir dilde blog başlığı gereklidir.');
-    const status=raw?.status==='PUBLISHED'?'PUBLISHED':'DRAFT';
+    const status=['PUBLISHED','DRAFT','ARCHIVED'].includes(raw?.status)?raw.status:'DRAFT';
     if(status==='PUBLISHED'&&!Object.values(translations).some((t:any)=>t.enabled&&t.title&&t.content)){
       throw new BadRequestException('Yayınlamak için en az bir dilde başlık ve içerik gerekir.');
     }
     return {
       id:str(raw?.id,90)||slug,slug,status,categoryId:str(raw?.categoryId,90)||null,
       featuredImage:url(raw?.featuredImage),authorName:str(raw?.authorName,160).trim()||'Ticarti',
-      sortOrder:index,translations
+      sortOrder:index,translations,
+      tags:Array.isArray(raw?.tags)?raw.tags.slice(0,30).map((x:any)=>str(x,80).trim()).filter(Boolean):[],
+      relatedPostIds:Array.isArray(raw?.relatedPostIds)?[...new Set(raw.relatedPostIds.map((x:any)=>str(x,90)))].slice(0,30):[],
+      scheduledAt:raw?.scheduledAt&&Number.isFinite(Date.parse(raw.scheduledAt))?new Date(raw.scheduledAt).toISOString():null,
+      isFeatured:raw?.isFeatured===true,ogImage:url(raw?.ogImage),
+      canonicalUrl:raw?.canonicalUrl?link(raw.canonicalUrl):'',noIndex:raw?.noIndex===true
     };
   }
   async updateBlog(body:any){
@@ -142,7 +147,10 @@ export class WebsiteService{
       const prevComparable=previous?{
         id:previous.id,slug:previous.slug,status:previous.status,categoryId:previous.categoryId||null,
         featuredImage:previous.featuredImage||'',authorName:previous.authorName||'Ticarti',
-        sortOrder:previous.sortOrder,translations:previous.translations
+        sortOrder:previous.sortOrder,translations:previous.translations,
+        tags:previous.tags||[],relatedPostIds:previous.relatedPostIds||[],
+        scheduledAt:previous.scheduledAt||null,isFeatured:previous.isFeatured===true,
+        ogImage:previous.ogImage||'',canonicalUrl:previous.canonicalUrl||'',noIndex:previous.noIndex===true
       }:null;
       const changed=JSON.stringify(cleaned)!==JSON.stringify(prevComparable);
       return {
@@ -190,6 +198,10 @@ export class WebsiteService{
     for(const post of posts){
       if(post.categoryId&&!categoryIds.has(post.categoryId))throw new BadRequestException('Yazının blog kategorisi bulunamadı.');
     }
+    const postIds=new Set(posts.map((p:any)=>p.id));
+    for(const post of posts){
+      if(post.relatedPostIds.some((id:string)=>id===post.id||!postIds.has(id)))throw new BadRequestException('İlgili blog yazısı bulunamadı.');
+    }
     const version=existing.version+1;
     const payload={version,posts,categories};
     if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
@@ -200,13 +212,16 @@ export class WebsiteService{
     const data=await this.blog();
     const locale=/^(tr|en|pt|ru)$/.test(lang)?lang:'';
     const hasContent=(t:any)=>t?.enabled!==false&&typeof t?.title==='string'&&!!t.title.trim()&&typeof t?.content==='string'&&!!t.content.trim();
-    const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&hasContent(x.translations?.[locale])).map((x:any)=>{
+    const now=Date.now();
+    const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&(!x.scheduledAt||Date.parse(x.scheduledAt)<=now)&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
       return {
         slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
         title:t.title,excerpt:t.excerpt||'',content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
+        tags:x.tags||[],isFeatured:x.isFeatured===true,relatedPostIds:x.relatedPostIds||[],
+        ogImage:x.ogImage||'',canonicalUrl:x.canonicalUrl||'',noIndex:x.noIndex===true,
         publishedAt:x.publishedAt||null,updatedAt:x.updatedAt||null,
         availableLocales:['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code]))
       };
