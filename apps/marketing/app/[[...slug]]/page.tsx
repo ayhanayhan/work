@@ -78,7 +78,15 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
         name:'Ticarti',url:BASE,inLanguage:lang,publisher:{'@id':BASE+'#organization'}},
       {'@context':'https://schema.org','@type':'WebPage','@id':url+'#webpage',
         url,name:page.title,description:page.description,inLanguage:lang,
-        isPartOf:{'@id':BASE+'#website'}}
+        isPartOf:{'@id':BASE+'#website'}},
+      ...(page.faq?.configured&&page.faq.enabled&&page.faq.items.length?[{
+        '@context':'https://schema.org','@type':'FAQPage','@id':url+'#faq',
+        inLanguage:lang,
+        mainEntity:page.faq.items.map(item=>({
+          '@type':'Question',name:item.question,
+          acceptedAnswer:{'@type':'Answer',text:item.answer}
+        }))
+      }]:[])
     ];
   }
   return [];
