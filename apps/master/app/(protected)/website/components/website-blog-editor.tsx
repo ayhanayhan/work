@@ -17,12 +17,12 @@ import {Tabs,TabsContent,TabsList,TabsTrigger} from '@/components/ui/tabs';
 import {WebsiteBlogRichText} from './website-blog-rich-text';
 import Link from 'next/link';
 
-type Translation={title:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
+type Translation={title:string;slug?:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
 type TextField=Exclude<keyof Translation,'enabled'>;
 type Post={id:string;slug:string;status:string;categoryId?:string|null;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;tags?:string[];relatedPostIds?:string[];scheduledAt?:string|null;isFeatured?:boolean;ogImage?:string;canonicalUrl?:string;noIndex?:boolean;translations:Record<string,Translation>};
 type BlogCategory={id:string;isActive:boolean;parentId:string|null;translations:Record<string,{title:string}>};
 type Snapshot={version:number;posts:Post[];categories:BlogCategory[]};
-const blank=():Translation=>({title:'',excerpt:'',content:'',category:'',seoTitle:'',seoDescription:'',imageAlt:'',enabled:true});
+const blank=():Translation=>({title:'',slug:'',excerpt:'',content:'',category:'',seoTitle:'',seoDescription:'',imageAlt:'',enabled:true});
 const newPost=():Post=>({id:'post-'+Date.now().toString(36),slug:'',status:'DRAFT',categoryId:null,featuredImage:'',authorName:'Ticarti',sortOrder:0,tags:[],relatedPostIds:[],scheduledAt:null,isFeatured:false,ogImage:'',canonicalUrl:'',noIndex:false,translations:{tr:blank()}});
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
 
@@ -48,6 +48,10 @@ export default function WebsiteBlogEditor(){
   const update=(id:string,fn:(p:Post)=>Post)=>setData(x=>({...x,posts:x.posts.map(p=>p.id===id?fn(p):p)}));
   const field=(key:TextField,value:string)=>{if(!editing)return;update(editing.id,p=>({...p,translations:{...p.translations,[lang]:{...blank(),...(p.translations[lang]||{}),[key]:value}}}))};
   const value=(key:TextField)=>editing?.translations?.[lang]?.[key]||'';
+  const changeSlug=(raw:string)=>{if(!editing)return;const slug=raw.toLowerCase().replace(/[^a-z0-9-]/g,'-');
+    update(editing.id,p=>({...p,slug:lang==='tr'||!p.slug?slug:p.slug,
+      translations:{...p.translations,[lang]:{...blank(),...(p.translations[lang]||{}),slug}}}));
+  };
   const reorder=(from:number,to:number)=>setData(x=>{if(to<0||to>=x.posts.length||from===to)return x;const posts=[...x.posts];const [p]=posts.splice(from,1);posts.splice(to,0,p);return {...x,posts}});
   const save=async():Promise<boolean>=>{
     if(data.posts.some(x=>!x.slug||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(x.slug))){setError('Her yazının SEO URL kodu küçük harf, sayı ve tireden oluşmalıdır.');return false}
@@ -112,7 +116,7 @@ export default function WebsiteBlogEditor(){
               <TabsContent value={lang} className="grid gap-4 mt-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <label className="grid gap-2"><span className="text-sm font-medium">Başlık</span><Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
-                  <label className="grid gap-2"><span className="text-sm font-medium">URL</span><Input value={editing.slug} onChange={e=>update(editing.id,p=>({...p,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'-')}))}/></label>
+                  <label className="grid gap-2"><span className="text-sm font-medium">URL</span><Input value={value('slug')||editing.slug} onChange={e=>changeSlug(e.target.value)}/></label>
                 </div>
                 <label className="grid gap-2"><span className="text-sm font-medium">Özet</span><Textarea rows={3} value={value('excerpt')} onChange={e=>field('excerpt',e.target.value)}/></label>
                 <div className="grid gap-2"><span className="text-sm font-medium">İçerik</span>
