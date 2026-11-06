@@ -86,14 +86,15 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
   const lang=resolveLang(slug),page=await renderPage(slug,await searchParams);
-  const canonical=absolute(normalPath(slug,lang,page));
+  const configuredCanonical=page.post?.canonicalUrl||'';
+  const canonical=configuredCanonical?(configuredCanonical.startsWith('/')?absolute(configuredCanonical):configuredCanonical):absolute(normalPath(slug,lang,page));
   const preview=await previewHost();
   const languages=page.post?alternatesForPost(page.post):page.isBlogList?
     Object.fromEntries((await Promise.all(BLOG_LOCALES.map(async code=>({
       code,count:(await getBlogPosts(code)).length
     })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):undefined;
-  const picture=page.post?imageUrl(page.post):undefined;
-  const noindex=preview||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
+  const picture=page.post?.ogImage?safeImage(page.post.ogImage):page.post?imageUrl(page.post):undefined;
+  const noindex=preview||page.post?.noIndex===true||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
   const generic={
     title:page.title,description:page.description,metadataBase:new URL(BASE),
     alternates:{canonical,languages},
