@@ -120,7 +120,10 @@ export async function renderPage(segments:string[],search:Record<string,string|u
       .replace('/assets/images/blog/store.svg',escapeHtml(safeImage(post.featuredImage)));
     const paragraphs=renderBlogContent(post.content);
     data.html=data.html.replace('<!-- TICARTI_POST_CONTENT -->',paragraphs);
-    data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',posts.filter(x=>x.slug!==post.slug).slice(0,3).map(p=>archiveCard(p,lang)).join(''));
+    const relatedIds=post.relatedPostIds||[];
+    const available=posts.filter(x=>x.slug!==post.slug);
+    const related=relatedIds.length?[...relatedIds.map(id=>available.find(x=>x.id===id)).filter((x):x is BlogPost=>!!x),...available.filter(x=>!relatedIds.includes(x.id))].slice(0,3):available.slice(0,3);
+    data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',related.map(p=>archiveCard(p,lang)).join(''));
     data.html=data.html.replace('Diğer yazılar',blogLabels[lang].related).replace('Tüm blog yazıları',blogLabels[lang].all).replace('Tüm yazılar',blogLabels[lang].all);
   }
   if(isHome){
