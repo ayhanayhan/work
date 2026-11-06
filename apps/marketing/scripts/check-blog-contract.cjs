@@ -36,7 +36,25 @@ async function run(){
   assert.ok(markup.includes('&lt;script&gt;'));
   assert.ok(markup.includes('<h2>Hello</h2>'));
   assert.ok(markup.includes('<ul>'));
-  console.log('PASS: no seed fallback; strict locale-only posts; safe blog content and routes');
+  const advanced=blog.renderBlogContent([
+    '# Başlık 1','', '###### Başlık 6','',
+    '| Özellik | Değer |','| --- | --- |','| API | Aktif |','',
+    '> Alıntı','',
+    '```html','<script>alert(1)</script>','```','',
+    '![](https://example.com/image.png)','', '---','',
+    '`let x = 1`'
+  ].join('\\n'));
+  assert.ok(advanced.includes('<h1>Başlık 1</h1>'),'H1 must render');
+  assert.ok(advanced.includes('<h6>Başlık 6</h6>'),'H6 must render');
+  assert.ok(advanced.includes('<table>')&&advanced.includes('<td>Aktif</td>'),'Tables must render');
+  assert.ok(advanced.includes('<blockquote>Alıntı</blockquote>'),'Quotes must render');
+  assert.ok(advanced.includes('<pre data-language="html"><code>'),'Fenced code block must render');
+  assert.ok(advanced.includes('&lt;script&gt;alert(1)&lt;/script&gt;'),'Code must be escaped');
+  assert.ok(!advanced.includes('<script>'),'Executable HTML must never be emitted');
+  assert.ok(advanced.includes('<figure><img'),'Safe image must render');
+  assert.ok(advanced.includes('<hr/>'),'Horizontal rule must render');
+  assert.ok(advanced.includes('<code>let x = 1</code>'),'Inline code must render');
+  console.log('PASS: no seed fallback; advanced headings, tables, images, safe code blocks and routes');
 }
 run().catch(error=>{console.error(error);process.exitCode=1}).finally(()=>{
   if(previousApi===undefined)delete process.env.API_ORIGIN;
