@@ -11,7 +11,7 @@ import {
 type EditorProps={
   initialValue?:string;minHeight?:number;onChange?:(html:string)=>void;
   /** Called for the Markdown source view; other consumers may keep HTML storage. */
-  sourceValue?:string;onSourceChange?:(text:string)=>void;
+  sourceValue?:string;onSourceChange?:(text:string)=>void;sourceToHtml?:(text:string)=>string;
 };
 function escapeHtml(value:string){
   return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -21,7 +21,7 @@ function safeUrl(value:string){
   return /^(https:\/\/|http:\/\/|\/assets\/)[^\s<>"']+$/i.test(v)?v:null;
 }
 export function TicartiRichTextEditor({
-  initialValue='',minHeight=220,onChange,sourceValue,onSourceChange
+  initialValue='',minHeight=220,onChange,sourceValue,onSourceChange,sourceToHtml
 }:EditorProps){
   const ref=useRef<HTMLDivElement|null>(null);
   const [sourceMode,setSourceMode]=useState(false);
@@ -126,7 +126,7 @@ export function TicartiRichTextEditor({
       {item('Geri al',<Undo2 className="size-4"/>,()=>run('undo'))}
       {item('İleri al',<Redo2 className="size-4"/>,()=>run('redo'))}
       {typeof onSourceChange==='function'?<Button type="button" variant={sourceMode?'primary':'outline'} size="sm"
-        onMouseDown={remember} onClick={()=>setSourceMode(x=>!x)}><AlignLeft className="size-4"/> {sourceMode?'Görsel editör':'Markdown'}</Button>:null}
+        onMouseDown={remember} onClick={()=>{if(sourceMode&&ref.current&&sourceToHtml)ref.current.innerHTML=sourceToHtml(sourceValue||'');setSourceMode(x=>!x)}}><AlignLeft className="size-4"/> {sourceMode?'Görsel editör':'Markdown'}</Button>:null}
     </div>
     {sourceMode&&typeof onSourceChange==='function'?
       <textarea spellCheck={false} aria-label="Markdown kaynak kodu" value={sourceValue||''}
