@@ -148,7 +148,7 @@ export default function WebsiteBlogEditor(){
               </select>
             </label>
             <label className="grid gap-2"><span className="text-sm font-medium">Zamanlı yayın</span>
-              <Input type="datetime-local" value={editing.scheduledAt||''} onChange={e=>update(editing.id,p=>({...p,scheduledAt:e.target.value||null}))}/>
+              <Input type="datetime-local" value={editing.scheduledAt?new Date(editing.scheduledAt).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(' ','T'):''} onChange={e=>update(editing.id,p=>({...p,scheduledAt:e.target.value?new Date(e.target.value).toISOString():null}))}/>
             </label>
             <label className="flex items-center justify-between rounded-lg border p-4">
               <span><b>Öne çıkan yazı</b><small className="block text-muted-foreground">Blog listelerinde öncelikli gösterilir.</small></span>
