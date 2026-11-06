@@ -25,6 +25,18 @@
       ]
     },
     {
+      "backendId": "commerce-master",
+      "rootDir": "./apps/master",
+      "ignore": [
+        "node_modules",
+        ".next",
+        "dist",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
       "backendId": "commerce-superadmin",
       "rootDir": "./apps/superadmin",
       "ignore": [
