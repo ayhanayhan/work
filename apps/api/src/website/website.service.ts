@@ -103,6 +103,7 @@ export class WebsiteService{
     await this.put(HOME_KEY,{version,modules});
     return {version,modules};
   }
+  async activeLocales(){return activePlatformLocales(this.prisma)}
   async blog(){
     const data=await this.get(BLOG_KEY);
     return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[],categories:Array.isArray(data?.categories)?data.categories:[]};
