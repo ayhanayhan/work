@@ -63,16 +63,18 @@ function inlineMarkdown(raw:string){
 /** Safe limited Markdown: titles, lists and paragraphs; never execute stored HTML. */
 export function renderBlogContent(content:string):string{
   const lines=content.replace(/\r\n?/g,'\n').split('\n');
-  const out:string[]=[];let paragraph:string[]=[];let list:string[]=[];
+  const out:string[]=[];let paragraph:string[]=[];let list:string[]=[];let numbered=false;
   function flushParagraph(){if(paragraph.length){out.push('<p>'+paragraph.map(inlineMarkdown).join(' ')+'</p>');paragraph=[];}}
-  function flushList(){if(list.length){out.push('<ul>'+list.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</ul>');list=[];}}
+  function flushList(){if(list.length){const tag=numbered?'ol':'ul';out.push('<'+tag+'>'+list.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+tag+'>');list=[];numbered=false;}}
   for(const raw of lines){
     const line=raw.trim();
     if(!line){flushParagraph();flushList();continue;}
     const header=line.match(/^(#{2,4})\s+(.+)$/);
     if(header){flushParagraph();flushList();out.push('<h'+header[1].length+'>'+inlineMarkdown(header[2])+'</h'+header[1].length+'>');continue;}
     const bullet=line.match(/^[-*]\s+(.+)$/);
-    if(bullet){flushParagraph();list.push(bullet[1]);continue;}
+    const ordered=line.match(/^\d+\.\s+(.+)$/);
+    if(bullet){flushParagraph();if(numbered)flushList();list.push(bullet[1]);continue;}
+    if(ordered){flushParagraph();if(list.length&&!numbered)flushList();numbered=true;list.push(ordered[1]);continue;}
     flushList();paragraph.push(line);
   }
   flushParagraph();flushList();
