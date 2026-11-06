@@ -35,7 +35,8 @@ gcloud run deploy "$SERVICE" --image="$IMAGE" --revision-suffix="$SUFFIX" --no-t
 # A zero-traffic revision can be Ready without becoming latestReadyRevisionName.
 # Resolve the exact revision we just created, instead of reading the traffic-serving pointer.
 NEW="${SERVICE}-${SUFFIX}"
-READY="$(gcloud run revisions describe "$NEW" --project="$PROJECT" --region="$REGION" --format='value(status.conditions[0].status)')"
+READY="$(gcloud run revisions describe "$NEW" --project="$PROJECT" --region="$REGION" --format=json |
+  node -e "let s='';process.stdin.on('data',x=>s+=x).on('end',()=>{const c=JSON.parse(s).status?.conditions||[];process.stdout.write(c.find(x=>x.type==='Ready')?.status||'Unknown')})")"
 if [ "$READY" != "True" ] || [ "$NEW" = "$OLD" ]; then
   echo "New revision not ready: $NEW (status: $READY)" >&2
   exit 1
