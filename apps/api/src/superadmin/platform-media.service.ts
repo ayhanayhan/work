@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException, ServiceUnavailableException} from '@nestjs/common';
+import {BadRequestException, Injectable, Logger, NotFoundException, ServiceUnavailableException} from '@nestjs/common';
 import {Storage} from '@google-cloud/storage';
 import sharp from 'sharp';
 import {randomUUID} from 'crypto';
@@ -9,6 +9,7 @@ type PlatformMediaItem={id:string;fileName:string;mimeType:string;publicUrl:stri
 @Injectable()
 export class PlatformMediaService {
   private readonly storage=new Storage();
+  private readonly logger=new Logger(PlatformMediaService.name);
   constructor(private readonly prisma:PrismaService){}
   private bucket(){const name=String(process.env.GCS_BUCKET||'').trim();if(!name)throw new ServiceUnavailableException('Platform medya yükleme için GCS_BUCKET yapılandırılmalı.');return this.storage.bucket(name);}
   private fileId(id:string){if(!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(id))throw new NotFoundException('Görsel bulunamadı.');return id}
@@ -32,9 +33,13 @@ export class PlatformMediaService {
     try{
       const img=sharp(file.buffer,{failOn:'error',limitInputPixels:25000000});
       const meta=await img.metadata();
-      if(!['jpeg','png','webp','avif'].includes(meta.format||''))throw new Error('unsupported');
+      if(!['jpeg','png','webp','avif'].includes(meta.format||''))throw new BadRequestException('Bu görsel formatı desteklenmiyor. PNG/JPG/WebP/AVIF yükleyin.');
       result=await img.rotate().resize({width:2400,height:2400,fit:'inside',withoutEnlargement:true}).webp({quality:84}).toBuffer();
-    }catch{throw new BadRequestException('Görsel okunamadı veya bozuk.')}
+    }catch(error:any){
+      this.logger.error('Platform WebP conversion failed: '+String(error?.message||error)+'; type='+String(file.mimetype)+'; bytes='+String(file.size));
+      if(error instanceof BadRequestException)throw error;
+      throw new BadRequestException('Görsel dönüştürülemedi. Dosyanın gerçekten PNG/JPG/WebP/AVIF olduğundan emin olun.');
+    }
     const id=randomUUID();const key='platform/media/'+id+'.webp';
     await this.bucket().file(key).save(result,{resumable:false,contentType:'image/webp',metadata:{cacheControl:'public,max-age=31536000,immutable'}});
     const item:PlatformMediaItem={id,fileName:String(file.originalname||'image.webp').slice(0,180),mimeType:'image/webp',publicUrl:this.url(id,host),storageKey:key,size:result.length,createdAt:new Date().toISOString()};
