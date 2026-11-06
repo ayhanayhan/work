@@ -83,7 +83,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       if(key!=='title')return {...p,translations};
       const previousAuto=slugify(before.title||''),nextAuto=slugify(next);
       const existingSlug=before.slug||p.slug;
-      if(!existingSlug||existingSlug===previousAuto){
+      if(!before.slug||existingSlug===previousAuto){
         translations[lang].slug=nextAuto;
         const defaultLang=locales.find(l=>l.isDefault)?.locale||locales[0]?.locale;
         return {...p,slug:lang===defaultLang||!p.slug?nextAuto:p.slug,translations};
