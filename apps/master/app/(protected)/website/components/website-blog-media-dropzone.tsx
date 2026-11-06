@@ -61,7 +61,7 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
     setBusy(true);setError('');
     try{
       for(const file of Array.from(files)){
-        if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))
+        if(!['image/jpeg','image/png','image/webp','image/avif','image/heic','image/heif'].includes(file.type))
           throw new Error('JPEG, PNG, WEBP veya AVIF görsel seçin.');
         let processed:File;
         try{processed=await optimize(file)}
@@ -107,7 +107,7 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
             <div className="flex flex-wrap gap-3 border-b p-3">
               <div className="relative min-w-40 grow"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/>
                 <Input className="pl-9" placeholder="Medya ara..." value={q} onChange={e=>setQ(e.target.value)}/></div>
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="hidden"
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif" multiple className="hidden"
                 onChange={e=>{if(e.target.files?.length)void upload(e.target.files)}}/>
               <Button type="button" variant="outline" disabled={busy} onClick={()=>fileRef.current?.click()}><Upload className="size-4"/>Yükle</Button>
             </div>
