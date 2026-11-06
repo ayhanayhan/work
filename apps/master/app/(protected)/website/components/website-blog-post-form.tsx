@@ -1,5 +1,5 @@
 'use client';
-import {useCallback,useEffect,useState} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {LoaderCircle,Save,ArrowLeft} from 'lucide-react';
@@ -35,6 +35,9 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
   const [tagDraft,setTagDraft]=useState('');
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState('');
+  const [draftRestored,setDraftRestored]=useState(false);
+  const draftReady=useRef(false);
+  const draftKey='ticarti:website-blog:draft:'+(postId||'new');
   const load=useCallback(async()=>{
     if(restoring)return;
     setLoading(true);setError('');
@@ -43,15 +46,33 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       const normalized={...snapshot,posts:Array.isArray(snapshot.posts)?snapshot.posts:[],categories:Array.isArray(snapshot.categories)?snapshot.categories:[]};
       const post=postId?normalized.posts.find((x:Post)=>x.id===postId):newPost();
       if(!post)throw new Error('Blog yazısı bulunamadı.');
-      setData(normalized);setEditing(structuredClone(post));setTagDraft((post.tags||[]).join(', '));
+      setData(normalized);
+      let next=structuredClone(post);
+      let restored=false;
+      try{
+        const raw=window.sessionStorage.getItem(draftKey);
+        if(raw){
+          const saved=JSON.parse(raw);
+          if(saved?.post?.translations&&saved?.post?.id===next.id&&
+             window.confirm('Bu yazı için kaydedilmemiş bir taslak bulundu. Kaldığınız yerden devam etmek ister misiniz?')){
+            next=saved.post;restored=true;
+          }
+        }
+      }catch{}
+      setEditing(next);setTagDraft((next.tags||[]).join(', '));
+      setDraftRestored(restored);draftReady.current=true;
     }catch(e){setError(err(e))}
     finally{setLoading(false)}
-  },[postId,request,restoring]);
+  },[postId,request,restoring,draftKey]);
   useEffect(()=>{void load()},[load]);
   useEffect(()=>{
     if(!locales.length)return;
     setLang(old=>locales.some(x=>x.locale===old)?old:(locales.find(x=>x.isDefault)?.locale||locales[0].locale));
   },[locales]);
+  useEffect(()=>{
+    if(!editing||!draftReady.current||saving)return;
+    try{window.sessionStorage.setItem(draftKey,JSON.stringify({post:editing,savedAt:Date.now()}))}catch{}
+  },[draftKey,editing,saving]);
   const update=(id:string,fn:(p:Post)=>Post)=>setEditing(p=>p&&p.id===id?fn(p):p);
   const field=(key:TextField,next:string)=>{if(!editing)return;update(editing.id,p=>({...p,translations:{...p.translations,[lang]:{...blank(),...(p.translations[lang]||{}),[key]:next}}}))};
   const value=(key:TextField)=>editing?.translations?.[lang]?.[key]||'';
@@ -79,6 +100,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       // Refuse stale writes: PATCH checks the version of the entire CMS snapshot.
       const posts=postId?data.posts.map(x=>x.id===editing.id?editing:x):[...data.posts,editing];
       await saveWebsiteBlog<Post,BlogCategory>(request,{version:data.version,posts,categories:data.categories});
+      try{window.sessionStorage.removeItem(draftKey)}catch{}
       router.push('/website/blog');router.refresh();
       return true;
     }catch(e){setError(err(e));return false}
@@ -93,6 +115,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       <Button disabled={!ready||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Kaydet</Button>
     </ToolbarActions></Toolbar></Container>
     <Container className="grid gap-4 pb-12">
+      {draftRestored?<p className="text-sm text-foreground">Kaydedilmemiş taslağın geri yüklendi. Kaydet butonuyla sunucuya kaydedebilirsin.</p>:null}
       {error?<p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>:null}
       {localesError?<p role="alert" className="rounded-lg border border-destructive/30 p-3 text-sm text-destructive">{localesError} <Button variant="outline" size="sm" onClick={()=>void reloadLocales()}>Yeniden dene</Button></p>:null}
       {loading||localesLoading||restoring?<div className="grid min-h-64 place-items-center"><LoaderCircle className="size-6 animate-spin"/></div>:null}
