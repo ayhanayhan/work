@@ -42,6 +42,7 @@ export const MENU_SIDEBAR: MenuConfig = [
   {
     title: 'İçerik', i18nKey: 'navigation.content', icon: FileText, children: [
       { title: 'Sayfalar', i18nKey: 'navigation.pages', path: '/content/pages' },
+      { title: 'Ticarti.com Blog', path: '/website/blog' },
       { title: 'Yorumlar', i18nKey: 'navigation.reviews', path: '/content/reviews' },
       { title: 'Sorular', i18nKey: 'navigation.questions', path: '/content/questions' },
     ],
