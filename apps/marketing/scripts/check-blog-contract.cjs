@@ -43,7 +43,7 @@ async function run(){
     '```html','<script>alert(1)</script>','```','',
     '![](https://example.com/image.png)','', '---','',
     '`let x = 1`'
-  ].join('\\n'));
+  ].join('\n'));
   assert.ok(advanced.includes('<h1>Başlık 1</h1>'),'H1 must render');
   assert.ok(advanced.includes('<h6>Başlık 6</h6>'),'H6 must render');
   assert.ok(advanced.includes('<table>')&&advanced.includes('<td>Aktif</td>'),'Tables must render');
