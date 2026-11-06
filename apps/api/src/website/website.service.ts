@@ -104,7 +104,7 @@ export class WebsiteService{
   }
   async blog(){
     const data=await this.get(BLOG_KEY);
-    return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[]};
+    return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[],categories:Array.isArray(data?.categories)?data.categories:[]};
   }
   private cleanPost(raw:any,index:number){
     const slug=str(raw?.slug,150).toLowerCase();
@@ -152,8 +152,42 @@ export class WebsiteService{
       };
     });
     if(new Set(posts.map((x:any)=>x.slug)).size!==posts.length)throw new BadRequestException('Blog URL kodları tekrar ediyor.');
+    // Standalone Ticarti.com category records. Existing post category text stays
+    // compatible with the public feed and the original marketing templates.
+    const inputCategories=body.categories===undefined?existing.categories:body.categories;
+    if(!Array.isArray(inputCategories)||inputCategories.length>200)throw new BadRequestException('Blog kategorileri geçersiz.');
+    const categories=inputCategories.map((raw:any,index:number)=>{
+      const id=str(raw?.id,90).trim();
+      if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id))throw new BadRequestException('Kategori kimliği geçersiz.');
+      const translations:Record<string,any>={};
+      for(const [lang,value] of Object.entries(raw?.translations||{})){
+        if(!/^(tr|en|pt|ru)$/.test(lang))continue;
+        const t:any=value||{};
+        translations[lang]={
+          title:str(t.title,160).trim(),slug:str(t.slug,160).trim().toLowerCase(),
+          description:str(t.description,1600).trim(),
+          seoTitle:str(t.seoTitle,220).trim(),seoDescription:str(t.seoDescription,500).trim()
+        };
+        if(translations[lang].slug&&!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(translations[lang].slug))throw new BadRequestException('Kategori SEO URL kodu geçersiz.');
+      }
+      if(!Object.values(translations).some((t:any)=>t.title))throw new BadRequestException('Kategori adı en az bir dilde gereklidir.');
+      return {id,parentId:str(raw?.parentId,90)||null,isActive:raw?.isActive!==false,sortOrder:index,translations};
+    });
+    const categoryIds=new Set(categories.map((c:any)=>c.id));
+    if(categoryIds.size!==categories.length)throw new BadRequestException('Tekrarlanan kategori kimliği var.');
+    for(const category of categories){
+      if(category.parentId&&!categoryIds.has(category.parentId))throw new BadRequestException('Üst kategori bulunamadı.');
+      if(category.parentId===category.id)throw new BadRequestException('Kategori kendisine bağlanamaz.');
+      const seen=new Set<string>([category.id]);let current=category;
+      while(current.parentId){
+        if(seen.has(current.parentId))throw new BadRequestException('Kategori döngüsü tespit edildi.');
+        seen.add(current.parentId);
+        current=categories.find((c:any)=>c.id===current.parentId);
+        if(!current)break;
+      }
+    }
     const version=existing.version+1;
-    const payload={version,posts};
+    const payload={version,posts,categories};
     if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
     await this.put(BLOG_KEY,payload);
     return payload;
