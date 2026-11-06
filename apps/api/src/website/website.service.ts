@@ -215,12 +215,40 @@ export class WebsiteService{
     for(const post of posts){
       if(post.categoryId&&!categoryIds.has(post.categoryId))throw new BadRequestException('Yazının blog kategorisi bulunamadı.');
     }
+    const inputAuthors=body.authors===undefined?existing.authors:body.authors;
+    if(!Array.isArray(inputAuthors)||inputAuthors.length>100)throw new BadRequestException('Blog yazarları geçersiz.');
+    const authors=inputAuthors.map((raw:any,index:number)=>{
+      const id=str(raw?.id,90).trim(),slug=str(raw?.slug,150).trim().toLowerCase();
+      if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id)||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
+        throw new BadRequestException('Yazar kimliği veya slug geçersiz.');
+      const translations:Record<string,any>={};
+      for(const [locale,tValue] of Object.entries(raw?.translations||{})){
+        if(!/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(locale))continue;
+        const t:any=tValue||{};
+        translations[locale]={name:str(t.name,150).trim(),bio:str(t.bio,4000).trim(),
+          seoTitle:str(t.seoTitle,220).trim(),seoDescription:str(t.seoDescription,500).trim()};
+      }
+      if(!Object.values(translations).some((t:any)=>t.name))throw new BadRequestException('Yazar adı zorunlu.');
+      const socials:Record<string,string>={};
+      for(const key of ['website','linkedin','instagram','x','facebook','youtube']){
+        const val=str(raw?.socials?.[key],400).trim();
+        if(val&&!/^https:\/\/[^\s<>"']+$/i.test(val))throw new BadRequestException('Sosyal medya adresi HTTPS olmalıdır.');
+        if(val)socials[key]=val;
+      }
+      return {id,slug,isActive:raw?.isActive!==false,avatar:url(raw?.avatar),sortOrder:index,socials,translations};
+    });
+    if(new Set(authors.map((x:any)=>x.id)).size!==authors.length||
+       new Set(authors.map((x:any)=>x.slug)).size!==authors.length)
+      throw new BadRequestException('Tekrarlanan yazar slug veya kimliği.');
+    const authorIds=new Set(authors.map((x:any)=>x.id));
+    for(const post of posts)if(post.authorId&&!authorIds.has(post.authorId))
+      throw new BadRequestException('Yazıya bağlı yazar bulunamadı. Önce yazının yazarını değiştirin.');
     const postIds=new Set(posts.map((p:any)=>p.id));
     for(const post of posts){
       if(post.relatedPostIds.some((id:string)=>id===post.id||!postIds.has(id)))throw new BadRequestException('İlgili blog yazısı bulunamadı.');
     }
     const version=existing.version+1;
-    const payload={version,posts,categories};
+    const payload={version,posts,categories,authors};
     if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
     await this.put(BLOG_KEY,payload);
     return payload;
