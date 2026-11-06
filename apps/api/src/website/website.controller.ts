@@ -7,6 +7,8 @@ export class WebsiteController {
   constructor(private readonly svc:WebsiteService){}
   @Get('public/website/home')
   publicHome(@Query('lang') lang?:string){return this.svc.publicHome(lang||'tr')}
+  @Get('public/website/faq')
+  publicFaq(@Query('lang') lang?:string){return this.svc.publicFaq(lang||'tr')}
   @Get('public/website/locales')
   publicLocales(){return this.svc.activeLocales()}
   @Get('public/website/blog')
