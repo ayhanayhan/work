@@ -1,10 +1,10 @@
 import path from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {notFound} from 'next/navigation';
-import {archiveCard,escapeHtml,getBlogPosts,homeCard,replaceMarker,safeImage,slugValid} from './blog';
+import {archiveCard,BlogLocale,BlogPost,blogLabels,blogPath,escapeHtml,getBlogPosts,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 
-export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean};
+export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale};
 function extract(html:string):PageData{
   const body=html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1];
   if(!body)throw new Error('Source page missing body');
@@ -21,6 +21,30 @@ function extract(html:string):PageData{
   return {html:markup,classes,title:title.replace(/<[^>]+>/g,''),description,scripts,isBlogList:false};
 }
 const supportedLocales=new Set(['tr','en','pt','ru']);
+
+/** Preserve original HTML and CSS while fixing template-era relative navigation. */
+function normalizeLegacyLinks(html:string,source:string,locale:BlogLocale){
+  const prefix=locale==='tr'?'':'/'+locale;
+  return html.replace(/\bhref="([^"]+)"/gi,(whole,url:string)=>{
+    if(/^(https?:|mailto:|tel:|#|javascript:|data:)/i.test(url))return whole;
+    const parts=url.match(/^([^?#]*)([?#].*)?$/);if(!parts||!parts[1])return whole;
+    const raw=parts[1],suffix=parts[2]||'';
+    if(raw.includes('/assets/'))return whole;
+    let target=raw.startsWith('/')?raw.replace(/^\/+/,''):path.posix.normalize(path.posix.join(path.posix.dirname(source),raw));
+    if(target.startsWith('tr/')||target.startsWith('pt/')||target.startsWith('ru/'))target=target.slice(3);
+    if(!target.startsWith('en/')&&target.startsWith('blog/'))target='en/'+target;
+    if(!target.startsWith('en/'))return whole;
+    const relative=target.slice(3);
+    let dest:string|null=null;
+    if(relative==='blog'||relative==='blog/index.html')dest=prefix+'/blog';
+    else if(/^blog\/[a-z0-9-]+(?:\.html)?$/.test(relative))dest=prefix+'/blog/'+relative.slice(5).replace(/\.html$/,'');
+    else if(relative==='index.html')dest=prefix+'/';
+    else if(relative==='success-stories/index.html')dest=prefix+'/success-stories/';
+    else if(/^(?:paketler|contacto|login|register|kvkk|gizlilik-politikasi|uyelik-sozlesmesi|companies\/enterprise|success-stories\/crowdy)\.html$/.test(relative))dest=prefix+'/'+relative;
+    return dest===null?whole:'href="'+dest+suffix+'"';
+  });
+}
+
 function staticPath(segments:string[]):string{
   const parts=segments.length?[...segments]:['en'];
   if(parts[0]!=='en')parts.unshift('en');
@@ -38,7 +62,7 @@ function pageKey(source:string):string{
   return map[source]||'';
 }
 export async function renderPage(segments:string[],search:Record<string,string|undefined>={}):Promise<PageData>{
-  const lang=segments.length&&supportedLocales.has(segments[0])?segments[0]:'tr';
+  const lang:BlogLocale=segments.length&&supportedLocales.has(segments[0])?segments[0] as BlogLocale:'tr';
   const route=['en',...(segments.length&&supportedLocales.has(segments[0])?segments.slice(1):segments)];
   const isHome=route.join('/')==='en'||route.join('/')==='en/index.html';
   const isBlog=route[0]==='en'&&route[1]==='blog';
@@ -53,56 +77,62 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   let raw:string;
   try{raw=await readFile(path.join(process.cwd(),'templates',source),'utf8')}
   catch{notFound();}
-  const data=extract(raw!);
+  const data=extract(raw!);data.locale=lang;
   const posts= isBlog||isHome ? await getBlogPosts(lang) : [];
-  const linkRoot=lang==='tr'?'':('/'+lang);
+  if(isBlog&&!posts.length)notFound();
+  if(isBlogList)data.posts=posts;
   if(isBlogList){
     data.isBlogList=true;
-    const categories=['Tümü',...new Set(posts.map(p=>p.category))];
+    const categories=[blogLabels[lang].filter,...new Set(posts.map(p=>p.category))];
     data.html=replaceMarker(data.html,'TICARTI_BLOG_FILTERS_START','TICARTI_BLOG_FILTERS_END',categories.map((name,i)=>{
       const id='tc-blog-category-'+i;
-      return `<li><input type="radio" name="tc-blog-category" id="${id}" value="${escapeHtml(name)}" ${i===0?'checked':''}/><label for="${id}">${escapeHtml(name)}</label></li>`;
+      return `<li><input type="radio" name="tc-blog-category" id="${id}" value="${i===0?'all':escapeHtml(name)}" ${i===0?'checked':''}/><label for="${id}">${escapeHtml(name)}</label></li>`;
     }).join(''));
-    data.html=replaceMarker(data.html,'TICARTI_BLOG_CARDS_START','TICARTI_BLOG_CARDS_END',posts.map(p=>archiveCard(p,linkRoot)).join(''));
+    data.html=replaceMarker(data.html,'TICARTI_BLOG_CARDS_START','TICARTI_BLOG_CARDS_END',posts.map(p=>archiveCard(p,lang)).join(''));
     if(posts.length){const first=posts[0];
       data.html=data.html.replace(/(<div class="featured-case-text"[^>]*>[\s\S]*?<h2>)[^<]*(<\/h2>)/,`$1${escapeHtml(first.title)}$2`);
       data.html=data.html.replace(/<div class="featured-desc">[\s\S]*?<\/div>/,`<div class="featured-desc">${escapeHtml(first.excerpt)}</div>`);
       data.html=data.html.replace(/<img([^>]*?)src="\/assets\/images\/blog\/[^\"]+"([^>]*?)>/,`<img alt="${escapeHtml(first.title)}" loading="lazy" src="${escapeHtml(safeImage(first.featuredImage))}"/>`);
-      data.html=data.html.replace(/class="tc-blog-featured-link" href="[^"]*"/,`class="tc-blog-featured-link" href="${linkRoot}/blog/${encodeURIComponent(first.slug)}"`);
+      data.html=data.html.replace(/class="tc-blog-featured-link" href="[^"]*"/,`class="tc-blog-featured-link" href="${blogPath(lang,first.slug)}"`);
     }
-    if(!posts.length){
-      data.html=data.html.replace('class="featured-case"','class="featured-case" hidden');
-      data.html=data.html.replace('<div class="card-inner list box" id="tc-blog-cards">','<div class="card-inner list box" id="tc-blog-cards"><p>Henüz yayınlanmış blog yazısı yok.</p>');
-    }
-    data.title='Blog | Ticarti';
+    data.html=data.html.replace('ÖNE ÇIKAN YAZI',blogLabels[lang].featured);
+    data.title='Blog | Ticarti';data.description=blogLabels[lang].blogDescription;
   }else if(isBlog){
     const post=posts.find(p=>p.slug===postSlug);
-    if(!post)notFound();
+    if(!post)notFound();data.post=post;
     data.title=post.seoTitle||post.title+' | Ticarti Blog';data.description=post.seoDescription||post.excerpt;
     data.html=data.html.replace('<!-- TICARTI_POST_TITLE -->',escapeHtml(post.title))
       .replace('<!-- TICARTI_POST_SUMMARY -->',escapeHtml(post.excerpt))
       .replace('<!-- TICARTI_POST_CATEGORY -->',escapeHtml(post.category))
       .replace('/assets/images/blog/store.svg',escapeHtml(safeImage(post.featuredImage)));
-    const paragraphs=post.content.split(/\n\s*\n/).filter(Boolean).map(x=>`<p>${escapeHtml(x)}</p>`).join('');
+    const paragraphs=renderBlogContent(post.content);
     data.html=data.html.replace('<!-- TICARTI_POST_CONTENT -->',paragraphs);
-    data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',posts.filter(x=>x.slug!==post.slug).slice(0,3).map(p=>archiveCard(p,linkRoot)).join(''));
+    data.html=replaceMarker(data.html,'TICARTI_BLOG_RELATED_START','TICARTI_BLOG_RELATED_END',posts.filter(x=>x.slug!==post.slug).slice(0,3).map(p=>archiveCard(p,lang)).join(''));
+    data.html=data.html.replace('Diğer yazılar',blogLabels[lang].related).replace('Tüm yazılar',blogLabels[lang].all);
   }
   if(isHome){
     // Keep the exact original header, layout, animations and FAQ; only swap blog content.
-    if(posts.length){
+    if(!posts.length){
+      data.html=data.html.replace(/<section\b(?=[^>]*\bid="tc-blog")[^>]*>[\s\S]*?<\/section>/i,'');
+    }else{
       const open=data.html.indexOf('<div aria-label="Blog yazıları" class="card-inner tc-blog__track"');
       if(open>=0){
         const contentStart=data.html.indexOf('>',open)+1;
         const nextSection=data.html.indexOf('</section>',contentStart);
         const articleEnd=data.html.lastIndexOf('</article>',nextSection);
         const end=data.html.indexOf('</div>',articleEnd);
-        if(end>=0)data.html=data.html.slice(0,contentStart)+posts.slice(0,8).map(p=>homeCard(p,linkRoot)).join('')+data.html.slice(end);
+        if(end>=0)data.html=data.html.slice(0,contentStart)+posts.slice(0,8).map(p=>homeCard(p,lang)).join('')+data.html.slice(end);
       }
+    }
+    if(posts.length){
+      data.html=data.html.replace('href="blog/index.html"','href="'+blogPath(lang)+'"');
+      data.html=data.html.replace('Tüm yazılar →',blogLabels[lang].all+' →');
     }
     // The original CMS binder remains available for homepage modules, not for blog posts.
     data.scripts.push('/assets/js/pages/website-home-cms.js');
   }
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
+  data.html=normalizeLegacyLinks(data.html,source,lang);
   return data;
 }
