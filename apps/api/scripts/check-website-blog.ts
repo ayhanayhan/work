@@ -104,6 +104,22 @@ async function test(){
   assert.equal(englishLocalized.localeSlugs.tr,'ornek-yazi');
   assert.equal(englishLocalized.localeSlugs.en,'english-article');
   assert.equal((await svc.publicBlogPost('english-article','en'))?.id,translatedPost.id);
-  console.log('PASS: blog language isolation, publishing, dates, drafts and SEO alternate locales');
+  // The exact same platform settings control the superadmin locale endpoint
+  // and public CMS publishing. Inactive translations remain stored.
+  store.set('general',{locales:[
+    {locale:'tr',label:'Türkçe',isActive:true,isDefault:true},
+    {locale:'de',label:'Deutsch',isActive:true,isDefault:false},
+    {locale:'en',label:'English',isActive:false,isDefault:false}
+  ]});
+  const germanPost={...related,id:'german-post',slug:'deutscher-beitrag',
+    translations:{de:{title:'Deutscher Beitrag',content:'Echter Inhalt'},
+      en:{title:'Previously translated',content:'Kept but disabled'}}};
+  const live=await svc.updateBlog({version:8,posts:[germanPost],
+    categories:afterCategoryEdit.categories});
+  assert.equal(live.posts[0].translations.en.title,'Previously translated');
+  assert.equal((await svc.publicBlog('de')).posts[0].title,'Deutscher Beitrag');
+  assert.equal((await svc.publicBlog('en')).posts.length,0,'Disabled platform language must not publish');
+  assert.deepEqual((await svc.publicBlog('de')).posts[0].availableLocales,['de']);
+  console.log('PASS: active platform locales, preserved inactive translations, blog publishing and SEO');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
