@@ -134,7 +134,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
               <TabsContent value={lang} className="grid gap-4 mt-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <label className="grid gap-2"><span className="text-sm font-medium">Başlık</span><Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
-                  <label className="grid gap-2"><span className="text-sm font-medium">URL</span><Input value={value('slug')||editing.slug} onChange={e=>changeSlug(e.target.value)}/></label>
+                  <label className="grid gap-2"><span className="text-sm font-medium">Slug</span><Input value={value('slug')||editing.slug} onChange={e=>changeSlug(e.target.value)}/></label>
                 </div>
                 <label className="grid gap-2"><span className="text-sm font-medium">Özet</span><Textarea rows={3} value={value('excerpt')} onChange={e=>field('excerpt',e.target.value)}/></label>
                 <div className="grid gap-2"><span className="text-sm font-medium">İçerik</span>
