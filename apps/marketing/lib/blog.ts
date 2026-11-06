@@ -5,6 +5,7 @@ export type BlogPost={
   seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
   availableLocales:BlogLocale[];publishedAt:string|null;updatedAt:string|null;
   tags:string[];isFeatured:boolean;relatedPostIds:string[];ogImage:string;canonicalUrl:string;noIndex:boolean;
+  localeSlugs:Partial<Record<BlogLocale,string>>;
 };
 export const isBlogLocale=(lang:string):lang is BlogLocale=>(BLOG_LOCALES as readonly string[]).includes(lang);
 export const escapeHtml=(value:string)=>String(value||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[x]);
@@ -40,6 +41,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       slugValid(String(entry.slug||''))&&Array.isArray(entry.availableLocales)&&entry.availableLocales.includes(lang)
     ).map((entry:any)=>({
       id:String(entry.id||entry.slug),slug:String(entry.slug),category:String(entry.category||'Blog'),title:String(entry.title).trim(),
+      localeSlugs:entry.localeSlugs&&typeof entry.localeSlugs==='object'?entry.localeSlugs:{},
       excerpt:String(entry.excerpt||'').trim(),featuredImage:String(entry.featuredImage||''),
       content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
       seoDescription:String(entry.seoDescription||'').trim(),imageAlt:String(entry.imageAlt||entry.title),
