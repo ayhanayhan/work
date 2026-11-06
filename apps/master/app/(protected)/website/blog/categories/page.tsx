@@ -16,17 +16,18 @@ import {Switch} from '@/components/ui/switch';
 type Translation={title:string;slug:string;description:string;seoTitle:string;seoDescription:string};
 type Category={id:string;parentId:string|null;isActive:boolean;sortOrder:number;translations:Record<string,Translation>};
 type Snapshot={version:number;posts:any[];categories:Category[]};
-const LANGS=[{id:'tr',title:'Türkçe'},{id:'en',title:'English'},{id:'pt',title:'Português'},{id:'ru',title:'Русский'}];
+
 const blank=():Translation=>({title:'',slug:'',description:'',seoTitle:'',seoDescription:''});
-const newCategory=():Category=>({id:'cat-'+Date.now().toString(36),parentId:null,isActive:true,sortOrder:0,translations:{tr:blank()}});
-const categoryTitle=(c:Category)=>c.translations?.tr?.title||Object.values(c.translations||{}).find(x=>x.title)?.title||'İsimsiz kategori';
+const newCategory=():Category=>({id:'cat-'+Date.now().toString(36),parentId:null,isActive:true,sortOrder:0,translations:{}});
+const categoryTitle=(c:Category)=>Object.values(c.translations||{}).find(x=>x.title)?.title||'İsimsiz kategori';
 
 export default function WebsiteBlogCategories(){
-  const {request,restoring}=useMasterSession();
+  const {request,restoring,locales,localesLoading,localesError,reloadLocales}=useMasterSession();
   const [data,setData]=useState<Snapshot>({version:0,posts:[],categories:[]});
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [query,setQuery]=useState(''),[error,setError]=useState(''),[message,setMessage]=useState('');
-  const [edit,setEdit]=useState<Category|null>(null),[lang,setLang]=useState('tr');
+  const [edit,setEdit]=useState<Category|null>(null),[lang,setLang]=useState('');
+  useEffect(()=>{if(locales.length)setLang(old=>locales.some(x=>x.locale===old)?old:(locales.find(x=>x.isDefault)?.locale||locales[0].locale))},[locales]);
   const load=useCallback(async()=>{
     if(restoring)return;
     setLoading(true);setError('');
@@ -56,8 +57,8 @@ export default function WebsiteBlogCategories(){
     finally{setSaving(false)}
   };
   const store=async()=>{
-    if(!edit)return;
-    if(!Object.values(edit.translations||{}).some(t=>t.title.trim())){
+    if(!edit||localesLoading||localesError||!locales.length)return;
+    if(!Object.entries(edit.translations||{}).some(([code,t])=>locales.some(l=>l.locale===code)&&t.title.trim())){
       setError('En az bir dilde kategori adı zorunlu.');return;
     }
     if(edit.parentId===edit.id){setError('Kategori kendisine bağlanamaz.');return;}
@@ -78,9 +79,10 @@ export default function WebsiteBlogCategories(){
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Blog Kategorileri</h1>
       <ToolbarDescription>Ticarti.com blogunun çok dilli kategorilerini ve SEO alanlarını yönetin.</ToolbarDescription>
     </ToolbarHeading><ToolbarActions><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button>
-      <Button onClick={()=>{setEdit(newCategory());setLang('tr');setError('')}}><Plus className="size-4"/>Yeni Kategori</Button>
+      <Button disabled={localesLoading||!!localesError||!locales.length} onClick={()=>{setEdit(newCategory());setLang(locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'');setError('')}}><Plus className="size-4"/>Yeni Kategori</Button>
     </ToolbarActions></Toolbar></Container>
     <Container className="pb-10">
+      {localesError?<p role="alert" className="mb-4 text-sm text-destructive">{localesError} <Button variant="outline" size="sm" onClick={()=>void reloadLocales()}>Yenile</Button></p>:null}
       {error?<p role="alert" className="mb-4 rounded-lg border border-destructive/30 p-3 text-sm text-destructive">{error}</p>:null}
       {message?<p className="mb-4 text-sm text-foreground">{message}</p>:null}
       <Card><CardHeader><CardHeading>Blog Kategorileri</CardHeading>
@@ -93,7 +95,7 @@ export default function WebsiteBlogCategories(){
               <div className="text-xs text-muted-foreground">/{c.translations?.tr?.slug||'kategori'} · Üst kategori: {data.categories.find(x=>x.id===c.parentId)?categoryTitle(data.categories.find(x=>x.id===c.parentId)!):'—'}</div>
             </div>
             <Badge appearance="light" variant={c.isActive?'success':'secondary'}>{c.isActive?'Aktif':'Pasif'}</Badge>
-            <Button variant="outline" onClick={()=>{setEdit(structuredClone(c));setLang('tr');setError('')}}>Düzenle</Button>
+            <Button variant="outline" onClick={()=>{setEdit(structuredClone(c));setLang(locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'');setError('')}}>Düzenle</Button>
             <Button variant="outline" size="icon" disabled={saving} onClick={()=>void remove(c)}><Trash2 className="size-4"/></Button>
           </div>)}
         {!loading&&!rows.length?<p className="py-10 text-center text-sm text-muted-foreground">Henüz kategori bulunmuyor.</p>:null}
@@ -111,7 +113,7 @@ export default function WebsiteBlogCategories(){
           </label>
           <label className="flex items-center gap-2 text-sm font-medium"><Switch checked={edit.isActive} onCheckedChange={v=>setEdit(x=>x?{...x,isActive:v}:x)}/>Aktif kategori</label>
         </div>
-        <div className="flex flex-wrap gap-2 border-b pb-3">{LANGS.map(x=><Button key={x.id} size="sm" variant={lang===x.id?'primary':'outline'} onClick={()=>setLang(x.id)}>{x.title}</Button>)}</div>
+        <div className="flex flex-wrap gap-2 border-b pb-3">{locales.map(x=><Button key={x.locale} size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)}>{x.label}</Button>)}</div>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-medium">Kategori adı<Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
           <label className="grid gap-2 text-sm font-medium">SEO URL / Slug<Input value={value('slug')} onChange={e=>field('slug',e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'-'))}/></label>
