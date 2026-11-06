@@ -41,18 +41,17 @@ export const MENU_SIDEBAR: MenuConfig = [
   },
   {
     title: 'İçerik', i18nKey: 'navigation.content', icon: FileText, children: [
+      { title: 'Anasayfa', path: '/website/home' },
+      { title: 'Sayfa İçerikleri', path: '/website/pages' },
       { title: 'Sayfalar', i18nKey: 'navigation.pages', path: '/content/pages' },
-      { title: 'Ticarti.com Blog', path: '/website/blog' },
       { title: 'Yorumlar', i18nKey: 'navigation.reviews', path: '/content/reviews' },
       { title: 'Sorular', i18nKey: 'navigation.questions', path: '/content/questions' },
     ],
   },
   {
     title: 'Blog', i18nKey: 'navigation.blog', icon: FileText, children: [
-      { title: 'Blog İçerikleri', i18nKey: 'navigation.blog_posts', path: '/blog/posts' },
-      { title: 'Blog Kategorileri', i18nKey: 'navigation.blog_categories', path: '/blog/categories' },
-      { title: 'Yazarlar', i18nKey: 'navigation.authors', path: '/blog/authors' },
-      { title: 'Yorumlar', i18nKey: 'navigation.blog_comments', path: '/blog/comments' },
+      { title: 'Blog İçerikleri', i18nKey: 'navigation.blog_posts', path: '/website/blog' },
+      { title: 'Blog Kategorileri', i18nKey: 'navigation.blog_categories', path: '/website/blog/categories' },
     ],
   },
   {
@@ -76,11 +75,6 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Log Kayıtları', i18nKey: 'navigation.activity_logs', path: '/users/activity' },
     ],
   },
-  { title: 'Ticarti.com', icon: LayoutGrid, children: [
-    { title: 'Anasayfa', path: '/website/home' },
-    { title: 'Sayfa İçerikleri', path: '/website/pages' },
-    { title: 'Kurumsal Blog', path: '/website/blog' },
-  ] },
   { title: 'Temalar', icon: Palette, children: [
     { title: 'Tema Kataloğu', path: '/themes' },
     { title: 'Tema Düzenleme', path: '/themes/manage' },
