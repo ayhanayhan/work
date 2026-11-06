@@ -9,6 +9,7 @@ import {Button} from '@/components/ui/button';
 import {Badge} from '@/components/ui/badge';
 import {Card,CardContent,CardHeader,CardHeading} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
+import {readWebsiteBlog,saveWebsiteBlog} from './website-blog-resource';
 
 type Post={id:string;slug:string;status:string;featuredImage?:string;authorName?:string;translations:Record<string,{title?:string;content?:string;enabled?:boolean}>};
 type Snapshot={version:number;posts:Post[];categories:any[]};
@@ -20,7 +21,7 @@ export default function WebsiteBlogEditor(){
   const load=useCallback(async()=>{
     if(restoring)return;
     setLoading(true);setError('');
-    try{const result=await request('/superadmin/website/blog') as Snapshot;
+    try{const result=await readWebsiteBlog<Post,any>(request);
       setData({...result,posts:Array.isArray(result.posts)?result.posts:[],categories:Array.isArray(result.categories)?result.categories:[]});
     }catch(e:any){setError(e.message||'Yazılar alınamadı.')}
     finally{setLoading(false)}
@@ -33,7 +34,7 @@ export default function WebsiteBlogEditor(){
   const change=async(posts:Post[],success:string)=>{
     setWorking(true);setError('');setNotice('');
     try{
-      const result=await request('/superadmin/website/blog',{method:'PATCH',body:JSON.stringify({version:data.version,posts,categories:data.categories})}) as Snapshot;
+      const result=await saveWebsiteBlog<Post,any>(request,{version:data.version,posts,categories:data.categories});
       setData({...result,categories:result.categories||[]});
       setNotice(success);
     }catch(e:any){setError(e.message||'Kayıt güncellenemedi. Yenileyin.')}
