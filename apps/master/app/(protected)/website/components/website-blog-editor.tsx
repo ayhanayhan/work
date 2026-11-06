@@ -17,11 +17,11 @@ import Link from 'next/link';
 
 type Translation={title:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
 type TextField=Exclude<keyof Translation,'enabled'>;
-type Post={id:string;slug:string;status:string;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;translations:Record<string,Translation>};
+type Post={id:string;slug:string;status:string;categoryId?:string|null;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;translations:Record<string,Translation>};
 type BlogCategory={id:string;isActive:boolean;parentId:string|null;translations:Record<string,{title:string}>};
 type Snapshot={version:number;posts:Post[];categories:BlogCategory[]};
 const blank=():Translation=>({title:'',excerpt:'',content:'',category:'',seoTitle:'',seoDescription:'',imageAlt:'',enabled:true});
-const newPost=():Post=>({id:'post-'+Date.now().toString(36),slug:'',status:'DRAFT',featuredImage:'',authorName:'Ticarti',sortOrder:0,translations:{tr:blank()}});
+const newPost=():Post=>({id:'post-'+Date.now().toString(36),slug:'',status:'DRAFT',categoryId:null,featuredImage:'',authorName:'Ticarti',sortOrder:0,translations:{tr:blank()}});
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
 
 export default function WebsiteBlogEditor(){
@@ -100,7 +100,7 @@ export default function WebsiteBlogEditor(){
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"><div><p className="font-medium">{locales.find(x=>x.locale===lang)?.label||lang} dilinde yayımla</p><p className="text-xs text-muted-foreground">Başlık ve içerik doluysa bu dilde görünür. Diğer dillere otomatik kopyalanmaz.</p></div><Switch checked={editing.translations[lang]?.enabled!==false} onCheckedChange={enabled=>update(editing.id,p=>({...p,translations:{...p.translations,[lang]:{...blank(),...p.translations[lang],enabled}}}))}/></div>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium">Yazı başlığı<Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
-        <label className="grid gap-2 text-sm font-medium">Kategori<select className="h-10 rounded-md border bg-background px-3" value={value('category')} onChange={e=>field('category',e.target.value)}><option value="">Kategori yok</option>{value('category')&&!data.categories.some(c=>Object.values(c.translations||{}).some(t=>t.title===value('category')))?<option value={value('category')}>{value('category')} (eski kategori)</option>:null}{data.categories.filter(c=>c.isActive).map(c=>{const title=c.translations?.[lang]?.title||c.translations?.tr?.title||Object.values(c.translations||{}).find(t=>t.title)?.title||'';return title?<option key={c.id} value={title}>{title}</option>:null})}</select></label>
+        <label className="grid gap-2 text-sm font-medium">Kategori<select className="h-10 rounded-md border bg-background px-3" value={editing.categoryId||''} onChange={e=>update(editing.id,p=>({...p,categoryId:e.target.value||null}))}><option value="">Kategori yok</option>{editing.categoryId&&!data.categories.some(c=>c.id===editing.categoryId)?<option value={editing.categoryId}>Eski kategori (bulunamadı)</option>:null}{data.categories.filter(c=>c.isActive||c.id===editing.categoryId).map(c=>{const title=c.translations?.[lang]?.title||c.translations?.tr?.title||Object.values(c.translations||{}).find(t=>t.title)?.title||'';return title?<option key={c.id} value={c.id}>{title}</option>:null})}</select></label>
       </div>
       <label className="grid gap-2 text-sm font-medium">Kısa açıklama<Textarea value={value('excerpt')} onChange={e=>field('excerpt',e.target.value)} rows={3}/></label>
       <label className="grid gap-2 text-sm font-medium">Yazı içeriği (Markdown destekli)<Textarea value={value('content')} onChange={e=>field('content',e.target.value)} rows={10}/><span className="text-xs text-muted-foreground">## Alt başlık, **kalın**, *italik*, - liste ve paragraf desteklenir. HTML kodları çalıştırılmaz.</span></label>
