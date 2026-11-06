@@ -12,7 +12,7 @@ import {Dialog,DialogBody,DialogContent,DialogFooter,DialogHeader,DialogTitle} f
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
-import {MediaField} from '@/app/(protected)/catalog/components/catalog-fields';
+import {WebsiteBlogMediaDropzone} from './website-blog-media-dropzone';
 import {Tabs,TabsContent,TabsList,TabsTrigger} from '@/components/ui/tabs';
 import {WebsiteBlogRichText} from './website-blog-rich-text';
 import Link from 'next/link';
@@ -119,7 +119,7 @@ export default function WebsiteBlogEditor(){
                 </div>
               </TabsContent>
             </Tabs>
-            <MediaField label="Kapak görseli" value={editing.featuredImage||''} onChange={featuredImage=>update(editing.id,p=>({...p,featuredImage}))}/>
+            <WebsiteBlogMediaDropzone label="Kapak görseli" value={editing.featuredImage||''} onChange={featuredImage=>update(editing.id,p=>({...p,featuredImage}))}/>
             <div className="grid md:grid-cols-2 gap-4">
               <label className="grid gap-2"><span className="text-sm font-medium">Kategori</span>
                 <select className="h-10 rounded-md border bg-background px-3" value={editing.categoryId||''} onChange={e=>update(editing.id,p=>({...p,categoryId:e.target.value||null}))}>
@@ -184,7 +184,7 @@ export default function WebsiteBlogEditor(){
             <label className="grid gap-2"><span className="text-sm font-medium">Canonical URL</span>
               <Input value={editing.canonicalUrl||''} onChange={e=>update(editing.id,p=>({...p,canonicalUrl:e.target.value}))}/>
             </label>
-            <MediaField label="Open Graph görseli" value={editing.ogImage||''} onChange={ogImage=>update(editing.id,p=>({...p,ogImage}))}/>
+            <WebsiteBlogMediaDropzone label="Open Graph görseli" value={editing.ogImage||''} onChange={ogImage=>update(editing.id,p=>({...p,ogImage}))}/>
             <label className="flex items-center justify-between rounded-lg border p-4">
               <span>Arama motorlarında indeksleme</span>
               <Switch checked={!editing.noIndex} onCheckedChange={v=>update(editing.id,p=>({...p,noIndex:!v}))}/>
