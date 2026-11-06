@@ -278,7 +278,7 @@ function SettingsShell({
 }
 
 function usePlatformSettings() {
-  const { request, restoring } = useMasterSession();
+  const { request, restoring, reloadLocales } = useMasterSession();
   const [data, setData] = useState<PlatformSettings | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -298,6 +298,7 @@ function usePlatformSettings() {
         body: JSON.stringify(data),
       });
       setData(next);
+      await reloadLocales();
       setMessage('Ayarlar kaydedildi.');
       window.setTimeout(() => setMessage(''), 2200);
     } finally {
