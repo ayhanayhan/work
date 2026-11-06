@@ -39,7 +39,8 @@ function htmlToMarkdown(html:string){
       case 'h3':return '\n\n### '+children+'\n\n';
       case 'h4':return '\n\n#### '+children+'\n\n';
       case 'li':return '- '+children.trim()+'\n';
-      case 'ul':case 'ol':return '\n'+children+'\n';
+      case 'ul':return '\n'+children+'\n';
+      case 'ol':return '\n'+Array.from(element.children).map((li,i)=>String(i+1)+'. '+walk(li).replace(/^-\s*/, '').trim()).join('\n')+'\n';
       case 'p':case 'div':return '\n\n'+children+'\n\n';
       case 'br':return '\n';
       case 'a':{
