@@ -114,11 +114,14 @@ export class WebsiteService{
       if(!/^(tr|en|pt|ru)$/.test(lang))continue;
       const t:any=translation||{};
       translations[lang]={
-        title:str(t.title,220).trim(),excerpt:str(t.excerpt,1200).trim(),
+        title:str(t.title,220).trim(),slug:str(t.slug,150).trim().toLowerCase(),excerpt:str(t.excerpt,1200).trim(),
         content:str(t.content,40000).trim(),category:str(t.category,120).trim(),
         seoTitle:str(t.seoTitle,220).trim(),seoDescription:str(t.seoDescription,500).trim(),
         imageAlt:str(t.imageAlt,220).trim(),enabled:t.enabled!==false
       };
+    }
+    for(const t of Object.values(translations)){
+      if(t.slug&&!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(t.slug))throw new BadRequestException('Dil bazlı blog URL kodu geçersiz.');
     }
     if(!Object.values(translations).some((x:any)=>x.title))throw new BadRequestException('En az bir dilde blog başlığı gereklidir.');
     const status=['PUBLISHED','DRAFT','ARCHIVED'].includes(raw?.status)?raw.status:'DRAFT';
@@ -160,6 +163,10 @@ export class WebsiteService{
       };
     });
     if(new Set(posts.map((x:any)=>x.slug)).size!==posts.length)throw new BadRequestException('Blog URL kodları tekrar ediyor.');
+    for(const locale of ['tr','en','pt','ru']){
+      const slugs=posts.map((p:any)=>p.translations?.[locale]?.slug||p.slug);
+      if(new Set(slugs).size!==slugs.length)throw new BadRequestException(locale+' dilinde tekrarlanan blog URL kodu var.');
+    }
     // Standalone Ticarti.com category records. Existing post category text stays
     // compatible with the public feed and the original marketing templates.
     const inputCategories=body.categories===undefined?existing.categories:body.categories;
@@ -216,7 +223,8 @@ export class WebsiteService{
     const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&(!x.scheduledAt||Date.parse(x.scheduledAt)<=now)&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
       return {
-        id:x.id,slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
+        id:x.id,slug:t.slug||x.slug,status:x.status,featuredImage:x.featuredImage||'',
+        localeSlugs:Object.fromEntries(['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code])).map(code=>[code,x.translations?.[code]?.slug||x.slug])),
         title:t.title,excerpt:t.excerpt||'',content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
         imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
