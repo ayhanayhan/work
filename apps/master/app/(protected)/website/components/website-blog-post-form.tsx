@@ -123,15 +123,13 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
                 <select className="h-10 rounded-md border bg-background px-3" value={editing.categoryId||''} onChange={e=>update(editing.id,p=>({...p,categoryId:e.target.value||null}))}>
                   <option value="">Kategori yok</option>
                   {data.categories.filter(c=>c.isActive||c.id===editing.categoryId).map(c=>{
-                    const title=c.translations?.[lang]?.title||c.translations?.tr?.title||Object.values(c.translations||{}).find(t=>t.title)?.title||'';
+                    const title=c.translations?.[lang]?.title||c.translations?.[locales.find(x=>x.isDefault)?.locale||'']?.title||Object.values(c.translations||{}).find(t=>t.title)?.title||'';
                     return title?<option key={c.id} value={c.id}>{title}</option>:null;
                   })}
                 </select>
               </label>
               <label className="grid gap-2"><span className="text-sm font-medium">Yazar</span>
-                <select className="h-10 rounded-md border bg-background px-3" value={editing.authorName||'Ticarti'} onChange={e=>update(editing.id,p=>({...p,authorName:e.target.value}))}>
-                  {Array.from(new Set(['Ticarti',...data.posts.map(x=>x.authorName||'Ticarti')])).map(author=><option key={author} value={author}>{author}</option>)}
-                </select>
+                <Input value={editing.authorName||''} placeholder="Yazar adı" onChange={e=>update(editing.id,p=>({...p,authorName:e.target.value}))}/>
               </label>
             </div>
             <label className="grid gap-2"><span className="text-sm font-medium">Etiketler</span>
@@ -164,7 +162,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
                 {data.posts.filter(p=>p.id!==editing.id).map(p=><label key={p.id} className="flex gap-2 text-sm">
                   <input type="checkbox" checked={(editing.relatedPostIds||[]).includes(p.id)}
                     onChange={e=>update(editing.id,x=>({...x,relatedPostIds:e.target.checked?[...(x.relatedPostIds||[]),p.id]:(x.relatedPostIds||[]).filter(y=>y!==p.id)}))}/>
-                  {p.translations?.tr?.title||Object.values(p.translations||{}).find(t=>t.title)?.title||p.slug}
+                  {p.translations?.[lang]?.title||Object.values(p.translations||{}).find(t=>t.title)?.title||p.slug}
                 </label>)}
                 {data.posts.length<=1?<p className="text-sm text-muted-foreground">İlişkilendirilecek başka yazı bulunmuyor.</p>:null}
               </div>
