@@ -52,6 +52,7 @@ export const MENU_SIDEBAR: MenuConfig = [
     title: 'Blog', i18nKey: 'navigation.blog', icon: FileText, children: [
       { title: 'Blog İçerikleri', i18nKey: 'navigation.blog_posts', path: '/website/blog' },
       { title: 'Blog Kategorileri', i18nKey: 'navigation.blog_categories', path: '/website/blog/categories' },
+      { title: 'Blog Yazarları', path: '/website/blog/authors' },
     ],
   },
   {
