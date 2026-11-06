@@ -83,6 +83,6 @@ function htmlToMarkdown(html:string){
 export function WebsiteBlogRichText({value,onChange,editorKey}:{value:string;onChange:(value:string)=>void;editorKey:string}){
   const initial=useMemo(()=>markdownToHtml(value),[editorKey]);
   return <TicartiRichTextEditor key={editorKey} initialValue={initial}
-    sourceValue={value} onSourceChange={onChange} onChange={html=>onChange(htmlToMarkdown(html))}
+    sourceValue={value} onSourceChange={onChange} sourceToHtml={markdownToHtml} onChange={html=>onChange(htmlToMarkdown(html))}
     minHeight={360}/>;
 }
