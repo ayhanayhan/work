@@ -12,7 +12,9 @@ const absolute=(path:string)=>BASE+path;
 const resolveLang=(slug:string[]):BlogLocale=>slug.length&&isBlogLocale(slug[0])?slug[0]:'tr';
 const localeLabel:Record<BlogLocale,string>={tr:'tr_TR',en:'en_US',pt:'pt_PT',ru:'ru_RU'};
 async function previewHost(){
-  const host=(await headers()).get('host')||'';
+  const h=await headers();
+  if(h.get('x-ticarti-site-proxy')==='1'&&h.get('x-forwarded-host')==='ticarti.com')return false;
+  const host=h.get('host')||'';
   return host.endsWith('.hosted.app')||host.includes('localhost')||host.includes('127.0.0.1');
 }
 function normalPath(slug:string[],lang:BlogLocale,page:PageData){
