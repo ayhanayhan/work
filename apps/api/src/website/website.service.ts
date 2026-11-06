@@ -103,6 +103,14 @@ export class WebsiteService{
     await this.put(HOME_KEY,{version,modules});
     return {version,modules};
   }
+  async publicFaq(lang='tr'){
+    const locales=await activePlatformLocales(this.prisma);
+    if(!locales.some(x=>x.locale===lang))return {enabled:false,configured:false,items:[],fields:{}};
+    const home=await this.home();
+    const module=home.modules.find((x:any)=>x.id==='faq');
+    return module?{enabled:module.enabled!==false,configured:home.version>0&&Array.isArray(module.items)&&module.items.length>0,
+      fields:module.fields,items:module.items}: {enabled:false,configured:false,fields:{},items:[]};
+  }
   async activeLocales(){return activePlatformLocales(this.prisma)}
   async blog(){
     const data=await this.get(BLOG_KEY);
