@@ -158,7 +158,7 @@ export function TicartiRichTextEditor({
      sourceMode==='html'&&typeof onHtmlSourceChange==='function'?
       <textarea spellCheck={false} aria-label="HTML kaynak kodu" value={htmlDraft}
         style={{minHeight}} className="w-full resize-y bg-background p-5 font-mono text-sm leading-7 outline-none"
-        onChange={e=>setHtmlDraft(e.target.value)}/>:
+        onChange={e=>{setHtmlDraft(e.target.value);onHtmlSourceChange(e.target.value)}}/>:
       <div ref={ref} contentEditable suppressContentEditableWarning onInput={()=>{remember();emit()}}
         onPaste={e=>{const txt=e.clipboardData.getData('text/plain').trim();
           if(htmlToSafeHtml&&/^<(?:!doctype|html|h[1-6]|p|div|section|article|ul|ol|table|blockquote|pre|figure|img|strong)\b/i.test(txt)){
