@@ -88,6 +88,22 @@ async function test(){
   assert.equal((await svc.publicBlog('tr')).posts[0].slug,'ilgili-yazi');
   await assert.rejects(svc.updateBlog({version:7,posts:[{...enhanced,relatedPostIds:['missing']}],
     categories:afterCategoryEdit.categories}),'Unknown related posts must fail validation');
+  const translatedPost={
+    ...enhanced,scheduledAt:null,
+    translations:{
+      tr:{title:'Türkçe makale',slug:'ornek-yazi',content:'İçerik'},
+      en:{title:'English article',slug:'english-article',content:'English content'}
+    }
+  };
+  const localized=await svc.updateBlog({version:7,posts:[translatedPost,related],
+    categories:afterCategoryEdit.categories});
+  assert.equal(localized.posts[0].translations.en.slug,'english-article');
+  assert.equal((await svc.publicBlog('tr')).posts.find(p=>p.id===translatedPost.id)?.slug,'ornek-yazi');
+  const englishLocalized=(await svc.publicBlog('en')).posts[0];
+  assert.equal(englishLocalized.slug,'english-article');
+  assert.equal(englishLocalized.localeSlugs.tr,'ornek-yazi');
+  assert.equal(englishLocalized.localeSlugs.en,'english-article');
+  assert.equal((await svc.publicBlogPost('english-article','en'))?.id,translatedPost.id);
   console.log('PASS: blog language isolation, publishing, dates, drafts and SEO alternate locales');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
