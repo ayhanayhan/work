@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 const MARKETING_ORIGIN = 'https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
 const PUBLIC_ORIGIN = 'https://ticarti.com';
-const PREFIX = '/ticarti-marketing-proxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
