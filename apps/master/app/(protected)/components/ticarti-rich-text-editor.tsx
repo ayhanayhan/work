@@ -170,7 +170,7 @@ export function TicartiRichTextEditor({
           }
         }}
         onMouseUp={remember} onKeyUp={remember} style={{minHeight}}
-        className="prose max-w-none overflow-auto p-5 text-sm leading-7 outline-none [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:bg-muted [&_th]:p-2 [&_pre]:whitespace-pre-wrap [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-3 [&_blockquote]:border-l-4 [&_blockquote]:pl-4"
+        className="prose max-w-none overflow-auto p-5 text-base leading-7 outline-none [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:my-4 [&_h1]:text-[36px] [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:my-4 [&_h2]:text-[30px] [&_h3]:font-bold [&_h3]:leading-tight [&_h3]:my-4 [&_h3]:text-[25px] [&_h4]:font-bold [&_h4]:leading-tight [&_h4]:my-4 [&_h4]:text-[21px] [&_h5]:font-bold [&_h5]:leading-tight [&_h5]:my-4 [&_h5]:text-[18px] [&_h6]:font-bold [&_h6]:leading-tight [&_h6]:my-4 [&_h6]:text-[16px] [&_p]:my-3 [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-6 [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:bg-muted [&_th]:p-2 [&_pre]:whitespace-pre-wrap [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-3 [&_blockquote]:border-l-4 [&_blockquote]:pl-4"
       />}
     <div className="flex items-center justify-between border-t bg-muted/10 px-3 py-2 text-xs text-muted-foreground">
       <span>{sourceMode==='html'?'HTML kaynak modu':sourceMode==='markdown'?'Markdown kaynak modu':'Görsel düzenleme'}</span>
