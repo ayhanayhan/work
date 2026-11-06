@@ -27,8 +27,14 @@ echo "=== BUILD API IMAGE & CREATE DISTINCT REVISION WITHOUT TRAFFIC ==="
 gcloud builds submit apps/api --tag="$IMAGE" --region="$REGION" --project="$PROJECT"
 SUFFIX="cms$(date +%m%d%H%M%S)"
 gcloud run deploy "$SERVICE" --image="$IMAGE" --revision-suffix="$SUFFIX" --no-traffic --project="$PROJECT" --region="$REGION" --quiet
-NEW="$(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$REGION" --format='value(status.latestReadyRevisionName)')"
-if [ -z "$NEW" ] || [ "$NEW" = "$OLD" ]; then echo "Distinct ready API revision not found" >&2; exit 1; fi
+# A zero-traffic revision can be Ready without becoming latestReadyRevisionName.
+# Resolve the exact revision we just created, instead of reading the traffic-serving pointer.
+NEW="${SERVICE}-${SUFFIX}"
+READY="$(gcloud run revisions describe "$NEW" --project="$PROJECT" --region="$REGION" --format='value(status.conditions[0].status)')"
+if [ "$READY" != "True" ] || [ "$NEW" = "$OLD" ]; then
+  echo "New revision not ready: $NEW (status: $READY)" >&2
+  exit 1
+fi
 echo "New: $NEW"
 
 echo "=== LIVE API TRAFFIC ==="
