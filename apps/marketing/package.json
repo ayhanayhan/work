@@ -8,7 +8,8 @@
     "start": "next start -p 3003",
     "check": "node scripts/design-lock.mjs && node scripts/check.mjs && node scripts/render-test.mjs",
     "test:render": "node scripts/render-test.mjs",
-    "check:design": "node scripts/design-lock.mjs"
+    "check:design": "node scripts/design-lock.mjs",
+    "postbuild": "node scripts/normalize-apphosting-standalone.mjs"
   },
   "dependencies": {
     "next": "15.5.27",
