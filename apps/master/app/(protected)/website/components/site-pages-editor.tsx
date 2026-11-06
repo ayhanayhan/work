@@ -16,10 +16,11 @@ type CMSData={id:string;version:number;values:Record<string,I18n>};
 type Field={id:string;label:string;type:'text'|'image';default:string};
 const pages=schema.pages as {id:string;title:string;source:string;fields:Field[]}[];
 export default function SitePagesEditor(){
-  const {request,restoring}=useMasterSession();
-  const [pageId,setPageId]=useState('home'),[locale,setLocale]=useState('tr');
+  const {request,restoring,locales:langs,localesLoading,localesError}=useMasterSession();
+  const [pageId,setPageId]=useState('home'),[locale,setLocale]=useState('');
+  useEffect(()=>{if(langs.length)setLocale(old=>langs.some(x=>x.locale===old)?old:(langs.find(x=>x.isDefault)?.locale||langs[0].locale))},[langs]);
   const [data,setData]=useState<CMSData|null>(null),[fields,setFields]=useState<Record<string,I18n>>({});
-  const [langs,setLangs]=useState<{locale:string;label:string}[]>([{locale:'tr',label:'Türkçe'},{locale:'en',label:'English'},{locale:'pt',label:'Português'},{locale:'ru',label:'Русский'}]);
+
   const [error,setError]=useState(''),[notice,setNotice]=useState(''),[loading,setLoading]=useState(false),[saving,setSaving]=useState(false);
   const [q,setQ]=useState(''),[kind,setKind]=useState('all'),[limit,setLimit]=useState(40);
   const selected=pages.find(x=>x.id===pageId)||pages[0];
@@ -30,16 +31,11 @@ export default function SitePagesEditor(){
     catch(e:any){setError(e?.message||'Sayfa içeriği yüklenemedi.')}finally{setLoading(false)}
   },[restoring,request,pageId]);
   useEffect(()=>{void load()},[load]);
-  useEffect(()=>{if(restoring)return;request('/superadmin/platform-locales').then((ls:any[])=>{
-    if(!Array.isArray(ls))return;
-    const seen=new Set<string>();const out=ls.map(x=>({locale:String(x.locale||'').split('-')[0].toLowerCase(),label:x.label||x.locale})).filter(x=>{if(!x.locale||seen.has(x.locale))return false;seen.add(x.locale);return true});
-    if(out.length)setLangs(out);
-  }).catch(()=>{})},[request,restoring]);
   const filtered=useMemo(()=>selected.fields.filter(f=>(kind==='all'||(kind==='image'?f.type==='image':kind==='heading'?f.label.toLowerCase().includes('başlık'):f.type==='text'))&&(!q.trim()||[f.id,f.label,f.default].join(' ').toLocaleLowerCase('tr-TR').includes(q.toLocaleLowerCase('tr-TR')))),[selected,q,kind]);
   const put=(id:string,value:string)=>setFields(old=>({...old,[id]:{...(old[id]||{}),[locale]:value}}));
   const dirty=!!data&&JSON.stringify(fields)!==JSON.stringify(data.values||{});
   const save=async()=>{
-    if(!data)return;
+    if(!data||localesLoading||localesError||!langs.length)return;
     setSaving(true);setError('');setNotice('');
     try{const result=await request('/superadmin/website/pages/'+encodeURIComponent(pageId),{method:'PATCH',body:JSON.stringify({version:data.version,values:fields})});setData(result);setFields(result.values);setNotice('Sayfa metin ve görselleri kaydedildi. Mevcut HTML/CSS tasarımına dokunulmadı.')}
     catch(e:any){setError(e?.message||'Değişiklikler kaydedilemedi.')}finally{setSaving(false)}
@@ -47,6 +43,7 @@ export default function SitePagesEditor(){
   return <>
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Sayfa İçerikleri</h1><ToolbarDescription>Orijinal tasarım sabit; metin ve görseller çok dilli ve alan bazında düzenlenir.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button><Button onClick={()=>void save()} disabled={!dirty||saving}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Kaydet</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-4 pb-10">
+      {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
       {error?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>:null}
       {notice?<div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{notice}</div>:null}
       <Card><CardContent className="flex flex-wrap gap-2 p-4">{pages.map(p=><Button size="sm" key={p.id} variant={pageId===p.id?'primary':'outline'} onClick={()=>{if(dirty&&!window.confirm('Kaydedilmemiş değişiklikler kaybolacak. Devam edilsin mi?'))return;setPageId(p.id);setLimit(40);setQ('')}}>{p.title}</Button>)}</CardContent></Card>
