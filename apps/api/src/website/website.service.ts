@@ -114,7 +114,7 @@ export class WebsiteService{
   async activeLocales(){return activePlatformLocales(this.prisma)}
   async blog(){
     const data=await this.get(BLOG_KEY);
-    return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[],categories:Array.isArray(data?.categories)?data.categories:[]};
+    return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[],categories:Array.isArray(data?.categories)?data.categories:[],authors:Array.isArray(data?.authors)?data.authors:[]};
   }
   private cleanPost(raw:any,index:number){
     const slug=str(raw?.slug,150).toLowerCase();
