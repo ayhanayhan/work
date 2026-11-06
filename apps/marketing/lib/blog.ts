@@ -3,6 +3,7 @@ export type BlogLocale=string;
 export type BlogPost={
   id:string;slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
   seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
+  author?:{slug:string;name:string;bio:string;seoTitle:string;seoDescription:string;avatar:string;socials:Record<string,string>}|null;
   availableLocales:BlogLocale[];publishedAt:string|null;updatedAt:string|null;
   tags:string[];isFeatured:boolean;relatedPostIds:string[];ogImage:string;canonicalUrl:string;noIndex:boolean;
   localeSlugs:Partial<Record<BlogLocale,string>>;
@@ -61,6 +62,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
       seoDescription:String(entry.seoDescription||'').trim(),imageAlt:String(entry.imageAlt||entry.title),
       authorName:String(entry.authorName||'Ticarti'),
+      author:entry.author&&typeof entry.author==='object'?entry.author:null,
       availableLocales:entry.availableLocales.filter((code:unknown):code is string=>typeof code==='string'&&isBlogLocale(code)),
       tags:Array.isArray(entry.tags)?entry.tags.filter((x:any)=>typeof x==='string'):[],
       isFeatured:entry.isFeatured===true,relatedPostIds:Array.isArray(entry.relatedPostIds)?entry.relatedPostIds:[],
