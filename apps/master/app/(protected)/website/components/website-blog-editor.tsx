@@ -55,6 +55,7 @@ export default function WebsiteBlogEditor(){
       <ToolbarDescription>Ticarti.com blog yazıları ve yayın durumları</ToolbarDescription>
     </ToolbarHeading><ToolbarActions>
       <Button asChild variant="outline"><Link href="/website/blog/categories">Blog Kategorileri</Link></Button>
+      <Button asChild variant="outline"><Link href="/website/blog/authors">Blog Yazarları</Link></Button>
       <Button variant="outline" disabled={loading} onClick={()=>{void load();void reloadLocales()}}><RefreshCw className="size-4"/>Yenile</Button>
       <Button asChild><Link href="/website/blog/new"><Plus className="size-4"/>Yeni Yazı</Link></Button>
     </ToolbarActions></Toolbar></Container>
