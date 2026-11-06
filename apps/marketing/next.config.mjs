@@ -3,6 +3,8 @@ const apiOrigin=(process.env.API_ORIGIN||'http://localhost:4000').replace(/\/$/,
 /** @type {import('next').NextConfig} */
 const nextConfig={
   output:'standalone',
+  // Share the existing Ticarti.com frontend without conflicting with its own /_next files.
+  assetPrefix:'https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app',
   outputFileTracingRoot:path.resolve(process.cwd(),'../..'),
   outputFileTracingIncludes:{'/*':['./templates/**/*']},
   poweredByHeader:false,
