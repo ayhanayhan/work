@@ -14,6 +14,7 @@ import {Tabs,TabsContent,TabsList,TabsTrigger} from '@/components/ui/tabs';
 import {Card,CardContent} from '@/components/ui/card';
 import {WebsiteBlogMediaDropzone} from './website-blog-media-dropzone';
 import {WebsiteBlogRichText} from './website-blog-rich-text';
+import {readWebsiteBlog,saveWebsiteBlog} from './website-blog-resource';
 
 type Translation={title:string;slug?:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
 type TextField=Exclude<keyof Translation,'enabled'>;
@@ -38,7 +39,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
     if(restoring)return;
     setLoading(true);setError('');
     try{
-      const snapshot=await request('/superadmin/website/blog') as Snapshot;
+      const snapshot=await readWebsiteBlog<Post,BlogCategory>(request);
       const normalized={...snapshot,posts:Array.isArray(snapshot.posts)?snapshot.posts:[],categories:Array.isArray(snapshot.categories)?snapshot.categories:[]};
       const post=postId?normalized.posts.find((x:Post)=>x.id===postId):newPost();
       if(!post)throw new Error('Blog yazısı bulunamadı.');
@@ -77,7 +78,7 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
     try{
       // Refuse stale writes: PATCH checks the version of the entire CMS snapshot.
       const posts=postId?data.posts.map(x=>x.id===editing.id?editing:x):[...data.posts,editing];
-      await request('/superadmin/website/blog',{method:'PATCH',body:JSON.stringify({version:data.version,posts,categories:data.categories})});
+      await saveWebsiteBlog<Post,BlogCategory>(request,{version:data.version,posts,categories:data.categories});
       router.push('/website/blog');router.refresh();
       return true;
     }catch(e){setError(err(e));return false}
