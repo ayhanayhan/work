@@ -1,0 +1,171 @@
+/* TICARTI V2 — 03 HOME INTRO */
+.tc-page-home .tc-bottom-cta__offer {
+  font: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 16px 0 0;
+  color: inherit;
+}
+.tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__plus, .tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__tag, .tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__panel {
+  display: none !important;
+}
+.tc-page-home .tc-site-hero .tc-ui-card {
+  cursor: default;
+}
+.tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__prev {
+  pointer-events: none;
+}
+.tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__logos img:not(:first-child) {
+  display: none !important;
+}
+.tc-page-home .tc-site-hero .tc-ui-card .tc-ui-card__prev-label {
+  display: block;
+}
+.tc-home-logo--allianz {
+  --s: 0.727 !important;
+  --dy: 1.5px !important;
+}
+.tc-home-logo--bbva {
+  --s: 1.06 !important;
+  --dy: -2.0px !important;
+}
+.tc-home-logo--bankinter {
+  --s: 0.765 !important;
+  --dy: -3.5px !important;
+}
+.tc-home-logo--microsoft {
+  --s: 0.758 !important;
+}
+.tc-home-logo--qida {
+  --s: 0.654 !important;
+  --dy: 2.5px !important;
+}
+.tc-home-logo--accenture {
+  --s: 0.701 !important;
+  --dy: -13.0px !important;
+}
+.tc-home-logo--deloitte {
+  --s: 0.738 !important;
+  --dy: -2.0px !important;
+}
+.tc-home-logo--dcycle {
+  --s: 1.044 !important;
+}
+.tc-home-logo--hp {
+  --s: 0.667 !important;
+}
+.tc-home-logo--linea-directa {
+  --s: 0.765 !important;
+  --dy: -0.2px !important;
+}
+.tc-home-logo--podo {
+  --s: 0.979 !important;
+  --dy: -5.0px !important;
+}
+.tc-home-logo--clicars {
+  --s: 0.935 !important;
+  --dy: -3.0px !important;
+}
+.tc-home-logo--sonosuite {
+  --s: 0.7 !important;
+  --dy: 0.2px !important;
+}
+.tc-home-logo--eroski {
+  --s: 0.686 !important;
+}
+.tc-home-logo--civitatis {
+  --s: 0.765 !important;
+  --dy: -4.8px !important;
+}
+.tc-home-logo--alten {
+  --s: 0.87 !important;
+}
+.tc-home-logo--vivla {
+  --s: 0.942 !important;
+  --dy: -4.2px !important;
+}
+.tc-home-logo--wayra {
+  --s: 0.765 !important;
+  --dy: -5.8px !important;
+}
+.tc-home-logo--cabify {
+  --s: 0.919 !important;
+}
+.tc-home-logo--affinity {
+  --s: 0.765 !important;
+  --dy: 0.2px !important;
+}
+.tc-page-home .tc-animated-heading__eyebrow {
+  --hrt-reveal-delay: 0ms !important;
+}
+.tc-page-home .tc-animated-heading__title {
+  --hrt-reveal-delay: 120ms !important;
+}
+.tc-page-home .tc-dashboard-radar {
+  --rdr-bg: #F6F7F5 !important;
+  --rdr-heading: #181B1A !important;
+  --rdr-subtitle: #5A5E5C !important;
+  --rdr-card-bg: #FFFFFF !important;
+  --rdr-card-title: #181B1A !important;
+  --rdr-card-lead: #A0A6AA !important;
+  --rdr-card-body: #5A5E5C !important;
+  --rdr-card-radius: 20px !important;
+  --rdr-placeholder-bg: #EEEFEC !important;
+  --rdr-placeholder-border: #D6D8D3 !important;
+  --rdr-reveal-dur: 0.7s !important;
+  --rdr-reveal-dist: 20px !important;
+}
+.tc-page-home .tc-dashboard-radar__subtitle {
+  --rdr-reveal-delay: 0.08s !important;
+}
+.tc-home-radar-reveal {
+  --rdr-reveal-delay: 0.16s !important;
+}
+.tc-home-radar-reveal-2 {
+  --rdr-reveal-delay: 0.24s !important;
+}
+.tc-page-home .tc-dashboard-radar__right {
+  --rdr-reveal-delay: 0.12s !important;
+}
+.tc-home-banner-reveal {
+  --reveal-delay: 120ms !important;
+}
+.tc-home-banner-reveal-2 {
+  --reveal-delay: 240ms !important;
+}
+.tc-page-home .tc-press {
+  --pr-bg: rgba(250, 250, 250, 1.0) !important;
+  --pr-title: #000000 !important;
+  --pr-title-size: 44px !important;
+  --pr-body:    !important;
+  --pr-img-ratio: 1.36 !important;
+  --pr-img-radius: 16px !important;
+  --pr-brand-h: px !important;
+  --pr-arrow-bg: rgba(238, 238, 238, 1.0) !important;
+  --pr-btn-bg: rgba(240,249,123, 1.0) !important;
+  --pr-btn-text: rgba(24, 24, 27, 1.0) !important;
+  --pr-btn-border: rgba(240,249,123, 1.0) !important;
+  --pr-btn-radius: 12px !important;
+  --pr-fact-icon-bg: rgba(#null, 0.0) !important;
+  --pr-fact-text:    !important;
+  --pr-awards-label: #6B6F6D !important;
+  --pr-awards-h: px !important;
+}
+.tc-page-home .tc-bottom-cta {
+  --hh-bg: rgba(255, 255, 255, 1.0) !important;
+  --hh-min-h: 500px !important;
+  --hh-pad-y: 100px !important;
+  --hh-heading: #000000 !important;
+  --hh-heading-size: 64px !important;
+  --hh-subtitle: #18181B !important;
+  --hh-logo-h: 30px !important;
+  --hh-cta1-bg: rgba(240,249,123, 1.0) !important;
+  --hh-cta1-text: #000000 !important;
+  --hh-cta1-border: rgba(#null, 0.0) !important;
+  --hh-cta2-bg: rgba(226, 242, 240, 1.0) !important;
+  --hh-cta2-text: #8ec03f !important;
+  --hh-cta2-border: rgba(255, 255, 255, 1.0) !important;
+  --hh-avatar-size: 26px !important;
+  --hh-avatar-border: 3.49px !important;
+  --hh-avatar-border-color: rgba(#null, 0.0) !important;
+}

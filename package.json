@@ -53,7 +53,9 @@
     "verify:core-v33": "npm run verify:p1 && npm run verify:production-migrations && npm --workspace @commerce/api run test:unit",
     "verify:v33-core": "node scripts/core-v33-priorities-check.mjs",
     "dev:help": "npm --workspace @commerce/help run dev",
-    "dev:master": "npm --workspace @commerce/master run dev"
+    "dev:master": "npm --workspace @commerce/master run dev",
+    "dev:marketing": "npm --workspace @commerce/marketing run dev",
+    "check:marketing": "npm --workspace @commerce/marketing run check"
   },
   "overrides": {
     "multer": "2.4.0",

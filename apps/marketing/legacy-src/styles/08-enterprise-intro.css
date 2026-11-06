@@ -1,0 +1,416 @@
+/* TICARTI V2 — 08 ENTERPRISE INTRO */
+.tc-page-enterprise .cell_17879033623832-padding {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.tc-page-enterprise .cell_17879086535792-padding {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.tc-page-enterprise .cell_17879079934372-padding {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.tc-page-enterprise .cell_17847985659512-padding {
+  padding-top: 0px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.tc-page-enterprise .cell_17848115040722-padding {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.tc-page-enterprise .tc-ui-header-spacer {
+  height: 126px !important;
+}
+.tc-enterprise-panel-meta {
+  --tc-ui-i: 0 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-meta--exp {
+  --tc-ui-i: 1 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-meta--loc {
+  --tc-ui-i: 2 !important;
+}
+.tc-enterprise-panel-divider {
+  --tc-ui-i: 3 !important;
+}
+.tc-enterprise-panel-label {
+  --tc-ui-i: 4 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-pills {
+  --tc-ui-i: 5 !important;
+}
+.tc-enterprise-tech--event-sourcing {
+  --tc-ui-p: 0s !important;
+}
+.tc-enterprise-tech--kubernetes {
+  --tc-ui-p: 0.16s !important;
+}
+.tc-enterprise-tech--aws {
+  --tc-ui-p: 0.32s !important;
+}
+.tc-enterprise-tech--kafka {
+  --tc-ui-p: 0.48s !important;
+}
+.tc-enterprise-tech--microservices {
+  --tc-ui-p: 0.64s !important;
+}
+.tc-enterprise-tech--redis {
+  --tc-ui-p: 0.8s !important;
+}
+.tc-enterprise-tech--openai {
+  --tc-ui-p: 0.96s !important;
+}
+.tc-enterprise-panel-divider-2 {
+  --tc-ui-i: 6 !important;
+}
+.tc-enterprise-panel-label-2 {
+  --tc-ui-i: 7 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-langs {
+  --tc-ui-i: 8 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-divider--cta {
+  --tc-ui-i: 9 !important;
+}
+.tc-page-enterprise .tc-ui-ehero__panel-cta {
+  --tc-ui-i: 10 !important;
+}
+.tc-enterprise-logo--microsoft {
+  --s: 1.277 !important;
+}
+.tc-enterprise-logo--hp {
+  --s: 1.311 !important;
+}
+.tc-enterprise-logo--bbva {
+  --s: 1.579 !important;
+}
+.tc-enterprise-logo--telefonica {
+  --s: 1.132 !important;
+}
+.tc-enterprise-logo--accenture {
+  --s: 1.034 !important;
+}
+.tc-enterprise-logo--bankinter {
+  --s: 1.72 !important;
+}
+.tc-enterprise-logo--linea-directa {
+  --s: 1.579 !important;
+}
+.tc-enterprise-logo--allianz {
+  --s: 1.154 !important;
+}
+.tc-enterprise-logo--ey {
+  --s: 1.096 !important;
+}
+.tc-enterprise-logo--eroski {
+  --s: 1.333 !important;
+}
+.tc-enterprise-logo--deloitte {
+  --s: 1.714 !important;
+}
+.tc-enterprise-logo--alten {
+  --s: 1.41 !important;
+}
+.tc-enterprise-logo--wayra {
+  --s: 1.017 !important;
+}
+.tc-enterprise-logo--vivla {
+  --s: 1.75 !important;
+}
+.tc-enterprise-logo--affinity {
+  --s: 0.769 !important;
+}
+.tc-enterprise-hcta-reveal-h3-more-talent-less-friction {
+  --reveal-delay: 0ms !important;
+}
+.tc-enterprise-hcta-reveal-div {
+  --reveal-delay: 120ms !important;
+}
+.tc-enterprise-reveal-block {
+  --tc-ui-i: 0 !important;
+}
+.tc-enterprise-tc-ui-emk-row-div {
+  --tc-ui-j: 0 !important;
+}
+.tc-enterprise-tc-ui-emk-row-div-2 {
+  --tc-ui-j: 1 !important;
+}
+.tc-enterprise-tc-ui-emk-row-div-3 {
+  --tc-ui-j: 2 !important;
+}
+.tc-enterprise-reveal-block-2 {
+  --tc-ui-i: 1 !important;
+}
+.tc-page-enterprise .tc-ui-emk__thumb {
+  width: 77px !important;
+  height: 30px !important;
+  transform: translate(0px, 0px) !important;
+  opacity: 1 !important;
+}
+.tc-page-enterprise .tc-ui-emk__row--muted {
+  --tc-ui-j: 0 !important;
+}
+.tc-enterprise-reveal-block-3 {
+  --tc-ui-i: 2 !important;
+}
+.tc-page-enterprise .tc-ui-emk__tags {
+  --tc-ui-drift: -193px !important;
+}
+.tc-enterprise-integration--dynamics-365 {
+  --tc-ui-j: 0 !important;
+}
+.tc-enterprise-integration--power-automate {
+  --tc-ui-j: 1 !important;
+}
+.tc-enterprise-integration--power-bi {
+  --tc-ui-j: 2 !important;
+}
+.tc-enterprise-integration--apis {
+  --tc-ui-j: 3 !important;
+}
+.tc-enterprise-integration--docker {
+  --tc-ui-j: 4 !important;
+}
+.tc-page-enterprise .tc-ui-pc {
+  --tc-ui-pc-section-bg: rgba(255, 255, 255, 1.0) !important;
+  --tc-ui-pc-banner-bg: rgba(244, 244, 245, 1.0) !important;
+  --tc-ui-pc-ink: rgba(24, 27, 26, 1.0) !important;
+  --tc-ui-pc-text: rgba(0, 0, 0, 1.0) !important;
+  --tc-ui-pc-card-bg: rgba(255, 255, 255, 1.0) !important;
+  --tc-ui-pc-icon-bg: rgba(226, 242, 240, 1.0) !important;
+  --tc-ui-pc-badge-color: rgba(5, 52, 44, 1.0) !important;
+  --tc-ui-pc-content-max: 1641px !important;
+  --tc-ui-pc-pad-top-d: 80px !important;
+  --tc-ui-pc-pad-bottom-d: 120px !important;
+  --tc-ui-pc-pad-top-m: 56px !important;
+  --tc-ui-pc-pad-bottom-m: 100px !important;
+  --tc-ui-pc-banner-radius-d: 32px !important;
+  --tc-ui-pc-banner-pad-d: 80px !important;
+  --tc-ui-pc-left-min-h-d: 615px !important;
+  --tc-ui-pc-eyebrow-d: 18px !important;
+  --tc-ui-pc-title-d: 64px !important;
+  --tc-ui-pc-title-m: 36px !important;
+  --tc-ui-pc-card-d: 18px !important;
+  --tc-ui-pc-card-radius-d: 32px !important;
+  --tc-ui-pc-cards-gap-d: 16px !important;
+  --tc-ui-pc-icon-box: 40px !important;
+  --tc-ui-pc-icon-radius: 16px !important;
+  --tc-ui-pc-icon-fit: contain !important;
+  --tc-ui-pc-badge-size-d: 100px !important;
+  --tc-ui-pc-badge-radius-d: 25px !important;
+  --tc-ui-pc-reveal-dur: 800ms !important;
+  --tc-ui-pc-reveal-dist-d: 28px !important;
+  --tc-ui-pc-reveal-stagger: 100ms !important;
+}
+.tc-page-enterprise .tc-ui-pc__badges {
+  --tc-ui-pc-reveal-delay: var(--tc-ui-pc-reveal-stagger) !important;
+}
+.tc-enterprise-animated-item {
+  --tc-ui-pc-reveal-delay: calc(var(--tc-ui-pc-reveal-stagger) * 0) !important;
+}
+.tc-enterprise-animated-item-2 {
+  --tc-ui-pc-reveal-delay: calc(var(--tc-ui-pc-reveal-stagger) * 1) !important;
+}
+.tc-enterprise-animated-item-3 {
+  --tc-ui-pc-reveal-delay: calc(var(--tc-ui-pc-reveal-stagger) * 2) !important;
+}
+.tc-enterprise-reveal-article {
+  --tc-ui-i: 0 !important;
+}
+.tc-enterprise-reveal-article-2 {
+  --tc-ui-i: 1 !important;
+}
+.tc-enterprise-reveal-article-3 {
+  --tc-ui-i: 2 !important;
+}
+.tc-page-enterprise .gmarkets__h2 {
+  --gm-reveal-delay: 100ms !important;
+}
+.tc-page-enterprise .gmarkets__cta-wrap {
+  --gm-reveal-delay: 200ms !important;
+}
+.tc-page-enterprise .gmcard--media {
+  --gm-reveal-delay: 0ms !important;
+}
+.tc-page-enterprise .gmcard--lead {
+  --gm-reveal-delay: 120ms !important;
+}
+.tc-enterprise-animated-article {
+  --gm-reveal-delay: 0ms !important;
+}
+.tc-enterprise-animated-article-2 {
+  --gm-reveal-delay: 120ms !important;
+}
+.tc-enterprise-animated-article-3 {
+  --gm-reveal-delay: 240ms !important;
+}
+.tc-page-enterprise .tc-ui-heading {
+  transition-delay: 80ms !important;
+}
+.tc-page-enterprise .tc-ui-head-right {
+  transition-delay: 160ms !important;
+}
+.tc-enterprise-animated-article-4 {
+  transition-delay: 0ms !important;
+}
+.tc-enterprise-animated-article-5 {
+  transition-delay: 90ms !important;
+}
+.tc-enterprise-animated-article-6 {
+  transition-delay: 180ms !important;
+}
+.tc-enterprise-animated-article-7 {
+  transition-delay: 270ms !important;
+}
+.tc-enterprise-animated-article-8 {
+  transition-delay: 0ms !important;
+}
+.tc-page-enterprise .tc-enterprise-criteria__h2 {
+  --tc-enterprise-criteria-reveal-delay: 0ms !important;
+}
+.tc-page-enterprise .tc-enterprise-criteria__sub {
+  --tc-enterprise-criteria-reveal-delay: 100ms !important;
+}
+.tc-enterprise-animated-article-9 {
+  --tc-enterprise-criteria-reveal-delay: 0ms !important;
+}
+.tc-enterprise-package-card {
+  --tc-enterprise-criteria-pk-scale: 0.7574 !important;
+}
+.tc-enterprise-package-row {
+  transform: translateY(-62px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-package-row-2 {
+  transform: translateY(0px) !important;
+  opacity: 0.594 !important;
+}
+.tc-enterprise-selected-block {
+  transform: translateY(62px) !important;
+  opacity: 1 !important;
+}
+.tc-enterprise-package-row-3 {
+  transform: translateY(124px) !important;
+  opacity: 0.66 !important;
+}
+.tc-enterprise-package-row-4 {
+  transform: translateY(186px) !important;
+  opacity: 0.594 !important;
+}
+.tc-enterprise-package-row-5 {
+  transform: translateY(248px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-animated-article-10 {
+  --tc-enterprise-criteria-reveal-delay: 140ms !important;
+}
+.tc-enterprise-package-card-2 {
+  --tc-enterprise-criteria-pk-scale: 0.7574 !important;
+}
+.tc-enterprise-package-row-6 {
+  transform: translateY(-62px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-package-row-7 {
+  transform: translateY(0px) !important;
+  opacity: 0.594 !important;
+}
+.tc-enterprise-selected-block-2 {
+  transform: translateY(62px) !important;
+  opacity: 1 !important;
+}
+.tc-enterprise-package-row-8 {
+  transform: translateY(124px) !important;
+  opacity: 0.66 !important;
+}
+.tc-enterprise-package-row-9 {
+  transform: translateY(186px) !important;
+  opacity: 0.594 !important;
+}
+.tc-enterprise-package-row-10 {
+  transform: translateY(248px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-animated-article-11 {
+  --tc-enterprise-criteria-reveal-delay: 280ms !important;
+}
+.tc-enterprise-package-card-3 {
+  --tc-enterprise-criteria-pk-scale: 0.7574 !important;
+}
+.tc-enterprise-package-row-11 {
+  transform: translateY(-67.0207px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-package-row-12 {
+  transform: translateY(-5.02075px) !important;
+  opacity: 0.540553 !important;
+}
+.tc-enterprise-selected-block-3 {
+  transform: translateY(56.9793px) !important;
+  opacity: 1 !important;
+}
+.tc-enterprise-package-row-13 {
+  transform: translateY(118.979px) !important;
+  opacity: 0.66 !important;
+}
+.tc-enterprise-package-row-14 {
+  transform: translateY(180.979px) !important;
+  opacity: 0.647447 !important;
+}
+.tc-enterprise-package-row-15 {
+  transform: translateY(242.979px) !important;
+  opacity: 0 !important;
+}
+.tc-enterprise-hcta-reveal-h3-what-you-could-build-with {
+  --reveal-delay: 0ms !important;
+}
+.tc-enterprise-hcta-reveal-div-2 {
+  --reveal-delay: 120ms !important;
+}
+.tc-page-enterprise .tc-story-highlights__media {
+  --tc-story-highlights-reveal-delay: 120ms !important;
+}
+.tc-page-enterprise .tc-story-feature__list {
+  --tc-story-feature-reveal-delay: 120ms !important;
+}
+.tc-page-enterprise #tc-ui-faq-panel-widget_1784811503841_220805406473-1 {
+  max-height: 102px !important;
+}
+.tc-page-enterprise #tc-ui-faq-panel-widget_1784811503841_220805406473-2 {
+  max-height: 0px !important;
+}
+.tc-page-enterprise #tc-ui-faq-panel-widget_1784811503841_220805406473-3 {
+  max-height: 0px !important;
+}
+.tc-page-enterprise #tc-ui-faq-panel-widget_1784811503841_220805406473-4 {
+  max-height: 0px !important;
+}
+.tc-page-enterprise .tc-ui-collab {
+  --tc-ui-bg: rgba(246, 251, 206, 1.0) !important;
+  --tc-ui-pad-y: 120px !important;
+  --tc-ui-pad-y-m: 64px !important;
+  --tc-ui-eyebrow: #555E5C !important;
+  --tc-ui-heading: #181B1A !important;
+  --tc-ui-heading-size: 64px !important;
+  --tc-ui-heading-ch: ch !important;
+  --tc-ui-subtext: #555E5C !important;
+  --tc-ui-card-bg: rgba(#null, 0.0) !important;
+  --tc-ui-card-border: rgba(#null, 0.0) !important;
+  --tc-ui-card-radius: px !important;
+  --tc-ui-card-pad: px !important;
+  --tc-ui-label:    !important;
+  --tc-ui-helper:    !important;
+  --tc-ui-input-bg: rgba(#null, 0.0) !important;
+  --tc-ui-input-border: rgba(#null, 0.0) !important;
+  --tc-ui-input-text:    !important;
+  --tc-ui-input-focus:    !important;
+  --tc-ui-input-radius: px !important;
+  --tc-ui-legal:    !important;
+  --tc-ui-cta-bg: rgba(#null, 0.0) !important;
+  --tc-ui-cta-text:    !important;
+  --tc-ui-cta-border: rgba(#null, 0.0) !important;
+  --tc-ui-cta-radius: px !important;
+  --tc-ui-cta-width: auto !important;
+}

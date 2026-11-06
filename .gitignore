@@ -17,3 +17,5 @@ coverage
 
 # Local generated artifacts
 *.zip
+
+.backups/

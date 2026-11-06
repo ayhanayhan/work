@@ -1,0 +1,146 @@
+/* TICARTI V2 — 05 CONTACT */
+.tc-page-contact #tc-widget-021 {
+  background-color: #f8f9ec !important;
+  background-image: none !important;
+  border-radius: 12px !important;
+  display: block !important;
+}
+.tc-page-contact #tc-widget-023 {
+  display: block !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+}
+.tc-page-contact #tc-widget-025 {
+  display: block !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+  padding-top: 20px !important;
+}
+.tc-page-contact .widget_1775825715205-flexbox-positioning {
+  display: -ms-flexbox !important;
+  -ms-flex-direction: column !important;
+  -ms-flex-align: center !important;
+  -ms-flex-pack: start;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start;
+}
+.tc-page-contact .widget_1775825715205-flexbox-positioning > div {
+  max-width: 100%;
+  flex-shrink: 0 !important;
+}
+@media (min-width:768px) {
+  .tc-page-contact .career-page-row-1-vertical-alignment > .tc-row {
+    display: -ms-flexbox !important;
+    -ms-flex-direction: row;
+    display: flex !important;
+    flex-direction: row;
+  }
+  .tc-page-contact .cell_17758257009802-vertical-alignment {
+    display: -ms-flexbox !important;
+    -ms-flex-direction: column !important;
+    -ms-flex-pack: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+  .tc-page-contact .cell_17758257009802-vertical-alignment > div {
+    flex-shrink: 0 !important;
+  }
+  .tc-page-contact .cell_1775825715467-vertical-alignment {
+    display: -ms-flexbox !important;
+    -ms-flex-direction: column !important;
+    -ms-flex-pack: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+  .tc-page-contact .cell_1775825715467-vertical-alignment > div {
+    flex-shrink: 0 !important;
+  }
+}
+.tc-page-contact .career-page-row-0-hidden {
+  display: block !important;
+}
+.tc-page-contact .career-page-row-0-background-layers {
+  background-image: linear-gradient(rgba(3, 48, 40, 1), rgba(3, 48, 40, 1)) !important;
+  background-position: left top !important;
+  background-size: auto !important;
+  background-repeat: no-repeat !important;
+}
+.tc-page-contact .dnd_area-module-1-hidden {
+  display: none !important;
+}
+.tc-page-contact .cell_17758257009802-padding {
+  padding-top: 120px !important;
+  padding-bottom: 60px !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+}
+.tc-page-contact .cell_17758257009802-background-layers {
+  background-image: linear-gradient(rgba(3, 48, 40, 1), rgba(3, 48, 40, 1)) !important;
+  background-position: left top !important;
+  background-size: auto !important;
+  background-repeat: no-repeat !important;
+}
+.tc-page-contact .cell_1775825715467-background-layers {
+  background-image: linear-gradient(rgba(3, 48, 40, 1), rgba(3, 48, 40, 1)) !important;
+  background-position: left top !important;
+  background-size: auto !important;
+  background-repeat: no-repeat !important;
+}
+.tc-page-contact .hs-image-widget {
+  max-width: 100% !important;
+  height: auto !important;
+}
+.tc-contact-content-div-contact-us {
+  background-color: #033028 !important;
+}
+.tc-contact-content-h2-contact-us {
+  color: #ffffff !important;
+  line-height: 1.2 !important;
+}
+.tc-contact-content-span-contact-us {
+  color: #F0F97B !important;
+}
+.tc-contact-content-div {
+  background-color: #033028 !important;
+}
+.tc-contact-content-p {
+  color: #ffffff !important;
+}
+.tc-contact-content-p-complete-this-form-for-oth {
+  color: #ffffff !important;
+}
+.tc-contact-content-div-2 {
+  background-color: #033028 !important;
+}
+.tc-contact-content-div-3 {
+  background-color: #033028 !important;
+}
+.tc-contact-content-span-you-can-also-give-us-a-cal {
+  color: #ffffff !important;
+  background-color: #033028 !important;
+}
+
+/* TICARTI V2 — Marketing contact inbox API form; inherits the existing site palette and typography. */
+.tc-page-contact .tc-contact-form {box-sizing:border-box;display:grid;gap:16px;padding:26px;background:#f8f9f6;border:1px solid #e4e7e2;border-radius:12px;color:#202320;font-family:inherit}
+.tc-page-contact .tc-contact-form *, .tc-page-contact .tc-contact-form *::before,.tc-page-contact .tc-contact-form *::after {box-sizing:border-box}
+.tc-page-contact .tc-contact-form__title {margin:0;color:#151515;font-size:22px;font-weight:650;line-height:1.3}
+.tc-page-contact .tc-contact-form__intro {margin:0;color:#576058;font-size:14px;line-height:1.6}
+.tc-page-contact .tc-contact-form__fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tc-page-contact .tc-contact-form__field {display:flex;flex-direction:column;min-width:0;gap:8px;color:#202320;font-size:13px;font-weight:600}
+.tc-page-contact .tc-contact-form__field b {font-weight:600;color:#9b372c}
+.tc-page-contact .tc-contact-form__field--full {grid-column:1/-1}
+.tc-page-contact .tc-contact-form__field input,.tc-page-contact .tc-contact-form__field textarea {width:100%;min-width:0;min-height:44px;margin:0;padding:11px 12px;border:1px solid #d5dbd3;border-radius:8px;background:#fff;color:#202320;font:inherit;font-size:14px;font-weight:400;line-height:1.5;outline:none}
+.tc-page-contact .tc-contact-form__field textarea {min-height:130px;resize:vertical}
+.tc-page-contact .tc-contact-form__field input:focus,.tc-page-contact .tc-contact-form__field textarea:focus {border-color:#8ec03f;box-shadow:0 0 0 2px rgba(142,192,63,.16)}
+.tc-page-contact .tc-contact-form__consent {display:flex;align-items:flex-start;gap:10px;color:#495148;font-size:12px;line-height:1.55;cursor:pointer}
+.tc-page-contact .tc-contact-form__consent input {flex:0 0 auto;width:16px;height:16px;margin-top:2px;accent-color:#8ec03f}
+.tc-page-contact .tc-contact-form__consent a {color:inherit;text-decoration:underline;text-underline-offset:2px}
+.tc-page-contact .tc-contact-form__submit {display:flex;align-items:center;justify-content:center;min-height:46px;padding:11px 20px;background:#F0F97B;border:0;border-radius:10px;color:#151515;font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+.tc-page-contact .tc-contact-form__submit:disabled {opacity:.55;cursor:wait}
+.tc-page-contact .tc-contact-form__status {min-height:18px;margin:0;color:#246729;font-size:13px;line-height:1.5}
+.tc-page-contact .tc-contact-form__status.is-error {color:#b42318}
+@media(max-width:700px){.tc-page-contact .tc-contact-form__fields{grid-template-columns:1fr}.tc-page-contact .tc-contact-form{padding:20px}}

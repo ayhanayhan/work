@@ -1,0 +1,27 @@
+{
+  "description": "Ticarti v2: ordered CSS sources",
+  "files": [
+    "00-fonts.css",
+    "01-legacy-component-compat.css",
+    "02-shared-animations.css",
+    "03-home-intro.css",
+    "04-pricing-layout.css",
+    "05-contact.css",
+    "06-success-stories.css",
+    "07-crowdy-story.css",
+    "08-enterprise-intro.css",
+    "09-shared-navigation.css",
+    "10-core-utilities.css",
+    "11-home-sections.css",
+    "12-enterprise-content.css",
+    "13-pricing-responsive.css",
+    "14-home-footer-and-layout.css",
+    "15-radar-and-blog-card.css",
+    "16-blog-articles.css",
+    "17-login-base.css",
+    "18-login-components.css",
+    "19-home-showcase.css",
+    "20-final-design-tokens.css",
+    "21-register-pricing-payment-footer.css"
+  ]
+}

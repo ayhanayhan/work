@@ -48,6 +48,23 @@
         "firebase-debug.*.log"
       ],
       "alwaysDeployFromSource": true
+    },
+    {
+      "backendId": "commerce-marketing",
+      "rootDir": "./apps/marketing",
+      "ignore": [
+        "node_modules",
+        ".next",
+        "dist",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        ".backups",
+        ".backups/**",
+        "**/.backups/**",
+        ".patch-backups",
+        ".patch-backups/**"
+      ]
     }
   ]
 }

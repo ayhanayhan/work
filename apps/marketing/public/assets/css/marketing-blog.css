@@ -1,0 +1,17 @@
+/* Derived from the approved success-stories visual language. */
+.tc-marketing-blog .featured-case{margin-top:24px}
+.tc-marketing-blog .tc-article-carousel .card .bg-imge .img img{display:block;width:100%;height:100%;object-fit:cover}
+.tc-marketing-blog .tc-article-carousel .card .card-items[hidden]{display:none!important}
+.tc-marketing-blog .tc-blog-featured-link{display:inline-flex;margin-top:20px;font:400 15px/1.5 var(--tc-font-body);border-bottom:1px solid currentColor;text-decoration:none;color:#181b1a}
+.tc-marketing-blog .tc-blog-card-link{position:absolute;inset:0;display:block;z-index:5}
+.tc-marketing-blog .tc-blog-kicker{font:400 13px/1.5 var(--tc-font-body);letter-spacing:.03em;text-transform:uppercase;color:#555e5c;margin-bottom:12px}
+.tc-marketing-blog .tc-blog-article{margin:0 auto;max-width:980px;padding:0 20px 70px}
+.tc-marketing-blog .tc-blog-article-cover{display:block;width:100%;max-height:490px;object-fit:cover;border-radius:6px}
+.tc-marketing-blog .tc-blog-article-copy{margin:36px auto;max-width:770px;font:400 17px/1.8 var(--tc-font-body);color:#343b37}
+.tc-marketing-blog .tc-blog-article-copy p{margin:0 0 26px}
+.tc-marketing-blog .tc-blog-back,.tc-marketing-blog .tc-blog-related-head a{color:#181b1a;text-decoration:underline;text-underline-offset:4px}
+.tc-marketing-blog .tc-blog-related-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 10px 28px}
+.tc-marketing-blog .tc-blog-related-head h2{font:400 clamp(26px,3vw,36px)/1.2 var(--tc-font-display);margin:0}
+@media(max-width:767px){.tc-marketing-blog .tc-blog-article{padding:0 16px 45px}.tc-marketing-blog .tc-blog-article-copy{font-size:16px}}
+
+.tc-marketing-blog .featured-case[hidden]{display:none!important}

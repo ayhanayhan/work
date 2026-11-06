@@ -1,0 +1,731 @@
+{
+  "version": 1,
+  "locale": "pt",
+  "modules": [
+    {
+      "id": "hero",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        },
+        "offer": {
+          "pt": ""
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "animated",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-3",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-4",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-5",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-6",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-7",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "builder",
+      "fields": {},
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-3",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "radar",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "channels",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "showcase",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-3",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-4",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-5",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-6",
+          "fields": {
+            "heading": {
+              "pt": ""
+            },
+            "role": {
+              "pt": ""
+            },
+            "description": {
+              "pt": ""
+            },
+            "button": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "references",
+      "fields": {
+        "heading": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-3",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-4",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-5",
+          "fields": {
+            "heading": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "bottomCta",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "offer": {
+          "pt": ""
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "blog",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "faq",
+      "fields": {
+        "heading": {
+          "pt": ""
+        },
+        "description": {
+          "pt": ""
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-2",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-3",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-4",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-5",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-6",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-7",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-8",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-9",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-10",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-11",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-12",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-13",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-14",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-15",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-16",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-17",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-18",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-19",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-20",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-21",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-22",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-23",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-24",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-25",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-26",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-27",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-28",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-29",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        },
+        {
+          "id": "item-30",
+          "fields": {
+            "question": {
+              "pt": ""
+            },
+            "answer": {
+              "pt": ""
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

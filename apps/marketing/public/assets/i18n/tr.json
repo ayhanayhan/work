@@ -1,0 +1,973 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "id": "hero",
+      "title": "Ana Slider",
+      "selector": ".tc-site-hero",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "E-ticaret siteni oluştur. 14 gün ücretsiz dene."
+        },
+        "description": {
+          "tr": "Mağazanı dakikalar içinde kur; ürünlerini, siparişlerini, stoklarını ve pazaryeri bağlantılarını tek panelden kolayca yönet."
+        },
+        "offer": {
+          "tr": "Lansmana özel %50 indirimi kaçırma."
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "animated",
+      "title": "Hareketli Başlık",
+      "selector": ".tc-animated-heading",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Ürün yönetiminden siparişlere"
+        },
+        "description": {
+          "tr": "tek panelden"
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Ürün yönetimi"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Sipariş ve iadeler"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-3",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Depo ve stok"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-4",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Kampanya yönetimi"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-5",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Çok dilli mağaza"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-6",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "SEO ve içerik"
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-7",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Analitik raporlar"
+            }
+          },
+          "assets": {},
+          "links": {}
+        }
+      ]
+    },
+    {
+      "id": "builder",
+      "title": "Özellik Kartları",
+      "selector": ".tc-builder-section",
+      "enabled": true,
+      "fields": {},
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Tek merkezden yönetim"
+            },
+            "description": {
+              "tr": "Ürünler, varyantlar, siparişler, müşteriler ve iadeler aynı yönetim panelinde."
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Icons/user-round-check-44x44.webp"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Büyümeye hazır altyapı"
+            },
+            "description": {
+              "tr": "Birden fazla depo, çoklu dil ve para birimi seçenekleriyle farklı satış modellerine uyum sağla."
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Icons/shield-check-44x44.webp"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-3",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Kontrol sende"
+            },
+            "description": {
+              "tr": "Rol ve yetki yönetimi, kampanya koşulları ve raporlarla operasyonunu görünür kıl."
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Icons/circle-check-shakers-anim.webp"
+          },
+          "links": {}
+        }
+      ]
+    },
+    {
+      "id": "radar",
+      "title": "Operasyon Alanı",
+      "selector": ".tc-dashboard-radar",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Satış yapmak kolay. Büyürken her şeyi yönetmek asıl mesele."
+        },
+        "description": {
+          "tr": "Ürün kataloğundan sevkiyata, kampanyadan iade süreçlerine kadar günlük operasyonunu sadeleştir."
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Siparişler ve stoklar aynı ritimde"
+            },
+            "description": {
+              "tr": "Çoklu depo, stok hareketleri, transfer talepleri ve sipariş dağıtım kurallarıyla süreci tek ekranda izle."
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=44&height=44&name=arrow-right-44x44.webp"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Pazarlama ve müşteri deneyimi bir arada"
+            },
+            "description": {
+              "tr": "Koşullu kampanyalar, kuponlar, içerik yönetimi ve e-posta şablonlarıyla müşterinin yolculuğunu yönet."
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=44&height=44&name=heart-handshake-44x44.webp"
+          },
+          "links": {}
+        }
+      ]
+    },
+    {
+      "id": "channels",
+      "title": "Satış Kanalları",
+      "selector": ".tc-sales-channels",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Tek panelde tüm mağazan, tüm satış kanalların."
+        },
+        "description": {
+          "tr": "Mağazanı, pazaryerlerini ve tüm siparişlerini tek panelden yönet. Stoklarını güncel tut, satış kanallarını kolayca takip et."
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "description": {
+              "tr": "Ürünlerini, stoklarını ve siparişlerini ayrı ayrı yönetme. Ticarti ile mağazanın tüm operasyonunu tek panelden takip et."
+            },
+            "button": {
+              "tr": "Tüm özellikleri keşfet"
+            }
+          },
+          "assets": {},
+          "links": {
+            "href": "paketler.html"
+          }
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "description": {
+              "tr": "Trendyol, Hepsiburada, n11 ve diğer pazaryerlerinden gelen siparişlerin tek ekranda toplansın; hiçbir kanalı ayrı ayrı kontrol etme."
+            },
+            "button": {
+              "tr": "Pazaryeri bağlantılarını incele"
+            }
+          },
+          "assets": {},
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        }
+      ]
+    },
+    {
+      "id": "showcase",
+      "title": "Öne Çıkan Özellikler",
+      "selector": ".tc-showcase",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Bir mağazadan çok daha fazlası. Ticarti ile tek operasyon."
+        },
+        "description": {
+          "tr": "Canlı mağaza tasarımından native mobil yönetime, pazaryerlerinden stok takibine kadar ihtiyacın olan her şey bir arada."
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Canlı mağaza tasarımı"
+            },
+            "role": {
+              "tr": "Tema ve canlı önizleme"
+            },
+            "description": {
+              "tr": "Mağazanı tasarla, tema ve sayfa düzenlerini canlı önizlemede kontrol et; değişikliklerini tek yerden yönet."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Images/Carrusel%20testimonials/Card%20Builder%20Male%201-1.webp"
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Native mobil uygulama"
+            },
+            "role": {
+              "tr": "Her yerden mağaza yönetimi"
+            },
+            "description": {
+              "tr": "Siparişlerini, müşterilerini ve stoklarını mobil uygulamadan takip et; işlerini hareket halindeyken yönet."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": ""
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        },
+        {
+          "id": "item-3",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Çok kanallı satış"
+            },
+            "role": {
+              "tr": "Web sitesi ve pazaryerleri"
+            },
+            "description": {
+              "tr": "Mağazanı ve pazaryerlerini tek panelde buluştur; siparişlerini ve satış kanallarını birlikte yönet."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Images/Carrusel%20testimonials/Card%20Builder%20Female%201-1.webp"
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        },
+        {
+          "id": "item-4",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Sipariş ve kargo"
+            },
+            "role": {
+              "tr": "İade ve sevkiyat süreçleri"
+            },
+            "description": {
+              "tr": "Sipariş, iade ve sevkiyat süreçlerini tek akışta izle; teslimat adımlarında kontrol sende olsun."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Images/Carrusel%20testimonials/Ruben%20Duarte.00_00_07_12.Imagen%20fija001%201.webp"
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        },
+        {
+          "id": "item-5",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Stok ve depo yönetimi"
+            },
+            "role": {
+              "tr": "Çoklu depo ve transfer"
+            },
+            "description": {
+              "tr": "Depolarını, stok hareketlerini ve transfer taleplerini yönet; ürün takibini tüm kanallarda kolaylaştır."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": ""
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        },
+        {
+          "id": "item-6",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Pazarlama ve büyüme"
+            },
+            "role": {
+              "tr": "Kampanya, çoklu dil ve raporlar"
+            },
+            "description": {
+              "tr": "Kuponlar, kampanyalar, çoklu dil seçenekleri ve raporlarla satış operasyonunu büyümeye hazırla."
+            },
+            "button": {
+              "tr": "Tüm özellikleri incele"
+            }
+          },
+          "assets": {
+            "image": "https://www.shakersworks.com/hubfs/Web%20repositioning/Images/Carrusel%20testimonials/Card%20Builder%20Female%202-1.webp"
+          },
+          "links": {
+            "href": "paketler.html#tc-compare"
+          }
+        }
+      ]
+    },
+    {
+      "id": "references",
+      "title": "Referanslar ve Partnerler",
+      "selector": ".tc-press",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Bir mağazadan, sınırsız olasılığa"
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Google"
+            }
+          },
+          "assets": {
+            "image": "../assets/images/partners/google.svg"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "AWS"
+            }
+          },
+          "assets": {
+            "image": "../assets/images/partners/aws.svg"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-3",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Microsoft"
+            }
+          },
+          "assets": {
+            "image": "../assets/images/partners/microsoft.svg"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-4",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Cloudflare"
+            }
+          },
+          "assets": {
+            "image": "../assets/images/partners/cloudflare.svg"
+          },
+          "links": {}
+        },
+        {
+          "id": "item-5",
+          "enabled": true,
+          "fields": {
+            "heading": {
+              "tr": "Meta"
+            }
+          },
+          "assets": {
+            "image": "../assets/images/partners/meta.svg"
+          },
+          "links": {}
+        }
+      ]
+    },
+    {
+      "id": "bottomCta",
+      "title": "Alt Çağrı Alanı",
+      "selector": ".tc-bottom-cta",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "E-ticaret siteni oluştur. 14 gün ücretsiz dene."
+        },
+        "offer": {
+          "tr": "Lansmana özel %50 indirimi kaçırma."
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "blog",
+      "title": "Blog Carousel",
+      "selector": "#tc-blog",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Blog"
+        },
+        "description": {
+          "tr": "E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."
+        }
+      },
+      "items": []
+    },
+    {
+      "id": "faq",
+      "title": "Sıkça Sorulan Sorular",
+      "selector": "#tc-faq",
+      "enabled": true,
+      "fields": {
+        "heading": {
+          "tr": "Sıkça sorulan sorular"
+        },
+        "description": {
+          "tr": "Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin."
+        }
+      },
+      "items": [
+        {
+          "id": "item-1",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "E-ticaret paketi nedir?"
+            },
+            "answer": {
+              "tr": "E-ticaret paketi, çevrim içi satış için mağaza yönetimi, ürün kataloğu, sipariş, ödeme ve pazarlama araçlarını bir arada sunan yazılım hizmetidir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-2",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Hazır e-ticaret paketi ile mağaza nasıl kurulur?"
+            },
+            "answer": {
+              "tr": "Önce hesap ve mağaza bilgileri oluşturulur; ardından ürünler, ödeme yöntemleri, kargo ve mağaza görünümü yapılandırılır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-3",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Paket seçerken nelere dikkat etmeliyim?"
+            },
+            "answer": {
+              "tr": "Ürün ve sipariş hacmi, depo sayısı, satış yapılan ülkeler, ihtiyaç duyulan entegrasyonlar ve ekibin yetki yapısı birlikte değerlendirilmelidir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-4",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ticarti Start, Grow ve Scale arasındaki fark nedir?"
+            },
+            "answer": {
+              "tr": "Start temel mağaza yönetimi, Grow çoklu depo ve gelişmiş pazarlama, Scale daha kapsamlı operasyon ihtiyaçları için konumlandırılmış örnek paketlerdir. Kesin sınırlar sözleşmede açıklanmalıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-5",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Plus paketi hangi işletmeler için uygundur?"
+            },
+            "answer": {
+              "tr": "Birden fazla marka, ülke, depo, mağaza ve özel ERP/WMS bağlantısı bulunan büyük ölçekli işletmeler için ihtiyaç analiziyle şekillenen özel bir çözümdür."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-6",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Paketimi sonradan yükseltebilir miyim?"
+            },
+            "answer": {
+              "tr": "Paket yükseltme ve ücretlendirme koşulları sözleşmeye göre belirlenir; mağaza büyürken daha kapsamlı paketler değerlendirilebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-7",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Aylık ve yıllık ödeme yapılabilir mi?"
+            },
+            "answer": {
+              "tr": "Ödeme dönemleri ve yenileme koşulları satış öncesinde netleştirilmelidir. Sayfada gösterilen aylık tutarlar örnek fiyatlardır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-8",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Fiyatlara KDV dahil mi?"
+            },
+            "answer": {
+              "tr": "Sayfada gösterilen örnek paket fiyatları KDV dahil olarak etiketlenmiştir. Nihai fiyat ve ödeme koşulları satış öncesinde doğrulanmalıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-9",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ücretsiz deneme süresi var mı?"
+            },
+            "answer": {
+              "tr": "Ticarti’yi 14 gün ücretsiz deneyebilirsin. Deneme kapsamı ve süre sonunda geçerli olacak paket koşulları kayıt adımında paylaşılır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-10",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ticarti ile e-ticaret sitemi ücretsiz deneyebilir miyim?"
+            },
+            "answer": {
+              "tr": "Mağazanı oluşturup Ticarti’yi 14 gün ücretsiz deneyebilirsin. Kalıcı ücretsiz paket vaadi bulunmuyor; deneme sonunda uygun bir paket seçebilirsin."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-11",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Paketlere alan adı dahil mi?"
+            },
+            "answer": {
+              "tr": "Özel alan adı bağlama ile alan adının satın alınması farklı işlemlerdir. Alan adı ücretinin dahil olup olmadığı satın alma şartlarında belirtilmelidir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-12",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "SSL sertifikası ve barındırma dahil mi?"
+            },
+            "answer": {
+              "tr": "Barındırma, SSL ve yenileme kapsamı planın hizmet koşullarında açıklanmalıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-13",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Tema değiştirebilir miyim?"
+            },
+            "answer": {
+              "tr": "Tema özelleştirme kapsamı kullanılan pakete ve özel tasarım ihtiyacına göre değişebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-14",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Sanal POS kurulumu nasıl yapılır?"
+            },
+            "answer": {
+              "tr": "Ödeme sağlayıcısına bağlı olarak başvuru, doğrulama ve teknik bağlantı adımları izlenir. Onay süreleri sağlayıcıya göre değişebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-15",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Kendi sanal POS hesabımı bağlayabilir miyim?"
+            },
+            "answer": {
+              "tr": "Desteklenen ödeme sağlayıcıları ve hesap bağlama koşulları entegrasyon listesine göre belirlenir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-16",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Taksitli ödeme seçeneği bulunuyor mu?"
+            },
+            "answer": {
+              "tr": "Taksit seçenekleri ödeme sağlayıcısına, sözleşmeye ve satıcı hesabının yetkilerine bağlıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-17",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ürün ekleme veya trafik sınırı var mı?"
+            },
+            "answer": {
+              "tr": "Ürün ve trafik limitleri her paketin güncel teknik koşullarında belirtilmelidir. Sayfadaki etiketler taslak sunum amaçlıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-18",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Kargo entegrasyonları nasıl çalışır?"
+            },
+            "answer": {
+              "tr": "Kargo sağlayıcılarıyla bağlantı kurulduğunda siparişten gönderime uzanan iş akışları tek panelden izlenebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-19",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Pazaryeri entegrasyonları dahil mi?"
+            },
+            "answer": {
+              "tr": "Pazaryeri bağlantılarının kullanılabilirliği ve entegrasyon kapsamı pakete göre değişebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-20",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Birden fazla depo yönetebilir miyim?"
+            },
+            "answer": {
+              "tr": "Grow ve üstü örnek planlarda birden fazla depo ve stok aktarımı seçenekleri gösterilmiştir. Kesin limitler yayın öncesi doğrulanmalıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-21",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "E-ihracat ve çoklu para birimi kullanabilir miyim?"
+            },
+            "answer": {
+              "tr": "Çoklu dil, para birimi ve ülke bazlı mağaza ayarlarının kapsamı seçilen plana göre değerlendirilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-22",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Başka bir altyapıdan Ticarti’ye geçebilir miyim?"
+            },
+            "answer": {
+              "tr": "Taşıma çalışmaları ürün, müşteri ve sipariş verilerinin alınabildiği formatlara bağlıdır. Önce teknik kapsam analizi yapılır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-23",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Altyapı geçişi ücretli mi?"
+            },
+            "answer": {
+              "tr": "Veri miktarı, tema, entegrasyonlar ve özel geliştirmeler maliyeti etkileyebilir. Nihai kapsam teklif aşamasında netleştirilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-24",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Kurulum için yazılım bilmek gerekir mi?"
+            },
+            "answer": {
+              "tr": "Temel mağaza ayarları yönetim panelinden yapılabilir. Özel tema veya entegrasyon projelerinde teknik çalışma gerekebilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-25",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "7/24 destek her pakette var mı?"
+            },
+            "answer": {
+              "tr": "Destek saatleri ve kanalları paket sözleşmesine göre değişebilir. “7/24” etiketi onaylı bir hizmet taahhüdü değildir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-26",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "E-ticaret yazılım güncellemeleri ücretli mi?"
+            },
+            "answer": {
+              "tr": "Standart güncelleme ve özel geliştirme ücretlendirmesi hizmet sözleşmesinde açıklanmalıdır."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-27",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "İlk üç ay ücretsiz kampanyası var mı?"
+            },
+            "answer": {
+              "tr": "“İlk 3 ay ücretsiz” etiketi taslak kampanya örneğidir; etkinliği ve koşulları resmî teklif yayınlandığında kesinleşir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-28",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Paket satın almadan demo görebilir miyim?"
+            },
+            "answer": {
+              "tr": "Demo ve deneme erişimiyle ilgili seçenekler satış ekibinin sunduğu güncel koşullara göre belirlenir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-29",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ticarti büyük perakende zincirleri için uygun mu?"
+            },
+            "answer": {
+              "tr": "Çok markalı, çok mağazalı veya çok ülkeli perakende operasyonları Plus kapsamındaki özel entegrasyon ve süreç analiziyle değerlendirilir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        },
+        {
+          "id": "item-30",
+          "enabled": true,
+          "fields": {
+            "question": {
+              "tr": "Ödemelerimi ve siparişlerimi tek panelden yönetebilir miyim?"
+            },
+            "answer": {
+              "tr": "Ticarti mağaza paneli ödeme ve sipariş süreçlerinin tek yerden yönetilmesini hedefler. Kullanılabilir entegrasyonlar ayrıca kontrol edilmelidir."
+            }
+          },
+          "assets": {},
+          "links": {}
+        }
+      ]
+    }
+  ]
+}

@@ -78,6 +78,7 @@ export const MENU_SIDEBAR: MenuConfig = [
   },
   { title: 'Ticarti.com', icon: LayoutGrid, children: [
     { title: 'Anasayfa', path: '/website/home' },
+    { title: 'Sayfa İçerikleri', path: '/website/pages' },
     { title: 'Kurumsal Blog', path: '/website/blog' },
   ] },
   { title: 'Temalar', icon: Palette, children: [
