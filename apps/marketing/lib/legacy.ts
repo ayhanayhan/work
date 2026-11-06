@@ -147,12 +147,12 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     }
     // FAQ visible markup and SEO structured data are built from this same locale-specific CMS snapshot.
     data.faq=await getHomepageFaq(lang);
-    data.html=applyHomepageFaq(data.html,data.faq);
     // Other homepage modules still use the existing integration.
     data.scripts.push('/assets/js/pages/website-home-cms.js');
   }
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
   data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
+  if(isHome&&data.faq)data.html=applyHomepageFaq(data.html,data.faq);
   return data;
 }
