@@ -21,6 +21,7 @@ async function test(){
   assert.equal((await svc.publicBlog('tr')).posts.length,1);
   assert.equal((await svc.publicBlog('en')).posts.length,0,'Incomplete English article must not appear');
   assert.equal((await svc.publicBlog('ru')).posts.length,0,'Disabled Russian article must not appear');
+  assert.equal((await svc.publicBlog('bg')).posts.length,0,'Unsupported locale must not return Turkish');
   assert.deepEqual((await svc.publicBlog('tr')).posts[0].availableLocales,['tr']);
   assert.equal((await svc.publicBlogPost('ornek-yazi','en')),null);
   assert.ok(created.posts[0].publishedAt,'Publication date must be stored');
