@@ -178,12 +178,13 @@ export class WebsiteService{
     for(const category of categories){
       if(category.parentId&&!categoryIds.has(category.parentId))throw new BadRequestException('Üst kategori bulunamadı.');
       if(category.parentId===category.id)throw new BadRequestException('Kategori kendisine bağlanamaz.');
-      const seen=new Set<string>([category.id]);let current=category;
-      while(current.parentId){
-        if(seen.has(current.parentId))throw new BadRequestException('Kategori döngüsü tespit edildi.');
-        seen.add(current.parentId);
-        current=categories.find((c:any)=>c.id===current.parentId);
-        if(!current)break;
+      const seen=new Set<string>([category.id]);
+      let parentId:string|null=category.parentId;
+      while(parentId){
+        if(seen.has(parentId))throw new BadRequestException('Kategori döngüsü tespit edildi.');
+        seen.add(parentId);
+        const parent=categories.find((c:any)=>c.id===parentId);
+        parentId=parent?.parentId||null;
       }
     }
     for(const post of posts){
