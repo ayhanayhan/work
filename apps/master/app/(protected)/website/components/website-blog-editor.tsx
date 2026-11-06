@@ -13,18 +13,20 @@ import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
 import {MediaField} from '@/app/(protected)/catalog/components/catalog-fields';
+import Link from 'next/link';
 
 type Translation={title:string;excerpt:string;content:string;category:string;seoTitle:string;seoDescription:string;imageAlt:string;enabled?:boolean};
 type TextField=Exclude<keyof Translation,'enabled'>;
 type Post={id:string;slug:string;status:string;featuredImage:string;authorName?:string;publishedAt?:string|null;updatedAt?:string|null;sortOrder:number;translations:Record<string,Translation>};
-type Snapshot={version:number;posts:Post[]};
+type BlogCategory={id:string;isActive:boolean;parentId:string|null;translations:Record<string,{title:string}>};
+type Snapshot={version:number;posts:Post[];categories:BlogCategory[]};
 const blank=():Translation=>({title:'',excerpt:'',content:'',category:'',seoTitle:'',seoDescription:'',imageAlt:'',enabled:true});
 const newPost=():Post=>({id:'post-'+Date.now().toString(36),slug:'',status:'DRAFT',featuredImage:'',authorName:'Ticarti',sortOrder:0,translations:{tr:blank()}});
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
 
 export default function WebsiteBlogEditor(){
   const {request,restoring}=useMasterSession();
-  const [data,setData]=useState<Snapshot>({version:0,posts:[]}),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
+  const [data,setData]=useState<Snapshot>({version:0,posts:[],categories:[]}),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState(''),[message,setMessage]=useState(''),[query,setQuery]=useState('');
   const [editId,setEditId]=useState<string|null>(null),[lang,setLang]=useState('tr'),[drag,setDrag]=useState<string|null>(null);
   const [locales,setLocales]=useState<Array<{locale:string;label:string}>>([{locale:'tr',label:'Türkçe'},{locale:'en',label:'English'},{locale:'pt',label:'Português'},{locale:'ru',label:'Русский'}]);
@@ -33,7 +35,7 @@ export default function WebsiteBlogEditor(){
     setLoading(true);setError('');
     try{
       const [result,langs]=await Promise.all([request('/superadmin/website/blog'),request('/superadmin/platform-locales')]);
-      setData(result);
+      setData({...result,categories:Array.isArray(result.categories)?result.categories:[]});
       if(Array.isArray(langs)&&langs.length){const supported=['tr','en','pt','ru'];setLocales(supported.map(code=>({locale:code,label:langs.find((x:any)=>String(x.locale||'').split('-')[0].toLowerCase()===code)?.label||({tr:'Türkçe',en:'English',pt:'Português',ru:'Русский'} as Record<string,string>)[code]})))}
     }catch(e){setError(errorText(e))}
     finally{setLoading(false)}
@@ -51,7 +53,7 @@ export default function WebsiteBlogEditor(){
     setSaving(true);setError('');setMessage('');
     try{
       const result=await request('/superadmin/website/blog',{method:'PATCH',body:JSON.stringify(data)});
-      setData(result);setMessage('Kaydedildi. Yalnızca içeriği tamamlanmış ve etkinleştirilmiş dillerde yayımlanır.');
+      setData({...result,categories:Array.isArray(result.categories)?result.categories:[]});setMessage('Kaydedildi. Yalnızca içeriği tamamlanmış ve etkinleştirilmiş dillerde yayımlanır.');
       if(editId&&!result.posts.some((x:Post)=>x.id===editId))setEditId(null);
       return true;
     }catch(e){setError(errorText(e));return false}
@@ -71,9 +73,9 @@ export default function WebsiteBlogEditor(){
   };
   const shown=data.posts.filter(x=>[x.slug,...Object.values(x.translations||{}).map(v=>v.title)].join(' ').toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr')));
   return <>
-    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Blog İçerikleri</h1><ToolbarDescription>Kurumsal blogu çok dilli olarak yönet. Bu içerikler mağazaların blogundan ayrıdır.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button onClick={()=>{const p=newPost();setData(x=>({...x,posts:[...x.posts,p]}));setEditId(p.id);setLang('tr')}}><Plus className="size-4"/>Yeni Yazı</Button><Button disabled={saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Blogu Kaydet</Button></ToolbarActions></Toolbar></Container>
+    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Blog İçerikleri</h1><ToolbarDescription>Ticarti.com blogunun çok dilli yazılarını, yayın durumunu ve SEO alanlarını yönetin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button asChild variant="outline"><Link href="/website/blog/categories">Blog Kategorileri</Link></Button><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button onClick={()=>{const p=newPost();setData(x=>({...x,posts:[...x.posts,p]}));setEditId(p.id);setLang('tr')}}><Plus className="size-4"/>Yeni Yazı</Button><Button disabled={saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Blogu Kaydet</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-5 pb-10">
-      <Card><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5"><div><div className="font-medium">Kurumsal blog</div><p className="text-sm text-muted-foreground">{data.posts.length} yazı · {data.posts.filter(p=>p.status==='PUBLISHED').length} yayında · her dil ayrı yayımlanır, çeviri zorunlu değildir.</p><p className="mt-1 text-xs text-muted-foreground">Bir dilde başlık ve içerik yoksa veya dil kapatıldıysa makale, blog listesi ve anasayfa modülünde görünmez.</p></div><Button asChild variant="outline" size="sm"><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Blogu İçe Aktar<input type="file" accept=".json,application/json" hidden onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button></CardContent></Card>
+      <Card><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5"><div><div className="font-medium">Blog</div><p className="text-sm text-muted-foreground">{data.posts.length} yazı · {data.posts.filter(p=>p.status==='PUBLISHED').length} yayında · her dil ayrı yayımlanır, çeviri zorunlu değildir.</p><p className="mt-1 text-xs text-muted-foreground">Bir dilde başlık ve içerik yoksa veya dil kapatıldıysa makale, blog listesi ve anasayfa modülünde görünmez.</p></div><Button asChild variant="outline" size="sm"><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Blogu İçe Aktar<input type="file" accept=".json,application/json" hidden onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button></CardContent></Card>
       {error?<p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>:null}
       {message?<p className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{message}</p>:null}
       <Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-2"><CardHeading>Blog Yazıları</CardHeading><div className="relative"><Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input className="w-72 ps-9" placeholder="Başlık veya URL ara" value={query} onChange={e=>setQuery(e.target.value)}/></div></div></CardHeader><CardContent className="grid gap-2 p-4">
@@ -98,7 +100,7 @@ export default function WebsiteBlogEditor(){
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"><div><p className="font-medium">{locales.find(x=>x.locale===lang)?.label||lang} dilinde yayımla</p><p className="text-xs text-muted-foreground">Başlık ve içerik doluysa bu dilde görünür. Diğer dillere otomatik kopyalanmaz.</p></div><Switch checked={editing.translations[lang]?.enabled!==false} onCheckedChange={enabled=>update(editing.id,p=>({...p,translations:{...p.translations,[lang]:{...blank(),...p.translations[lang],enabled}}}))}/></div>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium">Yazı başlığı<Input value={value('title')} onChange={e=>field('title',e.target.value)}/></label>
-        <label className="grid gap-2 text-sm font-medium">Kategori<Input value={value('category')} onChange={e=>field('category',e.target.value)}/></label>
+        <label className="grid gap-2 text-sm font-medium">Kategori<select className="h-10 rounded-md border bg-background px-3" value={value('category')} onChange={e=>field('category',e.target.value)}><option value="">Kategori yok</option>{value('category')&&!data.categories.some(c=>Object.values(c.translations||{}).some(t=>t.title===value('category')))?<option value={value('category')}>{value('category')} (eski kategori)</option>:null}{data.categories.filter(c=>c.isActive).map(c=>{const title=c.translations?.[lang]?.title||c.translations?.tr?.title||Object.values(c.translations||{}).find(t=>t.title)?.title||'';return title?<option key={c.id} value={title}>{title}</option>:null})}</select></label>
       </div>
       <label className="grid gap-2 text-sm font-medium">Kısa açıklama<Textarea value={value('excerpt')} onChange={e=>field('excerpt',e.target.value)} rows={3}/></label>
       <label className="grid gap-2 text-sm font-medium">Yazı içeriği (Markdown destekli)<Textarea value={value('content')} onChange={e=>field('content',e.target.value)} rows={10}/><span className="text-xs text-muted-foreground">## Alt başlık, **kalın**, *italik*, - liste ve paragraf desteklenir. HTML kodları çalıştırılmaz.</span></label>
