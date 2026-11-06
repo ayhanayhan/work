@@ -5,8 +5,8 @@ const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
 const MODULE_IDS=['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq'] as const;
 const MODULE_TITLES=['Ana Slider','Hareketli Başlık','Özellik Kartları','Operasyon','Satış Kanalları','Öne Çıkan Özellikler','Referanslar','Alt Çağrı Alanı','Blog','Sıkça Sorulan Sorular'];
-const ITEM_FIELDS:Record<string,string[]>={builder:['heading','description'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
-const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
+const ITEM_FIELDS:Record<string,string[]>={animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
+const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
 const str=(v:any,max=8000)=>String(v===undefined||v===null?'':v).slice(0,max);
 function localized(v:any,max=8000):Record<string,string>{
   if(!v||typeof v!=='object'||Array.isArray(v))return {};
