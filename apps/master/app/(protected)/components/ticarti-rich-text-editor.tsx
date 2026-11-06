@@ -25,8 +25,15 @@ export function TicartiRichTextEditor({
 }:EditorProps){
   const ref=useRef<HTMLDivElement|null>(null);
   const [sourceMode,setSourceMode]=useState(false);
+  const previousSourceMode=useRef(false);
   const selection=useRef<Range|null>(null);
-  useEffect(()=>{if(!sourceMode&&ref.current&&ref.current.innerHTML!==initialValue)ref.current.innerHTML=initialValue},[initialValue,sourceMode]);
+  useEffect(()=>{
+    if(!sourceMode&&ref.current){
+      const html=previousSourceMode.current&&sourceToHtml?sourceToHtml(sourceValue||''):initialValue;
+      if(previousSourceMode.current||!ref.current.innerHTML)ref.current.innerHTML=html;
+    }
+    previousSourceMode.current=sourceMode;
+  },[sourceMode,initialValue,sourceValue,sourceToHtml]);
   const emit=()=>onChange?.(ref.current?.innerHTML??'');
   const remember=()=>{
     const s=window.getSelection();
@@ -126,7 +133,7 @@ export function TicartiRichTextEditor({
       {item('Geri al',<Undo2 className="size-4"/>,()=>run('undo'))}
       {item('İleri al',<Redo2 className="size-4"/>,()=>run('redo'))}
       {typeof onSourceChange==='function'?<Button type="button" variant={sourceMode?'primary':'outline'} size="sm"
-        onMouseDown={remember} onClick={()=>{if(sourceMode&&ref.current&&sourceToHtml)ref.current.innerHTML=sourceToHtml(sourceValue||'');setSourceMode(x=>!x)}}><AlignLeft className="size-4"/> {sourceMode?'Görsel editör':'Markdown'}</Button>:null}
+        onMouseDown={remember} onClick={()=>setSourceMode(x=>!x)}><AlignLeft className="size-4"/> {sourceMode?'Görsel editör':'Markdown'}</Button>:null}
     </div>
     {sourceMode&&typeof onSourceChange==='function'?
       <textarea spellCheck={false} aria-label="Markdown kaynak kodu" value={sourceValue||''}
