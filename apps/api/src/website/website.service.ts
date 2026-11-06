@@ -107,37 +107,77 @@ export class WebsiteService{
     return {version:Number(data?.version)||0,posts:Array.isArray(data?.posts)?data.posts:[]};
   }
   private cleanPost(raw:any,index:number){
-    const slug=str(raw?.slug,150).toLocaleLowerCase('tr-TR');
+    const slug=str(raw?.slug,150).toLowerCase();
     if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw new BadRequestException('Blog URL kodu geçersiz.');
-    const translations:any={};
+    const translations:Record<string,any>={};
     for(const [lang,translation] of Object.entries(raw?.translations||{})){
-      if(!/^[a-z]{2,3}(?:-[A-Za-z]{2,4})?$/.test(lang))continue;
+      if(!/^(tr|en|pt|ru)$/.test(lang))continue;
       const t:any=translation||{};
-      translations[lang]={title:str(t.title,220),excerpt:str(t.excerpt,1200),content:str(t.content,40000),category:str(t.category,120),seoTitle:str(t.seoTitle,220),seoDescription:str(t.seoDescription,500)};
+      translations[lang]={
+        title:str(t.title,220).trim(),excerpt:str(t.excerpt,1200).trim(),
+        content:str(t.content,40000).trim(),category:str(t.category,120).trim(),
+        seoTitle:str(t.seoTitle,220).trim(),seoDescription:str(t.seoDescription,500).trim(),
+        imageAlt:str(t.imageAlt,220).trim(),enabled:t.enabled!==false
+      };
     }
-    if(!Object.values(translations).some((x:any)=>x.title))throw new BadRequestException('Blog başlığı gereklidir.');
-    return {id:str(raw?.id,90)||slug,slug,status:raw?.status==='PUBLISHED'?'PUBLISHED':'DRAFT',featuredImage:url(raw?.featuredImage),sortOrder:index,translations};
+    if(!Object.values(translations).some((x:any)=>x.title))throw new BadRequestException('En az bir dilde blog başlığı gereklidir.');
+    const status=raw?.status==='PUBLISHED'?'PUBLISHED':'DRAFT';
+    if(status==='PUBLISHED'&&!Object.values(translations).some((t:any)=>t.enabled&&t.title&&t.content)){
+      throw new BadRequestException('Yayınlamak için en az bir dilde başlık ve içerik gerekir.');
+    }
+    return {
+      id:str(raw?.id,90)||slug,slug,status,
+      featuredImage:url(raw?.featuredImage),authorName:str(raw?.authorName,160).trim()||'Ticarti',
+      sortOrder:index,translations
+    };
   }
   async updateBlog(body:any){
     if(!Array.isArray(body?.posts)||body.posts.length>250)throw new BadRequestException('Blog kayıtları geçersiz.');
     const existing=await this.blog();
     if(body.version!==undefined&&Number(body.version)!==existing.version)throw new ConflictException('Blog içeriği başka oturumda değişmiş. Yenileyin.');
-    const posts=body.posts.map((post:any,i:number)=>this.cleanPost(post,i));
+    const now=new Date().toISOString();
+    const posts=body.posts.map((post:any,i:number)=>{
+      const cleaned=this.cleanPost(post,i);
+      const previous=existing.posts.find((x:any)=>x.id===cleaned.id||x.slug===cleaned.slug);
+      const prevComparable=previous?{
+        id:previous.id,slug:previous.slug,status:previous.status,
+        featuredImage:previous.featuredImage||'',authorName:previous.authorName||'Ticarti',
+        sortOrder:previous.sortOrder,translations:previous.translations
+      }:null;
+      const changed=JSON.stringify(cleaned)!==JSON.stringify(prevComparable);
+      return {
+        ...cleaned,
+        publishedAt:cleaned.status==='PUBLISHED'?(previous?.publishedAt||now):(previous?.publishedAt||null),
+        updatedAt:changed?now:(previous?.updatedAt||now)
+      };
+    });
     if(new Set(posts.map((x:any)=>x.slug)).size!==posts.length)throw new BadRequestException('Blog URL kodları tekrar ediyor.');
     const version=existing.version+1;
-    await this.put(BLOG_KEY,{version,posts});
-    return {version,posts};
+    const payload={version,posts};
+    if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
+    await this.put(BLOG_KEY,payload);
+    return payload;
   }
   async publicBlog(lang='tr'){
     const data=await this.blog();
-    const locale=/^[a-z]{2,3}(?:-[A-Za-z]{2})?$/.test(lang)?lang:'tr';
-    return {version:data.version,posts:data.posts.filter((x:any)=>x.status==='PUBLISHED').map((x:any)=>({
-      slug:x.slug,status:x.status,featuredImage:x.featuredImage,
-      ...x.translations?.[locale],...(!x.translations?.[locale]?.title?x.translations?.tr||{}:{})
-    }))};
+    const locale=/^(tr|en|pt|ru)$/.test(lang)?lang:'tr';
+    const hasContent=(t:any)=>t?.enabled!==false&&typeof t?.title==='string'&&!!t.title.trim()&&typeof t?.content==='string'&&!!t.content.trim();
+    const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&hasContent(x.translations?.[locale])).map((x:any)=>{
+      const t=x.translations[locale];
+      return {
+        slug:x.slug,status:x.status,featuredImage:x.featuredImage||'',
+        title:t.title,excerpt:t.excerpt||'',content:t.content,
+        category:t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
+        imageAlt:t.imageAlt||t.title,authorName:x.authorName||'Ticarti',
+        publishedAt:x.publishedAt||null,updatedAt:x.updatedAt||null,
+        availableLocales:['tr','en','pt','ru'].filter(code=>hasContent(x.translations?.[code]))
+      };
+    });
+    return {version:data.version,locale,posts};
   }
   async publicBlogPost(slug:string,lang='tr'){
     const feed=await this.publicBlog(lang);
     return feed.posts.find((x:any)=>x.slug===slug)||null;
   }
+
 }
