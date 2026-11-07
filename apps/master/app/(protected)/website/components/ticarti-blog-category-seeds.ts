@@ -1,5 +1,5 @@
-/** The four languages shown in Ticarti Master: Turkish, English, Portuguese, Russian.
- * Preserve existing saved edits when importing; no unrelated language is seeded.
+/** Ticarti blog categories for the five Master Panel languages: tr, en, de, ru, ar.
+ * Import fills blank fields and keeps existing editor changes.
  */
 export type SeedCategory={id:string;translations:Record<string,{title:string;slug:string;description:string;seoTitle:string;seoDescription:string}>};
 export const ticartiBlogCategorySeeds:SeedCategory[]=[
@@ -20,19 +20,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "What Is E-Commerce? E-Commerce Guides | Ticarti",
         "seoDescription": "Learn how to start an e-commerce business, build an online store, sell products online and manage your store with practical guides."
       },
-      "pt": {
-        "title": "Comércio Eletrónico",
-        "slug": "comercio-eletronico",
-        "description": "Descubra guias completos para começar no comércio eletrónico, criar uma loja online e vender na internet. Explore os fundamentos, a gestão da loja, as vendas e a experiência do cliente.",
-        "seoTitle": "O Que É Comércio Eletrónico? Guias | Ticarti",
-        "seoDescription": "Saiba como começar a vender online, criar uma loja virtual e gerir o seu negócio de comércio eletrónico com guias e dicas."
-      },
       "ru": {
         "title": "Электронная коммерция",
         "slug": "elektronnaya-kommertsiya",
         "description": "Полезные материалы для тех, кто хочет начать онлайн-продажи и открыть интернет-магазин. Узнайте об основах электронной коммерции, управлении магазином, товарах и клиентском опыте.",
         "seoTitle": "Что такое электронная коммерция? Руководства | Ticarti",
         "seoDescription": "Как открыть интернет-магазин и начать онлайн-продажи? Руководства по электронной коммерции и управлению магазином."
+      },
+      "de": {
+        "title": "E-Commerce",
+        "slug": "e-commerce",
+        "description": "Umfassende Ratgeber für alle, die in den E-Commerce einsteigen, einen Onlineshop eröffnen und im Internet verkaufen möchten. Entdecken Sie Grundlagen des Onlinehandels, Shopverwaltung, Produktverkauf und Kundenerlebnis.",
+        "seoTitle": "Was ist E-Commerce? E-Commerce-Ratgeber | Ticarti",
+        "seoDescription": "Wie startet man im E-Commerce? Entdecken Sie Tipps und Ratgeber zum Aufbau eines Onlineshops, Onlineverkauf und Shopmanagement."
+      },
+      "ar": {
+        "title": "التجارة الإلكترونية",
+        "slug": "al-tijara-al-iliktruniya",
+        "description": "أدلة شاملة للراغبين في بدء التجارة الإلكترونية وإنشاء متجر إلكتروني والبيع عبر الإنترنت. اكتشف أساسيات التجارة الإلكترونية وإدارة المتجر وبيع المنتجات وتحسين تجربة العملاء.",
+        "seoTitle": "ما هي التجارة الإلكترونية؟ أدلة التجارة الإلكترونية | Ticarti",
+        "seoDescription": "كيف تبدأ التجارة الإلكترونية؟ اكتشف أدلة إنشاء متجر إلكتروني والبيع عبر الإنترنت وإدارة المتجر ونصائح عملية."
       }
     }
   },
@@ -53,19 +60,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "Digital Marketing Strategies and Guides | Ticarti",
         "seoDescription": "Grow your online store's traffic and sales with SEO, Google Ads, social media advertising and effective digital marketing strategies."
       },
-      "pt": {
-        "title": "Marketing Digital",
-        "slug": "marketing-digital",
-        "description": "Descubra estratégias eficazes para fazer crescer a sua marca e alcançar mais clientes. Explore guias sobre SEO, Google Ads, anúncios nas redes sociais, email marketing e otimização de conversões.",
-        "seoTitle": "Estratégias e Guias de Marketing Digital | Ticarti",
-        "seoDescription": "Aumente as visitas e as vendas da sua loja online com SEO, Google Ads, redes sociais e estratégias de marketing digital."
-      },
       "ru": {
         "title": "Цифровой маркетинг",
         "slug": "tsifrovoy-marketing",
         "description": "Узнайте, как развивать бренд и привлекать клиентов в интернете. Руководства по SEO, Google Ads, рекламе в социальных сетях, email-маркетингу и оптимизации конверсии.",
         "seoTitle": "Цифровой маркетинг: стратегии и руководства | Ticarti",
         "seoDescription": "Увеличивайте трафик и продажи интернет-магазина с помощью SEO, Google Ads, рекламы в соцсетях и цифрового маркетинга."
+      },
+      "de": {
+        "title": "Digitales Marketing",
+        "slug": "digitales-marketing",
+        "description": "Entdecken Sie wirksame Marketingstrategien, um Ihre Marke online aufzubauen und mehr Kunden zu erreichen. Ratgeber zu SEO, Google Ads, Social-Media-Werbung, E-Mail-Marketing und Conversion-Optimierung.",
+        "seoTitle": "Digitales Marketing: Strategien und Ratgeber | Ticarti",
+        "seoDescription": "Steigern Sie Besucherzahlen und Verkäufe Ihres Onlineshops mit SEO, Google Ads, Social-Media-Werbung und digitalen Marketingstrategien."
+      },
+      "ar": {
+        "title": "التسويق الرقمي",
+        "slug": "al-taswiq-al-raqami",
+        "description": "اكتشف استراتيجيات تسويق فعالة لتنمية علامتك التجارية والوصول إلى المزيد من العملاء عبر الإنترنت. أدلة حول تحسين محركات البحث وإعلانات Google والتواصل الاجتماعي والبريد الإلكتروني وتحسين التحويلات.",
+        "seoTitle": "استراتيجيات التسويق الرقمي وأدلته | Ticarti",
+        "seoDescription": "زد زيارات متجرك الإلكتروني ومبيعاته باستخدام تحسين محركات البحث وإعلانات Google ووسائل التواصل واستراتيجيات التسويق الرقمي."
       }
     }
   },
@@ -86,19 +100,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "Marketplace Selling and Commission Guides | Ticarti",
         "seoDescription": "Learn how to sell on Trendyol, Hepsiburada, Amazon and n11, including commissions, seller tools and marketplace integrations."
       },
-      "pt": {
-        "title": "Marketplaces",
-        "slug": "marketplaces",
-        "description": "Guias para vender na Trendyol, Hepsiburada, Amazon, n11 e outros marketplaces. Informações sobre comissões, criação de contas de vendedor, listagem de produtos, campanhas e integrações.",
-        "seoTitle": "Marketplaces: Comissões e Guias de Vendas | Ticarti",
-        "seoDescription": "Saiba como vender na Trendyol, Hepsiburada, Amazon e n11. Comissões, gestão de lojas e integrações de marketplaces."
-      },
       "ru": {
         "title": "Маркетплейсы",
         "slug": "marketpleysy",
         "description": "Руководства по продажам на Trendyol, Hepsiburada, Amazon, n11 и других площадках. Комиссии, открытие магазина, размещение товаров, акции и интеграции маркетплейсов.",
         "seoTitle": "Маркетплейсы: комиссии и руководство по продажам | Ticarti",
         "seoDescription": "Продажи на Trendyol, Hepsiburada, Amazon и n11: комиссии, управление магазином и интеграции с маркетплейсами."
+      },
+      "de": {
+        "title": "Online-Marktplätze",
+        "slug": "online-marktplaetze",
+        "description": "Ratgeber für den Verkauf auf Trendyol, Hepsiburada, Amazon, n11 und weiteren Online-Marktplätzen. Informationen zu Provisionen, Händlerkonten, Produktlistings, Aktionen und Marktplatz-Integrationen.",
+        "seoTitle": "Online-Marktplätze: Provisionen und Verkaufsratgeber | Ticarti",
+        "seoDescription": "Erfahren Sie mehr über den Verkauf auf Trendyol, Hepsiburada, Amazon und n11 sowie Provisionen, Shopverwaltung und Integrationen."
+      },
+      "ar": {
+        "title": "الأسواق الإلكترونية",
+        "slug": "al-aswaq-al-iliktruniya",
+        "description": "أدلة للبيع عبر Trendyol وHepsiburada وAmazon وn11 وغيرها من الأسواق الإلكترونية. تعرّف إلى العمولات وفتح حساب البائع وإدراج المنتجات وإدارة الحملات والتكاملات.",
+        "seoTitle": "الأسواق الإلكترونية والعمولات ودليل البيع | Ticarti",
+        "seoDescription": "أدلة البيع عبر Trendyol وHepsiburada وAmazon وn11، ومعلومات عن العمولات وإدارة المتاجر والتكاملات."
       }
     }
   },
@@ -119,19 +140,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "E-Commerce Shipping and Logistics Guides | Ticarti",
         "seoDescription": "Practical guides to shipping contracts, delivery costs, warehouse management and returns for e-commerce businesses."
       },
-      "pt": {
-        "title": "Envios e Logística",
-        "slug": "envios-e-logistica",
-        "description": "Tudo o que precisa de saber sobre envios, logística e gestão de entregas no comércio eletrónico. Guias sobre transportadoras, custos, armazéns, embalagens, stocks e devoluções.",
-        "seoTitle": "Guias de Envios e Logística no E-Commerce | Ticarti",
-        "seoDescription": "Guias práticos sobre contratos com transportadoras, custos de envio, gestão de armazéns, entregas e devoluções."
-      },
       "ru": {
         "title": "Доставка и логистика",
         "slug": "dostavka-i-logistika",
         "description": "Всё о доставке, логистике и управлении заказами в электронной коммерции. Тарифы и договоры с перевозчиками, склады, упаковка, учёт запасов и возвраты.",
         "seoTitle": "Доставка и логистика в электронной коммерции | Ticarti",
         "seoDescription": "Практические советы по тарифам доставки, работе со складами, упаковке заказов и обработке возвратов."
+      },
+      "de": {
+        "title": "Versand und Logistik",
+        "slug": "versand-und-logistik",
+        "description": "Alles Wissenswerte über Versand, Logistik und Liefermanagement im E-Commerce. Ratgeber zu Versandverträgen, Versandkosten, Lagerverwaltung, Verpackung, Beständen und Retouren.",
+        "seoTitle": "Versand und Logistik im E-Commerce | Ticarti",
+        "seoDescription": "Praktische Ratgeber zu Versandverträgen, Lieferkosten, Lagerverwaltung, Zustellung und Retouren im Onlinehandel."
+      },
+      "ar": {
+        "title": "الشحن والخدمات اللوجستية",
+        "slug": "al-shahn-wa-al-khadamat-al-lujistiya",
+        "description": "تعرّف إلى الشحن والخدمات اللوجستية وإدارة التسليم في التجارة الإلكترونية. أدلة حول اتفاقيات شركات الشحن وتكاليف الإرسال والمستودعات والتغليف والمخزون والمرتجعات.",
+        "seoTitle": "الشحن والخدمات اللوجستية في التجارة الإلكترونية | Ticarti",
+        "seoDescription": "أدلة عملية حول اتفاقيات الشحن وتكاليف التوصيل وإدارة المستودعات وعمليات التسليم والإرجاع في التجارة الإلكترونية."
       }
     }
   },
@@ -152,19 +180,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "E-Commerce Payment Systems and Virtual POS | Ticarti",
         "seoDescription": "Guides to virtual POS, online payment gateways, credit cards, installment payments and payment processing fees."
       },
-      "pt": {
-        "title": "Sistemas de Pagamento",
-        "slug": "sistemas-de-pagamento",
-        "description": "Descubra como aceitar pagamentos seguros e simples na sua loja online. Saiba mais sobre POS virtual, cartões, prestações, prestadores de pagamentos, comissões e soluções de pagamento online.",
-        "seoTitle": "Sistemas de Pagamento e POS Virtual | Ticarti",
-        "seoDescription": "Guias sobre POS virtual, pagamentos online, cartões de crédito, prestações e comissões de processamento de pagamentos."
-      },
       "ru": {
         "title": "Платёжные системы",
         "slug": "platezhnye-sistemy",
         "description": "Как безопасно и удобно принимать оплату в интернет-магазине. Виртуальные POS-терминалы, банковские карты, рассрочка, платёжные провайдеры и комиссии.",
         "seoTitle": "Платёжные системы и виртуальный POS | Ticarti",
         "seoDescription": "Руководства по виртуальным POS, онлайн-платежам, банковским картам, рассрочке и комиссиям платёжных систем."
+      },
+      "de": {
+        "title": "Zahlungssysteme",
+        "slug": "zahlungssysteme",
+        "description": "Entdecken Sie sichere und einfache Zahlungsmöglichkeiten für Onlineshops. Informationen zu virtuellen POS-Systemen, Kartenzahlungen, Ratenzahlung, Zahlungsdienstleistern, Provisionen und Online-Zahlungsinfrastruktur.",
+        "seoTitle": "E-Commerce-Zahlungssysteme und virtuelles POS | Ticarti",
+        "seoDescription": "Ratgeber zu virtuellen POS-Systemen, Onlinezahlungen, Kreditkarten, Ratenzahlung und Gebühren von Zahlungsanbietern."
+      },
+      "ar": {
+        "title": "أنظمة الدفع",
+        "slug": "anzimat-al-daf",
+        "description": "اكتشف طرق قبول المدفوعات بأمان وسهولة في المتاجر الإلكترونية. معلومات عن نقاط البيع الافتراضية وبطاقات الائتمان والتقسيط ومزودي خدمات الدفع والعمولات وبوابات الدفع.",
+        "seoTitle": "أنظمة الدفع ونقاط البيع الافتراضية للتجارة الإلكترونية | Ticarti",
+        "seoDescription": "أدلة حول نقاط البيع الافتراضية والدفع عبر الإنترنت وبطاقات الائتمان والتقسيط وعمولات خدمات الدفع."
       }
     }
   },
@@ -185,19 +220,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "E-Commerce Taxes and Legal Requirements | Ticarti",
         "seoDescription": "Guides to company formation, taxes, e-invoicing, KVKK data protection and distance selling contracts for online businesses."
       },
-      "pt": {
-        "title": "Impostos e Obrigações Legais",
-        "slug": "impostos-e-obrigacoes-legais",
-        "description": "Informações sobre impostos, criação de empresas e obrigações legais no comércio eletrónico. Explore faturação eletrónica, arquivo digital, contratos de venda à distância, proteção de dados e legislação.",
-        "seoTitle": "Impostos e Obrigações Legais no E-Commerce | Ticarti",
-        "seoDescription": "Guias informativos sobre criação de empresas, impostos, faturação eletrónica, proteção de dados e contratos de venda online."
-      },
       "ru": {
         "title": "Налоги и правовые вопросы",
         "slug": "nalogi-i-pravovye-voprosy",
         "description": "Информация о налогах, регистрации компании и юридических обязанностях интернет-магазинов. Электронные счета, архивы, договоры дистанционной продажи, защита данных и законодательство.",
         "seoTitle": "Налоги и правовые вопросы электронной торговли | Ticarti",
         "seoDescription": "Руководства по регистрации бизнеса, налогам, электронным счетам, защите данных и договорам дистанционной продажи."
+      },
+      "de": {
+        "title": "Steuern und Rechtliches",
+        "slug": "steuern-und-rechtliches",
+        "description": "Verständliche Informationen zu Steuern, Unternehmensgründung und rechtlichen Pflichten im E-Commerce. Entdecken Sie Ratgeber zu E-Rechnungen, elektronischer Archivierung, Fernabsatzverträgen, KVKK und Handelsvorschriften.",
+        "seoTitle": "Steuern und rechtliche Pflichten im E-Commerce | Ticarti",
+        "seoDescription": "Ratgeber zu Unternehmensgründung, Steuern, E-Rechnungen, Datenschutz nach KVKK und Fernabsatzverträgen im Onlinehandel."
+      },
+      "ar": {
+        "title": "الضرائب والإجراءات القانونية",
+        "slug": "al-daraib-wa-al-ijraat-al-qanuniya",
+        "description": "محتوى توضيحي حول الضرائب وتأسيس الشركات والالتزامات القانونية للتجارة الإلكترونية. أدلة عن الفواتير الإلكترونية والأرشفة والعقود عن بُعد وقانون حماية البيانات KVKK والتشريعات.",
+        "seoTitle": "الضرائب والإجراءات القانونية في التجارة الإلكترونية | Ticarti",
+        "seoDescription": "أدلة حول تأسيس الشركات والالتزامات الضريبية والفواتير الإلكترونية وحماية البيانات KVKK وعقود البيع عن بُعد."
       }
     }
   },
@@ -218,19 +260,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "Entrepreneurship, Business Ideas and Growth | Ticarti",
         "seoDescription": "Discover business ideas, entrepreneurship guides, brand building, financial planning and strategies for growing your business."
       },
-      "pt": {
-        "title": "Empreendedorismo",
-        "slug": "empreendedorismo",
-        "description": "Ideias e guias para criar o seu negócio, lançar uma marca e fazer crescer o projeto. Explore modelos de negócio, planeamento financeiro, escolha de produtos, branding e crescimento sustentável.",
-        "seoTitle": "Empreendedorismo, Ideias de Negócio e Crescimento | Ticarti",
-        "seoDescription": "Descubra ideias de negócio, guias de empreendedorismo, criação de marcas, planeamento financeiro e estratégias de crescimento."
-      },
       "ru": {
         "title": "Предпринимательство",
         "slug": "predprinimatelstvo",
         "description": "Идеи и руководства для тех, кто хочет открыть бизнес, создать бренд и развивать своё дело. Бизнес-модели, финансовое планирование, выбор продуктов, брендинг и устойчивый рост.",
         "seoTitle": "Предпринимательство, бизнес-идеи и рост | Ticarti",
         "seoDescription": "Бизнес-идеи, создание бренда, финансовое планирование и практические стратегии развития собственного дела."
+      },
+      "de": {
+        "title": "Unternehmertum",
+        "slug": "unternehmertum",
+        "description": "Ideen und Ratgeber für alle, die ein eigenes Unternehmen gründen, eine Marke aufbauen und ihr Geschäft ausbauen möchten. Entdecken Sie Geschäftsmodelle, Kapitalplanung, Produktauswahl, Markenbildung und nachhaltiges Wachstum.",
+        "seoTitle": "Unternehmertum, Geschäftsideen und Wachstum | Ticarti",
+        "seoDescription": "Entdecken Sie Geschäftsideen, Gründer-Ratgeber, Markenaufbau, Kapitalplanung und Strategien für nachhaltiges Unternehmenswachstum."
+      },
+      "ar": {
+        "title": "ريادة الأعمال",
+        "slug": "riyadat-al-aamal",
+        "description": "أفكار وأدلة للراغبين في تأسيس أعمالهم الخاصة وبناء علامة تجارية وتنمية مشاريعهم. اكتشف نماذج الأعمال وتخطيط رأس المال واختيار المنتجات وبناء العلامات واستراتيجيات النمو المستدام.",
+        "seoTitle": "ريادة الأعمال وأفكار المشاريع والنمو | Ticarti",
+        "seoDescription": "استكشف أفكار المشاريع وأدلة ريادة الأعمال وبناء العلامات التجارية والتخطيط المالي واستراتيجيات تنمية الأعمال."
       }
     }
   },
@@ -251,19 +300,26 @@ export const ticartiBlogCategorySeeds:SeedCategory[]=[
         "seoTitle": "Ticarti News, Announcements and Updates",
         "seoDescription": "Discover Ticarti's new features, integration announcements, platform updates and other e-commerce product news."
       },
-      "pt": {
-        "title": "Notícias Ticarti",
-        "slug": "noticias-ticarti",
-        "description": "Acompanhe as novidades da Ticarti. Descubra novas funcionalidades, integrações, atualizações de produtos, anúncios e notícias que melhoram a sua experiência de comércio eletrónico.",
-        "seoTitle": "Notícias, Anúncios e Novidades Ticarti",
-        "seoDescription": "Novas funcionalidades da Ticarti, anúncios de integrações, atualizações da plataforma e novidades do comércio eletrónico."
-      },
       "ru": {
         "title": "Новости Ticarti",
         "slug": "novosti-ticarti",
         "description": "Следите за обновлениями Ticarti. Новые функции платформы, интеграции, обновления продуктов, объявления и новости, которые помогут вам развивать интернет-торговлю.",
         "seoTitle": "Новости Ticarti: обновления и объявления",
         "seoDescription": "Новые функции Ticarti, анонсы интеграций, обновления платформы и новости для развития онлайн-бизнеса."
+      },
+      "de": {
+        "title": "Ticarti-Neuigkeiten",
+        "slug": "ticarti-neuigkeiten",
+        "description": "Bleiben Sie über alle Entwicklungen bei Ticarti informiert. Entdecken Sie neue Plattformfunktionen, Integrationen, Produktupdates, Ankündigungen und Neuigkeiten rund um Ihren E-Commerce-Alltag.",
+        "seoTitle": "Ticarti-News, Ankündigungen und Neuerungen",
+        "seoDescription": "Neuigkeiten zu Ticarti-Funktionen, Integrationen, Plattformupdates und Verbesserungen für Ihren Onlinehandel."
+      },
+      "ar": {
+        "title": "أخبار Ticarti",
+        "slug": "akhbar-ticarti",
+        "description": "تابع أحدث أخبار Ticarti وتطوراتها. اكتشف ميزات المنصة الجديدة والتكاملات وتحديثات المنتجات والإعلانات والأخبار التي تساعدك على تطوير تجارتك الإلكترونية.",
+        "seoTitle": "أخبار Ticarti والإعلانات والتحديثات",
+        "seoDescription": "تعرّف إلى ميزات Ticarti الجديدة وإعلانات التكاملات وتحديثات المنصة وكل ما يساعدك على تحسين تجربة التجارة الإلكترونية."
       }
     }
   }
