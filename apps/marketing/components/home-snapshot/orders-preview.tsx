@@ -19,6 +19,7 @@ const upcoming:Order[]=[
 export default function OrdersPreview(){
   const [rows,setRows]=useState(original);
   const [visible,setVisible]=useState(false);
+  const [pageVisible,setPageVisible]=useState(true);
   const [latest,setLatest]=useState('');
   const nextRef=useRef(0);
   const ref=useRef<HTMLDivElement>(null);
@@ -30,14 +31,19 @@ export default function OrdersPreview(){
     return()=>io.disconnect();
   },[]);
   useEffect(()=>{
-    if(!visible||document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const sync=()=>setPageVisible(!document.hidden);
+    sync();document.addEventListener('visibilitychange',sync);
+    return()=>document.removeEventListener('visibilitychange',sync);
+  },[]);
+  useEffect(()=>{
+    if(!visible||!pageVisible||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     const timer=window.setInterval(()=>{
       const next=upcoming[nextRef.current++%upcoming.length];
       setRows(rows=>[next,...rows].slice(0,4));
       setLatest(next.id);
     },2800);
     return()=>clearInterval(timer);
-  },[visible]);
+  },[visible,pageVisible]);
   return <div ref={ref} aria-label="Farklı pazaryerlerinden gelen örnek siparişler"
     aria-live="off" className="tc-orders__list" data-tc-orders-preview="">
     {rows.map((order,i)=><div key={order.id} className={'tk__row tc-order'+(i===0&&latest===order.id?' tc-order--react-enter':'')}>
