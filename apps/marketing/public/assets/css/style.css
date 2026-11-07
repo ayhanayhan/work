@@ -14535,3 +14535,8 @@ html.tc-page-auth .tc-legal-back {font-size:14px;color:#3e5d17;text-decoration:u
 
 /* React homepage: the original hero repeats cards only above 1150px. */
 @media (max-width:1150px){.tc-site-hero__track>.tc-ui-card[data-clone]{display:none!important}}
+
+/* Existing homepage order-feed entrance, now driven by React list state. */
+@keyframes tc-react-order-enter{from{opacity:.7;transform:translateY(-28px)}to{opacity:1;transform:translateY(0)}}
+.tc-orders__list>.tc-order--react-enter{animation:tc-react-order-enter 460ms cubic-bezier(.22,.61,.36,1) both}
+@media(prefers-reduced-motion:reduce){.tc-orders__list>.tc-order--react-enter{animation:none}}
