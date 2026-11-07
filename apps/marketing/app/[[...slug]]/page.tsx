@@ -2,6 +2,8 @@ import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
 import BlogInteractions from '@/components/blog-interactions';
+import {HomepageNative,homepageSchemas} from '@/components/home-native';
+import {activeLocales,homepageData,localized} from '@/lib/home-data';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
 
@@ -98,6 +100,23 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  const localeRows=await activeLocales();
+  const localeIds=localeRows.map(x=>x.locale);
+  const nativeHome=slug.length===0||(slug.length===1&&localeIds.includes(slug[0]));
+  if(nativeHome){
+    const lang=slug[0]||localeRows.find(x=>x.isDefault)?.locale||'tr';
+    const home=await homepageData(lang);
+    const hero=home.modules.find(m=>m.id==='hero'&&m.enabled);
+    const title=hero?localized(hero.fields,'heading',lang):'';
+    const description=hero?localized(hero.fields,'description',lang):'';
+    const path=lang==='tr'?'/':'/'+lang+'/';
+    const base=absolute(path);
+    return {title:title?title+' | Ticarti':'Ticarti',description,metadataBase:new URL(BASE),
+      alternates:{canonical:base,languages:Object.fromEntries(localeIds.map(l=>[l,absolute(l==='tr'?'/':'/'+l+'/')]))},
+      openGraph:{title:title||'Ticarti',description,url:base,type:'website',siteName:'Ticarti'},
+      robots:(await previewHost())?{index:false,follow:false}:{index:true,follow:true}
+    } satisfies Metadata;
+  }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const canonical=absolute(normalPath(slug,lang,page));
   const preview=await previewHost();
@@ -128,6 +147,18 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 }
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
+  const locales=await activeLocales();
+  const supported=locales.map(x=>x.locale);
+  if(slug.length===0||(slug.length===1&&supported.includes(slug[0]))){
+    const lang=slug[0]||locales.find(x=>x.isDefault)?.locale||'tr';
+    const [home,posts]=await Promise.all([homepageData(lang),getBlogPosts(lang)]);
+    const schemas=homepageSchemas(home,lang,posts);
+    return <>
+      <HomepageNative home={home} lang={lang} locales={locales} posts={posts}/>
+      {schemas.map((schema,i)=><script key={i} type="application/ld+json"
+        dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,'\\u003c')}}/>)}
+    </>;
+  }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const schemas=jsonLd(page,lang);
   return <>
