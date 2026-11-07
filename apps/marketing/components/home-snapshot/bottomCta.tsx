@@ -13,7 +13,7 @@ export default function BottomCtaSection({home,locale='tr'}:{home?:HomeContent|n
   <div className="tc-bottom-cta__inner">
    {heading?<h2 className="tc-bottom-cta__heading"><SimpleHtml html={heading}/></h2>:null}
    {offer?<p className="tc-bottom-cta__offer"><SimpleHtml html={offer}/></p>:null}
-   <FooterCallback/>
+   {locale==='tr'?<FooterCallback/>:null}
   </div>
  </section>;
 }
