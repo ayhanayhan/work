@@ -45,7 +45,7 @@ export default function BlogSection(){
         {"\n"}
         <div className={"cards-main"}>
           <div className={"card"}>
-            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={"0"}>
+            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={0}>
               <article className={"card-items list-item box card-visible tc-blog__card"}>
                 {"\n"}
                 <div className={"card-wrap"}>
@@ -54,7 +54,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/store.svg"} width={"800"} data-tc-content-src={"image-102"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/store.svg"} width={800} data-tc-content-src={"image-102"} />
                       </div>
                     </div>
                     {"\n"}
@@ -100,7 +100,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/channels.svg"} width={"800"} data-tc-content-src={"image-103"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/channels.svg"} width={800} data-tc-content-src={"image-103"} />
                       </div>
                     </div>
                     {"\n"}
@@ -146,7 +146,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/inventory.svg"} width={"800"} data-tc-content-src={"image-104"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/inventory.svg"} width={800} data-tc-content-src={"image-104"} />
                       </div>
                     </div>
                     {"\n"}
@@ -192,7 +192,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/product.svg"} width={"800"} data-tc-content-src={"image-105"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/product.svg"} width={800} data-tc-content-src={"image-105"} />
                       </div>
                     </div>
                     {"\n"}
@@ -238,7 +238,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/growth.svg"} width={"800"} data-tc-content-src={"image-106"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/growth.svg"} width={800} data-tc-content-src={"image-106"} />
                       </div>
                     </div>
                     {"\n"}
@@ -284,7 +284,7 @@ export default function BlogSection(){
                     {"\n"}
                     <div className={"bg-imge"}>
                       <div className={"img"}>
-                        <img alt={""} height={"640"} loading={"lazy"} src={"/assets/images/blog/global.svg"} width={"800"} data-tc-content-src={"image-107"} />
+                        <img alt={""} height={640} loading={"lazy"} src={"/assets/images/blog/global.svg"} width={800} data-tc-content-src={"image-107"} />
                       </div>
                     </div>
                     {"\n"}
