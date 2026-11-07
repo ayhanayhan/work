@@ -1,5 +1,5 @@
-import type {HomeLogo} from '@/lib/home-cms';
-import {safeAssetUrl,textFor} from '@/lib/home-cms';
+import type {HomeLogo} from '@/lib/home-content';
+import {safeAssetUrl,textFor} from '@/lib/home-content';
 export default function HeroLogoGroup({logos,locale}:{logos:HomeLogo[];locale:string}){
  return <div className="tc-ui-logos__group">
   {logos.filter(x=>x.enabled!==false&&x.assets?.image).map(logo=><div key={logo.id} className="tc-ui-logos__box">
