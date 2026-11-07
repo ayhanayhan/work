@@ -74,7 +74,7 @@ for(const expected of ['Dinamik Hero Başlığı','Referans açıklaması','Mark
 }
 assert.ok(cmsMarkup.includes('href="/blog/ornek-makale"'),'Blog card links to real post route');
 assert.ok(!cmsMarkup.includes('id="tc-phone-main-hero"'),'Hero CTA toggle must hide just the hero form');
-assert.ok(cmsMarkup.includes('id="tc-phone-main-footer"'),'Footer form must not be removed by hero CTA toggle');
+assert.ok(cmsMarkup.includes('id="tc-kvkk-footer"'),'Footer form must not be removed by hero CTA toggle');
 const source=fs.readFileSync(path.resolve(__dirname,'../templates/en/index.html'),'utf8');
 const body=source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1]||'';
 const originalBody=body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
