@@ -28,6 +28,8 @@ if [ "$API" -eq 1 ]; then
   echo "=== Testing changed API code ==="
   npm --workspace @commerce/api run test:website-blog
   npm --workspace @commerce/api run test:media
+  # Catch TypeScript failures locally before paying for a Cloud Build.
+  npm --workspace @commerce/api run build
   SERVICE="commerce-api"
   IMAGE="${API_REGION}-docker.pkg.dev/${PROJECT}/cloud-run-source-deploy/${SERVICE}:code-$(git rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
   OLD="$(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$API_REGION" --format=json |
