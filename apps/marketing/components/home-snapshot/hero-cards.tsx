@@ -1,6 +1,6 @@
 /* Real original 8 profile cards, kept as typed JSX. No HTML string cloning. */
-import type {HomeItem} from '@/lib/home-cms';
-import {safeAssetUrl,textFor} from '@/lib/home-cms';
+import type {HomeItem} from '@/lib/home-content';
+import {safeAssetUrl,textFor} from '@/lib/home-content';
 export default function HeroCards({clone=false,items,locale='tr'}:{clone?:boolean;items?:HomeItem[];locale?:string}){
  const configured=(items||[]).filter(item=>item.enabled!==false&&item.assets?.image);
  if(items?.length)return <>{configured.map(item=><article key={item.id} className="tc-ui-card" data-clone={clone?'1':undefined} aria-hidden={clone||undefined}>
