@@ -1,4 +1,4 @@
-import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
+import {BadRequestException,ConflictException,Injectable,TooManyRequestsException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {activePlatformLocales} from '../common/platform-locales';
 import initialBlog from './data/ticarti-blog-initial.json';
@@ -356,6 +356,66 @@ export class WebsiteService{
       return {ok:true,createdPosts:0,createdCategories:0,filledTranslations:0,alreadyImported:true};
     await this.updateBlog({version:current.version,posts,categories,authors:current.authors});
     return {ok:true,createdPosts,createdCategories,filledTranslations,alreadyImported:false};
+  }
+
+  private readonly submissionTimes=new Map<string,number>();
+  private throttle(kind:string,ip:string,seconds:number){
+    const now=Date.now(),key=kind+':'+ip,last=this.submissionTimes.get(key)||0;
+    if(now-last<seconds*1000)throw new TooManyRequestsException('Lütfen bir süre sonra yeniden deneyin.');
+    if(this.submissionTimes.size>20000){
+      for(const [k,v] of this.submissionTimes)if(now-v>3600000)this.submissionTimes.delete(k);
+    }
+    this.submissionTimes.set(key,now);
+  }
+  async blogComments(slug:string){
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw new BadRequestException('Geçersiz yazı.');
+    const rows=await this.prisma.platformSetting.findMany({where:{key:{startsWith:'marketing_blog_comment_v1_'}}});
+    return rows.map(r=>r.value as any).filter(c=>c?.postSlug===slug&&c.status==='APPROVED')
+      .sort((a,b)=>Date.parse(a.createdAt)-Date.parse(b.createdAt))
+      .map(c=>({id:c.id,name:c.name,comment:c.comment,createdAt:c.createdAt}));
+  }
+  async submitBlogComment(raw:any,ip:string){
+    const slug=str(raw?.slug,150),name=str(raw?.name,100).trim(),comment=str(raw?.comment,3000).trim();
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||name.length<2||name.length>100||comment.length<5||comment.length>3000)
+      throw new BadRequestException('Yazar adı veya yorum geçersiz.');
+    if(raw?.website)throw new BadRequestException('Geçersiz istek.');
+    const published=await this.blog(),post=published.posts.find((p:any)=>
+      p.status==='PUBLISHED'&&(p.slug===slug||Object.values(p.translations||{}).some((t:any)=>t.slug===slug)));
+    if(!post)throw new BadRequestException('Yayımlanmış yazı bulunamadı.');
+    this.throttle('comment',ip,60);
+    const id=crypto.randomUUID(),createdAt=new Date().toISOString();
+    await this.prisma.platformSetting.create({
+      data:{key:'marketing_blog_comment_v1_'+id,value:{id,postSlug:slug,name,comment,status:'PENDING',createdAt}}
+    });
+    return {ok:true,status:'PENDING'};
+  }
+  async pendingBlogComments(){
+    const rows=await this.prisma.platformSetting.findMany({where:{key:{startsWith:'marketing_blog_comment_v1_'}}});
+    return rows.map(r=>r.value as any).filter(c=>c&&c.status==='PENDING').sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  }
+  async moderateBlogComment(id:string,status:string){
+    if(!/^[0-9a-f-]{36}$/.test(id)||!['APPROVED','REJECTED'].includes(status))
+      throw new BadRequestException('Yorum veya durum geçersiz.');
+    const key='marketing_blog_comment_v1_'+id;
+    const row=await this.prisma.platformSetting.findUnique({where:{key}});
+    if(!row)throw new BadRequestException('Yorum bulunamadı.');
+    await this.prisma.platformSetting.update({where:{key},data:{value:{...(row.value as object),status,reviewedAt:new Date().toISOString()}}});
+    return {ok:true};
+  }
+  async submitBlogCallback(raw:any,ip:string){
+    const dial=str(raw?.dial,5).trim(),phone=str(raw?.phone,24).replace(/[\s()\-]/g,'');
+    const slug=str(raw?.slug,150),consent=raw?.consent===true;
+    if(!/^\+[1-9]\d{0,3}$/.test(dial)||!/^\d{7,15}$/.test(phone)||!consent)
+      throw new BadRequestException('Geçerli telefon numarası ve KVKK onayı zorunludur.');
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw new BadRequestException('Geçersiz yazı.');
+    if(raw?.website)throw new BadRequestException('Geçersiz istek.');
+    this.throttle('blog-callback',ip,120);
+    const id=crypto.randomUUID();
+    await this.prisma.platformSetting.create({data:{
+      key:'marketing_blog_callback_v1_'+id,
+      value:{id,phone:dial+phone,slug,consent:true,createdAt:new Date().toISOString(),status:'NEW'}
+    }});
+    return {ok:true};
   }
   async publicBlog(lang='tr'){
     const data=await this.blog();
