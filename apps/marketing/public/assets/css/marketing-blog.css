@@ -86,3 +86,68 @@
  .tc-site-footer .tc-footer-payments{justify-content:center;}
  .tc-site-footer .tc-footer-payments img{width:min(100%,245px)!important;}
 }
+
+/* Native Ticarti blog single: fixed image, readable editorial column and consistent sidebar. */
+.tc-marketing-blog .tc-post-hero{padding:76px 24px 54px;text-align:left;background:#fff}
+.tc-marketing-blog .tc-post-hero .inner{max-width:1240px}
+.tc-marketing-blog .tc-post-hero .section-heading h1{max-width:900px}
+.tc-marketing-blog .tc-post-hero .section-heading .content{max-width:860px;margin:22px 0 0}
+.tc-marketing-blog .tc-post-hero .tc-blog-post-meta{margin:18px 0 0;color:#666f69;font:400 14px/1.5 var(--tc-font-body)}
+.tc-marketing-blog .tc-blog-single-layout{width:min(100% - 48px,1240px);margin:0 auto 105px;display:grid;grid-template-columns:minmax(0,820px) minmax(260px,320px);gap:clamp(35px,5vw,76px);align-items:start}
+.tc-marketing-blog .tc-blog-single-primary{min-width:0}
+.tc-marketing-blog .tc-blog-single-primary .tc-blog-article{max-width:none;margin:0;padding:0}
+.tc-marketing-blog .tc-blog-single-primary .tc-blog-article-cover{width:100%;max-height:none;aspect-ratio:16/9;object-fit:cover;border-radius:6px;display:block}
+.tc-marketing-blog .tc-blog-single-primary .tc-blog-article-copy{max-width:none;margin:36px 0 0}
+.tc-marketing-blog .tc-blog-single-primary .tc-blog-article-copy h2,
+.tc-marketing-blog .tc-blog-single-primary .tc-blog-article-copy h3{scroll-margin-top:115px}
+.tc-marketing-blog .tc-blog-single-sidebar{position:sticky;top:95px;display:grid;gap:30px;max-height:calc(100vh - 110px);overflow-y:auto;scrollbar-width:thin}
+.tc-marketing-blog .tc-post-toc,.tc-marketing-blog .tc-post-recent{border-top:1px solid #e5e8e3;padding-top:20px}
+.tc-marketing-blog .tc-post-toc h2,.tc-marketing-blog .tc-post-recent h2{font:500 19px/1.3 var(--tc-font-display);margin:0 0 16px}
+.tc-marketing-blog .tc-post-toc nav{display:grid;gap:13px}
+.tc-marketing-blog .tc-post-toc a{font:400 14px/1.45 var(--tc-font-body);color:#444b47;text-decoration:none}
+.tc-marketing-blog .tc-post-toc a.is-subheading{padding-left:16px;color:#6d7470}
+.tc-marketing-blog .tc-post-toc a:hover,.tc-marketing-blog .tc-post-recent a:hover{color:#709b25}
+.tc-marketing-blog .tc-post-cta{background:#f5f8ed;border-radius:7px;padding:24px}
+.tc-marketing-blog .tc-post-cta h3{font:500 23px/1.25 var(--tc-font-display);margin:0 0 19px}
+.tc-marketing-blog .tc-post-cta form{display:grid;gap:13px}
+.tc-marketing-blog .tc-post-phone-row{display:flex;gap:6px}
+.tc-marketing-blog .tc-post-phone-row select{width:93px;flex:0 0 auto}
+.tc-marketing-blog .tc-post-phone-row input{width:100%;min-width:0}
+.tc-marketing-blog .tc-post-phone-row input,.tc-marketing-blog .tc-post-phone-row select,
+.tc-marketing-blog .tc-post-comment-form input:not(.tc-post-honeypot),.tc-marketing-blog .tc-post-comment-form textarea{border:1px solid #d9ded7;border-radius:5px;padding:11px 12px;background:#fff;color:#181b1a;font:400 14px/1.5 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-consent{display:flex;gap:9px;align-items:flex-start;font:400 12px/1.5 var(--tc-font-body);color:#555e5c}
+.tc-marketing-blog .tc-post-consent input{margin-top:3px}
+.tc-marketing-blog .tc-post-consent a{color:inherit;text-underline-offset:2px}
+.tc-marketing-blog .tc-post-cta button,.tc-marketing-blog .tc-post-comment-form button{background:#eafb66;border:0;border-radius:6px;color:#141814;padding:13px 17px;cursor:pointer;font:500 14px/1.5 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-cta button:disabled,.tc-marketing-blog .tc-post-comment-form button:disabled{opacity:.55;cursor:wait}
+.tc-marketing-blog .tc-post-cta [role="status"],.tc-marketing-blog .tc-post-comment-form [role="status"]{font-size:13px;color:#515e47}
+.tc-marketing-blog .tc-post-recent>a{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid #edf0ec;color:#181b1a;text-decoration:none;font:400 15px/1.4 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-recent img{width:68px;height:60px;object-fit:cover;border-radius:4px;flex:0 0 auto}
+.tc-marketing-blog .tc-post-recent small{display:block;color:#7b827d;font-size:12px;margin-top:6px}
+.tc-marketing-blog .tc-post-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;border-top:1px solid #e5e8e3;border-bottom:1px solid #e5e8e3;margin-top:50px;padding:28px 0}
+.tc-marketing-blog .tc-post-navigation>div:last-child{text-align:right}
+.tc-marketing-blog .tc-post-navigation a{display:grid;gap:6px;color:#191d1a;text-decoration:none}
+.tc-marketing-blog .tc-post-navigation a:hover{color:#709b25}
+.tc-marketing-blog .tc-post-navigation small{color:#707972;font-size:13px}
+.tc-marketing-blog .tc-post-navigation strong{font:500 17px/1.4 var(--tc-font-display)}
+.tc-marketing-blog .tc-post-comments{margin-top:62px}
+.tc-marketing-blog .tc-post-comments h2{font:400 30px/1.2 var(--tc-font-display);margin:0 0 24px}
+.tc-marketing-blog .tc-post-comment-empty{color:#777e79;font-size:15px}
+.tc-marketing-blog .tc-post-comment-list{display:grid;gap:20px;margin-bottom:30px}
+.tc-marketing-blog .tc-post-comment{border-bottom:1px solid #e7eae6;padding-bottom:19px}
+.tc-marketing-blog .tc-post-comment-meta{display:flex;justify-content:space-between;gap:12px;font:400 13px/1.4 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-comment-meta time{color:#858c87}
+.tc-marketing-blog .tc-post-comment p{white-space:pre-wrap;margin:10px 0 0;font:400 15px/1.6 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-comment-form{display:grid;gap:16px}
+.tc-marketing-blog .tc-post-comment-form label{display:grid;gap:7px;font:500 14px/1.4 var(--tc-font-body)}
+.tc-marketing-blog .tc-post-comment-form button{justify-self:start}
+.tc-marketing-blog .tc-post-honeypot{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important}
+@media(max-width:960px){
+ .tc-marketing-blog .tc-blog-single-layout{grid-template-columns:minmax(0,1fr);gap:45px}
+ .tc-marketing-blog .tc-blog-single-sidebar{position:static;max-height:none;overflow:visible}
+}
+@media(max-width:640px){
+ .tc-marketing-blog .tc-post-hero{padding:55px 20px 34px}
+ .tc-marketing-blog .tc-blog-single-layout{width:calc(100% - 40px);margin-bottom:65px}
+ .tc-marketing-blog .tc-post-navigation{gap:12px}
+}
