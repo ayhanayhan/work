@@ -108,8 +108,7 @@ export default function WebsiteBlogCategories(){
         return;
       }
       const result=await saveWebsiteBlog<any,Category>(request,{
-        version:latest.version,posts:latest.posts||[],categories,
-        authors:latest.authors
+        version:latest.version,posts:latest.posts||[],categories
       });
       setData({...result,categories:result.categories||categories});
       setMessage(created+' kategori eklendi, '+filled+' kategori/dil çeviri seti tamamlandı. '+
