@@ -25,7 +25,7 @@ export default function BottomCtaSection(){
             {"\n"}
             <div className={"tc-dial-select"}>
               {"\n"}
-              <span aria-hidden={"true"} className={"tc-dial-visible"} data-tc-content-key={"span-155"}>
+              <span aria-hidden={true} className={"tc-dial-visible"} data-tc-content-key={"span-155"}>
                 {"🇹🇷 +90"}
               </span>
               {"\n"}
@@ -161,7 +161,7 @@ export default function BottomCtaSection(){
                 {"\n"}
               </select>
               {"\n"}
-              <span aria-hidden={"true"} className={"tc-dial-chevron"}></span>
+              <span aria-hidden={true} className={"tc-dial-chevron"}></span>
               {"\n"}
             </div>
             {"\n"}
@@ -169,7 +169,7 @@ export default function BottomCtaSection(){
               {"Telefon numaranız"}
             </label>
             {"\n"}
-            <input aria-required={"true"} autoComplete={"tel-national"} id={"tc-phone-hero"} inputMode={"tel"} name={"phone"} placeholder={"5xx xxx xx xx"} required type={"tel"} />
+            <input aria-required={true} autoComplete={"tel-national"} id={"tc-phone-hero"} inputMode={"tel"} name={"phone"} placeholder={"5xx xxx xx xx"} required type={"tel"} />
             {"\n"}
             <button className={"tc-bottom-cta__cta tc-bottom-cta__cta--1"} type={"submit"} data-tc-content-key={"button-156"}>
               {"Sizi arayalım"}
@@ -198,7 +198,7 @@ export default function BottomCtaSection(){
         {"\n"}
       </div>
       {"\n"}
-      <div aria-hidden={"false"} className={"tc-bottom-cta__media"}>
+      <div aria-hidden={false} className={"tc-bottom-cta__media"}>
         {"\n"}
         <div className={"tc-bottom-cta__col tc-bottom-cta__col--a"}>
           {"\n"}
@@ -210,11 +210,11 @@ export default function BottomCtaSection(){
             {"\n"}
             <img alt={""} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_4.webp"} data-tc-content-src={"image-092"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Hugo.webp"} data-tc-content-src={"image-093"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Hugo.webp"} data-tc-content-src={"image-093"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_3.webp"} data-tc-content-src={"image-094"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_3.webp"} data-tc-content-src={"image-094"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_4.webp"} data-tc-content-src={"image-095"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_4.webp"} data-tc-content-src={"image-095"} />
             {"\n"}
           </div>
           {"\n"}
@@ -230,11 +230,11 @@ export default function BottomCtaSection(){
             {"\n"}
             <img alt={""} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_2.webp"} data-tc-content-src={"image-098"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder4.png"} data-tc-content-src={"image-099"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder4.png"} data-tc-content-src={"image-099"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_David.webp"} data-tc-content-src={"image-100"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_David.webp"} data-tc-content-src={"image-100"} />
             {"\n"}
-            <img alt={""} aria-hidden={"true"} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_2.webp"} data-tc-content-src={"image-101"} />
+            <img alt={""} aria-hidden={true} className={"tc-bottom-cta__img"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Talent%20cards/Builder%20Kit_2.webp"} data-tc-content-src={"image-101"} />
             {"\n"}
           </div>
           {"\n"}
