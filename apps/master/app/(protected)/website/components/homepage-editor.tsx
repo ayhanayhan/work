@@ -212,7 +212,7 @@ export default function HomepageEditor(){
               <div className="flex items-center justify-between"><b className="text-sm">Logo {i+1}</b><div className="flex gap-2"><Switch checked={logo.enabled!==false} onCheckedChange={v=>patchLogo(logo.id,x=>({...x,enabled:v}))}/><Button size="icon" variant="outline" onClick={()=>patch({logos:(working.logos||[]).filter(x=>x.id!==logo.id)})}><Trash2 className="size-4"/></Button></div></div>
               <label className="grid gap-2 text-sm">Başlık · {lang.toUpperCase()}<Input value={logo.fields?.title?.[lang]||''} onChange={e=>patchLogo(logo.id,x=>({...x,fields:{...x.fields,title:{...x.fields.title,[lang]:e.target.value}}}))}/></label>
               <MediaField label="Logo" value={logo.assets?.image||''} onChange={image=>patchLogo(logo.id,x=>({...x,assets:{...x.assets,image}}))}/>
-              <label className="grid gap-2 text-sm">Mağaza (yakında bağlanacak)<Input placeholder="Şimdilik boş kalabilir" value={logo.storeId||''} disabled/></label>
+              <label className="grid gap-2 text-sm">Mağaza seçimi (yakında bağlanacak)<select disabled className="h-10 rounded-md border bg-muted/50 px-3 text-sm"><option>Mağaza kaynağı daha sonra bağlanacak</option></select></label>
             </div>)}
           </div>:null}
           {entries.length?<div className="grid gap-4 border-t pt-5">
@@ -225,7 +225,7 @@ export default function HomepageEditor(){
               <div className="grid gap-4">{entries.map(key=><label key={key} className="grid gap-1.5 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key} · {lang.toUpperCase()}</span>{['description','answer'].includes(key)?<Textarea rows={2} className="max-h-48 overflow-y-auto resize-y" value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>:<Input value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>}</label>)}
                 {hasImage?<MediaField label="Görsel" value={entry.assets?.image||''} onChange={image=>patchItem(entry.id,x=>({...x,assets:{...x.assets,image}}))}/>:null}
                 {['hero','references'].includes(working.id)?<MediaField label="Referans logosu" value={entry.assets?.logo||''} onChange={logo=>patchItem(entry.id,x=>({...x,assets:{...x.assets,logo}}))}/>:null}
-                {['hero','references'].includes(working.id)?<label className="grid gap-2 text-sm">Mağaza seçimi (henüz bağlı değil)<Input value={entry.storeId||''} disabled placeholder="Mağaza bağlantısı sonraki aşamada eklenecek"/></label>:null}
+                {['hero','references'].includes(working.id)?<label className="grid gap-2 text-sm">Mağaza seçimi (yakında bağlanacak)<select disabled className="h-10 rounded-md border bg-muted/50 px-3 text-sm"><option>Mağaza kaynağı daha sonra bağlanacak</option></select></label>:null}
                 {hasLink?<label className="grid gap-2 text-sm"><span className="font-medium">Bağlantı adresi</span><Input value={entry.links?.href||''} placeholder="https:// veya sayfa bağlantısı" onChange={e=>patchItem(entry.id,x=>({...x,links:{...x.links,href:e.target.value}}))}/></label>:null}
               </div>
             </div>)}{!working.items.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
