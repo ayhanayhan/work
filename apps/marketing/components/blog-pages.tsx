@@ -78,7 +78,6 @@ export function BlogArticle({post,related,allPosts,locale}:{post:BlogPost;relate
      <div className="tc-blog-single-primary">
        <header className="tc-post-hero">
          <div className="section-heading">
-           <p className="tc-blog-kicker">{post.category}</p>
            <h1 id="article-title">{post.title}</h1>
            <p className="tc-blog-post-meta">{post.author?.name||post.authorName}{post.publishedAt?' · '+formatDate(post.publishedAt,locale):''}</p>
            {post.excerpt?<div className="content"><p>{post.excerpt}</p></div>:null}
