@@ -2,6 +2,8 @@
  * Modules may be connected to Master one by one without restructuring the page.
  */
 import HeroSection from './hero';
+import type {HomeContent} from '@/lib/home-cms';
+import type {BlogPost} from '@/lib/blog';
 import AnimatedHeadingSection from './animated';
 import BuilderSection from './builder';
 import RadarSection from './radar';
@@ -13,7 +15,7 @@ import BlogSection from './blog';
 import FaqSection from './faq';
 import HeaderSnapshot from './header';
 import FooterSnapshot from './footer';
-export default function HomeSnapshot(){return <>
+export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeContent|null;posts?:BlogPost[];locale?:string}){return <>
   {"\n"}
   <HeaderSnapshot />
   {"\n"}
@@ -39,7 +41,7 @@ export default function HomeSnapshot(){return <>
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-033"}>
                         {"\n"}
-                        <HeroSection />
+                        <HeroSection home={home} locale={locale}/>
                         {"\n\n"}
                       </div>
                       {"\n"}
@@ -283,7 +285,7 @@ export default function HomeSnapshot(){return <>
                 {"\n"}
                 <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-030"}>
                   {"\n"}
-                  <ReferencesSection />
+                  <ReferencesSection home={home} locale={locale}/>
                   {"\n\n"}
                 </div>
                 {"\n"}
@@ -374,10 +376,10 @@ export default function HomeSnapshot(){return <>
   </div>
   {"\n"}
   {"\n"}
-  <BlogSection />
+  <BlogSection home={home} locale={locale} posts={posts}/>
   {"\n"}
   {"\n"}
-  <FaqSection />
+  <FaqSection home={home} locale={locale}/>
   {"\n"}
   <FooterSnapshot />
   {"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"}
