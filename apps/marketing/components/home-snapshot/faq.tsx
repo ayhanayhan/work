@@ -5,7 +5,7 @@ import {moduleById,fieldFor,safePageUrl,textFor,type HomeContent} from '@/lib/ho
 export default function FaqSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
   const module=moduleById(home,'faq');
   const items=(module?.items||[]).filter(x=>x.enabled!==false&&textFor(x.fields?.question,locale)&&textFor(x.fields?.answer,locale));
-  if(home?.version&&home.modules.some(x=>x.id==='faq'&&x.enabled===false))return null;
+  if(home?.disabledModuleIds?.includes('faq'))return null;
   return (
     <section className={"tc-faq"} id={"tc-faq"}>
       <div className={"tc-faq__inner"}>
@@ -20,7 +20,7 @@ export default function FaqSection({home,locale='tr'}:{home?:HomeContent|null;lo
             {fieldFor(module,'button',locale)||"Ekibimizle iletişime geç"}
           </a>
         </div>
-        {items.length?(<div className="tc-faq__list">
+        {items.length||module?.configured?(<div className="tc-faq__list">
     {items.map((item,i)=><div key={item.id} className={'tc-faq__item'+(i===0?' is-open':'')}>
       <button aria-controls={'tc-faq-panel-'+item.id} aria-expanded={i===0} className="tc-faq__question" id={'tc-faq-head-'+item.id} type="button">
         <span className="tc-faq__q-text">{textFor(item.fields?.question,locale)}</span>
