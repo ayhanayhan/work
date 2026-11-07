@@ -30,7 +30,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
               {"\n"}
               <ul className={"tc-press__track"} role={"list"}>
                 {"\n"}
-                {items.length?items.map(item=><li key={item.id} className="tc-press__slide">
+                {module?.items?.length?items.map(item=><li key={item.id} className="tc-press__slide">
                   <img alt={textFor(item.fields?.heading,locale)||'Referans'} className="tc-press__img" decoding="async"
                     loading="lazy" src={safeAssetUrl(item.assets?.image,'/assets/images/ticarti-butik-girisimci.webp')}/>
                   {item.assets?.logo?<img className="tc-press__entry-logo" src={safeAssetUrl(item.assets.logo,'')} alt={textFor(item.fields?.heading,locale)||'Logo'}/>:null}
