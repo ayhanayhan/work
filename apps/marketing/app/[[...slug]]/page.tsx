@@ -146,7 +146,7 @@ export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
     return <>
-      <HomeInteractions><div className="tc-page-home"><HomeSnapshot/></div></HomeInteractions>
+      <HomeInteractions><HomeSnapshot/></HomeInteractions>
     </>;
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
