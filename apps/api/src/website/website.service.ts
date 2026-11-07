@@ -403,6 +403,12 @@ export class WebsiteService{
     await this.prisma.platformSetting.update({where:{key},data:{value:{...(row.value as object),status,reviewedAt:new Date().toISOString()}}});
     return {ok:true};
   }
+  async blogCallbackRequests(){
+    const rows=await this.prisma.platformSetting.findMany({where:{key:{startsWith:'marketing_blog_callback_v1_'}}});
+    return rows.map(r=>r.value as any).filter(x=>x?.status==='NEW')
+      .sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
+      .map(x=>({id:x.id,phone:x.phone,slug:x.slug,createdAt:x.createdAt}));
+  }
   async submitBlogCallback(raw:any,ip:string){
     const dial=str(raw?.dial,5).trim(),phone=str(raw?.phone,24).replace(/[\s()\-]/g,'');
     const slug=str(raw?.slug,150),consent=raw?.consent===true;
