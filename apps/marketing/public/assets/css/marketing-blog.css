@@ -235,3 +235,40 @@
  font:inherit;color:inherit;border:1px solid currentColor;border-radius:4px;
 }
 .tc-site-footer .tc-footer-language-picker .lang-toggle:focus-visible{outline:2px solid #8ec03f;outline-offset:3px}
+
+/* Typography standard: disable compressed tracking throughout the vendor theme.
+ * Keep the compiled original CSS locked; overrides are applied after it. */
+@scope (.tc-vendor-theme) {
+ :scope, * , *::before, *::after {letter-spacing:normal!important;}
+ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6 {font-weight:400!important;}
+ h1 strong,h2 strong,h3 strong,h4 strong,h5 strong,h6 strong {font-weight:inherit!important;}
+}
+/* Blog pages may be rendered outside the legacy vendor-theme scope. */
+.tc-marketing-blog,
+.tc-marketing-blog *,
+.tc-marketing-blog *::before,
+.tc-marketing-blog *::after {letter-spacing:normal!important;}
+.tc-marketing-blog h1,
+.tc-marketing-blog h2,
+.tc-marketing-blog h3,
+.tc-marketing-blog h4,
+.tc-marketing-blog h5,
+.tc-marketing-blog h6,
+.tc-marketing-blog .h1,
+.tc-marketing-blog .h2,
+.tc-marketing-blog .h3,
+.tc-marketing-blog .h4,
+.tc-marketing-blog .h5,
+.tc-marketing-blog .h6 {font-weight:400!important;}
+.tc-marketing-blog :is(h1,h2,h3,h4,h5,h6) :is(b,strong){font-weight:inherit!important;}
+/* Keep the TOC independent from CTA; allow slightly more scrolling room. */
+.tc-marketing-blog .tc-blog-single-sidebar .tc-post-toc {max-height:290px;}
+.tc-marketing-blog .tc-post-toc nav a {
+ font-family:var(--tc-font-body,'Inter',sans-serif);
+ font-size:var(--tc-type-text,16px);
+ line-height:var(--tc-type-leading,1.5);
+ font-weight:400;
+}
+@media(max-width:960px){
+ .tc-marketing-blog .tc-blog-single-sidebar .tc-post-toc{max-height:310px;}
+}
