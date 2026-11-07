@@ -41,9 +41,7 @@ export function BlogArchive({posts,locale}:{posts:BlogPost[];locale:BlogLocale})
        {categories.map(category=><label key={category}><input type="radio" name="tc-blog-category" value={category}/>{category}</label>)}
      </div>
      <div className="card"><div id="tc-blog-cards" className="card-inner">
-       {posts.map(post=><div key={post.id} className="tc-blog-archive-entry" data-tc-blog-category={post.category}>
-         <BlogCards posts={[post]} locale={locale}/>
-       </div>)}
+       <BlogCards posts={posts} locale={locale}/>
      </div></div>
      {!posts.length?<p className="tc-blog-empty">Bu dilde henüz yayımlanmış blog yazısı bulunmuyor.</p>:null}
    </section>
