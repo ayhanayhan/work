@@ -1,4 +1,4 @@
-import {BadRequestException,ConflictException,Injectable,TooManyRequestsException} from '@nestjs/common';
+import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
@@ -362,7 +362,7 @@ export class WebsiteService{
   private readonly submissionTimes=new Map<string,number>();
   private throttle(kind:string,ip:string,seconds:number){
     const now=Date.now(),key=kind+':'+ip,last=this.submissionTimes.get(key)||0;
-    if(now-last<seconds*1000)throw new TooManyRequestsException('Lütfen bir süre sonra yeniden deneyin.');
+    if(now-last<seconds*1000)throw new HttpException('Lütfen bir süre sonra yeniden deneyin.',HttpStatus.TOO_MANY_REQUESTS);
     if(this.submissionTimes.size>20000){
       for(const [k,v] of this.submissionTimes)if(now-v>3600000)this.submissionTimes.delete(k);
     }
