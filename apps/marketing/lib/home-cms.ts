@@ -5,9 +5,9 @@ export type HomeItem={id:string;enabled?:boolean;fields?:Record<string,Localized
 export type HomeLogo={id:string;enabled?:boolean;fields?:{title?:Localized};assets?:{image?:string};storeId?:string};
 export type HomeModule={
  id:string;enabled?:boolean;fields?:Record<string,Localized>;items?:HomeItem[];
- logos?:HomeLogo[];ctaEnabled?:boolean;categoryIds?:string[];
+ logos?:HomeLogo[];ctaEnabled?:boolean;categoryIds?:string[];configured?:boolean;
 };
-export type HomeContent={locale:string;version:number;modules:HomeModule[];consentContract?:{key:string;contentKey:string;href:string}};
+export type HomeContent={locale:string;version:number;modules:HomeModule[];disabledModuleIds?:string[];consentContract?:{key:string;contentKey:string;href:string}};
 export const moduleById=(home:HomeContent|null|undefined,id:string)=>home?.modules?.find(m=>m.id===id&&m.enabled!==false);
 export const textFor=(values:Localized|undefined,locale:string)=>values?.[locale]?.trim()||'';
 export const fieldFor=(module:HomeModule|undefined,key:string,locale:string)=>textFor(module?.fields?.[key],locale);
@@ -32,6 +32,6 @@ export async function getHomeContent(locale:string):Promise<HomeContent|null>{
   if(!response.ok)return null;
   const data=await response.json();
   if(!data||!Array.isArray(data.modules)||typeof data.version!=='number')return null;
-  return {locale,version:data.version,modules:data.modules,consentContract:data.consentContract};
+  return {locale,version:data.version,modules:data.modules,disabledModuleIds:Array.isArray(data.disabledModuleIds)?data.disabledModuleIds:[],consentContract:data.consentContract};
  }catch{return null;}
 }
