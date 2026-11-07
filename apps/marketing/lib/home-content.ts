@@ -1,5 +1,4 @@
-/* Pure typed homepage props and safe helpers. The existing React design is the fallback
-   until each selected Master module has saved content. */
+/* Pure typed homepage props and safe helpers. CMS modules never fall back to demo content. */
 export type Localized=Record<string,string>;
 export type HomeItem={id:string;enabled?:boolean;fields?:Record<string,Localized>;assets?:{image?:string;logo?:string};links?:{href?:string};storeId?:string};
 export type HomeLogo={id:string;enabled?:boolean;fields?:{title?:Localized};assets?:{image?:string};storeId?:string};
@@ -30,8 +29,10 @@ export function safeAssetUrl(input:string|undefined,fallback:string){
  */
 export function hasLocalizedContent(module:HomeModule|undefined,locale:string):boolean{
  if(!module?.configured||module.enabled===false)return false;
- if(Object.values(module.fields||{}).some(value=>Boolean(textFor(value,locale))))return true;
- if((module.items||[]).some(item=>item.enabled!==false&&Object.values(item.fields||{}).some(value=>Boolean(textFor(value,locale)))))return true;
+ const contentKeys=new Set(['heading','description','offer','button','formButton','question','answer','role','title']);
+ if(Object.entries(module.fields||{}).some(([key,value])=>contentKeys.has(key)&&Boolean(textFor(value,locale))))return true;
+ if((module.items||[]).some(item=>item.enabled!==false&&Object.entries(item.fields||{}).some(([key,value])=>
+   contentKeys.has(key)&&Boolean(textFor(value,locale)))))return true;
  if((module.logos||[]).some(item=>item.enabled!==false&&Boolean(textFor(item.fields?.title,locale))))return true;
  return false;
 }
