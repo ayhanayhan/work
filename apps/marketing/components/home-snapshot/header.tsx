@@ -3,6 +3,7 @@ export default function HeaderSnapshot(){return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
     {"\n"}
     <div className={"tc-site-header header-main"}>
+      <div className="tc-ui-drawer-overlay" aria-hidden="true"></div>
       {"\n"}
       <div aria-label={"Kampanya duyurusu"} className={"tc-announcement-bar tc-announcement-bar--closable"} data-days={"0"} data-editor={"0"} data-key={"ticarti-lansman-indirim-50"} data-tc-ui-topbar={""} role={"region"}>
         {"\n"}
@@ -63,6 +64,16 @@ export default function HeaderSnapshot(){return (
           </button>
           {"\n"}
           <div className={"tc-navigation-panel"}>
+            <div className="tc-ui-drawer-header">
+              <a className="tc-ui-drawer-brand" href="/" aria-label="Ticarti ana sayfa">
+                <img src="/assets/images/ticarti-logo.svg" alt="Ticarti"/>
+              </a>
+              <button type="button" className="tc-ui-drawer-close" aria-label="Menüyü kapat">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth={2} strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
             {"\n"}
             <div className={"tc-menu primary-menu js-enabled"}>
               {"\n"}
