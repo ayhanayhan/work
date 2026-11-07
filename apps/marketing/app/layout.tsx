@@ -29,7 +29,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   return <html lang={lang} dir={lang==='ar'?'rtl':'ltr'} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/shared-footer.css?v=1"/>
-    <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=4"/>
+    <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=5"/>
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=2"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
   </head><body>{children}</body></html>;
