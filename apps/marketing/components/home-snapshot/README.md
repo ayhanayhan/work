@@ -18,6 +18,11 @@ its page structure, text, class names, graphics or section sequence.
   reveal, rotating heading, touch swipe and video behavior via React lifecycle
   and React events. `hero-cards.tsx` renders the original slider repeat sets
   as JSX rather than cloning DOM elements.
+- `orders-preview.tsx` renders the original four visible order examples and
+  the existing rotating example orders from a fixed typed array, managed by
+  React state. `radar-display.tsx` renders the original nine radar targets
+  from fixed typed data and updates their visual position/image through React
+  state; no `document.createElement`, DOM cloning or external data feed.
 - The hero and footer callback forms are controlled React components
   (`hero-callback.tsx`, `bottomCta-callback.tsx`) with shared
   `phone-validators.ts`; they do not pretend to send data to a backend.
