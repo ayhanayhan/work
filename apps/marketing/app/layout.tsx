@@ -25,9 +25,12 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const locales=await getWebsiteLocales();
   const first=route.replace(/^\//,'').split('/')[0];
   const lang=locales.includes(first)?first:'tr';
-  const cls=await htmlAttrs(route,locales);
+  const routeParts=route.split('/').filter(Boolean);
+  const isNativeHome=routeParts.length===0||(routeParts.length===1&&locales.includes(routeParts[0]));
+  const cls=isNativeHome?'tc-page-home tc-native-page':await htmlAttrs(route,locales);
   return <html lang={lang} dir={lang==='ar'?'rtl':undefined} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=1"/>
+    {isNativeHome?<link rel="stylesheet" href="/assets/css/home-native.css?v=1"/>:null}
   </head><body>{children}</body></html>;
 }
