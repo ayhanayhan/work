@@ -68,7 +68,7 @@ function safeCategories(raw:any){
 function defaultModules(){
   return MODULE_IDS.map((id,i)=>({id,title:MODULE_TITLES[i],selector:({
     hero:'.tc-site-hero',animated:'.tc-animated-heading',builder:'.tc-builder-section',radar:'.tc-dashboard-radar',channels:'.tc-sales-channels',showcase:'.tc-showcase',references:'.tc-press',bottomCta:'.tc-bottom-cta',blog:'#tc-blog',faq:'#tc-faq'
-  } as any)[id],enabled:true,sortOrder:i,fields:safeFields({},MODULE_FIELDS[id]),items:[],logos:[],ctaEnabled:true,categoryIds:[]}));
+  } as any)[id],enabled:true,sortOrder:i,configured:false,fields:safeFields({},MODULE_FIELDS[id]),items:[],logos:[],ctaEnabled:true,categoryIds:[]}));
 }
 @Injectable()
 export class WebsiteService{
@@ -97,7 +97,7 @@ export class WebsiteService{
        ||contracts.find((x:any)=>x.isActive!==false&&x.contentKey==='kvkk-notice')
        ||{key:'KVKK_NOTICE',contentKey:'kvkk-notice'};
      const contractPaths:Record<string,string>={'kvkk-notice':'/kvkk.html','data-processing-policy':'/kvkk.html','privacy-policy':'/gizlilik-politikasi.html','membership-agreement':'/uyelik-sozlesmesi.html'};
-     return {version:data.version,locale,modules:data.modules.filter((x:any)=>x.enabled!==false),
+     return {version:data.version,locale,modules:data.modules.filter((x:any)=>x.enabled!==false),disabledModuleIds:data.modules.filter((x:any)=>x.enabled===false).map((x:any)=>x.id),
        consentContract:{key:kvkk.key,contentKey:kvkk.contentKey,href:contractPaths[kvkk.contentKey]||'/kvkk.html'}};
   }
   async updateModule(id:string,body:any){
@@ -106,7 +106,7 @@ export class WebsiteService{
     if(body.version!==undefined&&Number(body.version)!==snapshot.version)throw new ConflictException('İçerik başka bir oturumda güncellendi. Sayfayı yenileyin.');
     const previous=snapshot.modules.find((x:any)=>x.id===id)!;
     const allowed=MODULE_FIELDS[id];
-    const module={...previous,enabled:body.enabled!==false,fields:safeFields(body.fields,allowed),items:safeItems(id,body.items||[]),ctaEnabled:id==='hero'?body.ctaEnabled!==false:previous.ctaEnabled,logos:id==='hero'?safeLogos(body.logos||[]):previous.logos,categoryIds:id==='blog'?safeCategories(body.categoryIds):previous.categoryIds};
+    const module={...previous,configured:true,enabled:body.enabled!==false,fields:safeFields(body.fields,allowed),items:safeItems(id,body.items||[]),ctaEnabled:id==='hero'?body.ctaEnabled!==false:previous.ctaEnabled,logos:id==='hero'?safeLogos(body.logos||[]):previous.logos,categoryIds:id==='blog'?safeCategories(body.categoryIds):previous.categoryIds};
     const modules=snapshot.modules.map(x=>x.id===id?module:x);
     const version=snapshot.version+1;
     await this.put(HOME_KEY,{version,modules});
@@ -136,7 +136,7 @@ export class WebsiteService{
     const modules=snapshot.modules.map(m=>{
       const input=inputs.find((x:any)=>x.id===m.id);
       if(!input)throw new BadRequestException('Eksik modül: '+m.id);
-      return {...m,enabled:input.enabled!==false,fields:safeFields(input.fields,MODULE_FIELDS[m.id]),items:safeItems(m.id,input.items||[]),ctaEnabled:m.id==='hero'?input.ctaEnabled!==false:m.ctaEnabled,logos:m.id==='hero'?safeLogos(input.logos||[]):m.logos,categoryIds:m.id==='blog'?safeCategories(input.categoryIds):m.categoryIds};
+      return {...m,configured:true,enabled:input.enabled!==false,fields:safeFields(input.fields,MODULE_FIELDS[m.id]),items:safeItems(m.id,input.items||[]),ctaEnabled:m.id==='hero'?input.ctaEnabled!==false:m.ctaEnabled,logos:m.id==='hero'?safeLogos(input.logos||[]):m.logos,categoryIds:m.id==='blog'?safeCategories(input.categoryIds):m.categoryIds};
     });
     const version=snapshot.version+1;
     await this.put(HOME_KEY,{version,modules});
