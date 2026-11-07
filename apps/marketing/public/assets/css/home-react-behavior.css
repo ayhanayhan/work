@@ -19,3 +19,16 @@
  .tc-page-home .tc-press__slide .tc-press__entry-logo{max-width:90px;max-height:38px;left:10px;bottom:10px;padding:6px}
  .tc-page-home .tc-press__slide .tc-press__entry-description{right:10px;bottom:10px;font-size:11px;max-width:55%}
 }
+
+/* Keep the article rail's measured height stable while the card-body moves on hover.
+   The expanding copy is a visual overlay, never a layout-height change that moves FAQ. */
+.tc-page-home .tc-blog .cards-main,
+.tc-page-home .tc-blog .cards-main > .card {min-height:0;}
+.tc-page-home .tc-blog .tc-blog__track {align-items:start;overflow-y:clip;}
+.tc-page-home .tc-blog .tc-blog__card {height:410px !important;overflow:hidden;}
+.tc-page-home .tc-blog .tc-blog__card .card-wrap {height:410px;overflow:hidden;}
+.tc-page-home .tc-blog .tc-blog__card .card-body {min-height:0;}
+@media(max-width:700px){
+ .tc-page-home .tc-blog .tc-blog__card,
+ .tc-page-home .tc-blog .tc-blog__card .card-wrap {height:375px !important;}
+}
