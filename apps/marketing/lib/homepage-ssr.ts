@@ -155,9 +155,17 @@ function renderSingle(section:string,mod:HomeModule|undefined,lang:string,posts:
   if(!hasText&&!items.length)return '';
   if(requiresItems&&!items.length)return ''; // No original static demo cards.
   section=scopedText(section,mod,lang);
-  if(requiresItems)section=renderEntries(section,mod,lang);
-  // Remove template imagery that the CMS has not supplied.
-  if(mod.id==='hero')section=section.replace(/<img\b[^>]*>/gi,'');
+  if(requiresItems){
+    // Original example images are removed before rendering actual CMS cards.
+    section=section.replace(/<img\b[^>]*>/gi,'');
+    section=renderEntries(section,mod,lang);
+  }
+  if(mod.id==='hero'){
+    for(const cls of ['tc-site-hero__carousel','tc-site-hero__green','tc-ui-logos'])
+      section=removeContainer(section,cls);
+    section=section.replace(/<img\b[^>]*>/gi,'');
+  }
+  if(mod.id==='bottomCta')section=section.replace(/<img\b[^>]*>/gi,'');
   return section;
 }
 const localeNames:Record<string,string>={tr:'Türkçe',en:'English',de:'Deutsch',ru:'Русский',pt:'Português',ar:'العربية',bg:'Български',fr:'Français',es:'Español'};
