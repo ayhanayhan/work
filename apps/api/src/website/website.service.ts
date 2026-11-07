@@ -6,8 +6,8 @@ const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
 const MODULE_IDS=['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq'] as const;
 const MODULE_TITLES=['Ana Slider','Hareketli Başlık','Özellik Kartları','Operasyon','Satış Kanalları','Öne Çıkan Özellikler','Referanslar','Alt Çağrı Alanı','Blog','Sıkça Sorulan Sorular'];
-const ITEM_FIELDS:Record<string,string[]>={animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
-const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
+const ITEM_FIELDS:Record<string,string[]>={hero:['heading','description'],animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
+const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer','button','buttonUrl','formButton','consentText','phoneEmpty','phoneInvalid','kvkkRequired','notConnected'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description','button','buttonUrl']};
 const str=(v:any,max=8000)=>String(v===undefined||v===null?'':v).slice(0,max);
 function localized(v:any,max=8000):Record<string,string>{
   if(!v||typeof v!=='object'||Array.isArray(v))return {};
@@ -45,13 +45,30 @@ function safeItems(moduleId:string,input:any){
     const id=str(item?.id,90);
     if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id)||seen.has(id))throw new BadRequestException('Kayıt kimliği geçersiz veya tekrar ediyor.');
     seen.add(id);
-    return {id,enabled:item?.enabled!==false,sortOrder:index,fields:safeFields(item?.fields,ITEM_FIELDS[moduleId]),assets:{image:url(item?.assets?.image)},links:{href:link(item?.links?.href)}};
+    return {id,enabled:item?.enabled!==false,sortOrder:index,fields:safeFields(item?.fields,ITEM_FIELDS[moduleId]),assets:{image:url(item?.assets?.image),logo:url(item?.assets?.logo)},links:{href:link(item?.links?.href)},storeId:str(item?.storeId,90)};
   });
+}
+function safeLogos(raw:any){
+ if(!Array.isArray(raw))return [];
+ if(raw.length>100)throw new BadRequestException('Logo sayısı en fazla 100 olabilir.');
+ const seen=new Set<string>();
+ return raw.map((item:any,index:number)=>{
+   const id=str(item?.id,90);
+   if(!/^[a-zA-Z0-9_-]{1,90}$/.test(id)||seen.has(id))throw new BadRequestException('Logo kimliği geçersiz veya tekrar ediyor.');
+   seen.add(id);
+   return {id,enabled:item?.enabled!==false,sortOrder:index,
+     fields:{title:localized(item?.fields?.title,220)},assets:{image:url(item?.assets?.image)},storeId:str(item?.storeId,90)};
+ });
+}
+function safeCategories(raw:any){
+ if(raw===undefined)return [];
+ if(!Array.isArray(raw)||raw.length>200)throw new BadRequestException('Blog kategori seçimi geçersiz.');
+ return [...new Set(raw.map((x:any)=>str(x,90)))].filter(Boolean);
 }
 function defaultModules(){
   return MODULE_IDS.map((id,i)=>({id,title:MODULE_TITLES[i],selector:({
     hero:'.tc-site-hero',animated:'.tc-animated-heading',builder:'.tc-builder-section',radar:'.tc-dashboard-radar',channels:'.tc-sales-channels',showcase:'.tc-showcase',references:'.tc-press',bottomCta:'.tc-bottom-cta',blog:'#tc-blog',faq:'#tc-faq'
-  } as any)[id],enabled:true,sortOrder:i,fields:safeFields({},MODULE_FIELDS[id]),items:[]}));
+  } as any)[id],enabled:true,sortOrder:i,fields:safeFields({},MODULE_FIELDS[id]),items:[],logos:[],ctaEnabled:true,categoryIds:[]}));
 }
 @Injectable()
 export class WebsiteService{
@@ -67,14 +84,21 @@ export class WebsiteService{
     const data=await this.get(HOME_KEY);
     const modules=defaultModules().map(m=>{
       const saved=(Array.isArray(data?.modules)?data.modules:[]).find((x:any)=>x?.id===m.id);
-      return saved?{...m,...saved,title:m.title,selector:m.selector}:{...m};
+      return saved?{...m,...saved,logos:Array.isArray(saved.logos)?saved.logos:[],categoryIds:Array.isArray(saved.categoryIds)?saved.categoryIds:[],ctaEnabled:saved.ctaEnabled!==false,title:m.title,selector:m.selector}:{...m};
     });
     return {version:Number(data?.version)||0,modules:modules.sort((x,y)=>x.sortOrder-y.sortOrder)};
   }
   async publicHome(lang='tr'){
     const data=await this.home();
     const locale=/^[a-z]{2,3}(?:-[A-Za-z]{2})?$/.test(lang)?lang:'tr';
-    return {version:data.version,locale,modules:data.modules.filter((x:any)=>x.enabled!==false)};
+    const settings=await this.get('platform_contracts');
+     const contracts=Array.isArray(settings?.contracts)?settings.contracts:[];
+     const kvkk=contracts.find((x:any)=>x.isActive!==false&&x.key==='KVKK_NOTICE'&&x.placements?.includes('REGISTER_KVKK'))
+       ||contracts.find((x:any)=>x.isActive!==false&&x.contentKey==='kvkk-notice')
+       ||{key:'KVKK_NOTICE',contentKey:'kvkk-notice'};
+     const contractPaths:Record<string,string>={'kvkk-notice':'/kvkk.html','data-processing-policy':'/kvkk.html','privacy-policy':'/gizlilik-politikasi.html','membership-agreement':'/uyelik-sozlesmesi.html'};
+     return {version:data.version,locale,modules:data.modules.filter((x:any)=>x.enabled!==false),
+       consentContract:{key:kvkk.key,contentKey:kvkk.contentKey,href:contractPaths[kvkk.contentKey]||'/kvkk.html'}};
   }
   async updateModule(id:string,body:any){
     if(!MODULE_IDS.includes(id as any))throw new BadRequestException('Geçersiz modül.');
@@ -82,7 +106,7 @@ export class WebsiteService{
     if(body.version!==undefined&&Number(body.version)!==snapshot.version)throw new ConflictException('İçerik başka bir oturumda güncellendi. Sayfayı yenileyin.');
     const previous=snapshot.modules.find((x:any)=>x.id===id)!;
     const allowed=MODULE_FIELDS[id];
-    const module={...previous,enabled:body.enabled!==false,fields:safeFields(body.fields,allowed),items:safeItems(id,body.items||[])};
+    const module={...previous,enabled:body.enabled!==false,fields:safeFields(body.fields,allowed),items:safeItems(id,body.items||[]),ctaEnabled:id==='hero'?body.ctaEnabled!==false:previous.ctaEnabled,logos:id==='hero'?safeLogos(body.logos||[]):previous.logos,categoryIds:id==='blog'?safeCategories(body.categoryIds):previous.categoryIds};
     const modules=snapshot.modules.map(x=>x.id===id?module:x);
     const version=snapshot.version+1;
     await this.put(HOME_KEY,{version,modules});
@@ -112,7 +136,7 @@ export class WebsiteService{
     const modules=snapshot.modules.map(m=>{
       const input=inputs.find((x:any)=>x.id===m.id);
       if(!input)throw new BadRequestException('Eksik modül: '+m.id);
-      return {...m,enabled:input.enabled!==false,fields:safeFields(input.fields,MODULE_FIELDS[m.id]),items:safeItems(m.id,input.items||[])};
+      return {...m,enabled:input.enabled!==false,fields:safeFields(input.fields,MODULE_FIELDS[m.id]),items:safeItems(m.id,input.items||[]),ctaEnabled:m.id==='hero'?input.ctaEnabled!==false:m.ctaEnabled,logos:m.id==='hero'?safeLogos(input.logos||[]):m.logos,categoryIds:m.id==='blog'?safeCategories(input.categoryIds):m.categoryIds};
     });
     const version=snapshot.version+1;
     await this.put(HOME_KEY,{version,modules});
@@ -277,7 +301,7 @@ export class WebsiteService{
     const posts=data.posts.filter((x:any)=>x.status==='PUBLISHED'&&(!x.scheduledAt||Date.parse(x.scheduledAt)<=now)&&hasContent(x.translations?.[locale])).map((x:any)=>{
       const t=x.translations[locale];
       return {
-        id:x.id,slug:t.slug||x.slug,status:x.status,featuredImage:x.featuredImage||'',
+        id:x.id,slug:t.slug||x.slug,status:x.status,categoryId:x.categoryId||null,featuredImage:x.featuredImage||'',
         localeSlugs:Object.fromEntries(activeLocales.filter(code=>hasContent(x.translations?.[code])).map(code=>[code,x.translations?.[code]?.slug||x.slug])),
         title:t.title,excerpt:str(t.content||'',800).replace(/```[\s\S]*?```/g,' ').replace(/!?\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/<[^>]*>/g,' ').replace(/[#*_>~|`]/g,' ').replace(/\s+/g,' ').trim().slice(0,240),content:t.content,
         category:(data.categories.find((c:any)=>c.id===x.categoryId&&c.isActive!==false)?.translations?.[locale]?.title)||t.category||'Blog',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||'',
