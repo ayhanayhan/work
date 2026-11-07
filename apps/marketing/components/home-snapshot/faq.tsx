@@ -1,4 +1,5 @@
 import {moduleById,fieldFor,safePageUrl,textFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 /* Static React snapshot of original Ticarti homepage: faq.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
@@ -11,13 +12,13 @@ export default function FaqSection({home,locale='tr'}:{home?:HomeContent|null;lo
       <div className={"tc-faq__inner"}>
         <div className={"tc-faq__intro"}>
           <h2 className={"tc-faq__title"} data-tc-content-key={"h2-181"}>
-            {fieldFor(module,'heading',locale)||"Sıkça sorulan sorular"}
+            {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Sıkça sorulan sorular"}
           </h2>
           <p className={"tc-faq__subtitle"} data-tc-content-key={"p-182"}>
-            {fieldFor(module,'description',locale)||"Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin."}
+            {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin."}
           </p>
           <a className={"tc-faq__button"} href={safePageUrl(fieldFor(module,"buttonUrl",locale),"/contacto.html")} data-tc-content-key={"a-183"}>
-            {fieldFor(module,'button',locale)||"Ekibimizle iletişime geç"}
+            {module?.configured?fieldFor(module,'button',locale):"Ekibimizle iletişime geç"}
           </a>
         </div>
         {items.length||module?.configured?(<div className="tc-faq__list">
