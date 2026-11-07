@@ -23,7 +23,8 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const route=(await headers()).get('x-marketing-page')||'/';
   const parts=route.split('/').filter(Boolean);
   const snapshotHome=parts.length===0||(parts.length===1&&['tr','en','pt','ru'].includes(parts[0]));
-  const cls=snapshotHome?'tc-page-home':await htmlAttrs();
+  const homeAlias=parts.length===1&&parts[0]==='index.html'||parts.length===2&&['tr','en','pt','ru'].includes(parts[0])&&parts[1]==='index.html';
+  const cls=snapshotHome||homeAlias?'tc-page-home':await htmlAttrs();
   const lang=route.match(/^\/(tr|en|pt|ru)(?:\/|$)/)?.[1]||'tr';
   return <html lang={lang} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
