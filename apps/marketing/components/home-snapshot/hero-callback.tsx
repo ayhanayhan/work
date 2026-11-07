@@ -166,7 +166,7 @@ export default function HeroCallback(){
               {"Telefon numaranız"}
             </label>
             {"\n"}
-            <input aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
+            <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
             {"\n"}
             <button className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
               {"Sizi arayalım"}
@@ -176,7 +176,7 @@ export default function HeroCallback(){
           {"\n"}
           <div className={"tc-kvkk"}>
             {"\n"}
-            <input aria-describedby={"tc-kvkk-hero-error"} id={"tc-kvkk-hero"} name={"kvkk_read"} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
+            <input aria-describedby={"tc-kvkk-hero-error"} id={"tc-kvkk-hero"} name={"kvkk_read"} aria-invalid={!!kvkk} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
             {"\n"}
             <label htmlFor={"tc-kvkk-hero"}>
               <a href={"/kvkk.html"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-060"}>
