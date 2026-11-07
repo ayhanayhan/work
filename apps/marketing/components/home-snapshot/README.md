@@ -13,10 +13,16 @@ its page structure, text, class names, graphics or section sequence.
 - The Marketing homepage route renders these React components directly.
   It does not load a template file, query Master/API, interpolate HTML, or use
   `dangerouslySetInnerHTML` for the homepage.
-- `website-home-cms.js` has been removed. Old generated demo-order and
-  simulated radar-photo scripts are not executed. Existing purely visual and
-  interactive scripts are kept temporarily to avoid losing established
-  functionality before a behavior-for-behavior React port.
+- `website-home-cms.js` was removed. The homepage **does not load old
+  JavaScript files**. `interactions.tsx` owns carousel, FAQ, header, topbar,
+  reveal, rotating heading, touch swipe and video behavior via React lifecycle
+  and React events. `hero-cards.tsx` renders the original slider repeat sets
+  as JSX rather than cloning DOM elements.
+- The hero and footer callback forms are controlled React components
+  (`hero-callback.tsx`, `bottomCta-callback.tsx`) with shared
+  `phone-validators.ts`; they do not pretend to send data to a backend.
+- Mobile drawer and mega menus are ordinary JSX. No DOM-injected HTML, legacy
+  script loader or mock order feed runs on the homepage.
 - The snapshot intentionally retains the text and images already present in
   the supplied HTML. It is **not live database content**. Connecting a section
   to Master requires a separate explicit task and should update only that
@@ -28,3 +34,8 @@ visually and interactively against the live design before deploying.
 
 **Do not** restore client-side DOM text replacement, add stock placeholder
 images, or change the existing design during later CMS wiring.
+
+**Current milestone:** fixed JSX content and React interactions, with *no*
+Master/Prisma/API read on the homepage. The next milestone—only upon user
+instruction—is to replace the fixed data of one individual section at a time
+with validated server-side CMS data. Never bulk-connect all modules.
