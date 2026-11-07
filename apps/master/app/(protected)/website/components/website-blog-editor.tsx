@@ -10,6 +10,7 @@ import {Badge} from '@/components/ui/badge';
 import {Card,CardContent,CardHeader,CardHeading} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {readWebsiteBlog,saveWebsiteBlog} from './website-blog-resource';
+import ImportTicartiArticles from './import-ticarti-articles';
 
 type Post={id:string;slug:string;status:string;featuredImage?:string;authorName?:string;translations:Record<string,{title?:string;content?:string;enabled?:boolean}>};
 type Snapshot={version:number;posts:Post[];categories:any[]};
@@ -54,6 +55,7 @@ export default function WebsiteBlogEditor(){
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Blog İçerikleri</h1>
       <ToolbarDescription>Ticarti.com blog yazıları ve yayın durumları</ToolbarDescription>
     </ToolbarHeading><ToolbarActions>
+      <ImportTicartiArticles onDone={load}/>
       <Button asChild variant="outline"><Link href="/website/blog/categories">Blog Kategorileri</Link></Button>
       <Button asChild variant="outline"><Link href="/website/blog/authors">Blog Yazarları</Link></Button>
       <Button variant="outline" disabled={loading} onClick={()=>{void load();void reloadLocales()}}><RefreshCw className="size-4"/>Yenile</Button>
