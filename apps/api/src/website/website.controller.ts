@@ -23,6 +23,9 @@ export class WebsiteController {
   @Get('superadmin/website/blog-comments/pending')
   pendingComments(){return this.svc.pendingBlogComments()}
   @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/blog-callbacks')
+  callbacks(){return this.svc.blogCallbackRequests()}
+  @UseGuards(SuperAdminAuthGuard)
   @Patch('superadmin/website/blog-comments/:id')
   moderateComment(@Param('id') id:string,@Body() body:any){return this.svc.moderateBlogComment(id,body.status)}
   @Get('public/website/blog/:slug')
