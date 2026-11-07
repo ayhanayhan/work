@@ -1,8 +1,9 @@
 'use client';
 import {useState,type FormEvent} from 'react';
 import {validatePhone} from './phone-validators';
+import {fieldFor,safePageUrl,type HomeModule} from '@/lib/home-cms';
 /* Original markup and text retained. Fields are native controlled React state. */
-export default function HeroCallback(){
+export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html'}:{module?:HomeModule;locale?:string;consentHref?:string}){
  const [country,setCountry]=useState({dial:'+90',flag:'🇹🇷',iso:'TR'});
  const [phone,setPhone]=useState('');
  const [consent,setConsent]=useState(false);
@@ -10,10 +11,10 @@ export default function HeroCallback(){
  const [kvkk,setKvkk]=useState('');
  const submit=(e:FormEvent<HTMLFormElement>)=>{
    e.preventDefault();
-   const phoneError=validatePhone(phone,country.iso,country.dial);
-   const consentError=consent?'':'Devam etmek için KVKK aydınlatmasını okuyup kutuyu işaretleyin.';
+   const phoneError=!phone.trim()?(fieldFor(module,'phoneEmpty',locale)||'Telefon numaranızı girin.'):(validatePhone(phone,country.iso,country.dial)?(fieldFor(module,'phoneInvalid',locale)||validatePhone(phone,country.iso,country.dial)):'');
+   const consentError=consent?'':(fieldFor(module,'kvkkRequired',locale)||'Devam etmek için KVKK aydınlatmasını okuyup kutuyu işaretleyin.');
    setKvkk(consentError);
-   setError(phoneError||(!consentError?'Bu form henüz sunucuya bağlı değil; numaranız gönderilmedi.':''));
+   setError(phoneError||(!consentError?(fieldFor(module,'notConnected',locale)||'Bu form henüz sunucuya bağlı değil; numaranız gönderilmedi.') :''));
  };
  return (
 <form onSubmit={submit} className={"tc-callback-form tc-hero-callback"} data-tc-callback={""} noValidate>
@@ -169,7 +170,7 @@ export default function HeroCallback(){
             <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
             {"\n"}
             <button className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
-              {"Sizi arayalım"}
+              {fieldFor(module,'formButton',locale)||"Sizi arayalım"}
             </button>
             {"\n"}
           </div>
@@ -179,10 +180,10 @@ export default function HeroCallback(){
             <input aria-describedby={"tc-kvkk-hero-error"} id={"tc-kvkk-hero"} name={"kvkk_read"} aria-invalid={!!kvkk} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
             {"\n"}
             <label htmlFor={"tc-kvkk-hero"}>
-              <a href={"/kvkk.html"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-060"}>
+              <a href={safePageUrl(consentHref,'/kvkk.html')} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-060"}>
                 {"KVKK Aydınlatma Metni"}
               </a>
-              {"’ni okudum, onaylıyorum."}
+              {fieldFor(module,'consentText',locale)||"’ni okudum, onaylıyorum."}
             </label>
             {"\n"}
           </div>
