@@ -1,5 +1,6 @@
 import {BadRequestException,ConflictException,Injectable,TooManyRequestsException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
+import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
 import initialBlog from './data/ticarti-blog-initial.json';
 
@@ -383,7 +384,7 @@ export class WebsiteService{
       p.status==='PUBLISHED'&&(p.slug===slug||Object.values(p.translations||{}).some((t:any)=>t.slug===slug)));
     if(!post)throw new BadRequestException('Yayımlanmış yazı bulunamadı.');
     this.throttle('comment',ip,60);
-    const id=crypto.randomUUID(),createdAt=new Date().toISOString();
+    const id=randomUUID(),createdAt=new Date().toISOString();
     await this.prisma.platformSetting.create({
       data:{key:'marketing_blog_comment_v1_'+id,value:{id,postSlug:slug,name,comment,status:'PENDING',createdAt}}
     });
@@ -410,7 +411,7 @@ export class WebsiteService{
     if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw new BadRequestException('Geçersiz yazı.');
     if(raw?.website)throw new BadRequestException('Geçersiz istek.');
     this.throttle('blog-callback',ip,120);
-    const id=crypto.randomUUID();
+    const id=randomUUID();
     await this.prisma.platformSetting.create({data:{
       key:'marketing_blog_callback_v1_'+id,
       value:{id,phone:dial+phone,slug,consent:true,createdAt:new Date().toISOString(),status:'NEW'}
