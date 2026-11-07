@@ -1,7 +1,7 @@
 export const BLOG_LOCALES=['tr','en','pt','ru'] as const;
 export type BlogLocale=string;
 export type BlogPost={
-  id:string;slug:string;category:string;title:string;excerpt:string;featuredImage:string;content:string;
+  id:string;slug:string;category:string;categoryId?:string|null;title:string;excerpt:string;featuredImage:string;content:string;
   seoTitle:string;seoDescription:string;imageAlt:string;authorName:string;
   author?:{slug:string;name:string;bio:string;seoTitle:string;seoDescription:string;avatar:string;socials:Record<string,string>}|null;
   availableLocales:BlogLocale[];publishedAt:string|null;updatedAt:string|null;
@@ -54,7 +54,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       typeof entry.content==='string'&&entry.content.trim()&&
       slugValid(String(entry.slug||''))&&Array.isArray(entry.availableLocales)&&entry.availableLocales.includes(lang)
     ).map((entry:any)=>({
-      id:String(entry.id||entry.slug),slug:String(entry.slug),category:String(entry.category||'Blog'),title:String(entry.title).trim(),
+      id:String(entry.id||entry.slug),slug:String(entry.slug),category:String(entry.category||'Blog'),categoryId:entry.categoryId?String(entry.categoryId):null,title:String(entry.title).trim(),
       localeSlugs:entry.localeSlugs&&typeof entry.localeSlugs==='object'?entry.localeSlugs:{},
       excerpt:String(entry.excerpt||'').trim(),featuredImage:String(entry.featuredImage||''),
       content:String(entry.content).trim(),seoTitle:String(entry.seoTitle||'').trim(),
