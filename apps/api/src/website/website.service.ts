@@ -90,6 +90,7 @@ export class WebsiteService{
       siteName:str(saved?.siteName,100)||'Ticarti',
       defaultOgImage:str(saved?.defaultOgImage,2048),
       organizationLogo:str(saved?.organizationLogo,2048)||'/assets/images/ticarti-logo.svg',
+      googleVerification:str(saved?.googleVerification,250),bingVerification:str(saved?.bingVerification,250),
       robotsText:str(saved?.robotsText,10000),
       allowIndexing:saved?.allowIndexing!==false,
       pages:saved?.pages&&typeof saved.pages==='object'&&!Array.isArray(saved.pages)?saved.pages:{},
@@ -101,6 +102,7 @@ export class WebsiteService{
     return {
       siteName:seo.siteName,defaultOgImage:seo.defaultOgImage,
       organizationLogo:seo.organizationLogo,robotsText:seo.robotsText,
+      googleVerification:seo.googleVerification,bingVerification:seo.bingVerification,
       allowIndexing:seo.allowIndexing,pages:seo.pages,redirects:seo.redirects
     };
   }
@@ -153,7 +155,12 @@ export class WebsiteService{
         seen.add(target);target=redirects.find(r=>r.from===target).to;
       }
     }
+    for(const token of [body?.googleVerification,body?.bingVerification]){
+      if(token&&!/^[a-zA-Z0-9_-]{1,250}$/.test(String(token)))throw new BadRequestException('Doğrulama kodu geçersiz.');
+    }
     const next={
+      googleVerification:str(body?.googleVerification,250),
+      bingVerification:str(body?.bingVerification,250),
       version:current.version+1,siteName:str(body?.siteName,100).trim()||'Ticarti',
       defaultOgImage,organizationLogo:logo||'/assets/images/ticarti-logo.svg',
       robotsText:str(body?.robotsText,10000),allowIndexing:body?.allowIndexing!==false,
