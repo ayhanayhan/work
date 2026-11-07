@@ -28,15 +28,15 @@ const media=(src:string,alt:string,cls?:string)=>{
   const image=validMedia(src);
   return image?<img src={image} alt={alt} className={cls} loading="lazy"/>:null;
 };
-function Nav({lang}:{lang:string}){
+function Nav({lang,features,blog,faq}:{lang:string;features:boolean;blog:boolean;faq:boolean}){
   const root=prefix(lang);
   return <header className="tc-native-header">
     <div className="tc-native-shell tc-native-header-row">
-      <Link href={root+'/'} className="tc-native-logo" aria-label="Ticarti anasayfa">ticarti<span>.</span></Link>
+      <Link href={root+'/'} className="tc-native-logo" aria-label="Ticarti anasayfa"><img src="/assets/images/ticarti-logo.svg" alt="Ticarti"/></Link>
       <nav aria-label="Ana menü" className="tc-native-nav">
-        <Link href={root+'/#ozellikler'}>{ui(lang,'features')}</Link>
-        <Link href={root+'/#blog'}>{ui(lang,'blog')}</Link>
-        <Link href={root+'/#sss'}>{ui(lang,'faq')}</Link>
+        {features?<Link href={root+'/#ozellikler'}>{ui(lang,'features')}</Link>:null}
+        {blog?<Link href={root+'/#blog'}>{ui(lang,'blog')}</Link>:null}
+        {faq?<Link href={root+'/#sss'}>{ui(lang,'faq')}</Link>:null}
       </nav>
       <div className="tc-native-header-actions">
         <Link href={root+'/contacto.html'}>{ui(lang,'contact')}</Link>
@@ -136,7 +136,7 @@ function Footer({lang,locales}:{lang:string;locales:ActiveLocale[]}){
   const root=prefix(lang);
   return <footer className="tc-native-footer"><div className="tc-native-shell">
     <div className="tc-native-footer-row">
-      <Link href={root+'/'} className="tc-native-logo">ticarti<span>.</span></Link>
+      <Link href={root+'/'} className="tc-native-logo"><img src="/assets/images/ticarti-logo.svg" alt="Ticarti"/></Link>
       <nav aria-label="Alt menü">
         <Link href={root+'/paketler.html'}>{ui(lang,'packages')}</Link>
         <Link href={root+'/contacto.html'}>{ui(lang,'contact')}</Link>
@@ -155,7 +155,12 @@ function Footer({lang,locales}:{lang:string;locales:ActiveLocale[]}){
 }
 export function HomepageNative({home,lang,locales,posts}:Props){
   const known=new Set(['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq']);
-  const content=home.modules.filter(m=>m.enabled&&known.has(m.id)).map(m=>{
+  const activeModules=home.modules.filter(m=>m.enabled&&known.has(m.id));
+  const featureModule=activeModules.find(m=>m.id==='builder');
+  const features=!!featureModule&&visibleItems(featureModule,lang).length>0;
+  const blog=!!posts.length&&activeModules.some(m=>m.id==='blog');
+  const faq=activeModules.some(m=>m.id==='faq'&&visibleItems(m,lang).some(i=>it(i,'question',lang)&&it(i,'answer',lang)));
+  const content=activeModules.map(m=>{
     switch(m.id){
       case 'hero':return <Hero key={m.id} m={m} lang={lang}/>;
       case 'bottomCta':return <BottomCta key={m.id} m={m} lang={lang}/>;
@@ -165,7 +170,7 @@ export function HomepageNative({home,lang,locales,posts}:Props){
     }
   });
   return <div className="tc-native-home">
-    <Nav lang={lang}/>
+    <Nav lang={lang} features={features} blog={blog} faq={faq}/>
     <main id="main-content">{content}</main>
     <Footer lang={lang} locales={locales}/>
   </div>;
