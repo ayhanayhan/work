@@ -1,4 +1,5 @@
 /* Original Ticarti header markup converted to native JSX. */
+import MobileMegaMenu from './mobile-mega';
 export default function HeaderSnapshot(){return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
     {"\n"}
@@ -181,7 +182,7 @@ export default function HeaderSnapshot(){return (
                 {"\n"}
               </button>
               {"\n"}
-              <div className={"tc-ui-submenu-slot"}></div>
+              <div className={"tc-ui-submenu-slot"}><MobileMegaMenu /></div>
               {"\n"}
             </div>
             {"\n"}
