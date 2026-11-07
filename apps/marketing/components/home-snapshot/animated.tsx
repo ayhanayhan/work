@@ -21,7 +21,7 @@ export default function AnimatedHeadingSection(){
             {"Ürün yönetiminden siparişlere"}
           </span>
           {"\n"}
-          <span aria-hidden={"true"} className={"tc-animated-heading__roller"}>
+          <span aria-hidden={true} className={"tc-animated-heading__roller"}>
             {"\n"}
             <span className={"tc-animated-heading__stack"}>
               {"\n"}
@@ -57,9 +57,9 @@ export default function AnimatedHeadingSection(){
             {"\n"}
           </span>
           {"\n"}
-          <i aria-hidden={"true"} className={"tc-animated-heading__caret tc-animated-heading__caret--inline"}></i>
+          <i aria-hidden={true} className={"tc-animated-heading__caret tc-animated-heading__caret--inline"}></i>
           {"\n"}
-          <span aria-hidden={"true"} className={"tc-animated-heading__static"} data-tc-content-key={"span-079"}>
+          <span aria-hidden={true} className={"tc-animated-heading__static"} data-tc-content-key={"span-079"}>
             {"tek panelden"}
           </span>
           {"\n"}
