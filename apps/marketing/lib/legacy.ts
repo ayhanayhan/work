@@ -4,6 +4,7 @@ import {notFound} from 'next/navigation';
 import {archiveCard,BlogLocale,BlogPost,blogLabel,blogPath,escapeHtml,getBlogPosts,getWebsiteLocales,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 import {applyHomepageFaq,FaqContent,getHomepageFaq} from './faq';
+import {getHomepageSnapshot,renderHomepageServer} from './homepage-ssr';
 
 export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean;faq?:FaqContent};
 function extract(html:string):PageData{
@@ -128,30 +129,14 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     data.html=data.html.replace('Diğer yazılar',blogLabel(lang).related).replace('Tüm blog yazıları',blogLabel(lang).all).replace('Tüm yazılar',blogLabel(lang).all);
   }
   if(isHome){
-    // Keep the exact original header, layout, animations and FAQ; only swap blog content.
-    if(!posts.length){
-      data.html=data.html.replace(/<section\b(?=[^>]*\bid="tc-blog")[^>]*>[\s\S]*?<\/section>/i,'');
-    }else{
-      const open=data.html.indexOf('<div aria-label="Blog yazıları" class="card-inner tc-blog__track"');
-      if(open>=0){
-        const contentStart=data.html.indexOf('>',open)+1;
-        const nextSection=data.html.indexOf('</section>',contentStart);
-        const articleEnd=data.html.lastIndexOf('</article>',nextSection);
-        const end=data.html.indexOf('</div>',articleEnd);
-        if(end>=0)data.html=data.html.slice(0,contentStart)+posts.slice(0,8).map(p=>homeCard(p,lang)).join('')+data.html.slice(end);
-      }
-    }
-    if(posts.length){
-      data.html=data.html.replace('href="blog/index.html"','href="'+blogPath(lang)+'"');
-      data.html=data.html.replace('Tüm yazılar →',blogLabel(lang).all+' →');
-    }
-    // FAQ visible markup and SEO structured data are built from this same locale-specific CMS snapshot.
+    // One source of truth: CMS is rendered before HTML leaves Next.js.
+    // No client-side text replacement or template demo fallback.
+    const snapshot=await getHomepageSnapshot(lang);
     data.faq=await getHomepageFaq(lang);
-    // Other homepage modules still use the existing integration.
-    data.scripts.push('/assets/js/pages/website-home-cms.js');
+    data.html=renderHomepageServer(data.html,snapshot,lang,posts);
   }
   const id=pageKey(source);
-  if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
+  if(id&&!isHome){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
   data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
   if(isHome&&data.faq){
     data.html=applyHomepageFaq(data.html,data.faq);
