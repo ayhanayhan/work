@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback,useEffect,useMemo,useState} from 'react';
-import {LoaderCircle,Plus,RefreshCw,Search,Trash2} from 'lucide-react';
+import {Download,LoaderCircle,Plus,RefreshCw,Search,Trash2} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
 import {Toolbar,ToolbarActions,ToolbarDescription,ToolbarHeading} from '@/partials/common/toolbar';
@@ -13,6 +13,7 @@ import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
 import {readWebsiteBlog,saveWebsiteBlog} from '../../components/website-blog-resource';
+import {ticartiBlogCategorySeeds} from '../../components/ticarti-blog-category-seeds';
 
 type Translation={title:string;slug:string;description:string;seoTitle:string;seoDescription:string};
 type Category={id:string;parentId:string|null;isActive:boolean;sortOrder:number;translations:Record<string,Translation>};
@@ -65,6 +66,58 @@ export default function WebsiteBlogCategories(){
       data.categories.map(x=>x.id===edit.id?edit:x):[...data.categories,edit];
     if(await save(categories))setEdit(null);
   };
+  const importTicartiCategories=async()=>{
+    if(saving||loading||localesLoading||localesError||!locales.length)return;
+    const supported=locales.map(x=>x.locale).filter(x=>['tr','en','pt','ru','bg'].includes(x));
+    const unsupported=locales.map(x=>x.locale).filter(x=>!supported.includes(x));
+    if(!supported.length){setError('Hazır kategori çevirileri aktif dillerle eşleşmiyor.');return;}
+    setSaving(true);setError('');setMessage('');
+    try{
+      // Always read the latest persisted version to prevent accidental overwrites.
+      const latest=await readWebsiteBlog<any,Category>(request);
+      const categories:Category[]=Array.isArray(latest.categories)?structuredClone(latest.categories):[];
+      let created=0,filled=0;
+      const normalize=(v:string)=>v.trim().toLocaleLowerCase('tr');
+      for(const seed of ticartiBlogCategorySeeds){
+        const existing=categories.find(c=>c.id==='cat-ticarti-'+seed.id||
+          normalize(c.translations?.tr?.slug||'')===seed.id||
+          supported.some(locale=>normalize(c.translations?.[locale]?.slug||'')===normalize(seed.translations[locale]?.slug||'')));
+        if(!existing){
+          categories.push({id:'cat-ticarti-'+seed.id,parentId:null,isActive:true,sortOrder:categories.length,
+            translations:Object.fromEntries(supported.map(locale=>[locale,seed.translations[locale]]))});
+          created++;
+        }else{
+          for(const locale of supported){
+            const seedTranslation=seed.translations[locale],current=existing.translations?.[locale];
+            if(!seedTranslation)continue;
+            const next={...blank(),...current};
+            let changed=false;
+            for(const key of ['title','slug','description','seoTitle','seoDescription'] as const){
+              if(!next[key]?.trim()){next[key]=seedTranslation[key];changed=true;}
+            }
+            if(changed){
+              existing.translations={...existing.translations,[locale]:next};
+              filled++;
+            }
+          }
+        }
+      }
+      if(!created&&!filled){
+        setData({...latest,categories});
+        setMessage('Sekiz kategori zaten mevcut ve çeviri alanları dolu. Tekrar kayıt oluşturulmadı.');
+        return;
+      }
+      const result=await saveWebsiteBlog<any,Category>(request,{
+        version:latest.version,posts:latest.posts||[],categories,
+        authors:latest.authors
+      });
+      setData({...result,categories:result.categories||categories});
+      setMessage(created+' kategori eklendi, '+filled+' kategori/dil çeviri seti tamamlandı. '+
+        supported.map(x=>x.toUpperCase()).join(', ')+' dilleri işlendi.'+
+        (unsupported.length?' Henüz hazır çevirisi olmayan aktif diller: '+unsupported.join(', ')+'.':''));
+    }catch(e:any){setError('Toplu kategori ekleme başarısız: '+(e?.message||'İşlem tamamlanamadı.'))}
+    finally{setSaving(false)}
+  };
   const remove=async(category:Category)=>{
     if(data.categories.some(x=>x.parentId===category.id)){setError('Önce alt kategorileri taşıyın veya kaldırın.');return;}
     if(!window.confirm('Kategori silinsin mi? Mevcut yazılardaki kategori metinleri korunacaktır.'))return;
@@ -77,7 +130,7 @@ export default function WebsiteBlogCategories(){
   return <>
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Blog Kategorileri</h1>
       <ToolbarDescription>Ticarti.com blogunun çok dilli kategorilerini ve SEO alanlarını yönetin.</ToolbarDescription>
-    </ToolbarHeading><ToolbarActions><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button>
+    </ToolbarHeading><ToolbarActions><Button variant="outline" disabled={saving||loading||localesLoading||!!localesError} onClick={()=>void importTicartiCategories()}><Download className="size-4"/>8 Kategoriyi 5 Dilde Ekle</Button><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button>
       <Button disabled={localesLoading||!!localesError||!locales.length} onClick={()=>{setEdit(newCategory());setLang(locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'');setError('')}}><Plus className="size-4"/>Yeni Kategori</Button>
     </ToolbarActions></Toolbar></Container>
     <Container className="pb-10">
