@@ -42,6 +42,13 @@ assert.ok(!rendered.includes('E-ticaret siteni oluştur.<br/>14 gün ücretsiz d
 assert.ok(!rendered.includes('E-ticaret sitesi kurmadan önce bilmen gerekenler'));
 assert.ok(!rendered.includes('tc-site-hero__carousel'),'Fake hero carousel must be absent');
 assert.ok(rendered.includes('href="/blog/gercek-yazi"'));
+const inactive=ssr.renderHomepageServer(original,{version:2,modules:[{...hero,enabled:false},blogSection]},'tr',posts);
+assert.ok(!inactive.includes('Yalnızca CMS Başlığı'),'Disabled modules must not be rendered');
+const untranslated=ssr.renderHomepageServer(original,{version:2,modules:[hero]},'de',[]);
+assert.ok(!untranslated.includes('Yalnızca CMS Başlığı'),'Missing translations must never show Turkish text as demo');
+const legacySource=fs.readFileSync(path.resolve(__dirname,'../lib/legacy.ts'),'utf8');
+assert.ok(!legacySource.includes("data.scripts.push('/assets/js/pages/website-home-cms.js')"),
+  'Client-side CMS override must not run after SSR');
 const footer=ssr.renderFooterLanguages(rendered,['tr','de'],'tr',[]);
 assert.ok(footer.includes('href="/de/"'));
 assert.ok(footer.includes('>Deutsch<'));
