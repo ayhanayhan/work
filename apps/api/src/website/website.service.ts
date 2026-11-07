@@ -6,6 +6,7 @@ import initialBlog from './data/ticarti-blog-initial.json';
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
+const SEO_KEY='marketing_seo_v1';
 const MODULE_IDS=['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq'] as const;
 const MODULE_TITLES=['Ana Slider','Hareketli Başlık','Özellik Kartları','Operasyon','Satış Kanalları','Öne Çıkan Özellikler','Referanslar','Alt Çağrı Alanı','Blog','Sıkça Sorulan Sorular'];
 const ITEM_FIELDS:Record<string,string[]>={hero:['heading','description'],animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
@@ -81,6 +82,78 @@ export class WebsiteService{
   }
   private async put(key:string,value:any){
     return this.prisma.platformSetting.upsert({where:{key},create:{key,value},update:{value}});
+  }
+  async websiteSeo(){
+    const saved=await this.get(SEO_KEY);
+    return {
+      version:Number(saved?.version)||0,
+      siteName:str(saved?.siteName,100)||'Ticarti',
+      defaultOgImage:str(saved?.defaultOgImage,2048),
+      organizationLogo:str(saved?.organizationLogo,2048)||'/assets/images/ticarti-logo.svg',
+      robotsText:str(saved?.robotsText,10000),
+      allowIndexing:saved?.allowIndexing!==false,
+      pages:saved?.pages&&typeof saved.pages==='object'&&!Array.isArray(saved.pages)?saved.pages:{},
+      redirects:Array.isArray(saved?.redirects)?saved.redirects:[]
+    };
+  }
+  async publicWebsiteSeo(){
+    const seo=await this.websiteSeo();
+    return {
+      siteName:seo.siteName,defaultOgImage:seo.defaultOgImage,
+      organizationLogo:seo.organizationLogo,robotsText:seo.robotsText,
+      allowIndexing:seo.allowIndexing,pages:seo.pages,redirects:seo.redirects
+    };
+  }
+  async updateWebsiteSeo(body:any){
+    const current=await this.websiteSeo();
+    if(Number(body?.version)!==current.version)throw new ConflictException('SEO ayarları başka oturumda güncellendi.');
+    const locales=['tr','en','de','ru','ar'];
+    const allowedPages=['home','blog','pricing','contact','enterprise','privacy','terms','kvkk'];
+    const pageFields=['title','description','ogTitle','ogDescription','ogImage','twitterTitle','twitterDescription','canonicalPath'];
+    const pages:Record<string,any>={};
+    for(const id of allowedPages){
+      const source=body?.pages?.[id];
+      if(!source||typeof source!=='object')continue;
+      const translations:Record<string,any>={};
+      for(const locale of locales){
+        const values=source?.[locale];
+        if(!values||typeof values!=='object')continue;
+        const fields:Record<string,any>={};
+        for(const field of pageFields){
+          const value=str(values?.[field],field==='description'||field==='ogDescription'||field==='twitterDescription'?500:field==='ogImage'||field==='canonicalPath'?2048:220).trim();
+          if(field==='canonicalPath'&&value&&!/^\/[a-zA-Z0-9_./-]*$/.test(value))throw new BadRequestException('Canonical adres yalnızca site içi yol olabilir.');
+          if(field==='ogImage'&&value&&!/^https:\/\/[^\s"'<>]+$/.test(value)&&!/^\/assets\/[a-zA-Z0-9_./-]+$/.test(value))throw new BadRequestException('OG görsel adresi geçersiz.');
+          fields[field]=value;
+        }
+        fields.noindex=values.noindex===true;
+        translations[locale]=fields;
+      }
+      pages[id]=translations;
+    }
+    const defaultOgImage=str(body?.defaultOgImage,2048).trim();
+    const logo=str(body?.organizationLogo,2048).trim();
+    for(const v of [defaultOgImage,logo]){
+      if(v&&!/^https:\/\/[^\s"'<>]+$/.test(v)&&!/^\/assets\/[a-zA-Z0-9_./-]+$/.test(v))throw new BadRequestException('Görsel URL geçersiz.');
+    }
+    const redirects:any[]=[];
+    if(Array.isArray(body?.redirects)){
+      if(body.redirects.length>150)throw new BadRequestException('En fazla 150 yönlendirme eklenebilir.');
+      for(const item of body.redirects){
+        const from=str(item?.from,250).trim(),to=str(item?.to,250).trim();
+        if(!/^\/[a-zA-Z0-9_./-]+$/.test(from)||!/^\/[a-zA-Z0-9_./-]+$/.test(to)||from===to)
+          throw new BadRequestException('Yönlendirme yolları geçersiz.');
+        if(redirects.some(r=>r.from===from))throw new BadRequestException('Tekrarlanan yönlendirme.');
+        redirects.push({from,to,permanent:item?.permanent!==false});
+      }
+    }
+    const next={
+      version:current.version+1,siteName:str(body?.siteName,100).trim()||'Ticarti',
+      defaultOgImage,organizationLogo:logo||'/assets/images/ticarti-logo.svg',
+      robotsText:str(body?.robotsText,10000),allowIndexing:body?.allowIndexing!==false,
+      pages,redirects
+    };
+    await this.put(SEO_KEY,next);
+    return next;
   }
   async home(){
     const data=await this.get(HOME_KEY);
