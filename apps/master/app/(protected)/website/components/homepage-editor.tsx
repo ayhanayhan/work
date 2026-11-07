@@ -81,6 +81,22 @@ export default function HomepageEditor(){
   const move=(from:number,to:number)=>{
     setWorking(x=>{if(!x||to<0||to>=x.items.length||from===to)return x;const items=[...x.items];const [item]=items.splice(from,1);items.splice(to,0,item);return {...x,items}});
   };
+  const reorderModules=async(from:number,to:number)=>{
+    if(!data||saving||to<0||to>=data.modules.length||from===to)return;
+    const currentlySaved=!working||JSON.stringify(data.modules.find(x=>x.id===working.id))===JSON.stringify(working);
+    if(!currentlySaved){setError('Önce mevcut modüldeki değişiklikleri kaydedin.');return;}
+    setSaving(true);setError('');setMessage('');
+    try{
+      const modules=[...data.modules];
+      const [moved]=modules.splice(from,1);modules.splice(to,0,moved);
+      const result=await request('/superadmin/website/home-order',{
+        method:'PATCH',body:JSON.stringify({version:data.version,ids:modules.map(x=>x.id)})
+      }) as Snapshot;
+      setData(result);
+      setMessage('Modül sırası veritabanına kaydedildi.');
+    }catch(e){setError('Modül sıralaması kaydedilemedi: '+errorText(e))}
+    finally{setSaving(false)}
+  };
   const save=async()=>{
     if(!working||!data||localesLoading||localesError||!languageList.length)return;
     setSaving(true);setError('');setMessage('');
@@ -142,12 +158,12 @@ export default function HomepageEditor(){
   const itemLabel=(x:Entry,i:number)=>x.fields?.heading?.[lang]||x.fields?.question?.[lang]||x.fields?.heading?.tr||x.fields?.question?.tr||'Kayıt '+(i+1);
   const unchanged=!!working&&!!data&&JSON.stringify(data.modules.find(x=>x.id===working.id))===JSON.stringify(working);
   const editorState=!working?'':saving?'Kaydediliyor':unchanged?'Kaydedildi':'Kaydedilmemiş değişiklikler';
-  const stateText=data?.version===0?'Henüz yayına alınmış özel içerik yok; site kendi mevcut HTML içeriğini koruyor.':'İçerik sürümü: '+data?.version;
+  const stateText=data?.version===0?'Henüz kaydedilmiş anasayfa içeriği yok. Boş modüller sitede gösterilmez.':'İçerik sürümü: '+data?.version;
   return <>
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Anasayfa</h1><ToolbarDescription>Orijinal tasarım korunarak modül bazlı içerik, dil ve sıralama yönetimi.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button disabled={!working||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Modülü Kaydet</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-5 pb-10">
       <Card><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Orijinal HTML, animasyonlar, butonlar ve CSS değişmez. İçe aktarma yalnızca içerik verilerini yükler.</p></div>
+        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Anasayfa modülleri Next.js bileşenleridir. İçerikler veritabanından okunur. Modülleri sürükleyerek veya oklarla sıralayabilirsiniz.</p></div>
         <Button size="sm" variant="outline" asChild><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Site İçeriğini İçe Aktar<input type="file" hidden accept=".json,application/json" disabled={saving} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button>
       </CardContent></Card>
       {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
@@ -155,11 +171,27 @@ export default function HomepageEditor(){
       {message?<div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{message}</div>:null}
       {loading?<div className="grid min-h-64 place-items-center"><LoaderCircle className="animate-spin"/></div>:<div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)]">
         <Card><CardHeader><CardHeading><Layers3 className="me-2 inline size-4"/>Anasayfa Modülleri</CardHeading></CardHeader><CardContent className="grid content-start gap-1 p-3">
-          {(data?.modules||[]).map((m,i)=><button key={m.id} className={'flex items-center justify-between rounded-lg px-3 py-3 text-left '+(active===m.id?'bg-muted text-primary':'hover:bg-muted/50')} type="button" onClick={()=>{setActive(m.id);setError('');setMessage('')}}><span className="flex min-w-0 items-center gap-3"><span className="text-xs text-muted-foreground">{String(i+1).padStart(2,'0')}</span><span className="truncate text-sm font-medium">{m.title}</span></span>{m.enabled===false?<Badge appearance="light" variant="secondary">Pasif</Badge>:null}</button>)}
+          {(data?.modules||[]).map((m,i)=><div key={m.id} className={'flex items-center gap-1 rounded-lg px-2 py-1 '+(active===m.id?'bg-muted text-primary':'hover:bg-muted/50')}
+            draggable={!saving}
+            onDragStart={()=>setDragged(m.id)}
+            onDragOver={e=>e.preventDefault()}
+            onDrop={e=>{e.preventDefault();const from=data?.modules.findIndex(x=>x.id===dragged);setDragged(null);if(from!==undefined&&from>=0)void reorderModules(from,i)}}
+            onDragEnd={()=>setDragged(null)}>
+            <GripVertical className="size-4 shrink-0 cursor-grab text-muted-foreground"/>
+            <button type="button" className="flex min-w-0 flex-1 items-center gap-2 py-2 text-left" onClick={()=>{setActive(m.id);setError('');setMessage('')}}>
+              <span className="text-xs text-muted-foreground">{String(i+1).padStart(2,'0')}</span>
+              <span className="truncate text-sm font-medium">{m.title}</span>
+              {m.enabled===false?<Badge appearance="light" variant="secondary">Pasif</Badge>:null}
+            </button>
+            <button aria-label={m.title+' yukarı'} title="Yukarı" type="button" disabled={saving||i===0}
+              onClick={()=>void reorderModules(i,i-1)}><ArrowUp className="size-4"/></button>
+            <button aria-label={m.title+' aşağı'} title="Aşağı" type="button" disabled={saving||i===(data?.modules.length||0)-1}
+              onClick={()=>void reorderModules(i,i+1)}><ArrowDown className="size-4"/></button>
+          </div>)}
         </CardContent></Card>
         {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">{working.enabled?'Aktif':'Pasif'} · {editorState}</p><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector} · Görünüm sınıfları değiştirilmez.</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
           <div className="flex flex-wrap gap-2 border-b pb-4">{languageList.map(x=><Button size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)} key={x.locale}>{x.label||x.locale}</Button>)}</div>
-          {fields.length?<div className="grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{['description','answer'].includes(key)?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boşsa sitenin mevcut metni kullanılır.</span></label>)}</div>:null}
+          {fields.length?<div className="grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{['description','answer'].includes(key)?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boş bırakılırsa örnek metin gösterilmez.</span></label>)}</div>:null}
           {entries.length?<div className="grid gap-4 border-t pt-5">
             <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve yanıtları aktif her dilde düzenleyin. Yalnızca iki alanı da dolu olan sorular sitede ve FAQPage yapılandırılmış verisinde gösterilir.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. JSON girmeniz gerekmez.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
             {working.items.map((entry,i)=><div key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=working.items.findIndex(x=>x.id===dragged);if(from>=0)move(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
