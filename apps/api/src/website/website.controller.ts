@@ -26,6 +26,9 @@ export class WebsiteController {
   @Patch('superadmin/website/home/:id')
   updateModule(@Param('id') id:string,@Body() body:any){return this.svc.updateModule(id,body)}
   @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/home-order')
+  reorderHome(@Body() body:any){return this.svc.reorderHome(body)}
+  @UseGuards(SuperAdminAuthGuard)
   @Patch('superadmin/website/home-import')
   importHome(@Body() body:any){return this.svc.importHome(body)}
   @UseGuards(SuperAdminAuthGuard)
