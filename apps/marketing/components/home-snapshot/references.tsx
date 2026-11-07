@@ -17,7 +17,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
           </span>
           {"\n"}
           <span data-tc-content-key={"span-142"}>
-            {"sınırsız olasılığa"}
+            {fieldFor(module,'heading',locale)?null:"sınırsız olasılığa"}
           </span>
           {"\n"}
         </p>
@@ -82,7 +82,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
             </span>
             {"\n"}
             <span data-tc-content-key={"span-144"}>
-              {"sınırsız olasılığa"}
+              {fieldFor(module,'heading',locale)?null:"sınırsız olasılığa"}
             </span>
             {"\n"}
           </h2>
