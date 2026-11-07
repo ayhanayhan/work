@@ -59,6 +59,7 @@ async function test(){
   const categorized=await svc.updateBlog({version:4,posts:[withCategory],categories:[category]});
   assert.equal(categorized.categories.length,1,'Categories must be saved alongside posts');
   assert.equal((await svc.publicBlog('tr')).posts[0].category,'Rehberler');
+  assert.equal((await svc.publicBlog('tr')).posts[0].categoryId,'cat-guides');
   assert.equal((await svc.publicBlog('en')).posts[0].category,'Guides');
   await assert.rejects(svc.updateBlog({version:5,posts:[withCategory],categories:[]}),
     'Cannot delete a category referenced by an article');
@@ -140,7 +141,6 @@ async function test(){
     categoryIds:['cat-guides'],items:[]});
   assert.deepEqual(blogHome.module.categoryIds,['cat-guides']);
   assert.deepEqual((await svc.publicHome('tr')).modules.find((x:any)=>x.id==='blog').categoryIds,['cat-guides']);
-  assert.equal((await svc.publicBlog('tr')).posts[0].categoryId,'cat-guides');
   // FAQ uses the homepage CMS module, never a second seeded datastore.
   const faqSaved=await svc.updateModule('faq',{version:2,enabled:true,fields:{
     heading:{tr:'Sıkça Sorulan Sorular',de:'Häufige Fragen'}
