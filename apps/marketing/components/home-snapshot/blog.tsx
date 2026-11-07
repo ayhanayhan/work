@@ -6,7 +6,7 @@ import BlogCards from './blog-cards';
  */
 export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeContent|null;locale?:string;posts?:BlogPost[]}){
  const module=moduleById(home,'blog');
- if(home?.version&&home.modules.some(x=>x.id==='blog'&&x.enabled===false))return null;
+ if(home?.disabledModuleIds?.includes('blog'))return null;
   return (
     <section aria-labelledby={"tc-blog-title"} className={"tc-article-carousel tc-blog"} id={"tc-blog"}>
       {"\n"}
@@ -50,7 +50,7 @@ export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeConte
         {"\n"}
         <div className={"cards-main"}>
           <div className={"card"}>
-            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={0}>{posts.length?<BlogCards posts={posts} locale={locale}/>:home?.version?null:(<>
+            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={0}>{posts.length?<BlogCards posts={posts} locale={locale}/>:module?.configured?null:(<>
               <article className={"card-items list-item box card-visible tc-blog__card"}>
                 {"\n"}
                 <div className={"card-wrap"}>
