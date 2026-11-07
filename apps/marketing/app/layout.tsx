@@ -3,12 +3,13 @@ import type {ReactNode} from 'react';
 import {headers} from 'next/headers';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
+import {getWebsiteLocales} from '@/lib/blog';
 
 export const metadata:Metadata={title:'Ticarti | Ticaretin yeni hali',description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.'};
-async function htmlAttrs(){
-  const uri=(await headers()).get('x-marketing-page')||'/';
+async function htmlAttrs(uri:string,locales:string[]){
   const pathPart=uri.replace(/^\/+|\/+$/g,'');
-  const part=pathPart.replace(/^(?:tr|en|pt|ru)(?:\/|$)/,'');
+  const first=pathPart.split('/')[0];
+  const part=locales.includes(first)?pathPart.slice(first.length).replace(/^\//,''):pathPart;
   const safe=/^[a-zA-Z0-9_./-]*$/.test(part)&&!part.includes('..')?part:'';
   const fixed=safe==='en/blog'||safe==='en/blog/index.html'||safe==='blog'||safe==='blog/index.html'?'en/blog/index.html':
     safe.startsWith('en/blog/')||safe.startsWith('blog/')?'en/blog/post.html':
@@ -20,10 +21,12 @@ async function htmlAttrs(){
   }catch{return 'tc-page-home'}
 }
 export default async function RootLayout({children}:{children:ReactNode}) {
-  const cls=await htmlAttrs();
   const route=(await headers()).get('x-marketing-page')||'/';
-  const lang=route.match(/^\/(tr|en|pt|ru)(?:\/|$)/)?.[1]||'tr';
-  return <html lang={lang} className={cls}><head>
+  const locales=await getWebsiteLocales();
+  const first=route.replace(/^\//,'').split('/')[0];
+  const lang=locales.includes(first)?first:'tr';
+  const cls=await htmlAttrs(route,locales);
+  return <html lang={lang} dir={lang==='ar'?'rtl':undefined} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=1"/>
   </head><body>{children}</body></html>;
