@@ -1,22 +1,36 @@
+import {moduleById,fieldFor,safePageUrl,textFor,type HomeContent} from '@/lib/home-cms';
 /* Static React snapshot of original Ticarti homepage: faq.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function FaqSection(){
+export default function FaqSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'faq');
+  const items=(module?.items||[]).filter(x=>x.enabled!==false&&textFor(x.fields?.question,locale)&&textFor(x.fields?.answer,locale));
+  if(home?.version&&home.modules.some(x=>x.id==='faq'&&x.enabled===false))return null;
   return (
     <section className={"tc-faq"} id={"tc-faq"}>
       <div className={"tc-faq__inner"}>
         <div className={"tc-faq__intro"}>
           <h2 className={"tc-faq__title"} data-tc-content-key={"h2-181"}>
-            {"Sıkça sorulan sorular"}
+            {fieldFor(module,'heading',locale)||"Sıkça sorulan sorular"}
           </h2>
           <p className={"tc-faq__subtitle"} data-tc-content-key={"p-182"}>
-            {"Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin."}
+            {fieldFor(module,'description',locale)||"Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin."}
           </p>
-          <a className={"tc-faq__button"} href={"/contacto.html"} data-tc-content-key={"a-183"}>
-            {"Ekibimizle iletişime geç"}
+          <a className={"tc-faq__button"} href={safePageUrl(fieldFor(module,"buttonUrl",locale),"/contacto.html")} data-tc-content-key={"a-183"}>
+            {fieldFor(module,'button',locale)||"Ekibimizle iletişime geç"}
           </a>
         </div>
-        <div className={"tc-faq__list"}>
+        {items.length?(<div className="tc-faq__list">
+    {items.map((item,i)=><div key={item.id} className={'tc-faq__item'+(i===0?' is-open':'')}>
+      <button aria-controls={'tc-faq-panel-'+item.id} aria-expanded={i===0} className="tc-faq__question" id={'tc-faq-head-'+item.id} type="button">
+        <span className="tc-faq__q-text">{textFor(item.fields?.question,locale)}</span>
+        <span aria-hidden="true" className="tc-faq__icon"><svg fill="none" height={20} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width={20}><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div aria-labelledby={'tc-faq-head-'+item.id} className="tc-faq__panel" id={'tc-faq-panel-'+item.id} role="region">
+        <div className="tc-faq__answer"><p style={{whiteSpace:'pre-line'}}>{textFor(item.fields?.answer,locale)}</p></div>
+      </div>
+    </div>)}
+  </div>):(<div className={"tc-faq__list"}>
           <div className={"tc-faq__item is-open"}>
             <button aria-controls={"tc-faq-panel-1"} aria-expanded={"true"} className={"tc-faq__question"} id={"tc-faq-head-1"} type={"button"}>
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-184"}>
@@ -587,7 +601,7 @@ export default function FaqSection(){
               </div>
             </div>
           </div>
-        </div>
+        </div>)}
       </div>
     </section>
   );
