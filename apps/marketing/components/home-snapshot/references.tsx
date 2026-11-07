@@ -1,7 +1,10 @@
+import {moduleById,fieldFor,safeAssetUrl,textFor,type HomeContent} from '@/lib/home-cms';
 /* Static React snapshot of original Ticarti homepage: references.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function ReferencesSection(){
+export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+ const module=moduleById(home,'references');
+ const items=(module?.items||[]).filter(item=>item.enabled!==false&&item.assets?.image);
   return (
     <section className={"tc-press"}>
       {"\n"}
@@ -10,7 +13,7 @@ export default function ReferencesSection(){
         <p aria-hidden={true} className={"tc-press__title tc-press__title--m"}>
           {"\n"}
           <span data-tc-content-key={"span-141"}>
-            {"Bir mağazadan,"}
+            {fieldFor(module,'heading',locale)||"Bir mağazadan,"}
           </span>
           {"\n"}
           <span data-tc-content-key={"span-142"}>
@@ -27,11 +30,16 @@ export default function ReferencesSection(){
               {"\n"}
               <ul className={"tc-press__track"} role={"list"}>
                 {"\n"}
-                <li className={"tc-press__slide"}>
+                {items.length?items.map(item=><li key={item.id} className="tc-press__slide">
+                  <img alt={textFor(item.fields?.heading,locale)||'Referans'} className="tc-press__img" decoding="async"
+                    loading="lazy" src={safeAssetUrl(item.assets?.image,'/assets/images/ticarti-butik-girisimci.webp')}/>
+                  {item.assets?.logo?<img className="tc-press__entry-logo" src={safeAssetUrl(item.assets.logo,'')} alt={textFor(item.fields?.heading,locale)||'Logo'}/>:null}
+                  {textFor(item.fields?.description,locale)?<p className="tc-press__entry-description">{textFor(item.fields?.description,locale)}</p>:null}
+                </li>):(                <li className={"tc-press__slide"}>
                   {"\n"}
                   <img alt={"Butik moda atölyesinde gülümseyen girişimci"} className={"tc-press__img"} decoding={"async"} height={941} loading={"lazy"} src={"/assets/images/ticarti-butik-girisimci.webp"} width={1672} data-tc-content-src={"image-081"} />
                   {"\n"}
-                </li>
+                </li>)}
                 {"\n"}
               </ul>
               {"\n"}
