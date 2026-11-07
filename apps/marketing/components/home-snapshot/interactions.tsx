@@ -183,7 +183,7 @@ export default function HomeInteractions({children}:Props){
   };
   const updateForm=(form:HTMLFormElement,change:Partial<{dial:string;flag:string;error:string;kvkk:string;value:string;checked:boolean}>)=>{
     const key=form.dataset.ticartiForm||'hero';
-    setFormState(current=>({...current,[key]:{dial:'+90',flag:'🇹🇷',error:'',kvkk:'',value:'',checked:false',...current[key],...change}}));
+    setFormState(current=>({...current,[key]:{dial:'+90',flag:'🇹🇷',error:'',kvkk:'',value:'',checked:false,...current[key],...change}}));
   };
   const getForm=(form:HTMLFormElement)=>{
     const input=form.querySelector<HTMLInputElement>('input[type=tel]');
