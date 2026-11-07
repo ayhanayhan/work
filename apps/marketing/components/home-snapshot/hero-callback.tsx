@@ -26,7 +26,7 @@ export default function HeroCallback(){
                 {country.flag+" "+country.dial}
               </span>
               {"\n"}
-              <select aria-label={"Ülke ve telefon alan kodu seçin"} className={"tc-country-code"} name={"country_code"} value={country.dial} onChange={e=>{const option=e.currentTarget.selectedOptions[0];setCountry({dial:option.value,flag:option.dataset.flag||'',iso:option.dataset.country||'TR'});setError('')}}>
+              <select aria-label={"Ülke ve telefon alan kodu seçin"} className={"tc-country-code"} name={"country_code"} defaultValue={"+90"} onChange={e=>{const option=e.currentTarget.selectedOptions[0];setCountry({dial:option.value,flag:option.dataset.flag||'',iso:option.dataset.country||'TR'});setError('')}}>
                 {"\n"}
                 <option data-country={"TR"} data-flag={"🇹🇷"} data-name={"Türkiye"} value={"+90"}>
                   {"🇹🇷 Türkiye (+90)"}
