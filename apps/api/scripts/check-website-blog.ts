@@ -120,8 +120,29 @@ async function test(){
   assert.equal((await svc.publicBlog('de')).posts[0].title,'Deutscher Beitrag');
   assert.equal((await svc.publicBlog('en')).posts.length,0,'Disabled platform language must not publish');
   assert.deepEqual((await svc.publicBlog('de')).posts[0].availableLocales,['de']);
+  // Marketing homepage selected modules: localized hero CTA, KVKK mapping,
+  // repeatable references/logos, and category selection live in Prisma settings.
+  const emptyHome=await svc.home();
+  assert.equal(emptyHome.version,0);
+  const contractSettings={contracts:[{key:'KVKK_NOTICE',contentKey:'kvkk-notice',isActive:true,placements:['REGISTER_KVKK']}]};
+  store.set('platform_contracts',contractSettings);
+  const heroSaved=await svc.updateModule('hero',{version:0,enabled:true,ctaEnabled:false,
+    fields:{heading:{tr:'Mağazanı kur'},button:{tr:'Başla'},buttonUrl:{tr:'/paketler.html'},phoneEmpty:{tr:'Telefon gerekli'}},
+    items:[{id:'reference-1',enabled:true,fields:{heading:{tr:'Örnek mağaza'},description:{tr:'Referans açıklaması'}},
+      assets:{image:'/assets/images/test.png',logo:'/assets/images/test-logo.png'},storeId:''}],
+    logos:[{id:'logo-1',enabled:true,fields:{title:{tr:'Örnek marka'}},assets:{image:'/assets/images/test-logo.png'},storeId:''}]
+  });
+  assert.equal(heroSaved.module.ctaEnabled,false);
+  assert.equal(heroSaved.module.items[0].assets.logo,'/assets/images/test-logo.png');
+  assert.equal(heroSaved.module.logos[0].fields.title.tr,'Örnek marka');
+  assert.equal((await svc.publicHome('tr')).consentContract.href,'/kvkk.html');
+  const blogHome=await svc.updateModule('blog',{version:1,enabled:true,fields:{heading:{tr:'Makaleler'}},
+    categoryIds:['cat-guides'],items:[]});
+  assert.deepEqual(blogHome.module.categoryIds,['cat-guides']);
+  assert.deepEqual((await svc.publicHome('tr')).modules.find((x:any)=>x.id==='blog').categoryIds,['cat-guides']);
+  assert.equal((await svc.publicBlog('tr')).posts[0].categoryId,'cat-guides');
   // FAQ uses the homepage CMS module, never a second seeded datastore.
-  const faqSaved=await svc.updateModule('faq',{version:0,enabled:true,fields:{
+  const faqSaved=await svc.updateModule('faq',{version:2,enabled:true,fields:{
     heading:{tr:'Sıkça Sorulan Sorular',de:'Häufige Fragen'}
   },items:[{id:'faq-1',enabled:true,fields:{
     question:{tr:'Nasıl başlarım?',de:'Wie beginne ich?'},
@@ -130,7 +151,7 @@ async function test(){
   assert.equal(faqSaved.module.items.length,1);
   assert.equal((await svc.publicFaq('de')).items[0].fields.question.de,'Wie beginne ich?');
   assert.equal((await svc.publicFaq('en')).enabled,false,'Inactive language cannot publish FAQ');
-  await svc.updateModule('faq',{version:1,enabled:false,fields:faqSaved.module.fields,items:faqSaved.module.items});
+  await svc.updateModule('faq',{version:3,enabled:false,fields:faqSaved.module.fields,items:faqSaved.module.items});
   assert.equal((await svc.publicFaq('tr')).enabled,false,'Disabled FAQ module stays disabled in public endpoint');
   const author={
     id:'author-1',slug:'ticarti-uzmani',avatar:'https://example.com/avatar.webp',isActive:true,
