@@ -37,6 +37,8 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState('');
   const [draftRestored,setDraftRestored]=useState(false);
+  const [saveState,setSaveState]=useState<'saved'|'dirty'|'saving'>('saved');
+  const baseline=useRef('');
   const draftReady=useRef(false);
   const draftKey='ticarti:website-blog:draft:'+(postId||'new');
   const load=useCallback(async()=>{
@@ -48,20 +50,30 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       const post=postId?normalized.posts.find((x:Post)=>x.id===postId):newPost();
       if(!post)throw new Error('Blog yazısı bulunamadı.');
       setData(normalized);
-      let next=structuredClone(post);
+      draftReady.current=false;
+      const clean=structuredClone(post);
+      baseline.current=JSON.stringify(clean);
+      let next=clean;
       let restored=false;
       try{
         const raw=window.sessionStorage.getItem(draftKey);
         if(raw){
           const saved=JSON.parse(raw);
-          if(saved?.post?.translations&&(!postId||saved?.post?.id===next.id)&&
-             window.confirm('Bu yazı için kaydedilmemiş bir taslak bulundu. Kaldığınız yerden devam etmek ister misiniz?')){
-            next=saved.post;restored=true;
+          const same=JSON.stringify(saved?.post)===baseline.current;
+          const compatible=!!saved?.post?.translations &&
+            (!postId||saved.post.id===clean.id)&&
+            (saved?.serverUpdatedAt||null)===(clean.updatedAt||null);
+          if(same||!compatible)window.sessionStorage.removeItem(draftKey);
+          else if(typeof saved.savedAt==='number'&&saved.savedAt>Date.now()-7*24*60*60*1000){
+            next=saved.post;
+            restored=true;
           }
         }
       }catch{}
       setEditing(next);setTagDraft((next.tags||[]).join(', '));
-      setDraftRestored(restored);draftReady.current=true;
+      setDraftRestored(restored);
+      setSaveState(restored?'dirty':'saved');
+      draftReady.current=true;
     }catch(e){setError(err(e))}
     finally{setLoading(false)}
   },[postId,request,restoring,draftKey]);
@@ -72,8 +84,15 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
   },[locales]);
   useEffect(()=>{
     if(!editing||!draftReady.current||saving)return;
-    try{window.sessionStorage.setItem(draftKey,JSON.stringify({post:editing,savedAt:Date.now()}))}catch{}
-  },[draftKey,editing,saving]);
+    const dirty=JSON.stringify(editing)!==baseline.current;
+    setSaveState(dirty?'dirty':'saved');
+    try{
+      if(dirty)window.sessionStorage.setItem(draftKey,JSON.stringify({
+        post:editing,savedAt:Date.now(),serverUpdatedAt:data.posts.find(x=>x.id===editing.id)?.updatedAt||null
+      }));
+      else window.sessionStorage.removeItem(draftKey);
+    }catch{}
+  },[draftKey,editing,saving,data.posts]);
   const update=(id:string,fn:(p:Post)=>Post)=>setEditing(p=>p&&p.id===id?fn(p):p);
   const slugify=(v:string)=>v.toLocaleLowerCase('tr').normalize('NFKD').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const field=(key:TextField,next:string)=>{
@@ -109,16 +128,22 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
     if(editing.status==='PUBLISHED'&&!Object.entries(editing.translations).some(([code,t])=>locales.some(l=>l.locale===code)&&t.enabled!==false&&t.title?.trim()&&t.content?.trim())){
       setTab('publish');setError('Yayımlamak için aktif dillerden en az birinde başlık ve içerik zorunludur.');return false;
     }
-    setSaving(true);setError('');
+    setSaving(true);setSaveState('saving');setError('');
     try{
       // Refuse stale writes: PATCH checks the version of the entire CMS snapshot.
-      const posts=postId?data.posts.map(x=>x.id===editing.id?editing:x):[...data.posts,editing];
-      await saveWebsiteBlog<Post,BlogCategory>(request,{version:data.version,posts,categories:data.categories});
+      const current=await readWebsiteBlog<Post,BlogCategory>(request) as Snapshot;
+      const savedPost=postId?current.posts.find(x=>x.id===editing.id):null;
+      if(postId&&JSON.stringify(savedPost)!==baseline.current){
+        throw new Error('Bu yazı başka bir oturumda değiştirildi. Yazdıkların yerel taslakta korundu; sayfayı yenileyip değişiklikleri kontrol edin.');
+      }
+      const posts=postId?current.posts.map(x=>x.id===editing.id?editing:x):[...current.posts,editing];
+      await saveWebsiteBlog<Post,BlogCategory>(request,{version:current.version,posts,categories:current.categories,authors:current.authors} as Snapshot);
       draftReady.current=false;
       try{window.sessionStorage.removeItem(draftKey)}catch{}
+      setSaveState('saved');
       router.push('/website/blog');router.refresh();
       return true;
-    }catch(e){setError(err(e));return false}
+    }catch(e){setSaveState('dirty');setError(err(e));return false}
     finally{setSaving(false)}
   };
   const ready=!loading&&!restoring&&!localesLoading&&!!editing&&!!lang&&!localesError;
@@ -130,7 +155,12 @@ export default function WebsiteBlogPostForm({postId}:{postId?:string}){
       <Button disabled={!ready||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Kaydet</Button>
     </ToolbarActions></Toolbar></Container>
     <Container className="grid gap-4 pb-12">
-      {draftRestored?<p className="text-sm text-foreground">Kaydedilmemiş taslağın geri yüklendi. Kaydet butonuyla sunucuya kaydedebilirsin.</p>:null}
+      {ready&&editing?<div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <span>Yayın durumu: <strong>{editing.status==='PUBLISHED'?(editing.scheduledAt&&Date.parse(editing.scheduledAt)>Date.now()?'Zamanlanmış':'Yayında'):editing.status==='ARCHIVED'?'Arşiv':'Taslak'}</strong></span>
+        <span>·</span>
+        <span>{saveState==='saving'?'Kaydediliyor…':saveState==='dirty'?'Kaydedilmemiş değişiklikler':'Tüm değişiklikler kaydedildi'}</span>
+      </div>:null}
+      {draftRestored?<p className="text-sm text-foreground">Önceki oturumdan kaydedilmemiş değişiklikler geri yüklendi. Sunucu kaydının üzerine yazmadan önce kontrol edin.</p>:null}
       {error?<p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>:null}
       {localesError?<p role="alert" className="rounded-lg border border-destructive/30 p-3 text-sm text-destructive">{localesError} <Button variant="outline" size="sm" onClick={()=>void reloadLocales()}>Yeniden dene</Button></p>:null}
       {loading||localesLoading||restoring?<div className="grid min-h-64 place-items-center"><LoaderCircle className="size-6 animate-spin"/></div>:null}
