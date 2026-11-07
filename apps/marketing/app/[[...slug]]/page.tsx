@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
+import HomeSnapshot from '@/components/home-snapshot';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
@@ -98,6 +99,18 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  // Homepage is a static React snapshot until modules are deliberately connected.
+  // No Master, CMS, API or HTML-template reads are permitted on this route.
+  if(slug.length===0||(slug.length===1&&['tr','en','pt','ru'].includes(slug[0]))){
+    const lang=slug[0]||'tr';
+    const canonical=absolute(lang==='tr'?'/':'/'+lang+'/');
+    return {title:'Ticarti | E-Ticaretin Yeni Hali - Mağazanı Kur, Tek Yerden Yönet',
+      description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.',
+      metadataBase:new URL(BASE),alternates:{canonical},
+      openGraph:{title:'Ticarti',description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.',
+        url:canonical,type:'website',siteName:'Ticarti'}
+    };
+  }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const canonical=absolute(normalPath(slug,lang,page));
   const preview=await previewHost();
@@ -126,8 +139,36 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   }
   return {...generic,openGraph:{...generic.openGraph,type:'website'}} as Metadata;
 }
+// Pure visual interaction scripts. No database content patching, mock orders,
+// runtime HTML replacements or website-home-cms.js.
+const HOME_VISUAL_SCRIPTS=[
+  '/assets/js/vendor/jquery-1.11.2.js',
+  '/assets/js/common.js',
+  '/assets/js/components/home/hero-animation.js',
+  '/assets/js/components/home/video-reveal.js',
+  '/assets/js/components/home/rotating-headline.js',
+  '/assets/js/components/home/builder-cards.js',
+  '/assets/js/components/home/channel-reveal.js',
+  '/assets/js/pages/operations-carousel.js',
+  '/assets/js/components/home/press-carousel.js',
+  '/assets/js/pages/home.js',
+  '/assets/js/pages/faq.js',
+  '/assets/js/pages/header-navigation.js',
+  '/assets/js/pages/topbar-features.js',
+  '/assets/js/validation/phone.js',
+  '/assets/js/validation/domain.js',
+  '/assets/js/pages/callback-launch.js',
+  '/assets/js/pages/home-blog.js',
+  '/assets/js/pages/home-carousel-touch.js'
+];
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
+  if(slug.length===0||(slug.length===1&&['tr','en','pt','ru'].includes(slug[0]))){
+    return <>
+      <div className="tc-page-home"><HomeSnapshot/></div>
+      <LegacyScripts sources={HOME_VISUAL_SCRIPTS} htmlClasses="tc-page-home"/>
+    </>;
+  }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const schemas=jsonLd(page,lang);
   return <>
