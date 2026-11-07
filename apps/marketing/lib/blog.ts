@@ -11,16 +11,14 @@ export type BlogPost={
 export const isBlogLocale=(lang:string):lang is BlogLocale=>/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(lang);
 export async function getWebsiteLocales():Promise<string[]>{
   const api=(process.env.API_ORIGIN||'').replace(/\/$/,'');
-  // If the API is unavailable, keep existing public template routes accessible.
-  // These are legacy route fallbacks, never language tabs in Master.
-  if(!api)return [...BLOG_LOCALES];
+  if(!api)return [];
   try{
-    const res=await fetch(api+'/v1/public/website/locales',{next:{revalidate:60},signal:AbortSignal.timeout(4000)});
-    if(!res.ok)return [...BLOG_LOCALES];
+    const res=await fetch(api+'/v1/public/website/locales',{cache:'no-store',signal:AbortSignal.timeout(7000)});
+    if(!res.ok)return [];
     const rows=await res.json();
-    if(!Array.isArray(rows))return [...BLOG_LOCALES];
+    if(!Array.isArray(rows))return [];
     return rows.map((x:any)=>String(x.locale||'').toLowerCase()).filter(isBlogLocale);
-  }catch{return [...BLOG_LOCALES];}
+  }catch{return [];}
 }
 
 export const escapeHtml=(value:string)=>String(value||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[x]);
