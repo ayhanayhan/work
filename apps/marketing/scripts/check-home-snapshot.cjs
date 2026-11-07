@@ -53,6 +53,28 @@ for(const source of [callbackSource,footerCallbackSource]){
   assert.ok(!source.includes('window.TicartiValidators'),'No legacy form globals');
 }
 const markup=renderToStaticMarkup(React.createElement(load('index').default));
+// The new integration updates only the selected modules. No browser text patches.
+const cmsFixture={version:1,locale:'tr',disabledModuleIds:[],consentContract:{key:'KVKK_NOTICE',contentKey:'kvkk-notice',href:'/kvkk.html'},modules:[
+  {id:'hero',enabled:true,configured:true,ctaEnabled:false,fields:{
+    heading:{tr:'Dinamik Hero Başlığı'},button:{tr:'Başlayalım'},buttonUrl:{tr:'/paketler.html'}
+  },items:[{id:'reference-1',enabled:true,fields:{heading:{tr:'Vitrin'},description:{tr:'Referans açıklaması'}},
+    assets:{image:'/assets/images/test.jpg',logo:'/assets/images/test-logo.svg'}}],
+    logos:[{id:'logo-1',enabled:true,fields:{title:{tr:'Marka başlığı'}},assets:{image:'/assets/images/test-logo.svg'}}]},
+  {id:'references',enabled:true,configured:true,fields:{},items:[{id:'press-1',enabled:true,fields:{description:{tr:'Basın açıklaması'}},assets:{image:'/assets/images/test.jpg'}}]},
+  {id:'faq',enabled:true,configured:true,fields:{heading:{tr:'Yeni Sorular'},button:{tr:'İletişime geç'},buttonUrl:{tr:'/contacto.html'}},
+    items:[{id:'question-1',enabled:true,fields:{question:{tr:'Nasıl kurulur?'},answer:{tr:'Hemen başlayabilirsin.'}}}]},
+  {id:'blog',enabled:true,configured:true,fields:{heading:{tr:'En Son Makaleler'}},items:[],categoryIds:['cat-guides']}
+]};
+const previewPost={id:'post-1',slug:'ornek-makale',category:'Rehberler',categoryId:'cat-guides',
+ title:'Blog CMS Yazısı',excerpt:'E-ticaret rehberi özeti.',featuredImage:'/assets/images/blog/store.svg',imageAlt:'Blog',content:'İçerik'};
+const cmsMarkup=renderToStaticMarkup(React.createElement(load('index').default,{home:cmsFixture,posts:[previewPost],locale:'tr'}));
+for(const expected of ['Dinamik Hero Başlığı','Referans açıklaması','Marka başlığı','Nasıl kurulur?',
+  'Hemen başlayabilirsin.','En Son Makaleler','Blog CMS Yazısı']){
+  assert.ok(cmsMarkup.includes(expected),'CMS fixture not rendered: '+expected);
+}
+assert.ok(cmsMarkup.includes('href="/blog/ornek-makale"'),'Blog card links to real post route');
+assert.ok(!cmsMarkup.includes('id="tc-phone-main-hero"'),'Hero CTA toggle must hide just the hero form');
+assert.ok(cmsMarkup.includes('id="tc-phone-main-footer"'),'Footer form must not be removed by hero CTA toggle');
 const source=fs.readFileSync(path.resolve(__dirname,'../templates/en/index.html'),'utf8');
 const body=source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1]||'';
 const originalBody=body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
