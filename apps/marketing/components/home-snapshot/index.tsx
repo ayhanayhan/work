@@ -147,7 +147,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-032"}>
                         {"\n"}
-                        <BuilderSection />
+                        <BuilderSection home={home} locale={locale}/>
                         {"\n\n"}
                       </div>
                       {"\n"}
