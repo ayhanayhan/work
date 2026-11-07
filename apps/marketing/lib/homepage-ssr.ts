@@ -72,7 +72,7 @@ function scopedText(section:string,mod:HomeModule,lang:string){
     if(mod.id==='blog'&&key==='heading'){
       section=section.replace(/(<h2\b[^>]*id="tc-blog-title"[^>]*>)[\s\S]*?(<\/h2>)/i,'$1'+safe(value)+'$2');
     }else if(mod.id==='blog'&&key==='description'){
-      section=section.replace(/(<div\\b[^>]*class="tc-blog__heading"[^>]*>[\\s\\S]*?<p\\b[^>]*>)[\\s\\S]*?(<\\/p>)/i,
+      section=section.replace(/(<div\b[^>]*class="tc-blog__heading"[^>]*>[\s\S]*?<p\b[^>]*>)[\s\S]*?(<\/p>)/i,
         '$1'+safe(value)+'$2');
     }else section=setClassText(section,cls,value,key==='heading'&&mod.id==='hero');
   }
