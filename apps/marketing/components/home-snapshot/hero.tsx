@@ -85,7 +85,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
           {"\n"}
           <div className={"tc-ui-logos__track"}>
             {"\n"}
-            {logos.length?<HeroLogoGroup logos={logos} locale={locale}/>:(<div className={"tc-ui-logos__group"}>
+            {module?.logos?.length?<HeroLogoGroup logos={logos} locale={locale}/>:(<div className={"tc-ui-logos__group"}>
               {"\n"}
               <div className={"tc-ui-logos__box"}>
                 {"\n"}
