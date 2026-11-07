@@ -163,12 +163,12 @@ export default function HomepageEditor(){
   const itemLabel=(x:Entry,i:number)=>x.fields?.heading?.[lang]||x.fields?.question?.[lang]||x.fields?.heading?.tr||x.fields?.question?.tr||'Kayıt '+(i+1);
   const unchanged=!!working&&!!data&&JSON.stringify(data.modules.find(x=>x.id===working.id))===JSON.stringify(working);
   const editorState=!working?'':saving?'Kaydediliyor':unchanged?'Kaydedildi':'Kaydedilmemiş değişiklikler';
-  const stateText=data?.version===0?'Henüz kaydedilmiş anasayfa içeriği yok. Boş modüller sitede gösterilmez.':'İçerik sürümü: '+data?.version;
+  const stateText=data?.version===0?'Master içeriği henüz kaydedilmedi. Orijinal Next.js anasayfası kendi sabit içeriğiyle çalışır.':'İçerik sürümü: '+data?.version;
   return <>
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Anasayfa</h1><ToolbarDescription>Orijinal tasarım korunarak modül bazlı içerik, dil ve sıralama yönetimi.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button disabled={!working||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Modülü Kaydet</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-5 pb-10">
       <Card><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Anasayfa modülleri Next.js bileşenleridir. İçerikler veritabanından okunur. Modülleri sürükleyerek veya oklarla sıralayabilirsiniz.</p></div>
+        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Anasayfa modülleri Next.js/React bileşenleridir. Yalnızca bağlanan modüller Master verisini okur; diğerleri mevcut tasarımlarıyla kalır.</p></div>
         <Button size="sm" variant="outline" asChild><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Site İçeriğini İçe Aktar<input type="file" hidden accept=".json,application/json" disabled={saving} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button>
       </CardContent></Card>
       {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
