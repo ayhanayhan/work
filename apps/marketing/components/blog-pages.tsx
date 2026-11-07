@@ -46,7 +46,7 @@ export function BlogArchive({posts,locale}:{posts:BlogPost[];locale:BlogLocale})
 function articleWithToc(html:string){
  const headings:{id:string;title:string;level:number}[]=[];
  const used=new Set<string>();
- const marked=html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g,(_match,level:string,inner:string)=>{
+ const marked=html.replace(/<h(2)>([\s\S]*?)<\/h\1>/g,(_match,level:string,inner:string)=>{
   const title=inner.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').trim();
   if(!title)return _match;
   let id=title.toLocaleLowerCase('tr').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
