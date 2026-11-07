@@ -28,7 +28,7 @@ const link=({href,children,...props})=>React.createElement('a',{href,...props},c
 const data=importTs('lib/home-data.ts');
 const blog={blogPath:(lang,slug)=>(lang==='tr'?'':'/'+lang)+'/blog'+(slug?'/'+slug:'')};
 const {HomepageNative,homepageSchemas}=importTs('components/home-native.tsx',{
-  'next/link':{default:link},
+  'next/link':link,
   '@/lib/home-data':data,
   '@/lib/blog':blog
 });
