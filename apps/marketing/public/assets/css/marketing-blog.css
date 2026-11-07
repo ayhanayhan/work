@@ -53,3 +53,28 @@
 .footer-lang-wrap details.lang-wrap[open] .lang-menu{display:block;opacity:1;visibility:visible;pointer-events:auto}
 .footer-lang-wrap details.lang-wrap .lang-menu a.lang-item{display:flex;align-items:center;gap:8px;text-decoration:none}
 .footer-lang-wrap details.lang-wrap .lang-menu a.lang-item[aria-current="page"]{font-weight:700}
+
+/* Native React blog pages reuse the approved homepage cards, header and footer. */
+.tc-marketing-blog .tc-blog-archive-filters{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 35px}
+.tc-marketing-blog .tc-blog-archive-filters label{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font:400 15px/1.4 var(--tc-font-body);color:#343b37}
+.tc-marketing-blog .tc-blog-archive-filters input{accent-color:#8ec03f}
+.tc-marketing-blog .tc-blog-list .card-inner{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px;margin:0}
+.tc-marketing-blog .tc-blog-list .card .card-items{width:100%;min-width:0;padding:0;margin:0}
+.tc-marketing-blog .tc-blog-list .card-wrap{height:420px;overflow:hidden;border-radius:7px}
+.tc-marketing-blog .tc-blog-list .card-items[hidden]{display:none!important}
+.tc-marketing-blog .tc-blog-list .card .bg-imge .img{height:240px}
+.tc-marketing-blog .tc-blog-related .card-inner{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px;margin:0}
+.tc-marketing-blog .tc-blog-related .card .card-items{width:100%;min-width:0;margin:0;padding:0}
+.tc-marketing-blog .tc-blog-related .card-wrap{height:420px;overflow:hidden;border-radius:7px}
+.tc-marketing-blog .tc-blog-article{padding-top:64px}
+.tc-marketing-blog .tc-blog-article-cover{aspect-ratio:16/9;object-fit:cover}
+.tc-marketing-blog .tc-blog-post-meta{margin:28px 0 0;font:400 14px/1.5 var(--tc-font-body);color:#555e5c}
+.tc-marketing-blog .tc-blog-empty{padding:40px 0;color:#555e5c}
+@media(max-width:1050px){
+ .tc-marketing-blog .tc-blog-list .card-inner,.tc-marketing-blog .tc-blog-related .card-inner{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .tc-marketing-blog .tc-blog-list .card-inner,.tc-marketing-blog .tc-blog-related .card-inner{grid-template-columns:1fr}
+ .tc-marketing-blog .tc-blog-list .card-wrap,.tc-marketing-blog .tc-blog-related .card-wrap{height:385px}
+ .tc-marketing-blog .tc-blog-list .card .bg-imge .img{height:200px}
+}
