@@ -185,7 +185,7 @@ export default async function MarketingPage({params,searchParams}:Props){
     const selected=(post.relatedPostIds||[]).map(id=>candidates.find(p=>p.id===id)).filter((p):p is BlogPost=>!!p);
     const related=[...selected,...candidates.filter(p=>!selected.some(x=>x.id===p.id))].slice(0,3);
     return <>
-      <BlogArticle post={post} related={related} locale={lang}/>
+      <BlogArticle post={post} related={related} allPosts={all} locale={lang}/>
       {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,'\\u003c')}}/>)}
     </>;
   }
