@@ -1,4 +1,4 @@
-import {Body,Controller,Get,Headers,NotFoundException,Param,Patch,Post,Query,UseGuards} from '@nestjs/common';
+import {Body,Controller,Get,Headers,NotFoundException,Param,Patch,Post,Query,Req,UseGuards} from '@nestjs/common';
 import {SuperAdminAuthGuard} from '../superadmin-auth/superadmin-auth.guard';
 import {WebsiteService} from './website.service';
 
@@ -13,6 +13,18 @@ export class WebsiteController {
   publicLocales(){return this.svc.activeLocales()}
   @Get('public/website/blog')
   publicBlog(@Query('lang') lang?:string){return this.svc.publicBlog(lang||'tr')}
+  @Get('public/website/blog-comments/:slug')
+  comments(@Param('slug') slug:string){return this.svc.blogComments(slug)}
+  @Post('public/website/blog-comments')
+  addComment(@Body() body:any,@Req() req:any){return this.svc.submitBlogComment(body,String(req.ip||'unknown'))}
+  @Post('public/website/blog-callback')
+  callback(@Body() body:any,@Req() req:any){return this.svc.submitBlogCallback(body,String(req.ip||'unknown'))}
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/blog-comments/pending')
+  pendingComments(){return this.svc.pendingBlogComments()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/blog-comments/:id')
+  moderateComment(@Param('id') id:string,@Body() body:any){return this.svc.moderateBlogComment(id,body.status)}
   @Get('public/website/blog/:slug')
   async publicBlogPost(@Param('slug') slug:string,@Query('lang') lang?:string){
     const post=await this.svc.publicBlogPost(slug,lang||'tr');
