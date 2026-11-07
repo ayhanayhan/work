@@ -21,7 +21,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
    {heading?<h1 className="tc-site-hero__h1"><SimpleHtml html={heading.replace(/\n/g,'<br>')}/></h1>:null}
    {description?<p className="tc-site-hero__sub"><SimpleHtml html={description}/></p>:null}
    {offer?<p className="tc-hero-offer"><SimpleHtml html={offer}/></p>:null}
-   {module?.ctaEnabled!==false?<HeroCallback module={module} locale={locale}
+   {module?.ctaEnabled!==false&&fieldFor(module,'formButton',locale)&&fieldFor(module,'phonePlaceholder',locale)&&fieldFor(module,'consentText',locale)?<HeroCallback module={module} locale={locale}
      consentHref={safePageUrl(home?.consentContract?.href,'/kvkk.html')}/>:null}
    {button?<div className="tc-site-hero__ctas">
     <a className="tc-site-hero__cta tc-site-hero__cta--1" href={safePageUrl(fieldFor(module,'buttonUrl',locale),'/paketler.html')}>
