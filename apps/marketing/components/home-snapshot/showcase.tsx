@@ -19,7 +19,7 @@ export default function ShowcaseSection(){
       {"\n"}
       <div className={"tc-showcase__rail"}>
         {"\n"}
-        <div aria-label={"Ticarti özellik kartları"} className={"tc-showcase__track"} role={"region"} tabIndex={"0"}>
+        <div aria-label={"Ticarti özellik kartları"} className={"tc-showcase__track"} role={"region"} tabIndex={0}>
           {"\n"}
           <article className={"tc-showcase__item"}>
             {"\n"}
@@ -49,7 +49,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-120"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -81,7 +81,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-124"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -115,7 +115,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-128"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -149,7 +149,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-132"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -181,7 +181,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-136"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -215,7 +215,7 @@ export default function ShowcaseSection(){
               <span data-tc-content-key={"span-140"}>
                 {"Tüm özellikleri incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-showcase__link-arrow"}>
+              <span aria-hidden={true} className={"tc-showcase__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -229,13 +229,13 @@ export default function ShowcaseSection(){
       <div aria-label={"Özellik kartları arasında gezin"} className={"tc-showcase__nav"}>
         {"\n"}
         <button aria-label={"Önceki özellik"} className={"tc-showcase__arrow"} data-dir={"prev"} disabled type={"button"}>
-          <svg aria-hidden={"true"} fill={"none"} viewBox={"0 0 16 16"}>
+          <svg aria-hidden={true} fill={"none"} viewBox={"0 0 16 16"}>
             <path d={"M10 2 4 8l6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
           </svg>
         </button>
         {"\n"}
         <button aria-label={"Sonraki özellik"} className={"tc-showcase__arrow"} data-dir={"next"} type={"button"}>
-          <svg aria-hidden={"true"} fill={"none"} viewBox={"0 0 16 16"}>
+          <svg aria-hidden={true} fill={"none"} viewBox={"0 0 16 16"}>
             <path d={"M6 2l6 6-6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
           </svg>
         </button>
