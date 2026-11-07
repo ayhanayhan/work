@@ -1,24 +1,36 @@
 import type {MetadataRoute} from 'next';
-import {BLOG_LOCALES,blogPath,getBlogPosts} from '@/lib/blog';
+import {getBlogPosts,getWebsiteLocales,blogPath} from '@/lib/blog';
+import {getWebsiteSeo,metadataFor} from '@/lib/site-seo';
 
-export const revalidate=300;
-const BASE=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
+export const dynamic='force-dynamic';
+const origin=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
+const pages=[
+ ['home','/'],['blog','/blog'],['pricing','/paketler.html'],['contact','/contacto.html'],
+ ['enterprise','/companies/enterprise.html'],['privacy','/gizlilik-politikasi.html'],
+ ['terms','/uyelik-sozlesmesi.html'],['kvkk','/kvkk.html']
+] as const;
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
-  const pages=['/','/paketler.html','/contacto.html','/companies/enterprise.html','/success-stories/'];
-  const results=await Promise.all(BLOG_LOCALES.map(async lang=>({lang,posts:await getBlogPosts(lang)})));
-  const articles=results.flatMap(({lang,posts})=>posts.map(post=>({
-    url:BASE+blogPath(lang,post.slug),
-    changeFrequency:'monthly' as const,
-    priority:0.65,
-    ...(post.updatedAt?{lastModified:new Date(post.updatedAt)}:{}),
-    alternates:{languages:Object.fromEntries(post.availableLocales.map(locale=>[locale,BASE+blogPath(locale,post.slug)]))}
-  })));
-  const archives=results.filter(result=>result.posts.length).map(({lang})=>({
-    url:BASE+blogPath(lang),changeFrequency:'weekly' as const,priority:0.7,
-    alternates:{languages:Object.fromEntries(results.filter(x=>x.posts.length).map(x=>[x.lang,BASE+blogPath(x.lang)]))}
-  }));
-  return [
-    ...pages.map(route=>({url:BASE+route,changeFrequency:'weekly' as const,priority:route==='/'?1:0.6})),
-    ...archives,...articles
-  ];
+ const [seo,active]=await Promise.all([getWebsiteSeo(),getWebsiteLocales()]);
+ if(seo?.allowIndexing===false)return [];
+ const locales=active.length?active:['tr'];
+ const data:MetadataRoute.Sitemap=[];
+ for(const [id,path] of pages){
+  const variants=locales.filter(locale=>!metadataFor(seo,id,locale).noindex);
+  for(const locale of variants){
+   const prefix=locale==='tr'?'':'/'+locale;
+   data.push({url:origin+prefix+path,changeFrequency:id==='home'?'daily':'weekly',
+    priority:id==='home'?1:id==='blog'?0.8:0.5,
+    alternates:{languages:Object.fromEntries(variants.map(code=>[code,origin+(code==='tr'?'':'/'+code)+path]))}});
+  }
+ }
+ for(const locale of locales){
+  for(const post of await getBlogPosts(locale)){
+   if(post.noIndex)continue;
+   const others=post.availableLocales.filter(l=>locales.includes(l));
+   data.push({url:origin+blogPath(locale,post.slug),lastModified:post.updatedAt||post.publishedAt||undefined,
+    changeFrequency:'monthly',priority:0.7,
+    alternates:{languages:Object.fromEntries(others.map(code=>[code,origin+blogPath(code,post.localeSlugs?.[code]||post.slug)]))}});
+  }
+ }
+ return data;
 }
