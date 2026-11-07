@@ -71,6 +71,9 @@ function scopedText(section:string,mod:HomeModule,lang:string){
     const value=text(mod.fields?.[key],lang);
     if(mod.id==='blog'&&key==='heading'){
       section=section.replace(/(<h2\b[^>]*id="tc-blog-title"[^>]*>)[\s\S]*?(<\/h2>)/i,'$1'+safe(value)+'$2');
+    }else if(mod.id==='blog'&&key==='description'){
+      section=section.replace(/(<div\\b[^>]*class="tc-blog__heading"[^>]*>[\\s\\S]*?<p\\b[^>]*>)[\\s\\S]*?(<\\/p>)/i,
+        '$1'+safe(value)+'$2');
     }else section=setClassText(section,cls,value,key==='heading'&&mod.id==='hero');
   }
   return section;
@@ -84,6 +87,13 @@ function sectionItems(mod:HomeModule,lang:string){
       role:text(item.fields?.role,lang),button:text(item.fields?.button,lang),
       image:item.assets?.image||'',href:item.links?.href||''
     })).filter(x=>x.heading||x.description||x.role||x.button||x.image);
+}
+function removeContainer(section:string,className:string){
+  const rx=new RegExp('<div\\b[^>]*class="[^"]*\\b'+className+'\\b[^"]*"[^>]*>','i');
+  const match=rx.exec(section);
+  if(!match)return section;
+  const end=matched(section,match.index+match[0].length,'div');
+  return end<0?section:section.slice(0,match.index)+section.slice(end);
 }
 function replaceChildren(section:string,parentClass:string,markup:string){
   const target=new RegExp('<div\\b[^>]*class="[^"]*\\b'+parentClass+'\\b[^"]*"[^>]*>','i').exec(section);
