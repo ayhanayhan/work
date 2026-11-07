@@ -1,4 +1,4 @@
-import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath} from '@/lib/site-seo';
+import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath,type WebsiteSeo} from '@/lib/site-seo';
 import {redirect,permanentRedirect} from 'next/navigation';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
@@ -43,7 +43,10 @@ function imageUrl(post:BlogPost){
   const src=safeImage(post.featuredImage);
   return src.startsWith('https://')?src:absolute(src);
 }
-function jsonLd(page:PageData,lang:BlogLocale):object[]{
+function jsonLd(page:PageData,lang:BlogLocale,seo:WebsiteSeo|null=null):object[]{
+  const organizationName=seo?.siteName||'Ticarti';
+  const organizationLogo=seoImage(seo?.organizationLogo)||'/assets/images/ticarti-logo.svg';
+  const organizationLogoUrl=organizationLogo.startsWith('https://')?organizationLogo:absolute(organizationLogo);
   if(page.post){
     const post=page.post,path=blogPath(lang,post.slug),url=absolute(path),image=imageUrl(post);
     return [
@@ -61,8 +64,8 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
           ...(post.author.avatar?{image:safeImage(post.author.avatar)}:{}),
           ...(Object.values(post.author.socials||{}).length?{sameAs:Object.values(post.author.socials||{})}:{}),
         }:{'@type':post.authorName==='Ticarti'?'Organization':'Person',name:post.authorName},
-        publisher:{'@type':'Organization',name:'Ticarti',url:BASE,
-          logo:{'@type':'ImageObject',url:absolute('/assets/images/ticarti-logo.svg')}}
+        publisher:{'@type':'Organization',name:organizationName,url:BASE,
+          logo:{'@type':'ImageObject',url:organizationLogoUrl}}
       },
       {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
         {'@type':'ListItem',position:1,name:'Ticarti',item:absolute(lang==='tr'?'/':'/'+lang+'/')},
@@ -87,9 +90,9 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
     const url=absolute(lang==='tr'?'/':'/'+lang+'/');
     return [
       {'@context':'https://schema.org','@type':'Organization','@id':BASE+'#organization',
-        name:'Ticarti',url:BASE,logo:{'@type':'ImageObject',url:absolute('/assets/images/ticarti-logo.svg')}},
+        name:organizationName,url:BASE,logo:{'@type':'ImageObject',url:organizationLogoUrl}},
       {'@context':'https://schema.org','@type':'WebSite','@id':BASE+'#website',
-        name:'Ticarti',url:BASE,inLanguage:lang,publisher:{'@id':BASE+'#organization'}},
+        name:organizationName,url:BASE,inLanguage:lang,publisher:{'@id':BASE+'#organization'}},
       {'@context':'https://schema.org','@type':'WebPage','@id':url+'#webpage',
         url,name:page.title,description:page.description,inLanguage:lang,
         isPartOf:{'@id':BASE+'#website'}},
@@ -206,7 +209,7 @@ export default async function MarketingPage({params,searchParams}:Props){
     </>;
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
-  const schemas=jsonLd(page,lang);
+  const schemas=jsonLd(page,lang,seo);
   if(page.isBlogList){
     return <>
       <BlogArchive posts={page.posts||[]} locale={lang}/>
