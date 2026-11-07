@@ -1,18 +1,12 @@
 import type {BlogPost,BlogLocale} from '@/lib/blog';
 import {blogLabel,blogPath,renderBlogContent,safeImage} from '@/lib/blog';
-import HeaderSnapshot from '@/components/home-snapshot/header';
-import FooterSnapshot from '@/components/home-snapshot/footer';
+import SiteShell from '@/components/site-shell';
 import BlogCards from '@/components/home-snapshot/blog-cards';
-import HomeInteractions from '@/components/home-snapshot/interactions';
 
 const formatDate=(date:string|null,locale:string)=>date?new Intl.DateTimeFormat(locale,{year:'numeric',month:'long',day:'numeric'}).format(new Date(date)):'';
 
 function BlogFrame({children}:{children:React.ReactNode}){
- return <HomeInteractions>
-   <HeaderSnapshot/>
-   <main className="tc-marketing-blog">{children}</main>
-   <FooterSnapshot/>
- </HomeInteractions>;
+ return <SiteShell><main className="tc-marketing-blog">{children}</main></SiteShell>;
 }
 /** Archive and article use native React and the same card, header and footer modules as the homepage. */
 export function BlogArchive({posts,locale}:{posts:BlogPost[];locale:BlogLocale}){
