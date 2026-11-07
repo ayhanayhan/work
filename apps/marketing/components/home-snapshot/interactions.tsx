@@ -5,6 +5,7 @@
  * All visible copy and imagery live in static section JSX until CMS migration.
  */
 import {useCallback,useEffect,useRef,useState,type MouseEvent,type FormEvent,type ReactNode} from 'react';
+import {createPortal} from 'react-dom';
 
 type Props={children:ReactNode};
 const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -29,7 +30,37 @@ export default function HomeInteractions({children}:Props){
   const [pressHover,setPressHover]=useState(false);
   const [carouselState,setCarouselState]=useState<Record<string,{prev:boolean;next:boolean}>>({});
   const [headlineIndex,setHeadlineIndex]=useState(0);
+  const [backLabelHost,setBackLabelHost]=useState<HTMLElement|null>(null);
   const closeMenu=useCallback(()=>{setDrawer(false);setMega(null)},[]);
+
+  // The mobile submenu label is a React portal, never a textContent patch.
+  useEffect(()=>{
+    setBackLabelHost(rootRef.current?.querySelector<HTMLElement>('.tc-ui-back-label')||null);
+  },[]);
+  useEffect(()=>{
+    if(!drawer)return;
+    const nav=rootRef.current?.querySelector<HTMLElement>('.tc-navigation-panel');
+    if(!nav)return;
+    nav.querySelector<HTMLButtonElement>('.tc-ui-drawer-close')?.focus({preventScroll:true});
+    const trap=(e:KeyboardEvent)=>{
+      if(e.key!=='Tab')return;
+      const focusables=Array.from(nav.querySelectorAll<HTMLElement>(
+        'a[href],button:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])'
+      )).filter(el=>el.getClientRects().length>0);
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+    };
+    document.addEventListener('keydown',trap);
+    return()=>document.removeEventListener('keydown',trap);
+  },[drawer]);
+  useEffect(()=>{
+    const media=window.matchMedia('(max-width: 991px)');
+    const onResize=()=>{if(!media.matches)closeMenu()};
+    media.addEventListener('change',onResize);
+    return()=>media.removeEventListener('change',onResize);
+  },[closeMenu]);
 
   // Observe visibility/measurements, not text or data. React owns the page
   // and controls all stateful clicks; observers are only for CSS animations.
@@ -376,5 +407,8 @@ export default function HomeInteractions({children}:Props){
       if(option?.dataset.url)window.location.assign(option.dataset.url);
     }
   };
-  return <div className="tc-page-home" ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>{children}</div>;
+  return <div className="tc-page-home" ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+    {children}
+    {backLabelHost?createPortal(mega==='companies'?'Çözümler':mega==='resources'?'Kaynaklar':'',backLabelHost):null}
+  </div>;
 }
