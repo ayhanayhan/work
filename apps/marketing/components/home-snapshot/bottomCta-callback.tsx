@@ -166,7 +166,7 @@ export default function FooterCallback(){
               {"Telefon numaranız"}
             </label>
             {"\n"}
-            <input aria-required={true} autoComplete={"tel-national"} id={"tc-phone-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
+            <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
             {"\n"}
             <button className={"tc-bottom-cta__cta tc-bottom-cta__cta--1"} type={"submit"} data-tc-content-key={"button-156"}>
               {"Sizi arayalım"}
@@ -176,7 +176,7 @@ export default function FooterCallback(){
           {"\n"}
           <div className={"tc-kvkk"}>
             {"\n"}
-            <input aria-describedby={"tc-kvkk-footer-error"} id={"tc-kvkk-footer"} name={"kvkk_read"} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
+            <input aria-describedby={"tc-kvkk-footer-error"} id={"tc-kvkk-footer"} name={"kvkk_read"} aria-invalid={!!kvkk} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
             {"\n"}
             <label htmlFor={"tc-kvkk-footer"}>
               <a href={"/kvkk.html"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-157"}>
