@@ -121,7 +121,7 @@ export class WebsiteService{
         const fields:Record<string,any>={};
         for(const field of pageFields){
           const value=str(values?.[field],field==='description'||field==='ogDescription'||field==='twitterDescription'?500:field==='ogImage'||field==='canonicalPath'?2048:220).trim();
-          if(field==='canonicalPath'&&value&&!/^\/[a-zA-Z0-9_./-]*$/.test(value))throw new BadRequestException('Canonical adres yalnızca site içi yol olabilir.');
+          if(field==='canonicalPath'&&value&&(!/^\/[a-zA-Z0-9_./-]*$/.test(value)||value.startsWith('//')||value.includes('..')))throw new BadRequestException('Canonical adres yalnızca site içi yol olabilir.');
           if(field==='ogImage'&&value&&!/^https:\/\/[^\s"'<>]+$/.test(value)&&!/^\/assets\/[a-zA-Z0-9_./-]+$/.test(value))throw new BadRequestException('OG görsel adresi geçersiz.');
           fields[field]=value;
         }
@@ -140,10 +140,17 @@ export class WebsiteService{
       if(body.redirects.length>150)throw new BadRequestException('En fazla 150 yönlendirme eklenebilir.');
       for(const item of body.redirects){
         const from=str(item?.from,250).trim(),to=str(item?.to,250).trim();
-        if(!/^\/[a-zA-Z0-9_./-]+$/.test(from)||!/^\/[a-zA-Z0-9_./-]+$/.test(to)||from===to)
+        if(!/^\/[a-zA-Z0-9_./-]+$/.test(from)||!/^\/[a-zA-Z0-9_./-]+$/.test(to)||from===to||from.startsWith('//')||to.startsWith('//')||from.includes('..')||to.includes('..'))
           throw new BadRequestException('Yönlendirme yolları geçersiz.');
         if(redirects.some(r=>r.from===from))throw new BadRequestException('Tekrarlanan yönlendirme.');
         redirects.push({from,to,permanent:item?.permanent!==false});
+      }
+    }
+    for(const start of redirects){
+      const seen=new Set([start.from]);let target=start.to;
+      while(redirects.some(r=>r.from===target)){
+        if(seen.has(target))throw new BadRequestException('Döngüsel yönlendirme yapılamaz.');
+        seen.add(target);target=redirects.find(r=>r.from===target).to;
       }
     }
     const next={
