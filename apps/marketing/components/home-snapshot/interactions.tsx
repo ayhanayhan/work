@@ -4,7 +4,7 @@
  * external CMS fetch, HTML replacement, mock content insertion, or innerHTML.
  * All visible copy and imagery live in static section JSX until CMS migration.
  */
-import {useCallback,useEffect,useRef,useState,type MouseEvent,type ChangeEvent,type ReactNode} from 'react';
+import {useCallback,useEffect,useRef,useState,type MouseEvent,type FormEvent,type ReactNode} from 'react';
 
 type Props={children:ReactNode};
 const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,6 +54,11 @@ export default function HomeInteractions({children}:Props){
     },{threshold:0.2}):null;
     if(hero&&heroIO)heroIO.observe(hero);
     return()=>{io.disconnect();heroIO?.disconnect()};
+  },[]);
+
+  // Banner dismissal survives the current tab, just as in the original page.
+  useEffect(()=>{
+    try{if(sessionStorage.getItem('tc-announcement-bar:ticarti-lansman-indirim-50')==='1')setBanner(false)}catch{}
   },[]);
 
   // Preserve the old three-set hero rail without cloneNode or script injection.
@@ -263,7 +268,7 @@ export default function HomeInteractions({children}:Props){
   const onClick=(event:MouseEvent<HTMLDivElement>)=>{
     const root=rootRef.current,target=event.target as HTMLElement;if(!root)return;
     const el=(selector:string)=>target.closest<HTMLElement>(selector);
-    if(el('[data-tc-ui-topbar-close]')){setBanner(false);return;}
+    if(el('[data-tc-ui-topbar-close]')){try{sessionStorage.setItem('tc-announcement-bar:ticarti-lansman-indirim-50','1')}catch{}setBanner(false);return;}
     if(el('.tc-menu-toggle,.tc-ui-drawer-close')){
       setDrawer(v=>!v);setMega(null);return;
     }
@@ -308,12 +313,28 @@ export default function HomeInteractions({children}:Props){
     if(bar)bar.style.display=banner?'':'none';
   },[banner]);
 
-  const onChange=(event:ChangeEvent<HTMLDivElement>)=>{
+  const onMouseOver=(event:MouseEvent<HTMLDivElement>)=>{
+    if(window.matchMedia('(max-width: 991px)').matches)return;
+    const target=event.target as HTMLElement;
+    const trigger=target.closest<HTMLElement>('.primary-menu a.has-mega[data-mega-slug]');
+    if(trigger?.dataset.megaSlug)setMega(trigger.dataset.megaSlug);
+  };
+  const onMouseOut=(event:MouseEvent<HTMLDivElement>)=>{
+    if(window.matchMedia('(max-width: 991px)').matches)return;
+    const target=event.target as HTMLElement;
+    const menu=target.closest<HTMLElement>('.tc-mega-navigation,.primary-menu');
+    const destination=event.relatedTarget as Node|null;
+    if(menu&&(!destination||!menu.contains(destination))){
+      // Allow pointer transition from trigger row to mega navigation.
+      if(menu.classList.contains('tc-mega-navigation'))setMega(null);
+    }
+  };
+  const onChange=(event:FormEvent<HTMLDivElement>)=>{
     const target=event.target as HTMLSelectElement;
     if(target.matches('select.lang-select')){
       const select=target as HTMLSelectElement;const option=select.selectedOptions[0];
       if(option?.dataset.url)window.location.assign(option.dataset.url);
     }
   };
-  return <div ref={rootRef} onClick={onClick} onChange={onChange}>{children}</div>;
+  return <div ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>{children}</div>;
 }
