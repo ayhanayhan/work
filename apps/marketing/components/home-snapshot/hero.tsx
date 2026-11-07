@@ -72,7 +72,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
           <div className={"tc-site-hero__track"} id={"skTrack"}>
             <HeroCards items={items} locale={locale} />
             <HeroCards clone items={items} locale={locale} />
-            <HeroCards clone />
+            <HeroCards clone items={items} locale={locale} />
           </div>
           {"\n"}
         </div>
