@@ -150,6 +150,28 @@ function renderSingle(section:string,mod:HomeModule|undefined,lang:string,posts:
   if(mod.id==='hero')section=section.replace(/<img\b[^>]*>/gi,'');
   return section;
 }
+const localeNames:Record<string,string>={tr:'Türkçe',en:'English',de:'Deutsch',ru:'Русский',pt:'Português',ar:'العربية',bg:'Български',fr:'Français',es:'Español'};
+export function renderFooterLanguages(html:string,activeLocales:string[],lang:string,pathSegments:string[]=[]):string{
+  const marker='<div class="footer-lang-wrap">';
+  const start=html.indexOf(marker);
+  if(start<0)return html;
+  const end=matched(html,start+marker.length,'div');
+  if(end<0)return html;
+  const segments=[...pathSegments];
+  if(segments[0]===lang)segments.shift();
+  const suffix=segments.filter(x=>x!=='index.html').join('/');
+  const list=activeLocales.filter(x=>/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(x));
+  if(!list.length)return html.slice(0,start)+html.slice(end);
+  const entries=list.map(locale=>{
+    const url=(locale==='tr'?'':'/'+locale)+'/'+suffix;
+    return '<li'+(locale===lang?' class="is-active"':'')+'><a class="lang-item" href="'+safe(url.replace(/\\/+/g,'/'))+'" lang="'+safe(locale)+'"'+(locale===lang?' aria-current="page"':'')+'>'+
+      '<span class="lang-name">'+safe(localeNames[locale]||locale.toUpperCase())+'</span></a></li>';
+  }).join('');
+  const replacement='<div class="footer-lang-wrap"><details class="lang-wrap">'+
+    '<summary class="lang-toggle" aria-label="Dil seçimi"><span class="lang-current">'+safe(localeNames[lang]||lang.toUpperCase())+'</span><span class="lang-caret"></span></summary>'+
+    '<ul class="lang-menu">'+entries+'</ul></details></div>';
+  return html.slice(0,start)+replacement+html.slice(end);
+}
 export function renderHomepageServer(html:string,home:HomepageSnapshot|null,lang:string,posts:BlogPost[]):string{
   const sections=sectionRanges(html);
   if(!sections.length)throw Error('Homepage template has no matching CMS sections');
