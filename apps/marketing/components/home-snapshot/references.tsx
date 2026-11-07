@@ -7,7 +7,7 @@ export default function ReferencesSection(){
       {"\n"}
       <div className={"tc-press__inner"}>
         {"\n"}
-        <p aria-hidden={"true"} className={"tc-press__title tc-press__title--m"}>
+        <p aria-hidden={true} className={"tc-press__title tc-press__title--m"}>
           {"\n"}
           <span data-tc-content-key={"span-141"}>
             {"Bir mağazadan,"}
@@ -29,7 +29,7 @@ export default function ReferencesSection(){
                 {"\n"}
                 <li className={"tc-press__slide"}>
                   {"\n"}
-                  <img alt={"Butik moda atölyesinde gülümseyen girişimci"} className={"tc-press__img"} decoding={"async"} height={"941"} loading={"lazy"} src={"/assets/images/ticarti-butik-girisimci.webp"} width={"1672"} data-tc-content-src={"image-081"} />
+                  <img alt={"Butik moda atölyesinde gülümseyen girişimci"} className={"tc-press__img"} decoding={"async"} height={941} loading={"lazy"} src={"/assets/images/ticarti-butik-girisimci.webp"} width={1672} data-tc-content-src={"image-081"} />
                   {"\n"}
                 </li>
                 {"\n"}
@@ -39,7 +39,7 @@ export default function ReferencesSection(){
                 {"\n"}
                 <button aria-label={"Önceki görsel"} className={"tc-press__arrow"} data-dir={"prev"} type={"button"}>
                   {"\n"}
-                  <svg aria-hidden={"true"} fill={"none"} height={"14"} viewBox={"0 0 18 14"} width={"18"}>
+                  <svg aria-hidden={true} fill={"none"} height={14} viewBox={"0 0 18 14"} width={18}>
                     {"\n"}
                     <path d={"M17 7H1M6 1L1 7l5 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
                     {"\n"}
@@ -49,7 +49,7 @@ export default function ReferencesSection(){
                 {"\n"}
                 <button aria-label={"Sonraki görsel"} className={"tc-press__arrow"} data-dir={"next"} type={"button"}>
                   {"\n"}
-                  <svg aria-hidden={"true"} fill={"none"} height={"14"} viewBox={"0 0 18 14"} width={"18"}>
+                  <svg aria-hidden={true} fill={"none"} height={14} viewBox={"0 0 18 14"} width={18}>
                     {"\n"}
                     <path d={"M1 7h16M12 1l5 6-5 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
                     {"\n"}
@@ -146,32 +146,32 @@ export default function ReferencesSection(){
             <div className={"tc-press__awards-row"}>
               {"\n"}
               <div>
-                <img alt={"Google"} height={"28"} loading={"lazy"} src={"/assets/images/partners/google.svg"} width={"28"} data-tc-content-src={"image-085"} />
+                <img alt={"Google"} height={28} loading={"lazy"} src={"/assets/images/partners/google.svg"} width={28} data-tc-content-src={"image-085"} />
                 <span data-tc-content-key={"span-150"}>
                   {"Google"}
                 </span>
               </div>
               {"\n"}
               <div>
-                <img alt={"AWS"} height={"46"} loading={"lazy"} src={"/assets/images/partners/aws.svg"} width={"58"} data-tc-content-src={"image-086"} />
+                <img alt={"AWS"} height={46} loading={"lazy"} src={"/assets/images/partners/aws.svg"} width={58} data-tc-content-src={"image-086"} />
               </div>
               {"\n"}
               <div>
-                <img alt={"Microsoft"} height={"28"} loading={"lazy"} src={"/assets/images/partners/microsoft.svg"} width={"25"} data-tc-content-src={"image-087"} />
+                <img alt={"Microsoft"} height={28} loading={"lazy"} src={"/assets/images/partners/microsoft.svg"} width={25} data-tc-content-src={"image-087"} />
                 <span data-tc-content-key={"span-151"}>
                   {"Microsoft"}
                 </span>
               </div>
               {"\n"}
               <div>
-                <img alt={"Cloudflare"} height={"28"} loading={"lazy"} src={"/assets/images/partners/cloudflare.svg"} width={"30"} data-tc-content-src={"image-088"} />
+                <img alt={"Cloudflare"} height={28} loading={"lazy"} src={"/assets/images/partners/cloudflare.svg"} width={30} data-tc-content-src={"image-088"} />
                 <span data-tc-content-key={"span-152"}>
                   {"Cloudflare"}
                 </span>
               </div>
               {"\n"}
               <div>
-                <img alt={"Meta"} height={"28"} loading={"lazy"} src={"/assets/images/partners/meta.svg"} width={"34"} data-tc-content-src={"image-089"} />
+                <img alt={"Meta"} height={28} loading={"lazy"} src={"/assets/images/partners/meta.svg"} width={34} data-tc-content-src={"image-089"} />
                 <span>
                   {"Meta"}
                 </span>
