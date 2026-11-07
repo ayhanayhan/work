@@ -1,6 +1,7 @@
 import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
 import {blogPath,type BlogPost} from '@/lib/blog';
 import BlogCards from './blog-cards';
+import {SimpleHtml} from './simple-html';
 /* Static React snapshot of original Ticarti homepage: blog.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
@@ -17,11 +18,11 @@ export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeConte
           <div className={"tc-blog__heading"}>
             {"\n"}
             <h2 id={"tc-blog-title"} data-tc-content-key={"h2-158"}>
-              {fieldFor(module,'heading',locale)||"Blog"}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Blog"}
             </h2>
             {"\n"}
             <p data-tc-content-key={"p-159"}>
-              {fieldFor(module,'description',locale)||"E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."}
             </p>
             {"\n"}
           </div>
