@@ -1,17 +1,20 @@
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 import OrdersPreview from './orders-preview';
 /* Static React snapshot of original Ticarti homepage: channels.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function ChannelsSection(){
+export default function ChannelsSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'channels');
   return (
     <section aria-label={"Ticarti operasyon ve pazaryeri yönetimi"} className={"tc-sales-channels"}>
       {"\n"}
       <h2 className={"tc-sales-channels__heading tc-sales-channels__reveal"} data-tc-content-key={"h2-090"}>
-        {"Tek panelde tüm mağazan, tüm satış kanalların."}
+        {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Tek panelde tüm mağazan, tüm satış kanalların."}
       </h2>
       {"\n"}
       <p className={"tc-sales-channels__intro tc-sales-channels__reveal"} data-tc-content-key={"p-091"}>
-        {"Mağazanı, pazaryerlerini ve tüm siparişlerini tek panelden yönet. Stoklarını güncel tut, satış kanallarını kolayca takip et."}
+        {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"Mağazanı, pazaryerlerini ve tüm siparişlerini tek panelden yönet. Stoklarını güncel tut, satış kanallarını kolayca takip et."}
       </p>
       {"\n"}
       <div className={"tc-sales-channels__grid"}>
