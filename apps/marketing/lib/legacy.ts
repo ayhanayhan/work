@@ -148,7 +148,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     // FAQ visible markup and SEO structured data are built from this same locale-specific CMS snapshot.
     data.faq=await getHomepageFaq(lang);
     // Other homepage modules still use the existing integration.
-    data.scripts.push('/assets/js/pages/website-home-cms.js');
+    // Homepage text is no longer patched by any client-side CMS script.
   }
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
