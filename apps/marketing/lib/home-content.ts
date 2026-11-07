@@ -24,3 +24,14 @@ export function safeAssetUrl(input:string|undefined,fallback:string){
  if(/^(?:\.\.\/)+assets\/[a-zA-Z0-9_./-]+$/.test(value))return '/'+value.replace(/^(?:\.\.\/)+/,'');
  return fallback;
 }
+
+/** A connected homepage section must never fall back to old template/demo copy.
+ * Only explicitly saved text in the selected locale may make a content section visible.
+ */
+export function hasLocalizedContent(module:HomeModule|undefined,locale:string):boolean{
+ if(!module?.configured||module.enabled===false)return false;
+ if(Object.values(module.fields||{}).some(value=>Boolean(textFor(value,locale))))return true;
+ if((module.items||[]).some(item=>item.enabled!==false&&Object.values(item.fields||{}).some(value=>Boolean(textFor(value,locale)))))return true;
+ if((module.logos||[]).some(item=>item.enabled!==false&&Boolean(textFor(item.fields?.title,locale))))return true;
+ return false;
+}
