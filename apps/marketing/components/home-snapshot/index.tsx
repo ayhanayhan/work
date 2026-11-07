@@ -183,7 +183,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-035"}>
                         {"\n"}
-                        <RadarSection />
+                        <RadarSection home={home} locale={locale}/>
                         {"\n"}
                       </div>
                       {"\n"}
@@ -219,7 +219,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-034"}>
                         {"\n"}
-                        <ChannelsSection />
+                        <ChannelsSection home={home} locale={locale}/>
                         {"\n\n"}
                       </div>
                       {"\n"}
@@ -255,7 +255,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-036"}>
                         {"\n"}
-                        <ShowcaseSection />
+                        <ShowcaseSection home={home} locale={locale}/>
                         {"\n\n"}
                       </div>
                       {"\n"}
@@ -312,7 +312,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                       {"\n"}
                       <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-031"}>
                         {"\n"}
-                        <BottomCtaSection />
+                        <BottomCtaSection home={home} locale={locale}/>
                         {"\n"}
                       </div>
                       {"\n"}
