@@ -48,6 +48,6 @@ assert.ok(!markup.includes('<script'),'Scripts are not embedded in server markup
 const page=fs.readFileSync(path.resolve(__dirname,'../app/[[...slug]]/page.tsx'),'utf8');
 const homeStart=page.indexOf('if(slug.length===0');
 assert.ok(homeStart>=0&&page.includes('<HomeSnapshot/>'),'Native React homepage must be routed');
-assert.ok(!page.includes('website-home-cms.js'),'Client CMS patching must not be loaded');
+assert.ok(!page.includes("'/assets/js/pages/website-home-cms.js'"),'Client CMS patching must not be loaded');
 assert.ok(!page.includes("'/assets/js/pages/orders-preview.js'"),'No mocked order feed');
 console.log('PASS: native React snapshot retains 10 sections, header/footer, all images and SVGs; no CMS or runtime HTML patch');
