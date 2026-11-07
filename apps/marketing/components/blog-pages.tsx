@@ -74,16 +74,16 @@ export function BlogArticle({post,related,allPosts,locale}:{post:BlogPost;relate
  };
  const t=ui[locale]||ui.en;
  return <BlogFrame>
-   <section className="tc-post-hero">
-     <div className="inner"><div className="section-heading">
-       <p className="tc-blog-kicker">{post.category}</p>
-       <h1>{post.title}</h1>
-       <p className="tc-blog-post-meta">{post.author?.name||post.authorName}{post.publishedAt?' · '+formatDate(post.publishedAt,locale):''}</p>
-       {post.excerpt?<div className="content"><p>{post.excerpt}</p></div>:null}
-     </div></div>
-   </section>
    <div className="tc-blog-single-layout">
      <div className="tc-blog-single-primary">
+       <header className="tc-post-hero">
+         <div className="section-heading">
+           <p className="tc-blog-kicker">{post.category}</p>
+           <h1 id="article-title">{post.title}</h1>
+           <p className="tc-blog-post-meta">{post.author?.name||post.authorName}{post.publishedAt?' · '+formatDate(post.publishedAt,locale):''}</p>
+           {post.excerpt?<div className="content"><p>{post.excerpt}</p></div>:null}
+         </div>
+       </header>
        <article className="tc-blog-article">
          {post.featuredImage?<img className="tc-blog-article-cover" src={safeImage(post.featuredImage)} alt={post.imageAlt||post.title}/>:null}
          <div className="tc-blog-article-copy" dangerouslySetInnerHTML={{__html:html}}/>
@@ -97,9 +97,10 @@ export function BlogArticle({post,related,allPosts,locale}:{post:BlogPost;relate
      <aside className="tc-blog-single-sidebar" aria-label="Blog sidebar">
        <div className="tc-post-toc">
          <h2>{t.toc}</h2>
-         {headings.length?<nav aria-label={t.toc}>
-           {headings.map(h=><a className={h.level===3?'is-subheading':''} key={h.id} href={'#'+h.id}>{h.title}</a>)}
-         </nav>:null}
+         <nav aria-label={t.toc}>
+           <a href="#article-title">{post.title}</a>
+           {headings.map(h=><a key={h.id} href={'#'+h.id}>{h.title}</a>)}
+         </nav>
        </div>
        <BlogPhoneCta slug={post.slug} locale={locale}/>
        <div className="tc-post-recent">
