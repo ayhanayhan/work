@@ -1,4 +1,4 @@
-import {moduleById,fieldFor,safeAssetUrl,textFor,type HomeContent} from '@/lib/home-cms';
+import {moduleById,fieldFor,safeAssetUrl,textFor,type HomeContent} from '@/lib/home-content';
 /* Static React snapshot of original Ticarti homepage: references.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
