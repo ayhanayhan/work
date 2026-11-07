@@ -1,7 +1,10 @@
+import {moduleById,textFor,safeAssetUrl,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 /* Static React snapshot of original Ticarti homepage: builder.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function BuilderSection(){
+export default function BuilderSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+ const module=moduleById(home,'builder');
   return (
     <section className={"tc-builder-section"}>
       {"\n"}
@@ -11,6 +14,13 @@ export default function BuilderSection(){
       {"\n"}
       <div className={"tc-builder-section__grid"}>
         {"\n"}
+        {module?.configured ? (module.items||[]).filter(item=>item.enabled!==false).map(item=>
+          <article key={item.id} className="tc-builder-section__card">
+           {item.assets?.image?<span className="tc-builder-section__badge"><img src={safeAssetUrl(item.assets.image,'')} alt=""/></span>:null}
+           <h3 className="tc-builder-section__title"><SimpleHtml html={textFor(item.fields?.heading,locale)}/></h3>
+           <div className="tc-builder-section__text"><SimpleHtml html={textFor(item.fields?.description,locale)}/></div>
+          </article>
+        ) : <>
         <article className={"tc-builder-section__card"}>
           {"\n"}
           <span className={"tc-builder-section__badge"}>
@@ -65,6 +75,7 @@ export default function BuilderSection(){
           {"\n"}
         </article>
         {"\n"}
+        </>}
       </div>
       {"\n"}
     </section>
