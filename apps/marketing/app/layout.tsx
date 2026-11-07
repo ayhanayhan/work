@@ -20,8 +20,10 @@ async function htmlAttrs(){
   }catch{return 'tc-page-home'}
 }
 export default async function RootLayout({children}:{children:ReactNode}) {
-  const cls=await htmlAttrs();
   const route=(await headers()).get('x-marketing-page')||'/';
+  const parts=route.split('/').filter(Boolean);
+  const snapshotHome=parts.length===0||(parts.length===1&&['tr','en','pt','ru'].includes(parts[0]));
+  const cls=snapshotHome?'tc-page-home':await htmlAttrs();
   const lang=route.match(/^\/(tr|en|pt|ru)(?:\/|$)/)?.[1]||'tr';
   return <html lang={lang} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
