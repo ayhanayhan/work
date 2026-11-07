@@ -12,12 +12,12 @@ if [ "$#" -eq 0 ]; then
   exit 2
 fi
 API=0
-BACKENDS=()
+BACKEND_ONLY=''
 for item in "$@"; do
   case "$item" in
     api) API=1 ;;
-    master) BACKENDS+=("apphosting:commerce-master") ;;
-    marketing) BACKENDS+=("apphosting:commerce-marketing") ;;
+    master) BACKEND_ONLY="${BACKEND_ONLY:+${BACKEND_ONLY},}apphosting:commerce-master" ;;
+    marketing) BACKEND_ONLY="${BACKEND_ONLY:+${BACKEND_ONLY},}apphosting:commerce-marketing" ;;
     *) echo "Unsupported service: $item. No deployments started." >&2; exit 2 ;;
   esac
 done
@@ -58,10 +58,9 @@ if [ "$API" -eq 1 ]; then
   fi
 fi
 
-if [ "${#BACKENDS[@]}" -gt 0 ]; then
-  ONLY="$(IFS=,; echo "${BACKENDS[*]}")"
-  echo "=== Deploying only selected Firebase backends: $ONLY ==="
-  firebase deploy --only "$ONLY" --project="$PROJECT"
+if [ -n "$BACKEND_ONLY" ]; then
+  echo "=== Deploying only selected Firebase backends: $BACKEND_ONLY ==="
+  firebase deploy --only "$BACKEND_ONLY" --project="$PROJECT"
 fi
 
 if [ "$API" -eq 1 ]; then
