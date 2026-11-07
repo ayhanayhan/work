@@ -23,6 +23,10 @@ for item in "$@"; do
 done
 echo "=== Changed services: $* ==="
 git rev-parse --short HEAD
+if [[ "$BACKEND_ONLY" == *"apphosting:commerce-marketing"* ]]; then
+  echo "=== Native Next.js homepage test ==="
+  npm --workspace @commerce/marketing run test:home
+fi
 
 if [ "$API" -eq 1 ]; then
   echo "=== Testing changed API code ==="
