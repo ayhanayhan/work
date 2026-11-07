@@ -100,6 +100,7 @@ export default function HomeInteractions({children}:Props){
     if(!viewport||!track)return;
     let period=0,programmatic=false,resizeTimer=0;
     const measure=()=>{
+      if(window.matchMedia('(max-width: 1150px)').matches){period=0;viewport.scrollLeft=0;return;}
       const cards=Array.from(track.querySelectorAll<HTMLElement>('.tc-ui-card:not([data-clone])'));
       if(!cards.length)return;
       const gap=parseFloat(getComputedStyle(track).gap)||0;
