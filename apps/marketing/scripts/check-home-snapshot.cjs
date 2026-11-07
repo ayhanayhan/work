@@ -7,26 +7,33 @@ const ts=require('typescript');
 const React=require('react');
 const {renderToStaticMarkup}=require('react-dom/server');
 const dir=path.resolve(__dirname,'../components/home-snapshot');
-const componentNames=['hero','hero-cards','hero-callback','phone-validators','animated','builder','radar','radar-display','channels','orders-preview','showcase','references','bottomCta','bottomCta-callback','blog','faq','header','mobile-mega','footer','index','interactions'];
+const componentNames=['hero','hero-cards','hero-logo-group','hero-callback','phone-validators','animated','builder','radar','radar-display','channels','orders-preview','showcase','references','bottomCta','bottomCta-callback','blog','blog-cards','faq','header','mobile-mega','footer','index','interactions'];
 const compiled=new Map();
-function load(name){
-  if(compiled.has(name))return compiled.get(name).exports;
-  const file=path.join(dir,name+(name==='phone-validators'?'.ts':'.tsx'));
+function compileFile(input,homeComponent=false){
+  const candidates=[input,input+'.tsx',input+'.ts',input+'.js'];
+  const file=candidates.find(x=>fs.existsSync(x)&&fs.statSync(x).isFile());
+  if(!file)throw Error('Missing snapshot dependency '+input);
+  if(compiled.has(file))return compiled.get(file).exports;
   const source=fs.readFileSync(file,'utf8');
-  assert.ok(!source.includes('dangerouslySetInnerHTML'),'No runtime HTML injection: '+name);
-  assert.ok(!source.includes('fetch('),'No Master/API requests in static snapshot: '+name);
+  if(homeComponent){
+    assert.ok(!source.includes('dangerouslySetInnerHTML'),'No runtime HTML injection: '+file);
+    assert.ok(!source.includes('fetch('),'No client fetch in snapshot JSX: '+file);
+  }
   const result=ts.transpileModule(source,{
     fileName:file,reportDiagnostics:true,
     compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,
       jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true}
   });
   const errors=(result.diagnostics||[]).filter(x=>x.category===ts.DiagnosticCategory.Error);
-  if(errors.length)throw Error(name+' TypeScript JSX syntax: '+errors.map(x=>ts.flattenDiagnosticMessageText(x.messageText,' ')).join('; '));
-  const m=new Module(file,module);m.filename=file;m.paths=Module._nodeModulePaths(dir);compiled.set(name,m);
+  if(errors.length)throw Error(file+' TypeScript JSX syntax: '+errors.map(x=>ts.flattenDiagnosticMessageText(x.messageText,' ')).join('; '));
+  const m=new Module(file,module);m.filename=file;m.paths=Module._nodeModulePaths(path.dirname(file));compiled.set(file,m);
   const original=m.require.bind(m);
-  m.require=(id)=>id.startsWith('./')?load(id.slice(2)):original(id);
+  m.require=id=>id.startsWith('./')||id.startsWith('../')
+    ?compileFile(path.resolve(path.dirname(file),id))
+    :id.startsWith('@/')?compileFile(path.resolve(__dirname,'../',id.slice(2))):original(id);
   m._compile(result.outputText,file);return m.exports;
 }
+function load(name){return compileFile(path.join(dir,name+(name==='phone-validators'?'.ts':'.tsx')),true)}
 for(const name of componentNames)load(name);
 const {validatePhone}=load('phone-validators');
 assert.equal(validatePhone('532 123 45 67','TR','+90'),'','Correct TR phone accepted');
@@ -64,7 +71,7 @@ assert.ok(count(markup,/<svg\b/g)>=count(originalBody,/<svg\b/g),'Original icons
 assert.ok(!markup.includes('<script'),'Scripts are not embedded in server markup');
 const page=fs.readFileSync(path.resolve(__dirname,'../app/[[...slug]]/page.tsx'),'utf8');
 const homeStart=page.indexOf('if(slug.length===0');
-assert.ok(homeStart>=0&&page.includes('<HomeSnapshot/>'),'Native React homepage must be routed');
+assert.ok(homeStart>=0&&page.includes('<HomeSnapshot home={home}'),'Native React homepage must be routed');
 assert.ok(!page.includes("'/assets/js/pages/website-home-cms.js'"),'Client CMS patching must not be loaded');
 assert.ok(!page.includes("'/assets/js/pages/orders-preview.js'"),'No mocked order feed');
 assert.ok(page.includes('<HomeInteractions>'),'Interactions must run through React');
@@ -72,4 +79,4 @@ assert.ok(!page.includes('HOME_VISUAL_SCRIPTS'),'No legacy homepage script injec
 const behavior=fs.readFileSync(path.join(dir,'interactions.tsx'),'utf8');
 assert.ok(!behavior.includes('innerHTML') || behavior.includes('No legacy <script> injection'),'No runtime HTML replacement');
 assert.ok(!behavior.includes('appendChild('),'No legacy DOM append operations');
-console.log('PASS: native React snapshot retains 10 sections, header/footer, all images and SVGs; no CMS or runtime HTML patch');
+console.log('PASS: native React homepage preserves original sections and assets; only chosen modules consume server-side Master/Blog data');
