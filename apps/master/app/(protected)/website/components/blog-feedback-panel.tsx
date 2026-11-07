@@ -22,6 +22,13 @@ export default function BlogFeedbackPanel(){
   }catch(e:any){setError(e.message||'Blog başvuruları yüklenemedi.')}
  },[request,restoring]);
  useEffect(()=>{void load()},[load]);
+ const complete=async(id:string)=>{
+  setBusy(true);setError('');
+  try{
+   await request('/superadmin/website/blog-callbacks/'+encodeURIComponent(id)+'/complete',{method:'PATCH',body:'{}'});
+   await load();
+  }catch(e:any){setError(e.message||'Başvuru güncellenemedi.')}finally{setBusy(false)}
+ };
  const moderate=async(id:string,status:'APPROVED'|'REJECTED')=>{
   setBusy(true);setError('');
   try{
@@ -47,6 +54,7 @@ export default function BlogFeedbackPanel(){
     {callbacks.map(c=><div key={c.id} className="rounded-lg border p-3">
      <div className="text-sm font-medium"><a href={'tel:'+c.phone} className="underline">{c.phone}</a></div>
      <div className="mt-1 text-xs text-muted-foreground">{c.slug} · {new Date(c.createdAt).toLocaleString('tr-TR')}</div>
+     <Button size="sm" className="mt-2" variant="outline" disabled={busy} onClick={()=>void complete(c.id)}>İşlendi</Button>
     </div>)}
     {!callbacks.length?<p className="text-sm text-muted-foreground">Telefon talebi yok.</p>:null}
    </CardContent>
