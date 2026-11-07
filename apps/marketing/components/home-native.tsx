@@ -155,7 +155,7 @@ function Footer({lang,locales}:{lang:string;locales:ActiveLocale[]}){
 }
 export function HomepageNative({home,lang,locales,posts}:Props){
   const known=new Set(['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq']);
-  const activeModules=home.modules.filter(m=>m.enabled&&known.has(m.id));
+  const activeModules=home.modules.filter(m=>m.enabled&&known.has(m.id)).sort((a,b)=>a.sortOrder-b.sortOrder);
   const featureModule=activeModules.find(m=>m.id==='builder');
   const features=!!featureModule&&visibleItems(featureModule,lang).length>0;
   const blog=!!posts.length&&activeModules.some(m=>m.id==='blog');
