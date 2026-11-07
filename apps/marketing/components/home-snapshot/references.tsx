@@ -22,7 +22,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
       {item.assets?.logo?<img className="tc-press__logo" loading="lazy"
        src={safeAssetUrl(item.assets.logo,'')} alt=""/>:null}
       {textFor(item.fields?.heading,locale)?<h3>{textFor(item.fields?.heading,locale)}</h3>:null}
-      {textFor(item.fields?.description,locale)?<p>{textFor(item.fields.description,locale)}</p>:null}
+      {textFor(item.fields?.description,locale)?<p>{textFor(item.fields?.description,locale)}</p>:null}
      </li>)}
     </ul></div>
    </div></div>:null}
