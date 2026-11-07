@@ -7,7 +7,7 @@
 import {useCallback,useEffect,useRef,useState,type MouseEvent,type FormEvent,type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 
-type Props={children:ReactNode};
+type Props={children:ReactNode;className?:string};
 const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scrollStep=(track:HTMLElement,selector:string)=>{
   const el=track.querySelector<HTMLElement>(selector);
@@ -18,7 +18,7 @@ const scrollCarousel=(root:HTMLElement|null,trackSelector:string,itemSelector:st
   const track=root?.querySelector<HTMLElement>(trackSelector);
   if(track)track.scrollBy({left:dir*scrollStep(track,itemSelector),behavior:reduced()?'auto':'smooth'});
 };
-export default function HomeInteractions({children}:Props){
+export default function HomeInteractions({children,className='tc-page-home'}:Props){
   const rootRef=useRef<HTMLDivElement>(null);
   const [drawer,setDrawer]=useState(false);
   const [mega,setMega]=useState<string|null>(null);
@@ -407,7 +407,7 @@ export default function HomeInteractions({children}:Props){
       if(option?.dataset.url)window.location.assign(option.dataset.url);
     }
   };
-  return <div className="tc-page-home" ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+  return <div className={className} ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
     {children}
     {backLabelHost?createPortal(mega==='companies'?'Çözümler':mega==='resources'?'Kaynaklar':'',backLabelHost):null}
   </div>;
