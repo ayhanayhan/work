@@ -124,6 +124,8 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
     const finalCanonical=seoEntry.canonicalPath?absolute(seoEntry.canonicalPath):canonical;
     const languages=Object.fromEntries((await getWebsiteLocales()).map(l=>[l,absolute(l==='tr'?'/':'/'+l+'/')]));
     return {title,description,metadataBase:new URL(BASE),
+      verification:{...(seo?.googleVerification?{google:seo.googleVerification}:{}),
+        ...(seo?.bingVerification?{other:{'msvalidate.01':seo.bingVerification}}:{})},
       alternates:{canonical:finalCanonical,languages},
       robots:preview||seo?.allowIndexing===false||seoEntry.noindex?{index:false,follow:false}:{index:true,follow:true},
       openGraph:{title:seoEntry.ogTitle||title,description:seoEntry.ogDescription||description,
@@ -151,6 +153,8 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   const chosenPicture=seoImage(seoEntry.ogImage||picture||seo?.defaultOgImage);
   const generic={
     title:chosenTitle,description:chosenDescription,metadataBase:new URL(BASE),
+    verification:{...(seo?.googleVerification?{google:seo.googleVerification}:{}),
+      ...(seo?.bingVerification?{other:{'msvalidate.01':seo.bingVerification}}:{})},
     alternates:{canonical:chosenCanonical,languages},
     robots:noindex?{index:false,follow:false}:{index:true,follow:true},
     openGraph:{
