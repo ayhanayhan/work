@@ -138,6 +138,7 @@ export function MasterSessionProvider({
             : 'API isteği başarısız (HTTP ' + r.status + ', ' + path + ').')
         );
       }
+      if (!raw && (r.status === 204 || r.status === 205 || r.headers.get('content-length') === '0')) return {};
       if (!contentType.includes('json') || !raw) {
         throw new Error('API JSON yanıtı vermedi (' + path + ', HTTP ' + r.status + ').');
       }
