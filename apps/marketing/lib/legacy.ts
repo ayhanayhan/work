@@ -93,7 +93,7 @@ export async function renderPage(segments:string[],search:Record<string,string|u
   catch{notFound();}
   const data=extract(raw!);data.locale=lang;data.isHome=isHome;
   const posts=await getBlogPosts(lang);
-  if(isBlog&&!posts.length)notFound();
+  if(isBlog&&!isBlogList&&!posts.length)notFound();
   if(isBlogList)data.posts=posts;
   if(isBlogList){
     data.isBlogList=true;
