@@ -167,7 +167,7 @@ export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html
               {"Telefon numaranız"}
             </label>
             {"\n"}
-            <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası'} required type={"tel"} />
+            <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={fieldFor(module,'phonePlaceholder',locale)||(country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası')} required type={"tel"} />
             {"\n"}
             <button className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
               {fieldFor(module,'formButton',locale)||"Sizi arayalım"}
