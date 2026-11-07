@@ -3,13 +3,12 @@ import type {ReactNode} from 'react';
 import {headers} from 'next/headers';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
-import {getWebsiteLocales} from '@/lib/blog';
 
 export const metadata:Metadata={title:'Ticarti | Ticaretin yeni hali',description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.'};
-async function htmlAttrs(uri:string,locales:string[]){
+async function htmlAttrs(){
+  const uri=(await headers()).get('x-marketing-page')||'/';
   const pathPart=uri.replace(/^\/+|\/+$/g,'');
-  const first=pathPart.split('/')[0];
-  const part=locales.includes(first)?pathPart.slice(first.length).replace(/^\//,''):pathPart;
+  const part=pathPart.replace(/^(?:tr|en|pt|ru)(?:\/|$)/,'');
   const safe=/^[a-zA-Z0-9_./-]*$/.test(part)&&!part.includes('..')?part:'';
   const fixed=safe==='en/blog'||safe==='en/blog/index.html'||safe==='blog'||safe==='blog/index.html'?'en/blog/index.html':
     safe.startsWith('en/blog/')||safe.startsWith('blog/')?'en/blog/post.html':
@@ -21,16 +20,11 @@ async function htmlAttrs(uri:string,locales:string[]){
   }catch{return 'tc-page-home'}
 }
 export default async function RootLayout({children}:{children:ReactNode}) {
+  const cls=await htmlAttrs();
   const route=(await headers()).get('x-marketing-page')||'/';
-  const locales=await getWebsiteLocales();
-  const first=route.replace(/^\//,'').split('/')[0];
-  const lang=locales.includes(first)?first:'tr';
-  const routeParts=route.split('/').filter(Boolean);
-  const isNativeHome=routeParts.length===0||(routeParts.length===1&&locales.includes(routeParts[0]));
-  const cls=isNativeHome?'tc-page-home tc-native-page':await htmlAttrs(route,locales);
-  return <html lang={lang} dir={lang==='ar'?'rtl':undefined} className={cls}><head>
+  const lang=route.match(/^\/(tr|en|pt|ru)(?:\/|$)/)?.[1]||'tr';
+  return <html lang={lang} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=1"/>
-    {isNativeHome?<link rel="stylesheet" href="/assets/css/home-native.css?v=1"/>:null}
   </head><body>{children}</body></html>;
 }
