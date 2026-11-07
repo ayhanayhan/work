@@ -1,6 +1,6 @@
 import {BadRequestException, Injectable, Logger, NotFoundException, ServiceUnavailableException} from '@nestjs/common';
 import {Storage} from '@google-cloud/storage';
-import sharp from 'sharp';
+import sharp = require('sharp');
 import {randomUUID} from 'crypto';
 import {PrismaService} from '../prisma/prisma.service';
 
