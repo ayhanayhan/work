@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
 import HomeSnapshot from '@/components/home-snapshot';
+import {getHomeContent,moduleById} from '@/lib/home-cms';
 import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
@@ -145,8 +146,13 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
+    const locale=slug[0]&&['tr','en','pt','ru'].includes(slug[0])?slug[0]:'tr';
+    const [home,allPosts]=await Promise.all([getHomeContent(locale),getBlogPosts(locale)]);
+    const blogModule=moduleById(home,'blog');
+    const categories=blogModule?.categoryIds||[];
+    const posts=categories.length?allPosts.filter(p=>p.categoryId&&categories.includes(p.categoryId)):allPosts;
     return <>
-      <HomeInteractions><HomeSnapshot/></HomeInteractions>
+      <HomeInteractions><HomeSnapshot home={home} posts={posts} locale={locale}/></HomeInteractions>
     </>;
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
