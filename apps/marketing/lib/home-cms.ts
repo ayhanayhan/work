@@ -21,6 +21,7 @@ export function safePageUrl(input:string|undefined,fallback:string){
 export function safeAssetUrl(input:string|undefined,fallback:string){
  const value=(input||'').trim();
  if(value.startsWith('/assets/')||/^https:\/\/[^\s"'<>]+$/i.test(value))return value;
+ if(/^(?:\.\.\/)+assets\/[a-zA-Z0-9_./-]+$/.test(value))return '/'+value.replace(/^(?:\.\.\/)+/,'');
  return fallback;
 }
 export async function getHomeContent(locale:string):Promise<HomeContent|null>{
