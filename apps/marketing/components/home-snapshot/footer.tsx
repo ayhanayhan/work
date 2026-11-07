@@ -1,3 +1,4 @@
+import FooterLanguagePicker from '@/components/footer-language-picker';
 /* Original Ticarti footer markup converted to native JSX. */
 export default function FooterSnapshot(){return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-footer"}>
@@ -336,61 +337,7 @@ export default function FooterSnapshot(){return (
             {"\n"}
           </div>
           {"\n"}
-          <div className={"footer-lang-wrap"}>
-            {"\n"}
-            <div className={"lang-wrap"} data-lang-init={"1"}>
-              {"\n"}
-              <button aria-expanded={"false"} aria-haspopup={"true"} aria-label={"Language"} className={"lang-toggle"} type={"button"}>
-                {"\n"}
-                <span className={"lang-current"} data-tc-content-key={"span-274"}>
-                  {"English"}
-                </span>
-                {"\n"}
-                <span className={"lang-caret"}></span>
-                {"\n"}
-              </button>
-              {"\n"}
-              <ul className={"lang-menu"}>
-                {"\n"}
-                <li className={"is-active"}>
-                  {"\n"}
-                  <span className={"lang-item"}>
-                    {"\n"}
-                    <img alt={"en"} className={"lang-flag"} loading={"lazy"} src={"https://www.shakersworks.com/hubfs/Web%20repositioning/Icons/Languages/Frame%202147237041.webp"} data-tc-content-src={"image-109"} />
-                    {"\n"}
-                    <span className={"lang-name"} data-tc-content-key={"span-275"}>
-                      {"English"}
-                    </span>
-                    {"\n"}
-                    <span className={"lang-check"}>
-                      {"✓"}
-                    </span>
-                    {"\n"}
-                  </span>
-                  {"\n"}
-                </li>
-                {"\n"}
-                <li>
-                  {"\n"}
-                </li>
-                {"\n"}
-                <li>
-                  {"\n"}
-                </li>
-                {"\n"}
-                <li>
-                  {"\n"}
-                </li>
-                {"\n"}
-                <li>
-                  {"\n"}
-                </li>
-                {"\n"}
-              </ul>
-              {"\n"}
-            </div>
-            {"\n"}
-          </div>
+          <FooterLanguagePicker/>
         </div>
         {"\n"}
         <div className={"tc-home-footer-legal-bottom"}>
