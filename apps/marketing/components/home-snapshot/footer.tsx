@@ -444,7 +444,7 @@ export default function FooterSnapshot(){return (
             {"\n"}
           </div>
           <div aria-label={"Ödeme markaları"} className={"tc-footer-payments"}>
-            <img alt={"iyzico ile Öde, Mastercard, Maestro, Visa, Troy ve American Express"} height={261} loading={"lazy"} src={"/assets/images/payments/payment-methods.png"} width={2048} data-tc-content-src={"image-110"} />
+            <img alt={"Visa, Mastercard, Troy, American Express ve iyzico"} height={69} loading={"lazy"} src={"/assets/images/payments/payment-logos.svg"} width={420} data-tc-content-src={"image-110"} />
           </div>
         </div>
         {"\n"}
