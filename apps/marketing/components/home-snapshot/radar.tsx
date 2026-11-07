@@ -27,7 +27,7 @@ export default function RadarSection(){
               {"\n"}
               <div className={"tc-dashboard-radar__card-text"}>
                 {"\n"}
-                <img alt={""} className={"tc-dashboard-radar__card-icon"} height={"44"} sizes={"(max-width: 44px) 100vw, 44px"} src={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=44&height=44&name=arrow-right-44x44.webp"} srcSet={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=22&height=22&name=arrow-right-44x44.webp 22w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=44&height=44&name=arrow-right-44x44.webp 44w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=66&height=66&name=arrow-right-44x44.webp 66w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=88&height=88&name=arrow-right-44x44.webp 88w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=110&height=110&name=arrow-right-44x44.webp 110w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=132&height=132&name=arrow-right-44x44.webp 132w"} width={"44"} data-tc-content-src={"image-061"} />
+                <img alt={""} className={"tc-dashboard-radar__card-icon"} height={44} sizes={"(max-width: 44px) 100vw, 44px"} src={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=44&height=44&name=arrow-right-44x44.webp"} srcSet={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=22&height=22&name=arrow-right-44x44.webp 22w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=44&height=44&name=arrow-right-44x44.webp 44w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=66&height=66&name=arrow-right-44x44.webp 66w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=88&height=88&name=arrow-right-44x44.webp 88w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=110&height=110&name=arrow-right-44x44.webp 110w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/arrow-right-44x44.webp?width=132&height=132&name=arrow-right-44x44.webp 132w"} width={44} data-tc-content-src={"image-061"} />
                 {"\n"}
                 <h3 className={"tc-dashboard-radar__card-title"} data-tc-content-key={"h3-086"}>
                   {"Siparişler ve stoklar aynı ritimde"}
@@ -45,7 +45,7 @@ export default function RadarSection(){
               {"\n"}
               <div className={"tc-dashboard-radar__card-text"}>
                 {"\n"}
-                <img alt={""} className={"tc-dashboard-radar__card-icon"} height={"44"} sizes={"(max-width: 44px) 100vw, 44px"} src={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=44&height=44&name=heart-handshake-44x44.webp"} srcSet={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=22&height=22&name=heart-handshake-44x44.webp 22w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=44&height=44&name=heart-handshake-44x44.webp 44w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=66&height=66&name=heart-handshake-44x44.webp 66w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=88&height=88&name=heart-handshake-44x44.webp 88w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=110&height=110&name=heart-handshake-44x44.webp 110w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=132&height=132&name=heart-handshake-44x44.webp 132w"} width={"44"} data-tc-content-src={"image-062"} />
+                <img alt={""} className={"tc-dashboard-radar__card-icon"} height={44} sizes={"(max-width: 44px) 100vw, 44px"} src={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=44&height=44&name=heart-handshake-44x44.webp"} srcSet={"https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=22&height=22&name=heart-handshake-44x44.webp 22w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=44&height=44&name=heart-handshake-44x44.webp 44w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=66&height=66&name=heart-handshake-44x44.webp 66w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=88&height=88&name=heart-handshake-44x44.webp 88w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=110&height=110&name=heart-handshake-44x44.webp 110w, https://www.shakersworks.com/hs-fs/hubfs/Web%20repositioning/Icons/heart-handshake-44x44.webp?width=132&height=132&name=heart-handshake-44x44.webp 132w"} width={44} data-tc-content-src={"image-062"} />
                 {"\n"}
                 <h3 className={"tc-dashboard-radar__card-title"} data-tc-content-key={"h3-088"}>
                   {"Pazarlama ve müşteri deneyimi bir arada"}
@@ -67,15 +67,15 @@ export default function RadarSection(){
           {"\n"}
           <div aria-label={"Pazaryeri bağlantı ağı"} className={"tc-radar"} role={"img"}>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-radar__beam"}></div>
+            <div aria-hidden={true} className={"tc-radar__beam"}></div>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-radar__ring tc-radar__ring--1"}></div>
+            <div aria-hidden={true} className={"tc-radar__ring tc-radar__ring--1"}></div>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-radar__ring tc-radar__ring--2"}></div>
+            <div aria-hidden={true} className={"tc-radar__ring tc-radar__ring--2"}></div>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-radar__ring tc-radar__ring--3"}></div>
+            <div aria-hidden={true} className={"tc-radar__ring tc-radar__ring--3"}></div>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-radar__ring tc-radar__ring--4"}></div>
+            <div aria-hidden={true} className={"tc-radar__ring tc-radar__ring--4"}></div>
             {"\n"}
             <div className={"tc-radar__core"}>
               {"\n"}
