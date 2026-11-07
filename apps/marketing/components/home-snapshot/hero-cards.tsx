@@ -1,5 +1,18 @@
 /* Real original 8 profile cards, kept as typed JSX. No HTML string cloning. */
-export default function HeroCards({clone=false}:{clone?:boolean}){return <>
+import type {HomeItem} from '@/lib/home-cms';
+import {safeAssetUrl,textFor} from '@/lib/home-cms';
+export default function HeroCards({clone=false,items,locale='tr'}:{clone?:boolean;items?:HomeItem[];locale?:string}){
+ const configured=(items||[]).filter(item=>item.enabled!==false&&item.assets?.image);
+ if(configured.length)return <>{configured.map(item=><article key={item.id} className="tc-ui-card" data-clone={clone?'1':undefined} aria-hidden={clone||undefined}>
+   <div className="tc-ui-card__photo">
+     <img className="tc-ui-card__img" alt={textFor(item.fields?.heading,locale)||''} src={safeAssetUrl(item.assets?.image,'/assets/images/ticarti-butik-girisimci.webp')}/>
+     <div className="tc-ui-card__prev">
+       <span className="tc-ui-card__prev-label">{textFor(item.fields?.description,locale)||textFor(item.fields?.heading,locale)}</span>
+       {item.assets?.logo?<div className="tc-ui-card__logos"><img className="tc-ui-card__logo" src={safeAssetUrl(item.assets.logo,'')} alt={textFor(item.fields?.heading,locale)||'Logo'}/></div>:null}
+     </div>
+   </div>
+ </article>)}</>;
+ return <>
 
             {"\n"}
             <article className={"tc-ui-card"} data-clone={clone?"1":undefined} aria-hidden={clone?true:undefined}>
