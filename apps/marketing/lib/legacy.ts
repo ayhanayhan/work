@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 import {archiveCard,BlogLocale,BlogPost,blogLabel,blogPath,escapeHtml,getBlogPosts,getWebsiteLocales,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 import {applyHomepageFaq,FaqContent,getHomepageFaq} from './faq';
-import {getHomepageSnapshot,renderHomepageServer} from './homepage-ssr';
+import {getHomepageSnapshot,renderHomepageServer,renderFooterLanguages} from './homepage-ssr';
 
 export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean;faq?:FaqContent};
 function extract(html:string):PageData{
@@ -76,7 +76,8 @@ function pageKey(source:string):string{
   return map[source]||'';
 }
 export async function renderPage(segments:string[],search:Record<string,string|undefined>={}):Promise<PageData>{
-  const supportedLocales=new Set(await getWebsiteLocales());
+  const activeLocales=await getWebsiteLocales();
+  const supportedLocales=new Set(activeLocales);
   const lang:BlogLocale=segments.length&&supportedLocales.has(segments[0])?segments[0] as BlogLocale:'tr';
   const route=['en',...(segments.length&&supportedLocales.has(segments[0])?segments.slice(1):segments)];
   const isHome=route.join('/')==='en'||route.join('/')==='en/index.html';
@@ -144,5 +145,6 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     if(data.faq.items.length&&!data.html.includes('data-tc-ssr-faq="1"'))
       data.faq={...data.faq,items:[]};
   }
+  data.html=renderFooterLanguages(data.html,activeLocales,lang,segments);
   return data;
 }
