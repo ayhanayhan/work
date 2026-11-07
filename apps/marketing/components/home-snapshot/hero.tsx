@@ -27,7 +27,7 @@ export default function HeroSection(){
             {"\n"}
             <div className={"tc-dial-select"}>
               {"\n"}
-              <span aria-hidden={"true"} className={"tc-dial-visible"} data-tc-content-key={"span-058"}>
+              <span aria-hidden={true} className={"tc-dial-visible"} data-tc-content-key={"span-058"}>
                 {"🇹🇷 +90"}
               </span>
               {"\n"}
@@ -163,7 +163,7 @@ export default function HeroSection(){
                 {"\n"}
               </select>
               {"\n"}
-              <span aria-hidden={"true"} className={"tc-dial-chevron"}></span>
+              <span aria-hidden={true} className={"tc-dial-chevron"}></span>
               {"\n"}
             </div>
             {"\n"}
@@ -171,7 +171,7 @@ export default function HeroSection(){
               {"Telefon numaranız"}
             </label>
             {"\n"}
-            <input aria-required={"true"} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} placeholder={"5xx xxx xx xx"} required type={"tel"} />
+            <input aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} placeholder={"5xx xxx xx xx"} required type={"tel"} />
             {"\n"}
             <button className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
               {"Sizi arayalım"}
@@ -212,13 +212,13 @@ export default function HeroSection(){
       {"\n"}
       <div className={"tc-site-hero__carousel"}>
         {"\n"}
-        <span aria-hidden={"true"} className={"tc-site-hero__fade tc-site-hero__fade--l"}></span>
+        <span aria-hidden={true} className={"tc-site-hero__fade tc-site-hero__fade--l"}></span>
         {"\n"}
-        <span aria-hidden={"true"} className={"tc-site-hero__fade tc-site-hero__fade--r"}></span>
+        <span aria-hidden={true} className={"tc-site-hero__fade tc-site-hero__fade--r"}></span>
         {"\n"}
         <button aria-label={"Perfil anterior"} className={"tc-site-hero__arrow tc-site-hero__arrow--prev"} data-dir={"prev"} type={"button"}>
           {"\n"}
-          <svg aria-hidden={"true"} fill={"none"} height={"16"} viewBox={"0 0 24 24"} width={"16"}>
+          <svg aria-hidden={true} fill={"none"} height={16} viewBox={"0 0 24 24"} width={16}>
             {"\n"}
             <path d={"M15 6l-6 6 6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
             {"\n"}
@@ -228,7 +228,7 @@ export default function HeroSection(){
         {"\n"}
         <button aria-label={"Perfil siguiente"} className={"tc-site-hero__arrow tc-site-hero__arrow--next"} data-dir={"next"} type={"button"}>
           {"\n"}
-          <svg aria-hidden={"true"} fill={"none"} height={"16"} viewBox={"0 0 24 24"} width={"16"}>
+          <svg aria-hidden={true} fill={"none"} height={16} viewBox={"0 0 24 24"} width={16}>
             {"\n"}
             <path d={"M9 6l6 6-6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}></path>
             {"\n"}
@@ -568,7 +568,7 @@ export default function HeroSection(){
               {"\n"}
             </div>
             {"\n"}
-            <div aria-hidden={"true"} className={"tc-ui-logos__group"}>
+            <div aria-hidden={true} className={"tc-ui-logos__group"}>
               {"\n"}
               <div className={"tc-ui-logos__box"}>
                 {"\n"}
