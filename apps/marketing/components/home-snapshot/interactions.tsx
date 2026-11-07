@@ -56,6 +56,37 @@ export default function HomeInteractions({children}:Props){
     return()=>{io.disconnect();heroIO?.disconnect()};
   },[]);
 
+  // Keep the original fixed-header spacer aligned with the actual header
+  // rather than injecting a second header or changing CSS geometry.
+  useEffect(()=>{
+    const root=rootRef.current,header=root?.querySelector<HTMLElement>('.tc-site-header');
+    const spacer=root?.querySelector<HTMLElement>('.tc-ui-header-spacer');
+    if(!header||!spacer)return;
+    const sync=()=>{spacer.style.height=header.offsetHeight+'px'};
+    sync();
+    const ro=typeof ResizeObserver!=='undefined'?new ResizeObserver(sync):null;
+    ro?.observe(header);window.addEventListener('resize',sync);
+    return()=>{ro?.disconnect();window.removeEventListener('resize',sync)};
+  },[banner]);
+
+  // React state controls original carousel button disabled states.
+  useEffect(()=>{
+    const root=rootRef.current;if(!root)return;
+    for(const [kind,selector] of [
+      ['showcase','.tc-showcase'],['blog','#tc-blog']
+    ]){
+      const container=root.querySelector<HTMLElement>(selector);
+      if(!container)continue;
+      const state=carouselState[kind];
+      const prev=container.querySelector<HTMLButtonElement>(
+        kind==='showcase'?'[data-dir="prev"]':'[data-tc-blog-prev]');
+      const next=container.querySelector<HTMLButtonElement>(
+        kind==='showcase'?'[data-dir="next"]':'[data-tc-blog-next]');
+      if(prev)prev.disabled=!state?.prev;
+      if(next)next.disabled=!state?.next;
+    }
+  },[carouselState]);
+
   // Banner dismissal survives the current tab, just as in the original page.
   useEffect(()=>{
     try{if(sessionStorage.getItem('tc-announcement-bar:ticarti-lansman-indirim-50')==='1')setBanner(false)}catch{}
@@ -336,5 +367,5 @@ export default function HomeInteractions({children}:Props){
       if(option?.dataset.url)window.location.assign(option.dataset.url);
     }
   };
-  return <div ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>{children}</div>;
+  return <div className="tc-page-home" ref={rootRef} onClick={onClick} onChange={onChange} onMouseOver={onMouseOver} onMouseOut={onMouseOut}>{children}</div>;
 }
