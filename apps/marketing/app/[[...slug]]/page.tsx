@@ -6,6 +6,7 @@ import {getHomeContent} from '@/lib/home-cms';
 import {moduleById,textFor} from '@/lib/home-content';
 import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
+import {BlogArchive,BlogArticle} from '@/components/blog-pages';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
 
@@ -169,6 +170,23 @@ export default async function MarketingPage({params,searchParams}:Props){
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
   const schemas=jsonLd(page,lang);
+  if(page.isBlogList){
+    return <>
+      <BlogArchive posts={page.posts||[]} locale={lang}/>
+      <BlogInteractions/>
+      {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,'\\u003c')}}/>)}
+    </>;
+  }
+  if(page.post){
+    const all=await getBlogPosts(lang),post=page.post;
+    const candidates=all.filter(x=>x.id!==post.id);
+    const selected=(post.relatedPostIds||[]).map(id=>candidates.find(p=>p.id===id)).filter((p):p is BlogPost=>!!p);
+    const related=[...selected,...candidates.filter(p=>!selected.some(x=>x.id===p.id))].slice(0,3);
+    return <>
+      <BlogArticle post={post} related={related} locale={lang}/>
+      {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,'\\u003c')}}/>)}
+    </>;
+  }
   return <>
     <div className={page.classes} dangerouslySetInnerHTML={{__html:page.html}}/>
     {page.isBlogList?<BlogInteractions/>:null}
