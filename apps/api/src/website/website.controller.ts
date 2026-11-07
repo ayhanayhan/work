@@ -26,6 +26,9 @@ export class WebsiteController {
   @Get('superadmin/website/blog-callbacks')
   callbacks(){return this.svc.blogCallbackRequests()}
   @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/blog-callbacks/:id/complete')
+  completeCallback(@Param('id') id:string){return this.svc.completeBlogCallback(id)}
+  @UseGuards(SuperAdminAuthGuard)
   @Patch('superadmin/website/blog-comments/:id')
   moderateComment(@Param('id') id:string,@Body() body:any){return this.svc.moderateBlogComment(id,body.status)}
   @Get('public/website/blog/:slug')
