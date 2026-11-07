@@ -19,7 +19,7 @@ export default function ShowcaseSection({home,locale='tr'}:{home?:HomeContent|nu
       {item.assets?.image?<img className="tc-showcase__image" alt="" loading="lazy" src={safeAssetUrl(item.assets.image,'')}/>:null}
       <div className="tc-showcase__body">
        {textFor(item.fields?.heading,locale)?<h3 className="tc-showcase__name"><SimpleHtml html={textFor(item.fields?.heading,locale)}/></h3>:null}
-       {textFor(item.fields?.role,locale)?<p className="tc-showcase__role">{textFor(item.fields.role,locale)}</p>:null}
+       {textFor(item.fields?.role,locale)?<p className="tc-showcase__role">{textFor(item.fields?.role,locale)}</p>:null}
       </div>
      </div>
      {textFor(item.fields?.description,locale)?<p className="tc-showcase__description"><SimpleHtml html={textFor(item.fields?.description,locale)}/></p>:null}
