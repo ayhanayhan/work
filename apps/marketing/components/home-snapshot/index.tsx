@@ -343,39 +343,6 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
     {"\n"}
   </div>
   {"\n"}
-  <div aria-modal={"true"} className={"tc-site-hero tc-ui-fs"} role={"dialog"}>
-    {"\n"}
-    <div className={"tc-ui-fs__stage"}>
-
-    </div>
-    {"\n"}
-    <button aria-label={"Perfil anterior"} className={"tc-ui-fs__arrow tc-ui-fs__arrow--prev"} type={"button"}>
-      {"\n"}
-      <svg aria-hidden={true} fill={"none"} height={20} viewBox={"0 0 24 24"} width={20}>
-        {"\n"}
-        <path d={"M15 6l-6 6 6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}>
-
-        </path>
-        {"\n"}
-      </svg>
-      {"\n"}
-    </button>
-    {"\n"}
-    <button aria-label={"Perfil siguiente"} className={"tc-ui-fs__arrow tc-ui-fs__arrow--next"} type={"button"}>
-      {"\n"}
-      <svg aria-hidden={true} fill={"none"} height={20} viewBox={"0 0 24 24"} width={20}>
-        {"\n"}
-        <path d={"M9 6l6 6-6 6"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"1.6"}>
-
-        </path>
-        {"\n"}
-      </svg>
-      {"\n"}
-    </button>
-    {"\n"}
-  </div>
-  {"\n"}
-  {"\n"}
   <BlogSection home={home} locale={locale} posts={posts}/>
   {"\n"}
   {"\n"}
