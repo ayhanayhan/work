@@ -1,18 +1,21 @@
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 /* Static React snapshot of original Ticarti homepage: showcase.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function ShowcaseSection(){
+export default function ShowcaseSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'showcase');
   return (
     <section aria-labelledby={"tc-showcase-heading"} className={"tc-showcase"}>
       {"\n"}
       <div className={"tc-showcase__header"}>
         {"\n"}
         <h2 className={"tc-showcase__heading"} id={"tc-showcase-heading"} data-tc-content-key={"h2-115"}>
-          {"Bir mağazadan çok daha fazlası. Ticarti ile tek operasyon."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Bir mağazadan çok daha fazlası. Ticarti ile tek operasyon."}
         </h2>
         {"\n"}
         <p className={"tc-showcase__intro"} data-tc-content-key={"p-116"}>
-          {"Canlı mağaza tasarımından native mobil yönetime, pazaryerlerinden stok takibine kadar ihtiyacın olan her şey bir arada."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"Canlı mağaza tasarımından native mobil yönetime, pazaryerlerinden stok takibine kadar ihtiyacın olan her şey bir arada."}
         </p>
         {"\n"}
       </div>
