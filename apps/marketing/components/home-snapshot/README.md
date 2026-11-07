@@ -8,8 +8,10 @@ its page structure, text, class names, graphics or section sequence.
 - `hero.tsx`, `animated.tsx`, `builder.tsx`, `radar.tsx`,
   `channels.tsx`, `showcase.tsx`, `references.tsx`, `bottomCta.tsx`,
   `blog.tsx`, and `faq.tsx` are separate React section components.
-- Styling continues to use `public/assets/css/style.css`, **without** the
-  invented `home-native.css` redesign.
+- Styling continues to use the byte-for-byte design-locked `public/assets/css/style.css`.
+  The small `home-react-effects.css` file only reproduces three existing
+  behaviors (desktop hero clones, sample-order entry and radar sweep), not a
+  redesign.
 - The Marketing homepage route renders these React components directly.
   It does not load a template file, query Master/API, interpolate HTML, or use
   `dangerouslySetInnerHTML` for the homepage.
