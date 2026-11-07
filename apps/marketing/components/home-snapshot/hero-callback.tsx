@@ -181,7 +181,7 @@ export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html
             {"\n"}
             <label htmlFor={"tc-kvkk-hero"}>
               <a href={safePageUrl(consentHref,'/kvkk.html')} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-060"}>
-                {"KVKK Aydınlatma Metni"}
+                {fieldFor(module,'consentLinkText',locale)||"KVKK Aydınlatma Metni"}
               </a>
               {fieldFor(module,'consentText',locale)||"’ni okudum, onaylıyorum."}
             </label>
