@@ -2,12 +2,12 @@
 import {useEffect,useState,type FormEvent} from 'react';
 
 type Comment={id:string;name:string;comment:string;createdAt:string};
-const copy:Record<string,{comments:string;name:string;message:string;send:string;pending:string;empty:string;error:string;phone:string;call:string;consent:string;received:string;phoneError:string}>={
- tr:{comments:'Yorumlar',name:'Adınız',message:'Yorumunuz',send:'Yorum gönder',pending:'Yorumunuz onay için gönderildi.',empty:'Henüz yorum yapılmamış. İlk yorumu siz yazabilirsiniz.',error:'İşlem tamamlanamadı. Lütfen tekrar deneyin.',phone:'Telefon numaranız',call:'Sizi arayalım',consent:'KVKK Aydınlatma Metni’ni okudum.',received:'Talebiniz alındı.',phoneError:'Geçerli bir telefon numarası girin.'},
- en:{comments:'Comments',name:'Your name',message:'Your comment',send:'Submit comment',pending:'Your comment is awaiting approval.',empty:'No comments yet. Be the first to comment.',error:'Could not submit. Please try again.',phone:'Phone number',call:'Request a call',consent:'I have read the privacy notice.',received:'Your request has been received.',phoneError:'Enter a valid phone number.'},
- de:{comments:'Kommentare',name:'Ihr Name',message:'Ihr Kommentar',send:'Kommentar senden',pending:'Ihr Kommentar wartet auf Freigabe.',empty:'Noch keine Kommentare.',error:'Senden fehlgeschlagen. Bitte erneut versuchen.',phone:'Telefonnummer',call:'Rückruf anfordern',consent:'Ich habe die Datenschutzhinweise gelesen.',received:'Ihre Anfrage ist eingegangen.',phoneError:'Geben Sie eine gültige Telefonnummer ein.'},
- ru:{comments:'Комментарии',name:'Ваше имя',message:'Ваш комментарий',send:'Отправить комментарий',pending:'Комментарий отправлен на модерацию.',empty:'Комментариев пока нет.',error:'Не удалось отправить. Повторите попытку.',phone:'Номер телефона',call:'Заказать звонок',consent:'Я ознакомился с уведомлением о конфиденциальности.',received:'Запрос получен.',phoneError:'Введите корректный номер телефона.'},
- ar:{comments:'التعليقات',name:'الاسم',message:'تعليقك',send:'إرسال التعليق',pending:'تم إرسال تعليقك للمراجعة.',empty:'لا توجد تعليقات بعد.',error:'تعذر الإرسال. حاول مرة أخرى.',phone:'رقم الهاتف',call:'اطلب اتصالاً',consent:'قرأت إشعار حماية البيانات.',received:'تم استلام طلبك.',phoneError:'أدخل رقم هاتف صحيحاً.'}
+const copy:Record<string,{comments:string;name:string;message:string;send:string;pending:string;empty:string;error:string;phone:string;call:string;subtitle:string;consent:string;received:string;phoneError:string}>={
+ tr:{comments:'Yorumlar',name:'Adınız',message:'Yorumunuz',send:'Yorum gönder',pending:'Yorumunuz onay için gönderildi.',empty:'Henüz yorum yapılmamış. İlk yorumu siz yazabilirsiniz.',error:'İşlem tamamlanamadı. Lütfen tekrar deneyin.',phone:'Telefon numaranız',call:'Sizi arayalım',subtitle:"Mağazanızı birlikte değerlendirelim. Numaranızı bırakın, sizi arayalım.",consent:'KVKK Aydınlatma Metni’ni okudum.',received:'Talebiniz alındı.',phoneError:'Geçerli bir telefon numarası girin.'},
+ en:{comments:'Comments',name:'Your name',message:'Your comment',send:'Submit comment',pending:'Your comment is awaiting approval.',empty:'No comments yet. Be the first to comment.',error:'Could not submit. Please try again.',phone:'Phone number',call:'Request a call',subtitle:"Have a question about your store? Leave your number and we'll call you.",consent:'I have read the privacy notice.',received:'Your request has been received.',phoneError:'Enter a valid phone number.'},
+ de:{comments:'Kommentare',name:'Ihr Name',message:'Ihr Kommentar',send:'Kommentar senden',pending:'Ihr Kommentar wartet auf Freigabe.',empty:'Noch keine Kommentare.',error:'Senden fehlgeschlagen. Bitte erneut versuchen.',phone:'Telefonnummer',call:'Rückruf anfordern',subtitle:"Fragen zu Ihrem Shop? Hinterlassen Sie Ihre Nummer, wir rufen zurück.",consent:'Ich habe die Datenschutzhinweise gelesen.',received:'Ihre Anfrage ist eingegangen.',phoneError:'Geben Sie eine gültige Telefonnummer ein.'},
+ ru:{comments:'Комментарии',name:'Ваше имя',message:'Ваш комментарий',send:'Отправить комментарий',pending:'Комментарий отправлен на модерацию.',empty:'Комментариев пока нет.',error:'Не удалось отправить. Повторите попытку.',phone:'Номер телефона',call:'Заказать звонок',subtitle:"Есть вопросы о магазине? Оставьте номер, и мы вам перезвоним.",consent:'Я ознакомился с уведомлением о конфиденциальности.',received:'Запрос получен.',phoneError:'Введите корректный номер телефона.'},
+ ar:{comments:'التعليقات',name:'الاسم',message:'تعليقك',send:'إرسال التعليق',pending:'تم إرسال تعليقك للمراجعة.',empty:'لا توجد تعليقات بعد.',error:'تعذر الإرسال. حاول مرة أخرى.',phone:'رقم الهاتف',call:'اطلب اتصالاً',subtitle:"هل لديك أسئلة حول متجرك؟ اترك رقمك وسنتصل بك.",consent:'قرأت إشعار حماية البيانات.',received:'تم استلام طلبك.',phoneError:'أدخل رقم هاتف صحيحاً.'}
 };
 export function BlogComments({slug,locale}:{slug:string;locale:string}){
  const t=copy[locale]||copy.en;
@@ -55,7 +55,9 @@ export function BlogPhoneCta({slug,locale}:{slug:string;locale:string}){
   }catch{setStatus(t.error)}finally{setBusy(false)}
  };
  return <section className="tc-post-cta">
-  <h3>{t.call}</h3><form onSubmit={e=>void send(e)}>
+  <h3>{t.call}</h3>
+  <p className="tc-post-cta-subtitle">{t.subtitle}</p>
+  <form onSubmit={e=>void send(e)}>
    <div className="tc-post-phone-row">
     <select value={dial} onChange={e=>setDial(e.target.value)} aria-label="Country code">
      <option value="+90">🇹🇷 +90</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+7">🇷🇺 +7</option><option value="+966">🇸🇦 +966</option><option value="+971">🇦🇪 +971</option>
