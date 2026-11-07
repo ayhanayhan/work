@@ -142,8 +142,7 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 // Pure visual interaction scripts. No database content patching, mock orders,
 // runtime HTML replacements or website-home-cms.js.
 const HOME_VISUAL_SCRIPTS=[
-  '/assets/js/vendor/jquery-1.11.2.js',
-  '/assets/js/common.js',
+  // Preserve original template script order for animations and interaction.
   '/assets/js/components/home/hero-animation.js',
   '/assets/js/components/home/video-reveal.js',
   '/assets/js/components/home/rotating-headline.js',
@@ -151,6 +150,10 @@ const HOME_VISUAL_SCRIPTS=[
   '/assets/js/components/home/channel-reveal.js',
   '/assets/js/pages/operations-carousel.js',
   '/assets/js/components/home/press-carousel.js',
+  '/assets/js/vendor/jquery-1.11.2.js',
+  '/assets/js/common.js',
+  // Excluded: orders-preview.js (fake generated orders), home-radar.js
+  // (rotating sample photos), website-home-cms.js (DOM text replacement).
   '/assets/js/pages/home.js',
   '/assets/js/pages/faq.js',
   '/assets/js/pages/header-navigation.js',
