@@ -17,14 +17,15 @@ import originalFaq from './website-faq-original.json';
 
 type Localized=Record<string,string>;
 type Values=Record<string,Localized>;
-type Entry={id:string;enabled:boolean;sortOrder?:number;fields:Values;assets:{image?:string};links:{href?:string}};
-type Module={id:string;title:string;selector:string;enabled:boolean;sortOrder:number;fields:Values;items:Entry[]};
+type Entry={id:string;enabled:boolean;sortOrder?:number;fields:Values;assets:{image?:string;logo?:string};links:{href?:string};storeId?:string};
+type LogoEntry={id:string;enabled:boolean;fields:{title:Localized};assets:{image:string};storeId?:string};
+type Module={id:string;title:string;selector:string;enabled:boolean;sortOrder:number;fields:Values;items:Entry[];logos?:LogoEntry[];ctaEnabled?:boolean;categoryIds?:string[]};
 type Snapshot={version:number;modules:Module[]};
-const FIELD_LABELS:Record<string,string>={heading:'Başlık',description:'Açıklama',offer:'Kampanya metni',role:'Alt başlık',button:'Buton yazısı',question:'Soru',answer:'Yanıt'};
-const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description']};
-const ENTRY_FIELDS:Record<string,string[]>={animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
+const FIELD_LABELS:Record<string,string>={heading:'Başlık',description:'Açıklama',offer:'Kampanya metni',role:'Alt başlık',button:'Buton yazısı',question:'Soru',answer:'Yanıt',buttonUrl:'Buton URL',formButton:'CTA form butonu',consentText:'KVKK onay metni',phoneEmpty:'Telefon zorunlu uyarısı',phoneInvalid:'Geçersiz telefon uyarısı',kvkkRequired:'KVKK onayı uyarısı',notConnected:'Gönderilmeyen form mesajı'};
+const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer','button','buttonUrl','formButton','consentText','phoneEmpty','phoneInvalid','kvkkRequired','notConnected'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description','button','buttonUrl']};
+const ENTRY_FIELDS:Record<string,string[]>={hero:['heading','description'],animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
-const newItem=():Entry=>({id:'item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{},assets:{image:''},links:{href:''}});
+const newItem=():Entry=>({id:'item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{},assets:{image:'',logo:''},links:{href:''},storeId:''});
 
 export default function HomepageEditor(){
   const {request,restoring,locales:languageList,localesLoading,localesError}=useMasterSession();
@@ -37,6 +38,7 @@ export default function HomepageEditor(){
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState(''),[message,setMessage]=useState('');
   const [dragged,setDragged]=useState<string|null>(null);
+  const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
   const [blogFeed,setBlogFeed]=useState<{published:number;draft:number;archived:number;scheduled:number;localized:number}|null>(null);
 
   const load=useCallback(async()=>{
@@ -58,6 +60,7 @@ export default function HomepageEditor(){
         const snapshot=await request('/superadmin/website/blog');
         const now=Date.now();
         const posts=Array.isArray(snapshot?.posts)?snapshot.posts:[];
+         if(!cancelled)setBlogCategories(Array.isArray(snapshot?.categories)?snapshot.categories:[]);
         const activeLocale=lang||languageList.find(x=>x.isDefault)?.locale||'tr';
         const valid=(p:any)=>{const t=p?.translations?.[activeLocale];return t?.enabled!==false&&!!t?.title?.trim()&&!!t?.content?.trim()};
         if(!cancelled)setBlogFeed({
@@ -78,6 +81,8 @@ export default function HomepageEditor(){
   const patch=(updates:Partial<Module>)=>setWorking(x=>x?{...x,...updates}:x);
   const patchField=(key:string,value:string)=>setWorking(x=>x?{...x,fields:{...x.fields,[key]:{...(x.fields[key]||{}),[lang]:value}}}:x);
   const patchItem=(id:string,change:(item:Entry)=>Entry)=>setWorking(x=>x?{...x,items:x.items.map(item=>item.id===id?change(item):item)}:x);
+  const patchLogo=(id:string,change:(entry:LogoEntry)=>LogoEntry)=>setWorking(x=>x?{...x,logos:(x.logos||[]).map(item=>item.id===id?change(item):item)}:x);
+  const addLogo=()=>setWorking(x=>x?{...x,logos:[...(x.logos||[]),{id:'logo-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{title:{}},assets:{image:''},storeId:''}]}:x);
   const move=(from:number,to:number)=>{
     setWorking(x=>{if(!x||to<0||to>=x.items.length||from===to)return x;const items=[...x.items];const [item]=items.splice(from,1);items.splice(to,0,item);return {...x,items}});
   };
@@ -110,7 +115,7 @@ export default function HomepageEditor(){
         throw new Error('Bu modül başka bir oturumda değişmiş. Yazdıkların ekranda korunuyor; önce diğer değişiklikleri kontrol et.');
       }
       const response=await request('/superadmin/website/home/'+encodeURIComponent(working.id),{
-        method:'PATCH',body:JSON.stringify({version:latest.version,enabled:working.enabled,fields:working.fields,items:working.items})
+        method:'PATCH',body:JSON.stringify({version:latest.version,enabled:working.enabled,fields:working.fields,items:working.items,ctaEnabled:working.ctaEnabled!==false,logos:working.logos||[],categoryIds:working.categoryIds||[]})
       });
       setData({...latest,version:response.version,modules:latest.modules.map(x=>x.id===working.id?response.module:x)});
       if(working.id==='faq'){
@@ -153,8 +158,8 @@ export default function HomepageEditor(){
   };
   const fields=working?MODULE_FIELDS[working.id]||[]:[];
   const entries=working?ENTRY_FIELDS[working.id]||[]:[];
-  const hasImage=['builder','showcase','references'].includes(working?.id||'');
-  const hasLink=['showcase','references'].includes(working?.id||'');
+  const hasImage=['hero','builder','showcase','references'].includes(working?.id||'');
+  const hasLink=['hero','showcase','references'].includes(working?.id||'');
   const itemLabel=(x:Entry,i:number)=>x.fields?.heading?.[lang]||x.fields?.question?.[lang]||x.fields?.heading?.tr||x.fields?.question?.tr||'Kayıt '+(i+1);
   const unchanged=!!working&&!!data&&JSON.stringify(data.modules.find(x=>x.id===working.id))===JSON.stringify(working);
   const editorState=!working?'':saving?'Kaydediliyor':unchanged?'Kaydedildi':'Kaydedilmemiş değişiklikler';
@@ -192,6 +197,24 @@ export default function HomepageEditor(){
         {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">{working.enabled?'Aktif':'Pasif'} · {editorState}</p><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector} · Görünüm sınıfları değiştirilmez.</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
           <div className="flex flex-wrap gap-2 border-b pb-4">{languageList.map(x=><Button size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)} key={x.locale}>{x.label||x.locale}</Button>)}</div>
           {fields.length?<div className="grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{['description','answer'].includes(key)?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boş bırakılırsa örnek metin gösterilmez.</span></label>)}</div>:null}
+          {working.id==='hero'?<div className="grid gap-4 border-t pt-5">
+            <label className="flex items-center justify-between gap-4 text-sm"><span>Telefon CTA formu açık</span><Switch checked={working.ctaEnabled!==false} onCheckedChange={v=>patch({ctaEnabled:v})}/></label>
+            <div className="rounded-lg border p-3 text-xs text-muted-foreground">
+              KVKK bağlantısı Master → Ayarlar → Sözleşme Eşleştirme üzerinden eşleştirilen KVKK sözleşmesinden okunur. Formdaki bağlantı yeni sekmede açılır. Yukarıdaki KVKK onay metni alanı bağlantının ardından gelen metni düzenler.
+            </div>
+          </div>:null}
+          {working.id==='hero'?<div className="grid gap-4 border-t pt-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div><h3 className="font-semibold">Referansların altındaki logolar</h3><p className="text-xs text-muted-foreground">Her logo için dile özel başlık, görsel ve ileride bağlanacak mağaza alanı.</p></div>
+              <Button size="sm" variant="outline" onClick={addLogo}><Plus className="size-4"/>Logo Ekle</Button>
+            </div>
+            {(working.logos||[]).map((logo,i)=><div key={logo.id} className="grid gap-3 rounded-lg border p-4">
+              <div className="flex items-center justify-between"><b className="text-sm">Logo {i+1}</b><div className="flex gap-2"><Switch checked={logo.enabled!==false} onCheckedChange={v=>patchLogo(logo.id,x=>({...x,enabled:v}))}/><Button size="icon" variant="outline" onClick={()=>patch({logos:(working.logos||[]).filter(x=>x.id!==logo.id)})}><Trash2 className="size-4"/></Button></div></div>
+              <label className="grid gap-2 text-sm">Başlık · {lang.toUpperCase()}<Input value={logo.fields?.title?.[lang]||''} onChange={e=>patchLogo(logo.id,x=>({...x,fields:{...x.fields,title:{...x.fields.title,[lang]:e.target.value}}}))}/></label>
+              <MediaField label="Logo" value={logo.assets?.image||''} onChange={image=>patchLogo(logo.id,x=>({...x,assets:{...x.assets,image}}))}/>
+              <label className="grid gap-2 text-sm">Mağaza (yakında bağlanacak)<Input placeholder="Şimdilik boş kalabilir" value={logo.storeId||''} disabled/></label>
+            </div>)}
+          </div>:null}
           {entries.length?<div className="grid gap-4 border-t pt-5">
             <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve yanıtları aktif her dilde düzenleyin. Yalnızca iki alanı da dolu olan sorular sitede ve FAQPage yapılandırılmış verisinde gösterilir.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. JSON girmeniz gerekmez.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
             {working.items.map((entry,i)=><div key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=working.items.findIndex(x=>x.id===dragged);if(from>=0)move(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
@@ -200,7 +223,9 @@ export default function HomepageEditor(){
                 <div className="flex items-center gap-2"><Switch checked={entry.enabled!==false} onCheckedChange={enabled=>patchItem(entry.id,x=>({...x,enabled}))}/><Button size="icon" variant="outline" disabled={i===0} onClick={()=>move(i,i-1)}><ArrowUp className="size-4"/></Button><Button size="icon" variant="outline" disabled={i===working.items.length-1} onClick={()=>move(i,i+1)}><ArrowDown className="size-4"/></Button><Button size="icon" variant="outline" onClick={()=>{if(window.confirm('Bu kaydı kaldırmak istiyor musunuz?'))patch({items:working.items.filter(x=>x.id!==entry.id)})}}><Trash2 className="size-4"/></Button></div>
               </div>
               <div className="grid gap-4">{entries.map(key=><label key={key} className="grid gap-1.5 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key} · {lang.toUpperCase()}</span>{['description','answer'].includes(key)?<Textarea rows={2} className="max-h-48 overflow-y-auto resize-y" value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>:<Input value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>}</label>)}
-                {hasImage?<MediaField label="Görsel / logo" value={entry.assets?.image||''} onChange={image=>patchItem(entry.id,x=>({...x,assets:{...x.assets,image}}))}/>:null}
+                {hasImage?<MediaField label="Görsel" value={entry.assets?.image||''} onChange={image=>patchItem(entry.id,x=>({...x,assets:{...x.assets,image}}))}/>:null}
+                {['hero','references'].includes(working.id)?<MediaField label="Referans logosu" value={entry.assets?.logo||''} onChange={logo=>patchItem(entry.id,x=>({...x,assets:{...x.assets,logo}}))}/>:null}
+                {['hero','references'].includes(working.id)?<label className="grid gap-2 text-sm">Mağaza seçimi (henüz bağlı değil)<Input value={entry.storeId||''} disabled placeholder="Mağaza bağlantısı sonraki aşamada eklenecek"/></label>:null}
                 {hasLink?<label className="grid gap-2 text-sm"><span className="font-medium">Bağlantı adresi</span><Input value={entry.links?.href||''} placeholder="https:// veya sayfa bağlantısı" onChange={e=>patchItem(entry.id,x=>({...x,links:{...x.links,href:e.target.value}}))}/></label>:null}
               </div>
             </div>)}{!working.items.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
@@ -213,6 +238,15 @@ export default function HomepageEditor(){
             <b>SEO / FAQPage</b>
             <p className="mt-1 text-muted-foreground">Bu sayfanın açık olduğu dilde soru ve cevap alanları dolu olan aktif kayıtlar, anasayfanın sunucu HTML çıktısına ve aynı içerikli FAQPage JSON-LD şemasına eklenir. Eksik çeviriler başka bir dilden doldurulmaz.</p>
             <p className="mt-2 text-xs text-muted-foreground">Bu modülün yazılarını ve sırasını buradan yönetin. Eski HTML şablonundaki örnek sorular otomatik olarak sisteme aktarılmaz.</p>
+          </div>:null}
+          {working.id==='blog'?<div className="grid gap-3 rounded-lg border p-4">
+            <h3 className="font-semibold">Anasayfada gösterilecek blog kategorileri</h3>
+            <p className="text-xs text-muted-foreground">Hiçbiri seçili değilse tüm yayınlanmış kategorilerden içerik gelir. Seçim yaparsan yalnızca işaretli kategoriler gösterilir.</p>
+            {blogCategories.filter(x=>x.isActive!==false).map(c=><label key={c.id} className="flex items-center gap-3 text-sm">
+              <input type="checkbox" checked={(working.categoryIds||[]).includes(c.id)} onChange={e=>patch({categoryIds:e.target.checked?[...(working.categoryIds||[]),c.id]:(working.categoryIds||[]).filter(x=>x!==c.id)})}/>
+              {c.translations?.[lang]?.title||c.translations?.tr?.title||c.id}
+            </label>)}
+            {!blogCategories.length?<p className="text-xs text-muted-foreground">Henüz blog kategorisi oluşturulmadı.</p>:null}
           </div>:null}
           {working.id==='blog'?<div className="rounded-lg border p-4 text-sm">
             <b>Blog içerikleri ayrı yönetilir.</b>
