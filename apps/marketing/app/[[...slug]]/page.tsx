@@ -7,6 +7,8 @@ import {moduleById,textFor} from '@/lib/home-content';
 import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogArchive,BlogArticle} from '@/components/blog-pages';
+import SiteShell from '@/components/site-shell';
+import {stripLegacyShell} from '@/lib/shared-shell';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
 
@@ -188,7 +190,7 @@ export default async function MarketingPage({params,searchParams}:Props){
     </>;
   }
   return <>
-    <div className={page.classes} dangerouslySetInnerHTML={{__html:page.html}}/>
+    <SiteShell><div className={page.classes} dangerouslySetInnerHTML={{__html:stripLegacyShell(page.html)}}/></SiteShell>
     {page.isBlogList?<BlogInteractions/>:null}
     <LegacyScripts sources={page.scripts} htmlClasses={page.classes}/>
     {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{
