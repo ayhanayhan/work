@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
 import HomeSnapshot from '@/components/home-snapshot';
+import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
 import {renderPage,PageData} from '@/lib/legacy';
@@ -141,35 +142,11 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 }
 // Pure visual interaction scripts. No database content patching, mock orders,
 // runtime HTML replacements or website-home-cms.js.
-const HOME_VISUAL_SCRIPTS=[
-  // Preserve original template script order for animations and interaction.
-  '/assets/js/components/home/hero-animation.js',
-  '/assets/js/components/home/video-reveal.js',
-  '/assets/js/components/home/rotating-headline.js',
-  '/assets/js/components/home/builder-cards.js',
-  '/assets/js/components/home/channel-reveal.js',
-  '/assets/js/pages/operations-carousel.js',
-  '/assets/js/components/home/press-carousel.js',
-  '/assets/js/vendor/jquery-1.11.2.js',
-  '/assets/js/common.js',
-  // Excluded: orders-preview.js (fake generated orders), home-radar.js
-  // (rotating sample photos), website-home-cms.js (DOM text replacement).
-  '/assets/js/pages/home.js',
-  '/assets/js/pages/faq.js',
-  '/assets/js/pages/header-navigation.js',
-  '/assets/js/pages/topbar-features.js',
-  '/assets/js/validation/phone.js',
-  '/assets/js/validation/domain.js',
-  '/assets/js/pages/callback-launch.js',
-  '/assets/js/pages/home-blog.js',
-  '/assets/js/pages/home-carousel-touch.js'
-];
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
     return <>
-      <div className="tc-page-home"><HomeSnapshot/></div>
-      <LegacyScripts sources={HOME_VISUAL_SCRIPTS} htmlClasses="tc-page-home"/>
+      <HomeInteractions><div className="tc-page-home"><HomeSnapshot/></div></HomeInteractions>
     </>;
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
