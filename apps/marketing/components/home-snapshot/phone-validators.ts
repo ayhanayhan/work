@@ -7,7 +7,7 @@ RO:/^[1-9]\d{8}$/,GR:/^[1269]\d{9}$/,CY:/^[2-9]\d{7}$/,AZ:/^[1-9]\d{8}$/,
 GE:/^[1-9]\d{8}$/,UA:/^[1-9]\d{8}$/,RU:/^[3489]\d{9}$/,AE:/^[1-9]\d{7,8}$/,
 SA:/^[1-9]\d{8}$/,QA:/^[3-7]\d{7}$/,KW:/^[1-9]\d{7}$/,IQ:/^[1-9]\d{7,9}$/,
 IR:/^[1-9]\d{9}$/,EG:/^[1-9]\d{8,9}$/,MA:/^[1-9]\d{8}$/,IN:/^[6-9]\d{9}$/,
-PK:/^3\d{9}$/,AU:/^[1-9]\d{8}$};
+PK:/^3\d{9}$/,AU:/^[1-9]\d{8}$/};
 export function validatePhone(value:string,iso:string,dial:string){
  const raw=value.trim();if(!raw)return 'Telefon numaranızı girin.';
  let v=raw.startsWith(dial)?raw.slice(dial.length).trim():raw;
