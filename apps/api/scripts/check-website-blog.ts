@@ -150,6 +150,14 @@ async function test(){
   await assert.rejects(svc.updateBlog({version:10,posts:[{...germanPost,authorId:author.id}],
     categories:afterCategoryEdit.categories,authors:[]}),
     'Deleting an author referenced by a post must fail');
-  console.log('PASS: active locales, blog authors, generated summaries, FAQ and SEO data');
+  const oldHome=await svc.home();
+  const ids=oldHome.modules.map(m=>m.id).reverse();
+  const ordered=await svc.reorderHome({version:oldHome.version,ids});
+  assert.deepEqual(ordered.modules.map(x=>x.id),ids,'New order must be saved');
+  assert.deepEqual((await svc.publicHome('tr')).modules.map(x=>x.id),ids.filter(id=>id!=='faq'),
+    'Public React homepage receives saved order and excludes disabled sections');
+  await assert.rejects(svc.reorderHome({version:oldHome.version,ids}),
+    'Concurrent module ordering must reject stale versions');
+  console.log('PASS: active locales, blog authors, persisted native homepage ordering, FAQ and SEO');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
