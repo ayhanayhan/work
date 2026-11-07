@@ -210,7 +210,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
               {"\n"}
             </div>)}
             {"\n"}
-            <div aria-hidden={true} className={"tc-ui-logos__group"}>
+            {!module?.configured?<div aria-hidden={true} className={"tc-ui-logos__group"}>
               {"\n"}
               <div className={"tc-ui-logos__box"}>
                 {"\n"}
@@ -332,7 +332,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
                 {"\n"}
               </div>
               {"\n"}
-            </div>
+            </div>:null}
             {"\n"}
           </div>
           {"\n"}
