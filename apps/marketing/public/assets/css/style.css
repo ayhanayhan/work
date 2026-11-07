@@ -14540,3 +14540,8 @@ html.tc-page-auth .tc-legal-back {font-size:14px;color:#3e5d17;text-decoration:u
 @keyframes tc-react-order-enter{from{opacity:.7;transform:translateY(-28px)}to{opacity:1;transform:translateY(0)}}
 .tc-orders__list>.tc-order--react-enter{animation:tc-react-order-enter 460ms cubic-bezier(.22,.61,.36,1) both}
 @media(prefers-reduced-motion:reduce){.tc-orders__list>.tc-order--react-enter{animation:none}}
+
+/* The original radar sweep is now a CSS animation controlled by React visibility. */
+@keyframes tc-react-radar-sweep{to{transform:rotate(360deg)}}
+.tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:tc-react-radar-sweep 8s linear infinite}
+@media(prefers-reduced-motion:reduce){.tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:none}}
