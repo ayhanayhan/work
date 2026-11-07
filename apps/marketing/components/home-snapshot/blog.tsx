@@ -1,7 +1,12 @@
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-cms';
+import {blogPath,type BlogPost} from '@/lib/blog';
+import BlogCards from './blog-cards';
 /* Static React snapshot of original Ticarti homepage: blog.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function BlogSection(){
+export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeContent|null;locale?:string;posts?:BlogPost[]}){
+ const module=moduleById(home,'blog');
+ if(home?.version&&home.modules.some(x=>x.id==='blog'&&x.enabled===false))return null;
   return (
     <section aria-labelledby={"tc-blog-title"} className={"tc-article-carousel tc-blog"} id={"tc-blog"}>
       {"\n"}
@@ -12,18 +17,18 @@ export default function BlogSection(){
           <div className={"tc-blog__heading"}>
             {"\n"}
             <h2 id={"tc-blog-title"} data-tc-content-key={"h2-158"}>
-              {"Blog"}
+              {fieldFor(module,'heading',locale)||"Blog"}
             </h2>
             {"\n"}
             <p data-tc-content-key={"p-159"}>
-              {"E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."}
+              {fieldFor(module,'description',locale)||"E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."}
             </p>
             {"\n"}
           </div>
           {"\n"}
           <div className={"tc-blog__actions"}>
             {"\n"}
-            <a className={"tc-blog__all"} href={"/blog/"} data-tc-content-key={"a-160"}>
+            <a className={"tc-blog__all"} href={blogPath(locale)} data-tc-content-key={"a-160"}>
               {"Tüm yazılar →"}
             </a>
             {"\n"}
@@ -45,7 +50,7 @@ export default function BlogSection(){
         {"\n"}
         <div className={"cards-main"}>
           <div className={"card"}>
-            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={0}>
+            <div aria-label={"Blog yazıları"} className={"card-inner tc-blog__track"} role={"region"} tabIndex={0}>{posts.length?<BlogCards posts={posts} locale={locale}/>:home?.version?null:(<>
               <article className={"card-items list-item box card-visible tc-blog__card"}>
                 {"\n"}
                 <div className={"card-wrap"}>
@@ -321,6 +326,7 @@ export default function BlogSection(){
                 </div>
                 {"\n"}
               </article>
+            </>)}
             </div>
           </div>
         </div>
