@@ -68,9 +68,9 @@ export default function WebsiteBlogCategories(){
   };
   const importTicartiCategories=async()=>{
     if(saving||loading||localesLoading||localesError||!locales.length)return;
-    const supported=locales.map(x=>x.locale).filter(x=>['tr','en','pt','ru','bg'].includes(x));
-    const unsupported=locales.map(x=>x.locale).filter(x=>!supported.includes(x));
-    if(!supported.length){setError('Hazır kategori çevirileri aktif dillerle eşleşmiyor.');return;}
+    const supported=['tr','en','pt','ru','bg'];
+    const enabled=locales.map(x=>x.locale);
+    const unsupported=enabled.filter(x=>!supported.includes(x));
     setSaving(true);setError('');setMessage('');
     try{
       // Always read the latest persisted version to prevent accidental overwrites.
@@ -112,7 +112,8 @@ export default function WebsiteBlogCategories(){
       });
       setData({...result,categories:result.categories||categories});
       setMessage(created+' kategori eklendi, '+filled+' kategori/dil çeviri seti tamamlandı. '+
-        supported.map(x=>x.toUpperCase()).join(', ')+' dilleri işlendi.'+
+        supported.map(x=>x.toUpperCase()).join(', ')+' dilleri kaydedildi.'+
+        (supported.filter(x=>!enabled.includes(x)).length?' Henüz aktif olmayan çeviriler de saklandı: '+supported.filter(x=>!enabled.includes(x)).join(', ')+'.':'')+
         (unsupported.length?' Henüz hazır çevirisi olmayan aktif diller: '+unsupported.join(', ')+'.':''));
     }catch(e:any){setError('Toplu kategori ekleme başarısız: '+(e?.message||'İşlem tamamlanamadı.'))}
     finally{setSaving(false)}
