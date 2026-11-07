@@ -32,3 +32,6 @@
  .tc-page-home .tc-blog .tc-blog__card,
  .tc-page-home .tc-blog .tc-blog__card .card-wrap {height:375px !important;}
 }
+
+/* An unconfigured CMS section must take up no space, even inside the original grid wrappers. */
+.tc-page-home .tc-component[hidden]{display:none!important;}
