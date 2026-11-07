@@ -8,7 +8,7 @@ export const metadata:Metadata={title:'Ticarti | Ticaretin yeni hali',descriptio
 async function htmlAttrs(){
   const uri=(await headers()).get('x-marketing-page')||'/';
   const pathPart=uri.replace(/^\/+|\/+$/g,'');
-  const part=pathPart.replace(/^(?:tr|en|pt|ru)(?:\/|$)/,'');
+  const part=pathPart.replace(/^(?:tr|en|de|ru|ar)(?:\/|$)/,'');
   const safe=/^[a-zA-Z0-9_./-]*$/.test(part)&&!part.includes('..')?part:'';
   const fixed=safe==='en/blog'||safe==='en/blog/index.html'||safe==='blog'||safe==='blog/index.html'?'en/blog/index.html':
     safe.startsWith('en/blog/')||safe.startsWith('blog/')?'en/blog/post.html':
@@ -22,14 +22,14 @@ async function htmlAttrs(){
 export default async function RootLayout({children}:{children:ReactNode}) {
   const route=(await headers()).get('x-marketing-page')||'/';
   const parts=route.split('/').filter(Boolean);
-  const snapshotHome=parts.length===0||(parts.length===1&&['tr','en','pt','ru'].includes(parts[0]));
-  const homeAlias=parts.length===1&&parts[0]==='index.html'||parts.length===2&&['tr','en','pt','ru'].includes(parts[0])&&parts[1]==='index.html';
+  const snapshotHome=parts.length===0||(parts.length===1&&['tr','en','de','ru','ar'].includes(parts[0]));
+  const homeAlias=parts.length===1&&parts[0]==='index.html'||parts.length===2&&['tr','en','de','ru','ar'].includes(parts[0])&&parts[1]==='index.html';
   const cls=snapshotHome||homeAlias?'tc-page-home':await htmlAttrs();
-  const lang=route.match(/^\/(tr|en|pt|ru)(?:\/|$)/)?.[1]||'tr';
+  const lang=route.match(/^\/(tr|en|de|ru|ar)(?:\/|$)/)?.[1]||'tr';
   return <html lang={lang} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/shared-footer.css?v=1"/>
-    <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=3"/>
+    <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=4"/>
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=2"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
   </head><body>{children}</body></html>;
