@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
 import HomeSnapshot from '@/components/home-snapshot';
-import {getHomeContent,moduleById} from '@/lib/home-cms';
+import {getHomeContent,moduleById,textFor} from '@/lib/home-cms';
 import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogLocale,BlogPost,blogLabel,blogPath,getBlogPosts,getWebsiteLocales,isBlogLocale,safeImage} from '@/lib/blog';
@@ -151,8 +151,19 @@ export default async function MarketingPage({params,searchParams}:Props){
     const blogModule=moduleById(home,'blog');
     const categories=blogModule?.categoryIds||[];
     const posts=categories.length?allPosts.filter(p=>p.categoryId&&categories.includes(p.categoryId)):allPosts;
+    const faqModule=moduleById(home,'faq');
+    const faqItems=(faqModule?.items||[])
+      .filter(item=>item.enabled!==false&&textFor(item.fields?.question,locale)&&textFor(item.fields?.answer,locale));
+    const faqJsonLd=faqModule?.configured&&faqItems.length?{
+      '@context':'https://schema.org','@type':'FAQPage',
+      mainEntity:faqItems.map(item=>({
+        '@type':'Question',name:textFor(item.fields?.question,locale),
+        acceptedAnswer:{'@type':'Answer',text:textFor(item.fields?.answer,locale)}
+      }))
+    }:null;
     return <>
       <HomeInteractions><HomeSnapshot home={home} posts={posts} locale={locale}/></HomeInteractions>
+      {faqJsonLd?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqJsonLd).replace(/</g,'\\u003c')}}/>:null}
     </>;
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
