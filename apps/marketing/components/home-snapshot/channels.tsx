@@ -13,7 +13,7 @@ export default function ChannelsSection({home,locale='tr'}:{home?:HomeContent|nu
   {items.length?<div className="tc-sales-channels__grid">
    {items.map(item=><article key={item.id} className="tc-sales-channels__col">
     {textFor(item.fields?.description,locale)?<p><SimpleHtml html={textFor(item.fields?.description,locale)}/></p>:null}
-    {textFor(item.fields?.button,locale)&&item.links?.href?<a href={item.links.href}>{textFor(item.fields.button,locale)}</a>:null}
+    {textFor(item.fields?.button,locale)&&item.links?.href?<a href={item.links.href}>{textFor(item.fields?.button,locale)}</a>:null}
    </article>)}
   </div>:null}
  </section>;
