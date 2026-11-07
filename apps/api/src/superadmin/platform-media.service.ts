@@ -1,13 +1,15 @@
 import {BadRequestException, Injectable, Logger, NotFoundException, ServiceUnavailableException} from '@nestjs/common';
 import {Storage} from '@google-cloud/storage';
-import sharp = require('sharp');
+import type sharp from 'sharp';
+// Sharp 0.35 exports a callable CommonJS function at runtime; use its default type.
+const sharpRuntime: typeof sharp = require('sharp');
 import {randomUUID} from 'crypto';
 import {PrismaService} from '../prisma/prisma.service';
 
 type PlatformMediaItem={id:string;fileName:string;mimeType:string;publicUrl:string;storageKey:string;size:number;createdAt:string};
 /** Shared production conversion used by the upload route and build smoke test. */
 export async function convertPlatformMediaBuffer(buffer:Buffer):Promise<Buffer>{
-  const img=sharp(buffer,{failOn:'error',limitInputPixels:25000000});
+  const img=sharpRuntime(buffer,{failOn:'error',limitInputPixels:25000000});
   const meta=await img.metadata();
   if(!['jpeg','png','webp','avif'].includes(meta.format||''))throw new BadRequestException('Bu görsel formatı desteklenmiyor. PNG/JPG/WebP/AVIF yükleyin.');
   return img.rotate().resize({width:2400,height:2400,fit:'inside',withoutEnlargement:true}).webp({quality:84}).toBuffer();
