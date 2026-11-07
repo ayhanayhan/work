@@ -31,9 +31,9 @@ export default function HeroSection(){
                 {"🇹🇷 +90"}
               </span>
               {"\n"}
-              <select aria-label={"Ülke ve telefon alan kodu seçin"} className={"tc-country-code"} name={"country_code"}>
+              <select aria-label={"Ülke ve telefon alan kodu seçin"} className={"tc-country-code"} name={"country_code"} defaultValue={"+90"}>
                 {"\n"}
-                <option data-country={"TR"} data-flag={"🇹🇷"} data-name={"Türkiye"} selected value={"+90"}>
+                <option data-country={"TR"} data-flag={"🇹🇷"} data-name={"Türkiye"} value={"+90"}>
                   {"🇹🇷 Türkiye (+90)"}
                 </option>
                 {"\n"}
