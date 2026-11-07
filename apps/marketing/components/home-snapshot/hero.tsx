@@ -1,4 +1,5 @@
 import HeroCallback from './hero-callback';
+import {SimpleHtml} from './simple-html';
 import HeroCards from './hero-cards';
 import HeroLogoGroup from './hero-logo-group';
 import {moduleById,fieldFor,safePageUrl,type HomeContent} from '@/lib/home-content';
@@ -16,15 +17,15 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
       <div className={"tc-site-hero__intro"}>
         {"\n"}
         <h1 className={"tc-site-hero__h1"}>
-          {heading?heading.split(/\n/).map((line,i)=><span key={i}>{i>0?<br/>:null}{line}</span>):<>E-ticaret siteni oluştur.<br/>14 gün ücretsiz dene.</>}
+          {module?.configured?<SimpleHtml html={heading.replace(/\n/g,'<br>')}/>:<>E-ticaret siteni oluştur.<br/>14 gün ücretsiz dene.</>}
         </h1>
         {"\n"}
         <p className={"tc-site-hero__sub"} data-tc-content-key={"p-056"}>
-          {fieldFor(module,'description',locale)||"Mağazanı dakikalar içinde kur; ürünlerini, siparişlerini, stoklarını ve pazaryeri bağlantılarını tek panelden kolayca yönet."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"Mağazanı dakikalar içinde kur; ürünlerini, siparişlerini, stoklarını ve pazaryeri bağlantılarını tek panelden kolayca yönet."}
         </p>
         {"\n"}
         <p className={"tc-hero-offer"} data-tc-content-key={"p-057"}>
-          {fieldFor(module,'offer',locale)||"Lansmana özel %50 indirimi kaçırma."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'offer',locale)}/>:"Lansmana özel %50 indirimi kaçırma."}
         </p>
         {"\n"}
         {module?.ctaEnabled!==false?<HeroCallback module={module} locale={locale} consentHref={safePageUrl(home?.consentContract?.href,'/kvkk.html')}/>:null}
@@ -33,7 +34,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
           {"\n"}
           <a className={"tc-site-hero__cta tc-site-hero__cta--1"} href={safePageUrl(fieldFor(module,"buttonUrl",locale),"/paketler.html")}>
             <span data-tc-content-key={"span-061"}>
-              {fieldFor(module,'button',locale)||"E-ticaret siteni oluştur"}
+              {module?.configured?fieldFor(module,'button',locale):"E-ticaret siteni oluştur"}
             </span>
           </a>
           {"\n"}
@@ -85,7 +86,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
           {"\n"}
           <div className={"tc-ui-logos__track"}>
             {"\n"}
-            {module?.logos?.length?<HeroLogoGroup logos={logos} locale={locale}/>:(<div className={"tc-ui-logos__group"}>
+            {module?.configured?<HeroLogoGroup logos={logos} locale={locale}/>:(<div className={"tc-ui-logos__group"}>
               {"\n"}
               <div className={"tc-ui-logos__box"}>
                 {"\n"}
