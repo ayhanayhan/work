@@ -278,7 +278,7 @@ export default function HomeInteractions({children}:Props){
     const press=root?.querySelector<HTMLElement>('.tc-press__carousel');
     if(press){
       const single=press.querySelectorAll('.tc-press__slide').length<=1;
-      press.querySelectorAll<HTMLButtonElement>('.tc-press__arrow').forEach(btn=>{btn.hidden=single});
+      press.querySelectorAll<HTMLButtonElement>('.tc-press__arrow').forEach(btn=>{btn.hidden=single;btn.disabled=single;btn.style.display=single?'none':''});
     }
   },[pressIndex]);
 
