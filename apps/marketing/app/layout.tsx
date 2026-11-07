@@ -26,7 +26,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const homeAlias=parts.length===1&&parts[0]==='index.html'||parts.length===2&&['tr','en','de','ru','ar'].includes(parts[0])&&parts[1]==='index.html';
   const cls=snapshotHome||homeAlias?'tc-page-home':await htmlAttrs();
   const lang=route.match(/^\/(tr|en|de|ru|ar)(?:\/|$)/)?.[1]||'tr';
-  return <html lang={lang} className={cls}><head>
+  return <html lang={lang} dir={lang==='ar'?'rtl':'ltr'} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/shared-footer.css?v=1"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=4"/>
