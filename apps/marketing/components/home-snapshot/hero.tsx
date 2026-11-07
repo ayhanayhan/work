@@ -1,35 +1,39 @@
 import HeroCallback from './hero-callback';
 import HeroCards from './hero-cards';
+import HeroLogoGroup from './hero-logo-group';
+import {moduleById,fieldFor,safePageUrl,type HomeContent} from '@/lib/home-cms';
 /* Static React snapshot of original Ticarti homepage: hero.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function HeroSection(){
+export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'hero');
+  const heading=fieldFor(module,'heading',locale);
+  const items=module?.items;
+  const logos=module?.logos?.filter(x=>x.enabled!==false&&x.assets?.image)||[];
   return (
     <section aria-label={"La casa del mejor talento tech de Europa"} className={"tc-site-hero is-armed"} data-kpi-replay={"false"} data-kpi-stagger={"0"}>
       {"\n"}
       <div className={"tc-site-hero__intro"}>
         {"\n"}
         <h1 className={"tc-site-hero__h1"}>
-          {"E-ticaret siteni oluştur."}
-          <br />
-          {"14 gün ücretsiz dene."}
+          {heading?heading.split(/\n/).map((line,i)=><span key={i}>{i>0?<br/>:null}{line}</span>):<>E-ticaret siteni oluştur.<br/>14 gün ücretsiz dene.</>}
         </h1>
         {"\n"}
         <p className={"tc-site-hero__sub"} data-tc-content-key={"p-056"}>
-          {"Mağazanı dakikalar içinde kur; ürünlerini, siparişlerini, stoklarını ve pazaryeri bağlantılarını tek panelden kolayca yönet."}
+          {fieldFor(module,'description',locale)||"Mağazanı dakikalar içinde kur; ürünlerini, siparişlerini, stoklarını ve pazaryeri bağlantılarını tek panelden kolayca yönet."}
         </p>
         {"\n"}
         <p className={"tc-hero-offer"} data-tc-content-key={"p-057"}>
-          {"Lansmana özel %50 indirimi kaçırma."}
+          {fieldFor(module,'offer',locale)||"Lansmana özel %50 indirimi kaçırma."}
         </p>
         {"\n"}
-        <HeroCallback />
+        {module?.ctaEnabled!==false?<HeroCallback module={module} locale={locale} consentHref={safePageUrl(home?.consentContract?.href,'/kvkk.html')}/>:null}
         {"\n"}
         <div className={"tc-site-hero__ctas"}>
           {"\n"}
-          <a className={"tc-site-hero__cta tc-site-hero__cta--1"} href={"/paketler.html"}>
+          <a className={"tc-site-hero__cta tc-site-hero__cta--1"} href={safePageUrl(fieldFor(module,"buttonUrl",locale),"/paketler.html")}>
             <span data-tc-content-key={"span-061"}>
-              {"E-ticaret siteni oluştur"}
+              {fieldFor(module,'button',locale)||"E-ticaret siteni oluştur"}
             </span>
           </a>
           {"\n"}
@@ -66,8 +70,8 @@ export default function HeroSection(){
         <div className={"tc-site-hero__viewport"} id={"skViewport"}>
           {"\n"}
           <div className={"tc-site-hero__track"} id={"skTrack"}>
-            <HeroCards />
-            <HeroCards clone />
+            <HeroCards items={items} locale={locale} />
+            <HeroCards clone items={items} locale={locale} />
             <HeroCards clone />
           </div>
           {"\n"}
@@ -81,7 +85,7 @@ export default function HeroSection(){
           {"\n"}
           <div className={"tc-ui-logos__track"}>
             {"\n"}
-            <div className={"tc-ui-logos__group"}>
+            {logos.length?<HeroLogoGroup logos={logos} locale={locale}/>:(<div className={"tc-ui-logos__group"}>
               {"\n"}
               <div className={"tc-ui-logos__box"}>
                 {"\n"}
@@ -203,7 +207,7 @@ export default function HeroSection(){
                 {"\n"}
               </div>
               {"\n"}
-            </div>
+            </div>)}
             {"\n"}
             <div aria-hidden={true} className={"tc-ui-logos__group"}>
               {"\n"}
