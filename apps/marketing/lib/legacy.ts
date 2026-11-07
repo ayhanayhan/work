@@ -135,6 +135,12 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     const snapshot=await getHomepageSnapshot(lang);
     data.faq=await getHomepageFaq(lang);
     data.html=renderHomepageServer(data.html,snapshot,lang,posts);
+    // These template-era scripts generate fake orders, portraits or overwrite CMS text.
+    data.scripts=data.scripts.filter(src=>![
+      '/assets/js/pages/orders-preview.js',
+      '/assets/js/pages/home-radar.js',
+      '/assets/js/pages/website-home-cms.js'
+    ].includes(src));
     const hero=snapshot?.modules.find(module=>module.id==='hero'&&module.enabled!==false);
     const heading=hero?.fields?.heading?.[lang]?.trim()||'';
     const description=hero?.fields?.description?.[lang]?.trim()||'';
