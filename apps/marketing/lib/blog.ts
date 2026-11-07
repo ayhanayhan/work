@@ -150,7 +150,7 @@ export function archiveCard(post:BlogPost,lang:BlogLocale='tr'){
 export function homeCard(post:BlogPost,lang:BlogLocale='tr'){
   return '<article class="card-items list-item box card-visible tc-blog__card"><div class="card-wrap">'+
     '<a class="tc-blog__card-link" href="'+blogPath(lang,post.slug)+'" aria-label="'+escapeHtml(post.title)+'">'+
-    '<div class="bg-imge"><div class="img"><img loading="lazy" width="800" height="640" alt="'+escapeHtml(post.imageAlt)+'" src="'+escapeHtml(safeImage(post.featuredImage))+'"/></div></div>'+
+    (post.featuredImage?'<div class="bg-imge"><div class="img"><img loading="lazy" width="800" height="640" alt="'+escapeHtml(post.imageAlt)+'" src="'+escapeHtml(safeImage(post.featuredImage))+'"/></div></div>':'')+
     '<div class="card-body"><div class="title"><p>'+escapeHtml(post.category)+'</p></div><div class="content"><h4>'+escapeHtml(post.title)+'</h4></div>'+
     '<div class="card-expand"><div class="card-expand-desc">'+escapeHtml(post.excerpt)+'</div><span class="card-expand-cta">'+blogLabel(lang).read+'</span></div></div></a></div></article>';
 }
