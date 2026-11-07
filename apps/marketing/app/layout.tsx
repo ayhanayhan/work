@@ -29,6 +29,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   return <html lang={lang} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=1"/>
+    {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=1"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
   </head><body>{children}</body></html>;
 }
