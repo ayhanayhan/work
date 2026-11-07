@@ -196,14 +196,14 @@ export default function HomepageEditor(){
         </CardContent></Card>
         {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">{working.enabled?'Aktif':'Pasif'} · {editorState}</p><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector} · Görünüm sınıfları değiştirilmez.</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
           <div className="flex flex-wrap gap-2 border-b pb-4">{languageList.map(x=><Button size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)} key={x.locale}>{x.label||x.locale}</Button>)}</div>
-          {fields.length?<div className="grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{(['description','answer'].includes(key)||(working.id==='hero'&&key==='heading'))?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boş bırakılırsa örnek metin gösterilmez.</span></label>)}</div>:null}
-          {working.id==='hero'?<div className="grid gap-4 border-t pt-5">
+          {fields.length?<details open className="rounded-lg border p-4"><summary className="cursor-pointer select-none font-semibold">Metinler ve bağlantılar</summary><div className="mt-4 grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{(['description','answer'].includes(key)||(working.id==='hero'&&key==='heading'))?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boş bırakılırsa eski demo metin gösterilmez.</span></label>)}</div></details>:null}
+          {working.id==='hero'?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">Telefon CTA formu</summary><div className="mt-4 grid gap-4">
             <label className="flex items-center justify-between gap-4 text-sm"><span>Telefon CTA formu açık</span><Switch checked={working.ctaEnabled!==false} onCheckedChange={v=>patch({ctaEnabled:v})}/></label>
             <div className="rounded-lg border p-3 text-xs text-muted-foreground">
               KVKK bağlantısı Master → Ayarlar → Sözleşme Eşleştirme üzerinden eşleştirilen KVKK sözleşmesinden okunur. Formdaki bağlantı yeni sekmede açılır. Yukarıdaki KVKK onay metni alanı bağlantının ardından gelen metni düzenler.
             </div>
-          </div>:null}
-          {working.id==='hero'?<div className="grid gap-4 border-t pt-5">
+          </div></details>:null}
+          {working.id==='hero'?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">Referans logoları ({(working.logos||[]).length})</summary><div className="mt-4 grid gap-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div><h3 className="font-semibold">Referansların altındaki logolar</h3><p className="text-xs text-muted-foreground">Her logo için dile özel başlık, görsel ve ileride bağlanacak mağaza alanı.</p></div>
               <Button size="sm" variant="outline" onClick={addLogo}><Plus className="size-4"/>Logo Ekle</Button>
@@ -214,8 +214,8 @@ export default function HomepageEditor(){
               <MediaField label="Logo" value={logo.assets?.image||''} onChange={image=>patchLogo(logo.id,x=>({...x,assets:{...x.assets,image}}))}/>
               <label className="grid gap-2 text-sm">Mağaza seçimi (yakında bağlanacak)<select disabled className="h-10 rounded-md border bg-muted/50 px-3 text-sm"><option>Mağaza kaynağı daha sonra bağlanacak</option></select></label>
             </div>)}
-          </div>:null}
-          {entries.length?<div className="grid gap-4 border-t pt-5">
+          </div></details>:null}
+          {entries.length?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan kayıtlar'} ({working.items.length})</summary><div className="mt-4 grid gap-4">
             <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':working.id==='hero'?'Slider Referans Kartları':working.id==='references'?'Referans Görselleri':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve yanıtları aktif her dilde düzenleyin. Yalnızca iki alanı da dolu olan sorular sitede ve FAQPage yapılandırılmış verisinde gösterilir.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. Mağaza eşleştirmesi sonraki aşamada açılacak.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
             {working.items.map((entry,i)=><div key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=working.items.findIndex(x=>x.id===dragged);if(from>=0)move(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -229,7 +229,7 @@ export default function HomepageEditor(){
                 {hasLink?<label className="grid gap-2 text-sm"><span className="font-medium">Bağlantı adresi</span><Input value={entry.links?.href||''} placeholder="https:// veya sayfa bağlantısı" onChange={e=>patchItem(entry.id,x=>({...x,links:{...x.links,href:e.target.value}}))}/></label>:null}
               </div>
             </div>)}{!working.items.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
-          </div>:null}
+          </div></details>:null}
           {working.id==='faq'&&!working.items.length?<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4 text-sm">
             <div><b>Mevcut SSS içeriklerini taşı</b><p className="mt-1 text-muted-foreground">Sitedeki orijinal Türkçe 30 soru-cevap, yalnızca düzenlemeye alınır. Eski paket/fiyat bilgilerini mutlaka kontrol edin; otomatik yayımlanmaz.</p></div>
             <Button size="sm" variant="outline" onClick={importOriginalFaq}><Upload className="size-4"/>Mevcut SSS'yi İçe Aktar</Button>
