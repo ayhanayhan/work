@@ -1,6 +1,7 @@
 import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {activePlatformLocales} from '../common/platform-locales';
+import initialBlog from './data/ticarti-blog-initial.json';
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
@@ -291,6 +292,70 @@ export class WebsiteService{
     if(Buffer.byteLength(JSON.stringify(payload),'utf8')>2_500_000)throw new BadRequestException('Blog veri boyutu sınırı aşıldı.');
     await this.put(BLOG_KEY,payload);
     return payload;
+  }
+
+  /** One-time, authenticated, server-side import. Browser sends no article payload. */
+  async importInitialBlog(){
+    if(initialBlog.schema!=='ticarti-blog-import-v1'||initialBlog.articles.length!==10||initialBlog.categories.length!==8)
+      throw new BadRequestException('Blog başlangıç verisi geçersiz.');
+    const current=await this.blog();
+    const posts=structuredClone(current.posts) as any[];
+    const categories=structuredClone(current.categories) as any[];
+    const supported=['tr','en','de','ru','ar'];
+    const categorySlugs:Record<string,string>={
+      'E-Ticaret':'e-ticaret','Dijital Pazarlama':'dijital-pazarlama','Pazaryerleri':'pazaryerleri',
+      'Kargo ve Lojistik':'kargo-ve-lojistik','Ödeme Sistemleri':'odeme-sistemleri',
+      'Vergi ve Yasal Süreçler':'vergi-ve-yasal-surecler','Girişimcilik':'girisimcilik',
+      'Ticarti Haberleri':'ticarti-haberleri'
+    };
+    let createdPosts=0,createdCategories=0,filledTranslations=0;
+    const ids:Record<string,string>={};
+    for(const seed of initialBlog.categories){
+      const trSlug=seed.translations.tr.slug;
+      let category=categories.find((c:any)=>c.id===seed.id||c.translations?.tr?.slug===trSlug);
+      if(!category){
+        category={...seed,parentId:null,isActive:true,sortOrder:categories.length};
+        categories.push(category);createdCategories++;
+      }else{
+        for(const locale of supported){
+          const original=(seed.translations as any)[locale];
+          if(!original)continue;
+          const saved={...(category.translations?.[locale]||{})};
+          let changed=false;
+          for(const field of ['title','slug','description','seoTitle','seoDescription']){
+            if(!String(saved[field]||'').trim()&&original[field]){saved[field]=original[field];changed=true;}
+          }
+          if(changed){category.translations={...category.translations,[locale]:saved};filledTranslations++;}
+        }
+      }
+      ids[trSlug]=category.id;
+    }
+    for(const seed of initialBlog.articles){
+      const existing=posts.find((p:any)=>p.slug===seed.slug||p.translations?.tr?.slug===seed.slug);
+      if(existing){
+        for(const locale of supported){
+          const translation=(seed.translations as any)[locale];
+          if(!existing.translations?.[locale]?.title&&translation){
+            existing.translations={...existing.translations,[locale]:translation};
+            filledTranslations++;
+          }
+        }
+        continue;
+      }
+      const categoryId=ids[categorySlugs[seed.category]];
+      if(!categoryId)throw new BadRequestException('Kategori bulunamadı: '+seed.category);
+      posts.push({
+        id:'ticarti-article-'+seed.slug,slug:seed.slug,status:'DRAFT',categoryId,
+        authorId:null,authorName:'Ticarti',featuredImage:'',isFeatured:false,tags:[],
+        relatedPostIds:[],scheduledAt:null,ogImage:'',canonicalUrl:'',noIndex:false,
+        translations:seed.translations
+      });
+      createdPosts++;
+    }
+    if(!createdPosts&&!createdCategories&&!filledTranslations)
+      return {ok:true,createdPosts:0,createdCategories:0,filledTranslations:0,alreadyImported:true};
+    await this.updateBlog({version:current.version,posts,categories,authors:current.authors});
+    return {ok:true,createdPosts,createdCategories,filledTranslations,alreadyImported:false};
   }
   async publicBlog(lang='tr'){
     const data=await this.blog();
