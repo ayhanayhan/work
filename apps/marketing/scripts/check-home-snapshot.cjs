@@ -28,6 +28,17 @@ function load(name){
   m._compile(result.outputText,file);return m.exports;
 }
 for(const name of componentNames)load(name);
+const {validatePhone}=load('phone-validators');
+assert.equal(validatePhone('532 123 45 67','TR','+90'),'','Correct TR phone accepted');
+assert.ok(validatePhone('111','TR','+90'),'Invalid TR phone rejected');
+assert.equal(validatePhone('202 555 0175','US','+1'),'','Correct US phone accepted');
+const callbackSource=fs.readFileSync(path.join(dir,'hero-callback.tsx'),'utf8');
+const footerCallbackSource=fs.readFileSync(path.join(dir,'bottomCta-callback.tsx'),'utf8');
+for(const source of [callbackSource,footerCallbackSource]){
+  assert.ok(source.includes('useState('),'Callback form must be React-managed');
+  assert.ok(source.includes('onSubmit={submit}'),'Callback submit must be handled by React');
+  assert.ok(!source.includes('window.TicartiValidators'),'No legacy form globals');
+}
 const markup=renderToStaticMarkup(React.createElement(load('index').default));
 const source=fs.readFileSync(path.resolve(__dirname,'../templates/en/index.html'),'utf8');
 const body=source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1]||'';
