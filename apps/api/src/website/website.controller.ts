@@ -9,6 +9,8 @@ export class WebsiteController {
   publicHome(@Query('lang') lang?:string){return this.svc.publicHome(lang||'tr')}
   @Get('public/website/faq')
   publicFaq(@Query('lang') lang?:string){return this.svc.publicFaq(lang||'tr')}
+  @Get('public/website/seo')
+  publicSeo(){return this.svc.publicWebsiteSeo()}
   @Get('public/website/locales')
   publicLocales(){return this.svc.activeLocales()}
   @Get('public/website/blog')
@@ -37,6 +39,12 @@ export class WebsiteController {
     if(!post)throw new NotFoundException('Bu dilde yayımlanmış blog yazısı bulunamadı.');
     return post;
   }
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/seo')
+  seo(){return this.svc.websiteSeo()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/seo')
+  updateSeo(@Body() body:any){return this.svc.updateWebsiteSeo(body)}
   @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/website/home')
   home(){return this.svc.home()}
