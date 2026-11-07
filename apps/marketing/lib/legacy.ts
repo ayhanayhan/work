@@ -135,6 +135,11 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     const snapshot=await getHomepageSnapshot(lang);
     data.faq=await getHomepageFaq(lang);
     data.html=renderHomepageServer(data.html,snapshot,lang,posts);
+    const hero=snapshot?.modules.find(module=>module.id==='hero'&&module.enabled!==false);
+    const heading=hero?.fields?.heading?.[lang]?.trim()||'';
+    const description=hero?.fields?.description?.[lang]?.trim()||'';
+    data.title=heading?heading+' | Ticarti':'Ticarti';
+    data.description=description;
   }
   const id=pageKey(source);
   if(id&&!isHome){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
