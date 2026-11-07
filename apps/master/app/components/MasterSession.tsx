@@ -121,16 +121,26 @@ export function MasterSessionProvider({
         }
       }
 
-      const j = await r.json().catch(() => ({}));
-
-      if (!r.ok) {
-        throw new Error(
-          Array.isArray(j?.message)
-            ? j.message.join(', ')
-            : j?.message || 'İşlem başarısız.',
-        );
+      const contentType = r.headers.get('content-type') || '';
+      const raw = await r.text();
+      let j: any = {};
+      if (contentType.includes('json') && raw) {
+        try { j = JSON.parse(raw); } catch {}
       }
 
+      if (!r.ok) {
+        const reason = Array.isArray(j?.message)
+          ? j.message.join(', ')
+          : typeof j?.message === 'string' ? j.message : '';
+        throw new Error(
+          reason || (r.status === 409
+            ? 'İçerik başka bir oturumda güncellendi. Kaydı yenileyip tekrar deneyin.'
+            : 'API isteği başarısız (HTTP ' + r.status + ', ' + path + ').')
+        );
+      }
+      if (!contentType.includes('json') || !raw) {
+        throw new Error('API JSON yanıtı vermedi (' + path + ', HTTP ' + r.status + ').');
+      }
       return j;
     },
     [token, router],
