@@ -1,7 +1,7 @@
 'use client';
 import {useState,type FormEvent} from 'react';
 import {validatePhone} from './phone-validators';
-import {fieldFor,safePageUrl,type HomeModule} from '@/lib/home-cms';
+import {fieldFor,safePageUrl,type HomeModule} from '@/lib/home-content';
 /* Original markup and text retained. Fields are native controlled React state. */
 export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html'}:{module?:HomeModule;locale?:string;consentHref?:string}){
  const [country,setCountry]=useState({dial:'+90',flag:'🇹🇷',iso:'TR'});
