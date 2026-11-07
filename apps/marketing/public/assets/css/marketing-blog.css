@@ -151,3 +151,72 @@
  .tc-marketing-blog .tc-blog-single-layout{width:calc(100% - 40px);margin-bottom:65px}
  .tc-marketing-blog .tc-post-navigation{gap:12px}
 }
+
+/* Blog editorial refinement — keep the original theme's font family and weight. */
+@scope (.tc-vendor-theme) {
+ h1,.h1 {letter-spacing:normal;}
+}
+.tc-marketing-blog .tc-blog-single-layout{
+ width:min(calc(100% - 48px),1320px);
+ grid-template-columns:minmax(0,1fr) minmax(340px,370px);
+ column-gap:clamp(36px,4.5vw,68px);
+ align-items:start;
+}
+.tc-marketing-blog .tc-blog-single-primary .tc-post-hero{
+ margin:0 0 34px;padding:0;background:transparent;text-align:start;
+}
+.tc-marketing-blog .tc-blog-single-primary .tc-post-hero .section-heading{
+ width:100%;max-width:none;
+}
+.tc-marketing-blog .tc-blog-single-primary .tc-post-hero .section-heading h1{
+ max-width:none;letter-spacing:normal;
+}
+.tc-marketing-blog .tc-blog-single-primary .tc-post-hero .tc-blog-post-meta{
+ margin:16px 0 0;
+}
+.tc-marketing-blog .tc-blog-single-primary .tc-post-hero .section-heading .content{
+ max-width:none;margin:18px 0 0;
+}
+.tc-marketing-blog .tc-blog-single-sidebar{
+ position:sticky;top:95px;align-self:start;
+ max-height:none;overflow:visible;gap:24px;
+}
+.tc-marketing-blog .tc-blog-single-sidebar .tc-post-toc{
+ min-height:0;max-height:208px;
+ padding:0 8px 0 0;
+ overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
+ border-top:0;
+}
+.tc-marketing-blog .tc-post-toc h2{margin:0 0 12px;position:sticky;top:0;background:#fff;padding-bottom:7px;z-index:1;}
+.tc-marketing-blog .tc-post-toc nav{gap:10px;}
+.tc-marketing-blog .tc-post-toc nav a{display:block;font-size:13px;line-height:1.4;scroll-margin-top:115px;}
+.tc-marketing-blog .tc-post-cta{padding:24px 23px;}
+.tc-marketing-blog .tc-post-cta h3{margin:0 0 8px;}
+.tc-marketing-blog .tc-post-cta .tc-post-cta-subtitle{
+ margin:0 0 16px;color:#555e5c;font:400 14px/1.55 var(--tc-font-body);
+}
+.tc-marketing-blog .tc-post-phone-row{
+ display:flex;align-items:stretch;gap:0;width:100%;min-width:0;
+ border:1px solid #d9ded7;border-radius:7px;background:#fff;overflow:hidden;
+}
+.tc-marketing-blog .tc-post-phone-row select{
+ width:100px;min-width:0;flex:0 0 100px;
+ border:0!important;border-right:1px solid #d9ded7!important;
+ border-radius:0!important;background:#fff!important;
+ padding:10px 8px!important;outline-offset:-2px;
+}
+.tc-marketing-blog .tc-post-phone-row input{
+ flex:1 1 0;width:1%;min-width:0;
+ border:0!important;border-radius:0!important;background:#fff!important;
+ padding:10px 12px!important;outline-offset:-2px;
+}
+.tc-marketing-blog .tc-post-phone-row:focus-within{border-color:#8ec03f;}
+@media(max-width:960px){
+ .tc-marketing-blog .tc-blog-single-layout{grid-template-columns:minmax(0,1fr);gap:38px;}
+ .tc-marketing-blog .tc-blog-single-sidebar{position:static;top:auto;}
+ .tc-marketing-blog .tc-blog-single-sidebar .tc-post-toc{max-height:260px;}
+}
+@media(max-width:640px){
+ .tc-marketing-blog .tc-blog-single-layout{width:calc(100% - 40px);}
+ .tc-marketing-blog .tc-blog-single-primary .tc-post-hero{padding:0;margin-bottom:25px;}
+}
