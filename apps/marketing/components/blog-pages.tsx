@@ -46,10 +46,10 @@ export function BlogArchive({posts,locale}:{posts:BlogPost[];locale:BlogLocale})
 function articleWithToc(html:string){
  const headings:{id:string;title:string;level:number}[]=[];
  const used=new Set<string>();
- const marked=html.replace(/<h([23])>([\\s\\S]*?)<\\/h\\1>/g,(_match,level:string,inner:string)=>{
+ const marked=html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g,(_match,level:string,inner:string)=>{
   const title=inner.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').trim();
   if(!title)return _match;
-  let id=title.toLocaleLowerCase('tr').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  let id=title.toLocaleLowerCase('tr').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   if(!id)id='section';
   const base=id;let number=2;while(used.has(id))id=base+'-'+number++;
   used.add(id);headings.push({id,title,level:Number(level)});
