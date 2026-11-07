@@ -1,7 +1,7 @@
 import HeroCallback from './hero-callback';
 import HeroCards from './hero-cards';
 import HeroLogoGroup from './hero-logo-group';
-import {moduleById,fieldFor,safePageUrl,type HomeContent} from '@/lib/home-cms';
+import {moduleById,fieldFor,safePageUrl,type HomeContent} from '@/lib/home-content';
 /* Static React snapshot of original Ticarti homepage: hero.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
