@@ -5,3 +5,17 @@
 @keyframes tc-react-radar-sweep{to{transform:rotate(360deg)}}
 .tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:tc-react-radar-sweep 8s linear infinite}
 @media(prefers-reduced-motion:reduce){.tc-orders__list>.tc-order--react-enter,.tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:none}}
+
+/* Optional reference metadata exists only on Master-configured press slides. */
+.tc-page-home .tc-press__slide .tc-press__entry-logo {
+ position:absolute;left:20px;bottom:20px;max-width:124px;max-height:52px;width:auto;height:auto;
+ object-fit:contain;background:rgba(255,255,255,.94);padding:10px;border-radius:8px;z-index:2;
+}
+.tc-page-home .tc-press__slide .tc-press__entry-description {
+ position:absolute;right:16px;bottom:16px;max-width:62%;margin:0;padding:10px 14px;
+ color:#fff;background:rgba(0,0,0,.52);border-radius:8px;font-size:13px;line-height:1.4;z-index:2;
+}
+@media(max-width:640px){
+ .tc-page-home .tc-press__slide .tc-press__entry-logo{max-width:90px;max-height:38px;left:10px;bottom:10px;padding:6px}
+ .tc-page-home .tc-press__slide .tc-press__entry-description{right:10px;bottom:10px;font-size:11px;max-width:55%}
+}
