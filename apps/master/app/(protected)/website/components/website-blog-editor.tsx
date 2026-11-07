@@ -11,6 +11,7 @@ import {Card,CardContent,CardHeader,CardHeading} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {readWebsiteBlog,saveWebsiteBlog} from './website-blog-resource';
 import ImportTicartiArticles from './import-ticarti-articles';
+import BlogFeedbackPanel from './blog-feedback-panel';
 
 type Post={id:string;slug:string;status:string;featuredImage?:string;authorName?:string;translations:Record<string,{title?:string;content?:string;enabled?:boolean}>};
 type Snapshot={version:number;posts:Post[];categories:any[]};
@@ -88,6 +89,7 @@ export default function WebsiteBlogEditor(){
         </div>)}
         {!loading&&!shown.length?<p className="py-12 text-center text-sm text-muted-foreground">Blog yazısı bulunamadı.</p>:null}
       </CardContent></Card>
+      <BlogFeedbackPanel/>
     </Container>
   </>;
 }
