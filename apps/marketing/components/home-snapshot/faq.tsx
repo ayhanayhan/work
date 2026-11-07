@@ -22,8 +22,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-184"}>
                 {"E-ticaret paketi nedir?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -41,8 +41,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-186"}>
                 {"Hazır e-ticaret paketi ile mağaza nasıl kurulur?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -60,8 +60,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-188"}>
                 {"Paket seçerken nelere dikkat etmeliyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -79,8 +79,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-190"}>
                 {"Ticarti Start, Grow ve Scale arasındaki fark nedir?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -98,8 +98,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-192"}>
                 {"Plus paketi hangi işletmeler için uygundur?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -117,8 +117,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-194"}>
                 {"Paketimi sonradan yükseltebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -136,8 +136,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-196"}>
                 {"Aylık ve yıllık ödeme yapılabilir mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -155,8 +155,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-198"}>
                 {"Fiyatlara KDV dahil mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -174,8 +174,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-200"}>
                 {"Ücretsiz deneme süresi var mı?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -193,8 +193,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-202"}>
                 {"Ticarti ile e-ticaret sitemi ücretsiz deneyebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -212,8 +212,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-204"}>
                 {"Paketlere alan adı dahil mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -231,8 +231,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-206"}>
                 {"SSL sertifikası ve barındırma dahil mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -250,8 +250,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-208"}>
                 {"Tema değiştirebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -269,8 +269,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-210"}>
                 {"Sanal POS kurulumu nasıl yapılır?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -288,8 +288,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-212"}>
                 {"Kendi sanal POS hesabımı bağlayabilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -307,8 +307,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-214"}>
                 {"Taksitli ödeme seçeneği bulunuyor mu?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -326,8 +326,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-216"}>
                 {"Ürün ekleme veya trafik sınırı var mı?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -345,8 +345,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-218"}>
                 {"Kargo entegrasyonları nasıl çalışır?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -364,8 +364,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-220"}>
                 {"Pazaryeri entegrasyonları dahil mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -383,8 +383,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-222"}>
                 {"Birden fazla depo yönetebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -402,8 +402,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-224"}>
                 {"E-ihracat ve çoklu para birimi kullanabilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -421,8 +421,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-226"}>
                 {"Başka bir altyapıdan Ticarti’ye geçebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -440,8 +440,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-228"}>
                 {"Altyapı geçişi ücretli mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -459,8 +459,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-230"}>
                 {"Kurulum için yazılım bilmek gerekir mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -478,8 +478,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-232"}>
                 {"7/24 destek her pakette var mı?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -497,8 +497,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-234"}>
                 {"E-ticaret yazılım güncellemeleri ücretli mi?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -516,8 +516,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-236"}>
                 {"İlk üç ay ücretsiz kampanyası var mı?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -535,8 +535,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-238"}>
                 {"Paket satın almadan demo görebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -554,8 +554,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-240"}>
                 {"Ticarti büyük perakende zincirleri için uygun mu?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
@@ -573,8 +573,8 @@ export default function FaqSection(){
               <span className={"tc-faq__q-text"} data-tc-content-key={"span-242"}>
                 {"Ödemelerimi ve siparişlerimi tek panelden yönetebilir miyim?"}
               </span>
-              <span aria-hidden={"true"} className={"tc-faq__icon"}>
-                <svg fill={"none"} height={"20"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={"20"}>
+              <span aria-hidden={true} className={"tc-faq__icon"}>
+                <svg fill={"none"} height={20} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"} viewBox={"0 0 24 24"} width={20}>
                   <polyline points={"6 9 12 15 18 9"}></polyline>
                 </svg>
               </span>
