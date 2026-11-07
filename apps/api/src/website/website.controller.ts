@@ -1,4 +1,4 @@
-import {Body,Controller,Get,Headers,NotFoundException,Param,Patch,Query,UseGuards} from '@nestjs/common';
+import {Body,Controller,Get,Headers,NotFoundException,Param,Patch,Post,Query,UseGuards} from '@nestjs/common';
 import {SuperAdminAuthGuard} from '../superadmin-auth/superadmin-auth.guard';
 import {WebsiteService} from './website.service';
 
@@ -34,6 +34,9 @@ export class WebsiteController {
   @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/website/blog')
   blog(){return this.svc.blog()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Post('superadmin/website/blog/seed-initial')
+  seedInitialBlog(){return this.svc.importInitialBlog()}
   @UseGuards(SuperAdminAuthGuard)
   @Patch('superadmin/website/blog')
   updateBlog(@Body() body:any){return this.svc.updateBlog(body)}
