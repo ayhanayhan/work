@@ -7,7 +7,7 @@ const ts=require('typescript');
 const React=require('react');
 const {renderToStaticMarkup}=require('react-dom/server');
 const dir=path.resolve(__dirname,'../components/home-snapshot');
-const componentNames=['hero','hero-cards','hero-callback','phone-validators','animated','builder','radar','channels','showcase','references','bottomCta','bottomCta-callback','blog','faq','header','mobile-mega','footer','index','interactions'];
+const componentNames=['hero','hero-cards','hero-callback','phone-validators','animated','builder','radar','radar-display','channels','orders-preview','showcase','references','bottomCta','bottomCta-callback','blog','faq','header','mobile-mega','footer','index','interactions'];
 const compiled=new Map();
 function load(name){
   if(compiled.has(name))return compiled.get(name).exports;
@@ -32,6 +32,12 @@ const {validatePhone}=load('phone-validators');
 assert.equal(validatePhone('532 123 45 67','TR','+90'),'','Correct TR phone accepted');
 assert.ok(validatePhone('111','TR','+90'),'Invalid TR phone rejected');
 assert.equal(validatePhone('202 555 0175','US','+1'),'','Correct US phone accepted');
+for(const component of ['radar-display','orders-preview']){
+  const source=fs.readFileSync(path.join(dir,component+'.tsx'),'utf8');
+  assert.ok(source.includes('useState('),'Animation must be driven by React state: '+component);
+  assert.ok(!source.includes('document.createElement('),'No imperative DOM creation: '+component);
+}
+
 const callbackSource=fs.readFileSync(path.join(dir,'hero-callback.tsx'),'utf8');
 const footerCallbackSource=fs.readFileSync(path.join(dir,'bottomCta-callback.tsx'),'utf8');
 for(const source of [callbackSource,footerCallbackSource]){
