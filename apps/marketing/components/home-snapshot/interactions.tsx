@@ -56,6 +56,111 @@ export default function HomeInteractions({children}:Props){
     return()=>{io.disconnect();heroIO?.disconnect()};
   },[]);
 
+  // Preserve the old three-set hero rail without cloneNode or script injection.
+  // The three sets are already rendered declaratively by HeroCards.
+  useEffect(()=>{
+    const root=rootRef.current,viewport=root?.querySelector<HTMLElement>('#skViewport');
+    const track=root?.querySelector<HTMLElement>('#skTrack');
+    if(!viewport||!track)return;
+    let period=0,programmatic=false,resizeTimer=0;
+    const measure=()=>{
+      const cards=Array.from(track.querySelectorAll<HTMLElement>('.tc-ui-card:not([data-clone])'));
+      if(!cards.length)return;
+      const gap=parseFloat(getComputedStyle(track).gap)||0;
+      period=cards.reduce((sum,c)=>sum+c.getBoundingClientRect().width+gap,0);
+      programmatic=true;
+      viewport.scrollLeft=period+Math.max(0,(period-viewport.clientWidth)/2);
+      requestAnimationFrame(()=>{programmatic=false});
+    };
+    const scroll=()=>{
+      if(programmatic||period<=0)return;
+      if(viewport.scrollLeft<period*0.6){
+        programmatic=true;viewport.scrollLeft+=period;requestAnimationFrame(()=>{programmatic=false});
+      }else if(viewport.scrollLeft>=period*2.4){
+        programmatic=true;viewport.scrollLeft-=period;requestAnimationFrame(()=>{programmatic=false});
+      }
+    };
+    const resize=()=>{clearTimeout(resizeTimer);resizeTimer=window.setTimeout(measure,180)};
+    measure();document.fonts?.ready.then(measure);
+    viewport.addEventListener('scroll',scroll,{passive:true});
+    window.addEventListener('resize',resize);
+    return()=>{clearTimeout(resizeTimer);viewport.removeEventListener('scroll',scroll);window.removeEventListener('resize',resize)};
+  },[]);
+
+  // Video play/pause and scroll visibility belong to the React lifecycle.
+  useEffect(()=>{
+    const root=rootRef.current;if(!root)return;
+    const cleanup:Array<()=>void>=[];
+    root.querySelectorAll<HTMLElement>('.video-section__inner').forEach(wrapper=>{
+      const video=wrapper.querySelector<HTMLVideoElement>('.video-section__video');
+      const toggle=wrapper.querySelector<HTMLButtonElement>('.video-section__toggle');
+      if(!video)return;
+      let userPaused=false;
+      const onPlay=()=>wrapper.classList.add('is-playing');
+      const onPause=()=>wrapper.classList.remove('is-playing');
+      const onToggle=()=>{
+        if(video.paused){userPaused=false;void video.play().catch(()=>{});}
+        else{userPaused=true;video.pause();}
+      };
+      video.addEventListener('play',onPlay);video.addEventListener('pause',onPause);
+      toggle?.addEventListener('click',onToggle);
+      let io:IntersectionObserver|null=null;
+      if(!reduced()&&'IntersectionObserver' in window){
+        io=new IntersectionObserver(entries=>entries.forEach(e=>{
+          if(e.isIntersecting){if(!userPaused)void video.play().catch(()=>{});}
+          else video.pause();
+        }),{threshold:0.35});
+        io.observe(wrapper);
+      }
+      cleanup.push(()=>{io?.disconnect();video.pause();video.removeEventListener('play',onPlay);video.removeEventListener('pause',onPause);toggle?.removeEventListener('click',onToggle)});
+    });
+    return()=>cleanup.forEach(fn=>fn());
+  },[]);
+
+  // Touch scrolling stays native on vertical gestures; horizontal swipes snap
+  // to the original cards. No re-created DOM or template strings.
+  useEffect(()=>{
+    if(!window.matchMedia('(pointer: coarse)').matches)return;
+    const root=rootRef.current;if(!root)return;
+    const cleanup:Array<()=>void>=[];
+    for(const [selector,cardSelector] of [
+      ['.tc-site-hero__viewport','.tc-ui-card'],
+      ['.tc-showcase__track','.tc-showcase__item'],
+      ['.tc-blog__track','.tc-blog__card']
+    ]){
+      const track=root.querySelector<HTMLElement>(selector);if(!track)continue;
+      let startX=0,startY=0,initial=0,dragging=false,vertical=false;
+      const onStart=(e:TouchEvent)=>{
+        if(e.touches.length!==1)return;
+        startX=e.touches[0].clientX;startY=e.touches[0].clientY;
+        initial=track.scrollLeft;dragging=false;vertical=false;
+      };
+      const onMove=(e:TouchEvent)=>{
+        if(e.touches.length!==1||vertical)return;
+        const dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+        if(!dragging){if(Math.abs(dx)<9&&Math.abs(dy)<9)return;
+          if(Math.abs(dy)>=Math.abs(dx)){vertical=true;return}dragging=true;}
+        if(e.cancelable)e.preventDefault();
+        track.scrollLeft=initial-dx;
+      };
+      const onEnd=(e:TouchEvent)=>{
+        if(!dragging)return;
+        dragging=false;
+        const touch=e.changedTouches[0];if(!touch)return;
+        const dx=touch.clientX-startX;
+        const step=scrollStep(track,cardSelector),direction=Math.sign(dx);
+        const jumps=Math.abs(dx)<35?0:Math.min(3,Math.max(1,Math.round(Math.abs(dx)/step)));
+        const left=Math.max(0,Math.min(track.scrollWidth-track.clientWidth,initial-direction*jumps*step));
+        track.scrollTo({left,behavior:reduced()?'auto':'smooth'});
+      };
+      track.addEventListener('touchstart',onStart,{passive:true});
+      track.addEventListener('touchmove',onMove,{passive:false});
+      track.addEventListener('touchend',onEnd,{passive:true});
+      cleanup.push(()=>{track.removeEventListener('touchstart',onStart);track.removeEventListener('touchmove',onMove);track.removeEventListener('touchend',onEnd)});
+    }
+    return()=>cleanup.forEach(fn=>fn());
+  },[]);
+
   // Original rotating headline: state switches CSS classes; no DOM text edits.
   useEffect(()=>{
     const root=rootRef.current,section=root?.querySelector<HTMLElement>('.tc-animated-heading');
