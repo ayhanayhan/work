@@ -1,8 +1,11 @@
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 import RadarDisplay from './radar-display';
 /* Static React snapshot of original Ticarti homepage: radar.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function RadarSection(){
+export default function RadarSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'radar');
   return (
     <section className={"tc-dashboard-radar"}>
       {"\n"}
@@ -13,11 +16,11 @@ export default function RadarSection(){
           <header className={"tc-dashboard-radar__header"}>
             {"\n"}
             <h2 className={"tc-dashboard-radar__heading tc-dashboard-radar__reveal"} data-tc-content-key={"h2-084"}>
-              {"Satış yapmak kolay. Büyürken her şeyi yönetmek asıl mesele."}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Satış yapmak kolay. Büyürken her şeyi yönetmek asıl mesele."}
             </h2>
             {"\n"}
             <p className={"tc-dashboard-radar__subtitle tc-dashboard-radar__reveal"} data-tc-content-key={"p-085"}>
-              {"Ürün kataloğundan sevkiyata, kampanyadan iade süreçlerine kadar günlük operasyonunu sadeleştir."}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"Ürün kataloğundan sevkiyata, kampanyadan iade süreçlerine kadar günlük operasyonunu sadeleştir."}
             </p>
             {"\n"}
           </header>
