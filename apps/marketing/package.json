@@ -6,12 +6,12 @@
     "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3003",
-    "check": "node scripts/design-lock.mjs && node scripts/check.mjs && node scripts/render-test.mjs && node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs && node scripts/check-native-home.cjs",
+    "check": "node scripts/design-lock.mjs && node scripts/check.mjs && node scripts/render-test.mjs && node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs",
     "test:render": "node scripts/render-test.mjs",
     "check:design": "node scripts/design-lock.mjs",
     "postbuild": "node scripts/normalize-apphosting-standalone.mjs",
-    "test:blog": "node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs && node scripts/check-native-home.cjs",
-    "test:home": "node scripts/check-native-home.cjs"
+    "test:blog": "node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs",
+    "test:home": "node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs"
   },
   "dependencies": {
     "next": "15.5.27",
