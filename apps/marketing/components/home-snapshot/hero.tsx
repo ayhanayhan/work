@@ -65,12 +65,10 @@ export default function HeroSection(){
         {"\n"}
         <div className={"tc-site-hero__viewport"} id={"skViewport"}>
           {"\n"}
-          <div className={
+          <div className={"tc-site-hero__track"} id={"skTrack"}>
             <HeroCards />
             <HeroCards clone />
             <HeroCards clone />
-          article>
-            {"\n"}
           </div>
           {"\n"}
         </div>
