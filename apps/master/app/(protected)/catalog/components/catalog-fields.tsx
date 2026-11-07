@@ -8,6 +8,7 @@ import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/compo
 import {Switch} from '@/components/ui/switch';
 import {Textarea} from '@/components/ui/textarea';
 import {useMasterSession} from '@/app/components/MasterSession';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 
 export type Locale={locale:string;label:string;flag?:string;isDefault?:boolean};
 export type Currency={code:string;name?:string;symbol?:string;isDefault?:boolean};
@@ -58,31 +59,68 @@ export function PriceMatrix({plans,currencies,value,onChange,allowTrials=false,a
   </div>;
 }
 type MediaItem={id:string;publicUrl:string;fileName?:string;originalName?:string};
+/** Shared Master media picker. Every image field opens the same modal. */
 export function MediaField({label,value,onChange,multiple=false}:{label:string;value:string|string[];onChange:(val:any)=>void;multiple?:boolean}){
   const {request}=useMasterSession();
-  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[rows,setRows]=useState<MediaItem[]>([]),[draft,setDraft]=useState('');
+  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[rows,setRows]=useState<MediaItem[]>([]);
+  const [filter,setFilter]=useState('');
   const urls=multiple?(Array.isArray(value)?value:[]):typeof value==='string'&&value?[value]:[];
-  const add=(url:string)=>multiple?onChange([...new Set([...urls,url])]):onChange(url);
-  const remove=(url:string)=>multiple?onChange(urls.filter(x=>x!==url)):onChange('');
-  const gallery=async()=>{setOpen(true);setError('');try{const r=await request('/superadmin/media');setRows(Array.isArray(r)?r:[])}catch(e:any){setError(e.message||'Medya galerisi alınamadı.')}};
-  const upload=async(e:ChangeEvent<HTMLInputElement>)=>{
-    const file=e.target.files?.[0];e.target.value='';if(!file)return;
-    setBusy(true);setError('');
-    try{const form=new FormData();form.append('file',file);const row=await request('/superadmin/media/upload',{method:'POST',body:form});add(row.publicUrl);setRows(prev=>[row,...prev.filter(x=>x.id!==row.id)])}
-    catch(e:any){setError(e.message||'Dosya yüklenemedi.')}finally{setBusy(false)}
+  const add=(url:string)=>{
+    multiple?onChange([...new Set([...urls,url])]):onChange(url);
+    if(!multiple)setOpen(false);
   };
+  const remove=(url:string)=>multiple?onChange(urls.filter(x=>x!==url)):onChange('');
+  const gallery=async()=>{
+    setOpen(true);setError('');setFilter('');
+    try{const result=await request('/superadmin/media');setRows(Array.isArray(result)?result:[])}
+    catch(e:any){setError(e.message||'Medya kütüphanesi alınamadı.')}
+  };
+  const upload=async(e:ChangeEvent<HTMLInputElement>)=>{
+    const files=Array.from(e.target.files||[]);e.target.value='';if(!files.length)return;
+    setBusy(true);setError('');
+    try{
+      const saved:MediaItem[]=[];
+      for(const file of files){
+        const form=new FormData();form.append('file',file);
+        const row=await request('/superadmin/media/upload',{method:'POST',body:form});
+        if(!row?.publicUrl)throw new Error('Medya yükleme yanıtı geçersiz.');
+        saved.push(row);
+      }
+      setRows(prev=>[...saved,...prev.filter(x=>!saved.some(y=>y.id===x.id))]);
+      if(multiple)onChange([...new Set([...urls,...saved.map(x=>x.publicUrl)])]);
+      else if(saved[0])add(saved[0].publicUrl);
+    }catch(e:any){setError(e.message||'Dosya yüklenemedi.')}finally{setBusy(false)}
+  };
+  const visible=rows.filter(r=>(r.originalName||r.fileName||'').toLocaleLowerCase('tr').includes(filter.toLocaleLowerCase('tr')));
   return <div className="grid gap-3">
     <div className="text-sm font-medium">{label}</div>
-    <div className="flex flex-wrap gap-2">
-      <Button size="sm" variant="outline" onClick={()=>void gallery()}><ImagePlus className="size-4"/>Medya kütüphanesi</Button>
-      <Button size="sm" variant="outline" asChild><label className="cursor-pointer">{busy?<LoaderCircle className="size-4 animate-spin"/>:<Upload className="size-4"/>}Görsel yükle<input hidden type="file" accept="image/png,image/jpeg,image/webp,image/avif" onChange={e=>void upload(e)}/></label></Button>
+    <div className="flex flex-wrap items-center gap-3">
+      <Button type="button" size="sm" variant="outline" onClick={()=>void gallery()}><ImagePlus className="size-4"/>Medya Kütüphanesi</Button>
+      <span className="text-xs text-muted-foreground">{urls.length?urls.length+' görsel seçildi':'Görsel seçilmedi'}</span>
     </div>
-    <Field label={multiple?'Görsel URL ekle':'Görsel URL'}>{multiple?<div className="flex gap-2"><Input placeholder="https://..." value={draft} onChange={e=>setDraft(e.target.value)}/><Button variant="outline" onClick={()=>{if(draft.trim()){add(draft.trim());setDraft('')}}}><Plus className="size-4"/>Ekle</Button></div>:<Input value={typeof value==='string'?value:''} placeholder="https://..." onChange={e=>onChange(e.target.value)}/>}</Field>
-    {urls.length?<div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{urls.map(url=><div key={url} className="relative overflow-hidden rounded-lg border bg-muted"><img src={url} alt="" className="aspect-video w-full object-contain"/><button type="button" onClick={()=>remove(url)} aria-label="Görseli kaldır" className="absolute end-2 top-2 rounded bg-background/90 p-1.5 shadow-sm"><Trash2 className="size-4"/></button></div>)}</div>:<p className="text-xs text-muted-foreground">Henüz görsel seçilmedi.</p>}
-    {error?<p className="text-sm text-destructive">{error}</p>:null}
-    {open?<div className="rounded-lg border p-4"><div className="mb-3 flex items-center justify-between"><b>Medya Kütüphanesi</b><Button size="sm" variant="outline" onClick={()=>setOpen(false)}>Kapat</Button></div>
-      <div className="grid max-h-80 grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-4">{rows.map(r=><button type="button" key={r.id} className="rounded border p-1 text-start hover:border-primary" onClick={()=>{add(r.publicUrl);if(!multiple)setOpen(false)}}><img src={r.publicUrl} alt={r.originalName||r.fileName||''} className="aspect-video w-full object-contain"/><span className="block truncate p-1 text-xs">{r.originalName||r.fileName||'Görsel'}</span></button>)}</div>
-      {!rows.length?<p className="py-8 text-center text-sm text-muted-foreground">Henüz medya kaydı yok.</p>:null}
-    </div>:null}
+    {urls.length?<div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{urls.map(url=><div key={url} className="relative overflow-hidden rounded-lg border bg-muted">
+      <img src={url} alt="" className="aspect-video w-full object-contain"/>
+      <button type="button" onClick={()=>remove(url)} aria-label="Görseli kaldır" className="absolute end-2 top-2 rounded bg-background/90 p-1.5 shadow-sm"><Trash2 className="size-4"/></button>
+    </div>)}</div>:null}
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="left-[50%] top-[50%] w-[min(96vw,980px)] max-w-none translate-x-[-50%] translate-y-[-50%] max-h-[90vh] overflow-hidden">
+        <DialogHeader><DialogTitle>Medya Kütüphanesi</DialogTitle><DialogDescription>Mevcut bir görsel seçin veya yeni görseller yükleyin.</DialogDescription></DialogHeader>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Input className="max-w-xs" value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Görsellerde ara"/>
+          <Button type="button" size="sm" variant="outline" asChild><label className="cursor-pointer">
+            {busy?<LoaderCircle className="size-4 animate-spin"/>:<Upload className="size-4"/>}Yükle
+            <input hidden type="file" multiple={multiple} accept="image/png,image/jpeg,image/webp,image/avif" disabled={busy} onChange={e=>void upload(e)}/>
+          </label></Button>
+        </div>
+        {error?<p role="alert" className="text-sm text-destructive">{error}</p>:null}
+        <div className="grid min-h-48 max-h-[58vh] grid-cols-2 gap-3 overflow-y-auto p-1 sm:grid-cols-4">
+          {visible.map(item=><button type="button" key={item.id} className="rounded-lg border p-2 text-left hover:border-primary focus-visible:outline-primary" onClick={()=>add(item.publicUrl)}>
+            <img src={item.publicUrl} alt={item.originalName||item.fileName||'Görsel'} className="aspect-video w-full object-contain"/>
+            <span className="mt-2 block truncate text-xs">{item.originalName||item.fileName||'Görsel'}</span>
+          </button>)}
+          {!visible.length?<p className="col-span-full py-10 text-center text-sm text-muted-foreground">Görsel bulunamadı.</p>:null}
+        </div>
+      </DialogContent>
+    </Dialog>
   </div>;
 }
