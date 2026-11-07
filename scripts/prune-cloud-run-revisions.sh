@@ -27,11 +27,22 @@ const service=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
 const revisions=JSON.parse(fs.readFileSync(process.argv[3],'utf8'));
 const limit=Number(process.argv[4]);
 const status=service.status||{};
+// Cloud Run status.traffic can retain many historical zero-percent revisions.
+// Protect only actively serving traffic, tagged URLs, and the latest ready/created
+// revisions. Do not accidentally protect all historical 0% traffic entries.
 const protectedNames=new Set([
- status.latestReadyRevisionName,status.latestCreatedRevisionName,
- ...((status.traffic||[]).map(x=>x.revisionName)),
+  status.latestReadyRevisionName,
+  status.latestCreatedRevisionName,
 ].filter(Boolean));
-for(const entry of service.spec?.traffic||[])if(entry.revisionName)protectedNames.add(entry.revisionName);
+const isProtectedTraffic=(entry)=>{
+  if(!entry?.revisionName)return false;
+  // Explicit tags remain reachable even when they receive 0% of the main URL.
+  if(typeof entry.tag==='string'&&entry.tag.trim())return true;
+  // Explicit positive traffic only; no default assumption for absent percents.
+  return typeof entry.percent==='number'&&entry.percent>0;
+};
+for(const entry of [...(status.traffic||[]),...(service.spec?.traffic||[])])
+  if(isProtectedTraffic(entry))protectedNames.add(entry.revisionName);
 const rows=revisions.map(r=>({
  name:r.metadata?.name||r.name?.split('/').pop()||'',
  date:r.metadata?.creationTimestamp||r.createTime||r.createdTime||'',
@@ -39,6 +50,7 @@ const rows=revisions.map(r=>({
  .sort((a,b)=>b.date.localeCompare(a.date)||b.name.localeCompare(a.name));
 const keep=new Set(rows.slice(0,limit).map(x=>x.name));
 for(const name of protectedNames)keep.add(name);
+if(!rows.length)throw Error('No commerce-api revisions detected; cleanup aborted');
 for(const row of rows){
  if(keep.has(row.name))console.error('KEEP',row.name,protectedNames.has(row.name)?'(traffic/latest protected)':'');
  else console.log(row.name);
