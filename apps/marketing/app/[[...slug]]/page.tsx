@@ -1,3 +1,5 @@
+import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath} from '@/lib/site-seo';
+import {redirect} from 'next/navigation';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
@@ -105,16 +107,29 @@ function jsonLd(page:PageData,lang:BlogLocale):object[]{
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  const seo=await getWebsiteSeo();
+  const seoPage=seoPageForPath(slug);
+  const seoLocale=slug.length&&['tr','en','de','ru','ar'].includes(slug[0])?slug[0]:'tr';
+  const seoEntry=metadataFor(seo,seoPage,seoLocale);
+
   // Homepage is a static React snapshot until modules are deliberately connected.
   // No Master, CMS, API or HTML-template reads are permitted on this route.
-  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
-    const lang=['tr','en','pt','ru'].includes(slug[0]||'')?slug[0]:'tr';
+  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','de','ru','ar'].includes(slug[0])))||(slug.length===2&&['tr','en','de','ru','ar'].includes(slug[0])&&slug[1]==='index.html')){
+    const lang=['tr','en','de','ru','ar'].includes(slug[0]||'')?slug[0]:'tr';
     const canonical=absolute(lang==='tr'?'/':'/'+lang+'/');
-    return {title:'Ticarti | E-Ticaretin Yeni Hali - Mağazanı Kur, Tek Yerden Yönet',
-      description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.',
-      metadataBase:new URL(BASE),alternates:{canonical},
-      openGraph:{title:'Ticarti',description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.',
-        url:canonical,type:'website',siteName:'Ticarti'}
+    const title=seoEntry.title||'Ticarti | E-Ticaretin Yeni Hali - Mağazanı Kur, Tek Yerden Yönet';
+    const description=seoEntry.description||'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.';
+    const ogImage=seoImage(seoEntry.ogImage||seo?.defaultOgImage);
+    const finalCanonical=seoEntry.canonicalPath?absolute(seoEntry.canonicalPath):canonical;
+    const languages=Object.fromEntries(['tr','en','de','ru','ar'].map(l=>[l,absolute(l==='tr'?'/':'/'+l+'/')]));
+    return {title,description,metadataBase:new URL(BASE),
+      alternates:{canonical:finalCanonical,languages},
+      robots:seo?.allowIndexing===false||seoEntry.noindex?{index:false,follow:false}:{index:true,follow:true},
+      openGraph:{title:seoEntry.ogTitle||title,description:seoEntry.ogDescription||description,
+        url:finalCanonical,type:'website',siteName:seo?.siteName||'Ticarti',
+        ...(ogImage?{images:[{url:ogImage}]}:{})},
+      twitter:{card:ogImage?'summary_large_image':'summary',title:seoEntry.twitterTitle||title,
+        description:seoEntry.twitterDescription||description,...(ogImage?{images:[ogImage]}:{})}
     };
   }
   const lang=await resolveLang(slug),page=await renderPage(slug,await searchParams);
@@ -125,18 +140,22 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
       code,count:(await getBlogPosts(code)).length
     })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):undefined;
   const picture=page.post?imageUrl(page.post):undefined;
-  const noindex=preview||page.post?.noIndex===true||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
+  const noindex=preview||seo?.allowIndexing===false||seoEntry.noindex===true||page.post?.noIndex===true||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
+  const chosenCanonical=seoEntry.canonicalPath?absolute(seoEntry.canonicalPath):canonical;
+  const chosenTitle=seoEntry.title||page.title;
+  const chosenDescription=seoEntry.description||page.description;
+  const chosenPicture=seoImage(seoEntry.ogImage||picture||seo?.defaultOgImage);
   const generic={
-    title:page.title,description:page.description,metadataBase:new URL(BASE),
-    alternates:{canonical,languages},
+    title:chosenTitle,description:chosenDescription,metadataBase:new URL(BASE),
+    alternates:{canonical:chosenCanonical,languages},
     robots:noindex?{index:false,follow:false}:{index:true,follow:true},
     openGraph:{
-      title:page.title,description:page.description,url:canonical,
-      siteName:'Ticarti',locale:localeLabel[lang]||lang.replace('-','_'),
-      ...(picture?{images:[{url:picture,alt:page.post?.imageAlt||page.title}]}:{})
+      title:seoEntry.ogTitle||chosenTitle,description:seoEntry.ogDescription||chosenDescription,url:chosenCanonical,
+      siteName:seo?.siteName||'Ticarti',locale:localeLabel[lang]||lang.replace('-','_'),
+      ...(chosenPicture?{images:[{url:chosenPicture,alt:page.post?.imageAlt||chosenTitle}]}:{})
     },
-    twitter:{card:picture?'summary_large_image' as const:'summary' as const,title:page.title,
-      description:page.description,...(picture?{images:[picture]}:{})}
+    twitter:{card:chosenPicture?'summary_large_image' as const:'summary' as const,title:seoEntry.twitterTitle||chosenTitle,
+      description:seoEntry.twitterDescription||chosenDescription,...(chosenPicture?{images:[chosenPicture]}:{})}
   };
   if(page.post){
     return {...generic,openGraph:{...generic.openGraph,type:'article',
@@ -149,8 +168,13 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 // runtime HTML replacements or website-home-cms.js.
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
-  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
-    const locale=slug[0]&&['tr','en','pt','ru'].includes(slug[0])?slug[0]:'tr';
+  const seo=await getWebsiteSeo();
+  const requestPath='/'+slug.join('/');
+  const match=seo?.redirects?.find(x=>x.from.replace(/\/$/,'')===requestPath.replace(/\/$/,''));
+  if(match&&match.to!==match.from)redirect(match.to);
+
+  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','de','ru','ar'].includes(slug[0])))||(slug.length===2&&['tr','en','de','ru','ar'].includes(slug[0])&&slug[1]==='index.html')){
+    const locale=slug[0]&&['tr','en','de','ru','ar'].includes(slug[0])?slug[0]:'tr';
     const [home,allPosts]=await Promise.all([getHomeContent(locale),getBlogPosts(locale)]);
     const blogModule=moduleById(home,'blog');
     const categories=blogModule?.categoryIds||[];
