@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import type {BlogPost,BlogLocale} from '@/lib/blog';
 import {blogLabel,blogPath,renderBlogContent,safeImage} from '@/lib/blog';
 import SiteShell from '@/components/site-shell';
@@ -5,7 +6,7 @@ import BlogCards from '@/components/home-snapshot/blog-cards';
 
 const formatDate=(date:string|null,locale:string)=>date?new Intl.DateTimeFormat(locale,{year:'numeric',month:'long',day:'numeric'}).format(new Date(date)):'';
 
-function BlogFrame({children}:{children:React.ReactNode}){
+function BlogFrame({children}:{children:ReactNode}){
  return <SiteShell><main className="tc-marketing-blog">{children}</main></SiteShell>;
 }
 /** Archive and article use native React and the same card, header and footer modules as the homepage. */
