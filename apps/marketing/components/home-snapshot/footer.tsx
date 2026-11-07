@@ -242,7 +242,7 @@ export default function FooterSnapshot(){return (
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
-                    <svg aria-hidden={"true"} version={"1.0"} viewBox={"0 0 448 512"} xmlns={"http://www.w3.org/2000/svg"}>
+                    <svg aria-hidden={true} version={"1.0"} viewBox={"0 0 448 512"} xmlns={"http://www.w3.org/2000/svg"}>
                       {"\n"}
                       <g id={"Instagram1_layer"}>
                         {"\n"}
@@ -264,7 +264,7 @@ export default function FooterSnapshot(){return (
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
-                    <svg aria-hidden={"true"} version={"1.0"} viewBox={"0 0 576 512"} xmlns={"http://www.w3.org/2000/svg"}>
+                    <svg aria-hidden={true} version={"1.0"} viewBox={"0 0 576 512"} xmlns={"http://www.w3.org/2000/svg"}>
                       {"\n"}
                       <g id={"YouTube2_layer"}>
                         {"\n"}
@@ -286,7 +286,7 @@ export default function FooterSnapshot(){return (
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
-                    <svg aria-hidden={"true"} version={"1.0"} viewBox={"0 0 496 512"} xmlns={"http://www.w3.org/2000/svg"}>
+                    <svg aria-hidden={true} version={"1.0"} viewBox={"0 0 496 512"} xmlns={"http://www.w3.org/2000/svg"}>
                       {"\n"}
                       <g id={"Spotify3_layer"}>
                         {"\n"}
@@ -308,7 +308,7 @@ export default function FooterSnapshot(){return (
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
-                    <svg aria-hidden={"true"} version={"1.0"} viewBox={"0 0 448 512"} xmlns={"http://www.w3.org/2000/svg"}>
+                    <svg aria-hidden={true} version={"1.0"} viewBox={"0 0 448 512"} xmlns={"http://www.w3.org/2000/svg"}>
                       {"\n"}
                       <g id={"LinkedIn4_layer"}>
                         {"\n"}
@@ -408,19 +408,19 @@ export default function FooterSnapshot(){return (
                   </li>
                   {"\n"}
                   <li>
-                    <span aria-disabled={"true"} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-277"}>
+                    <span aria-disabled={true} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-277"}>
                       {"Gizlilik Politikası"}
                     </span>
                   </li>
                   {"\n"}
                   <li>
-                    <span aria-disabled={"true"} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-278"}>
+                    <span aria-disabled={true} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-278"}>
                       {"Kullanım Koşulları"}
                     </span>
                   </li>
                   {"\n"}
                   <li>
-                    <span aria-disabled={"true"} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-279"}>
+                    <span aria-disabled={true} title={"Bağlantı henüz tanımlanmadı"} data-tc-content-key={"span-279"}>
                       {"Çerez Politikası"}
                     </span>
                   </li>
@@ -444,7 +444,7 @@ export default function FooterSnapshot(){return (
             {"\n"}
           </div>
           <div aria-label={"Ödeme markaları"} className={"tc-footer-payments"}>
-            <img alt={"iyzico ile Öde, Mastercard, Maestro, Visa, Troy ve American Express"} height={"261"} loading={"lazy"} src={"/assets/images/payments/payment-methods.png"} width={"2048"} data-tc-content-src={"image-110"} />
+            <img alt={"iyzico ile Öde, Mastercard, Maestro, Visa, Troy ve American Express"} height={261} loading={"lazy"} src={"/assets/images/payments/payment-methods.png"} width={2048} data-tc-content-src={"image-110"} />
           </div>
         </div>
         {"\n"}
