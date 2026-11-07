@@ -4,7 +4,7 @@
  * external CMS fetch, HTML replacement, mock content insertion, or innerHTML.
  * All visible copy and imagery live in static section JSX until CMS migration.
  */
-import {useCallback,useEffect,useRef,useState,type MouseEvent,type ChangeEvent,type FormEvent,type ReactNode} from 'react';
+import {useCallback,useEffect,useRef,useState,type MouseEvent,type ChangeEvent,type ReactNode} from 'react';
 
 type Props={children:ReactNode};
 const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,32 +17,6 @@ const scrollCarousel=(root:HTMLElement|null,trackSelector:string,itemSelector:st
   const track=root?.querySelector<HTMLElement>(trackSelector);
   if(track)track.scrollBy({left:dir*scrollStep(track,itemSelector),behavior:reduced()?'auto':'smooth'});
 };
-const phoneRules:Record<string,RegExp>={
-  TR:/^5\d{9}$/,US:/^[2-9]\d{2}[2-9]\d{6}$/,CA:/^[2-9]\d{2}[2-9]\d{6}$/,
-  GB:/^[1-9]\d{9}$/,DE:/^[1-9]\d{5,12}$/,FR:/^[1-9]\d{8}$/,
-  NL:/^[1-9]\d{8}$/,BE:/^[1-9]\d{7,8}$/,AT:/^[1-9]\d{3,12}$/,
-  CH:/^[1-9]\d{8}$/,IT:/^\d{6,11}$/,ES:/^[6-9]\d{8}$/,
-  PT:/^[29]\d{8}$/,BG:/^[1-9]\d{7,8}$/,RO:/^[1-9]\d{8}$/,
-  GR:/^[1269]\d{9}$/,CY:/^[2-9]\d{7}$/,AZ:/^[1-9]\d{8}$/,
-  GE:/^[1-9]\d{8}$/,UA:/^[1-9]\d{8}$/,RU:/^[3489]\d{9}$/,
-  AE:/^[1-9]\d{7,8}$/,SA:/^[1-9]\d{8}$/,QA:/^[3-7]\d{7}$/,
-  KW:/^[1-9]\d{7}$/,IQ:/^[1-9]\d{7,9}$/,IR:/^[1-9]\d{9}$/,
-  EG:/^[1-9]\d{8,9}$/,MA:/^[1-9]\d{8}$/,IN:/^[6-9]\d{9}$/,
-  PK:/^3\d{9}$/,AU:/^[1-9]\d{8}$/
-};
-function validatePhone(input:HTMLInputElement,option:HTMLOptionElement|undefined){
-  const raw=input.value.trim();
-  if(!raw)return 'Telefon numaranızı girin.';
-  const dial=option?.value||'+90',country=option?.dataset.country||'TR';
-  let value=raw.startsWith(dial)?raw.slice(dial.length).trim():raw;
-  if(!/^[0-9 ()-]+$/.test(value))return 'Yalnızca rakam, boşluk, kısa çizgi ve parantez kullanın.';
-  let digits=value.replace(/\D/g,'');
-  if(country!=='IT'&&digits.startsWith('0'))digits=digits.slice(1);
-  if(!phoneRules[country]?.test(digits)||!/^\+[1-9]\d{7,14}$/.test(dial+digits))
-    return 'Seçilen ülkeye uygun geçerli bir telefon numarası girin.';
-  return '';
-}
-
 export default function HomeInteractions({children}:Props){
   const rootRef=useRef<HTMLDivElement>(null);
   const [drawer,setDrawer]=useState(false);
@@ -54,7 +28,6 @@ export default function HomeInteractions({children}:Props){
   const [pressIndex,setPressIndex]=useState(0);
   const [pressHover,setPressHover]=useState(false);
   const [carouselState,setCarouselState]=useState<Record<string,{prev:boolean;next:boolean}>>({});
-  const [formState,setFormState]=useState<Record<string,{dial:string;flag:string;error:string;kvkk:string;value:string;checked:boolean}>>({});
   const [headlineIndex,setHeadlineIndex]=useState(0);
   const closeMenu=useCallback(()=>{setDrawer(false);setMega(null)},[]);
 
@@ -181,15 +154,6 @@ export default function HomeInteractions({children}:Props){
     else if(kind==='showcase')scrollCarousel(root,'.tc-showcase__track','.tc-showcase__item',direction);
     else scrollCarousel(root,'.tc-blog__track','.tc-blog__card',direction);
   };
-  const updateForm=(form:HTMLFormElement,change:Partial<{dial:string;flag:string;error:string;kvkk:string;value:string;checked:boolean}>)=>{
-    const key=form.dataset.ticartiForm||'hero';
-    setFormState(current=>({...current,[key]:{dial:'+90',flag:'🇹🇷',error:'',kvkk:'',value:'',checked:false,...current[key],...change}}));
-  };
-  const getForm=(form:HTMLFormElement)=>{
-    const input=form.querySelector<HTMLInputElement>('input[type=tel]');
-    const option=form.querySelector<HTMLSelectElement>('select.tc-country-code')?.selectedOptions[0];
-    return {input,option};
-  };
 
   const onClick=(event:MouseEvent<HTMLDivElement>)=>{
     const root=rootRef.current,target=event.target as HTMLElement;if(!root)return;
@@ -240,49 +204,11 @@ export default function HomeInteractions({children}:Props){
   },[banner]);
 
   const onChange=(event:ChangeEvent<HTMLDivElement>)=>{
-    const target=event.target as HTMLInputElement;
-    const form=target.closest<HTMLFormElement>('[data-tc-callback]');
-    if(form){
-      const {input,option}=getForm(form);
-      if(target.matches('select.tc-country-code')){
-        updateForm(form,{dial:option?.value||'+90',flag:option?.dataset.flag||'🇹🇷',error:''});
-      }else if(target.matches('input[type=tel]')){
-        updateForm(form,{value:input?.value||'',error:''});
-      }else if(target.name==='kvkk_read'){
-        updateForm(form,{checked:target.checked,kvkk:''});
-      }
-    }
+    const target=event.target as HTMLSelectElement;
     if(target.matches('select.lang-select')){
       const select=target as HTMLSelectElement;const option=select.selectedOptions[0];
       if(option?.dataset.url)window.location.assign(option.dataset.url);
     }
   };
-  const onSubmit=(event:FormEvent<HTMLDivElement>)=>{
-    const form=(event.target as Element).closest<HTMLFormElement>('[data-tc-callback]');
-    if(!form)return;
-    event.preventDefault();
-    const {input,option}=getForm(form);
-    if(!input)return;
-    const error=validatePhone(input,option);
-    const consent=form.querySelector<HTMLInputElement>('input[name=kvkk_read]');
-    const kvkk=consent&&!consent.checked?'Devam etmek için KVKK aydınlatmasını okuyup kutuyu işaretleyin.':'';
-    updateForm(form,{error:error||(!kvkk?'Bu form henüz sunucuya bağlı değil; numaranız gönderilmedi.':''),kvkk});
-  };
-  useEffect(()=>{
-    const root=rootRef.current;if(!root)return;
-    for(const form of root.querySelectorAll<HTMLFormElement>('[data-tc-callback]')){
-      const key=form.classList.contains('tc-hero-callback')?'hero':'footer';
-      form.dataset.ticartiForm=key;
-      const country=form.querySelector<HTMLSelectElement>('select.tc-country-code')?.selectedOptions[0];
-      const state=formState[key];
-      const visible=form.querySelector('.tc-dial-visible');
-      if(visible)visible.textContent=(state?.flag||country?.dataset.flag||'🇹🇷')+' '+(state?.dial||country?.value||'+90');
-      const error=form.querySelector<HTMLElement>('.tc-callback-status');
-      if(error)error.textContent=state?.error||'';
-      const kvkk=form.querySelector<HTMLElement>('.tc-kvkk-error');
-      if(kvkk)kvkk.textContent=state?.kvkk||'';
-    }
-  },[formState]);
-
-  return <div ref={rootRef} onClick={onClick} onChange={onChange} onSubmit={onSubmit}>{children}</div>;
+  return <div ref={rootRef} onClick={onClick} onChange={onChange}>{children}</div>;
 }
