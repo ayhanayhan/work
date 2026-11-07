@@ -139,7 +139,10 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   const languages=page.post?alternatesForPost(page.post):page.isBlogList?
     Object.fromEntries((await Promise.all((await getWebsiteLocales()).map(async code=>({
       code,count:(await getBlogPosts(code)).length
-    })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):undefined;
+    })))).filter(x=>x.count>0).map(x=>[x.code,absolute(blogPath(x.code))])):
+    Object.fromEntries((await getWebsiteLocales()).filter(code=>!metadataFor(seo,seoPage,code).noindex).map(code=>
+      [code,absolute(normalPath(slug,code,page))]
+    ));
   const picture=page.post?imageUrl(page.post):undefined;
   const noindex=preview||seo?.allowIndexing===false||seoEntry.noindex===true||page.post?.noIndex===true||slug.some(part=>part==='login'||part==='register'||part==='login.html'||part==='register.html');
   const chosenCanonical=seoEntry.canonicalPath?absolute(seoEntry.canonicalPath):canonical;
