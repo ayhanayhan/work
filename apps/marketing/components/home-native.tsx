@@ -7,6 +7,21 @@ import {blogPath} from '@/lib/blog';
 type Props={home:HomeData;lang:string;locales:ActiveLocale[];posts:BlogPost[]};
 const t=(m:HomeModule,key:string,lang:string)=>localized(m.fields,key,lang);
 const it=(m:HomeItem,key:string,lang:string)=>localized(m.fields,key,lang);
+const uiText:Record<string,Record<string,string>>={
+  tr:{features:'Özellikler',blog:'Blog',faq:'Sık Sorulan Sorular',contact:'İletişim',login:'Giriş yap',
+    create:'E-ticaret siteni oluştur',trial:'Ücretsiz dene',all:'Tüm yazılar',packages:'Paketler',privacy:'Gizlilik',locale:'Dil'},
+  en:{features:'Features',blog:'Blog',faq:'Frequently Asked Questions',contact:'Contact',login:'Log in',
+    create:'Create your online store',trial:'Try for free',all:'All articles',packages:'Plans',privacy:'Privacy',locale:'Language'},
+  de:{features:'Funktionen',blog:'Blog',faq:'Häufige Fragen',contact:'Kontakt',login:'Anmelden',
+    create:'Onlineshop erstellen',trial:'Kostenlos testen',all:'Alle Artikel',packages:'Tarife',privacy:'Datenschutz',locale:'Sprache'},
+  ru:{features:'Возможности',blog:'Блог',faq:'Частые вопросы',contact:'Контакты',login:'Войти',
+    create:'Создать интернет-магазин',trial:'Попробовать бесплатно',all:'Все статьи',packages:'Тарифы',privacy:'Конфиденциальность',locale:'Язык'},
+  pt:{features:'Funcionalidades',blog:'Blog',faq:'Perguntas frequentes',contact:'Contato',login:'Entrar',
+    create:'Criar a loja online',trial:'Experimentar grátis',all:'Todos os artigos',packages:'Planos',privacy:'Privacidade',locale:'Idioma'},
+  ar:{features:'المميزات',blog:'المدونة',faq:'الأسئلة الشائعة',contact:'اتصل بنا',login:'تسجيل الدخول',
+    create:'أنشئ متجرك الإلكتروني',trial:'جرّب مجاناً',all:'كل المقالات',packages:'الباقات',privacy:'الخصوصية',locale:'اللغة'}
+};
+const ui=(lang:string,key:string)=>uiText[lang]?.[key]||uiText.en[key]||key;
 const prefix=(lang:string)=>lang==='tr'?'':'/'+lang;
 const url=(lang:string,path:string)=>prefix(lang)+path;
 const media=(src:string,alt:string,cls?:string)=>{
@@ -19,13 +34,13 @@ function Nav({lang}:{lang:string}){
     <div className="tc-native-shell tc-native-header-row">
       <Link href={root+'/'} className="tc-native-logo" aria-label="Ticarti anasayfa">ticarti<span>.</span></Link>
       <nav aria-label="Ana menü" className="tc-native-nav">
-        <Link href={root+'/#ozellikler'}>Özellikler</Link>
-        <Link href={root+'/#blog'}>Blog</Link>
-        <Link href={root+'/#sss'}>Sık Sorulan Sorular</Link>
+        <Link href={root+'/#ozellikler'}>{ui(lang,'features')}</Link>
+        <Link href={root+'/#blog'}>{ui(lang,'blog')}</Link>
+        <Link href={root+'/#sss'}>{ui(lang,'faq')}</Link>
       </nav>
       <div className="tc-native-header-actions">
-        <Link href={root+'/contacto.html'}>İletişim</Link>
-        <Link className="tc-native-button tc-native-button--primary" href={root+'/login.html'}>Giriş yap</Link>
+        <Link href={root+'/contacto.html'}>{ui(lang,'contact')}</Link>
+        <Link className="tc-native-button tc-native-button--primary" href={root+'/login.html'}>{ui(lang,'login')}</Link>
       </div>
     </div>
   </header>;
@@ -39,7 +54,7 @@ function Hero({m,lang}:{m:HomeModule;lang:string}){
       {description?<p className="tc-native-lead">{description}</p>:null}
       {offer?<p className="tc-native-offer">{offer}</p>:null}
       <div className="tc-native-actions">
-        <Link className="tc-native-button tc-native-button--primary" href={url(lang,'/register.html')}>E-ticaret siteni oluştur</Link>
+        <Link className="tc-native-button tc-native-button--primary" href={url(lang,'/register.html')}>{ui(lang,'create')}</Link>
       </div>
     </div>
   </section>;
@@ -81,7 +96,7 @@ function BottomCta({m,lang}:{m:HomeModule;lang:string}){
   return <section className="tc-native-section tc-native-bottom-cta"><div className="tc-native-shell">
     {heading?<h2 className="tc-native-section-title">{heading}</h2>:null}
     {offer?<p className="tc-native-section-description">{offer}</p>:null}
-    <Link className="tc-native-button tc-native-button--primary" href={url(lang,'/register.html')}>Ücretsiz dene</Link>
+    <Link className="tc-native-button tc-native-button--primary" href={url(lang,'/register.html')}>{ui(lang,'trial')}</Link>
   </div></section>;
 }
 function Blog({m,posts,lang}:{m:HomeModule;posts:BlogPost[];lang:string}){
@@ -101,7 +116,7 @@ function Blog({m,posts,lang}:{m:HomeModule;posts:BlogPost[];lang:string}){
           </Link>
         </article>)}
       </div>
-      <Link className="tc-native-text-link" href={blogPath(lang)}>Tüm yazılar</Link>
+      <Link className="tc-native-text-link" href={blogPath(lang)}>{ui(lang,'all')}</Link>
     </div>
   </section>;
 }
@@ -123,9 +138,9 @@ function Footer({lang,locales}:{lang:string;locales:ActiveLocale[]}){
     <div className="tc-native-footer-row">
       <Link href={root+'/'} className="tc-native-logo">ticarti<span>.</span></Link>
       <nav aria-label="Alt menü">
-        <Link href={root+'/paketler.html'}>Paketler</Link>
-        <Link href={root+'/contacto.html'}>İletişim</Link>
-        <Link href={root+'/gizlilik-politikasi.html'}>Gizlilik</Link>
+        <Link href={root+'/paketler.html'}>{ui(lang,'packages')}</Link>
+        <Link href={root+'/contacto.html'}>{ui(lang,'contact')}</Link>
+        <Link href={root+'/gizlilik-politikasi.html'}>{ui(lang,'privacy')}</Link>
         <Link href={root+'/kvkk.html'}>KVKK</Link>
       </nav>
       {locales.length?<details className="tc-native-language">
@@ -139,7 +154,6 @@ function Footer({lang,locales}:{lang:string;locales:ActiveLocale[]}){
   </div></footer>;
 }
 export function HomepageNative({home,lang,locales,posts}:Props){
-  const moduleMap=new Map(home.modules.map(m=>[m.id,m]));
   const known=new Set(['hero','animated','builder','radar','channels','showcase','references','bottomCta','blog','faq']);
   const content=home.modules.filter(m=>m.enabled&&known.has(m.id)).map(m=>{
     switch(m.id){
