@@ -2,7 +2,7 @@
  * Modules may be connected to Master one by one without restructuring the page.
  */
 import HeroSection from './hero';
-import type {HomeContent} from '@/lib/home-content';
+import {moduleById,hasLocalizedContent,type HomeContent} from '@/lib/home-content';
 import type {BlogPost} from '@/lib/blog';
 import AnimatedHeadingSection from './animated';
 import BuilderSection from './builder';
@@ -15,7 +15,9 @@ import BlogSection from './blog';
 import FaqSection from './faq';
 import HeaderSnapshot from './header';
 import FooterSnapshot from './footer';
-export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeContent|null;posts?:BlogPost[];locale?:string}){return <>
+export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeContent|null;posts?:BlogPost[];locale?:string}){
+ const show=(id:string)=>hasLocalizedContent(moduleById(home,id),locale);
+ return <>
   {"\n"}
   <HeaderSnapshot />
   {"\n"}
@@ -39,7 +41,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-033"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-033"} hidden={!show('hero')}>
                         {"\n"}
                         <HeroSection home={home} locale={locale}/>
                         {"\n\n"}
@@ -109,7 +111,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-037"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-037"} hidden={!show('animated')}>
                         {"\n"}
                         <AnimatedHeadingSection home={home} locale={locale}/>
                         {"\n\n"}
@@ -145,7 +147,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-032"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-032"} hidden={!show('builder')}>
                         {"\n"}
                         <BuilderSection home={home} locale={locale}/>
                         {"\n\n"}
@@ -181,7 +183,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-035"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-035"} hidden={!show('radar')}>
                         {"\n"}
                         <RadarSection home={home} locale={locale}/>
                         {"\n"}
@@ -217,7 +219,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-034"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-034"} hidden={!show('channels')}>
                         {"\n"}
                         <ChannelsSection home={home} locale={locale}/>
                         {"\n\n"}
@@ -253,7 +255,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-036"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-036"} hidden={!show('showcase')}>
                         {"\n"}
                         <ShowcaseSection home={home} locale={locale}/>
                         {"\n\n"}
@@ -283,7 +285,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
               {"\n"}
               <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                 {"\n"}
-                <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-030"}>
+                <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-030"} hidden={!show('references')}>
                   {"\n"}
                   <ReferencesSection home={home} locale={locale}/>
                   {"\n\n"}
@@ -310,7 +312,7 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
                     {"\n"}
                     <div className={"span12 widget-span widget-type-custom_widget dnd-module"} data-w={"12"} data-widget-type={"custom_widget"} data-x={"0"}>
                       {"\n"}
-                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-031"}>
+                      <div className={"tc-component tc-component__content tc-component--section"} id={"tc-widget-031"} hidden={!show('bottomCta')}>
                         {"\n"}
                         <BottomCtaSection home={home} locale={locale}/>
                         {"\n"}
