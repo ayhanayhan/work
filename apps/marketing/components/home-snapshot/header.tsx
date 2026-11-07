@@ -26,7 +26,7 @@ export default function HeaderSnapshot(){return (
           {"\n"}
           <button aria-label={"Duyuruyu kapat"} className={"tc-announcement-bar__close"} data-tc-ui-topbar-close={""} type={"button"}>
             {"\n"}
-            <svg aria-hidden={"true"} fill={"none"} viewBox={"0 0 24 24"} xmlns={"http://www.w3.org/2000/svg"}>
+            <svg aria-hidden={true} fill={"none"} viewBox={"0 0 24 24"} xmlns={"http://www.w3.org/2000/svg"}>
               {"\n"}
               <path d={"M18 6L6 18M6 6L18 18"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"}></path>
               {"\n"}
@@ -164,7 +164,7 @@ export default function HeaderSnapshot(){return (
               {"\n"}
               <button className={"tc-ui-back"} type={"button"}>
                 {"\n"}
-                <span aria-hidden={"true"} className={"tc-ui-back-ico"}></span>
+                <span aria-hidden={true} className={"tc-ui-back-ico"}></span>
                 {"\n"}
                 <span className={"tc-ui-back-label"}></span>
                 {"\n"}
@@ -924,7 +924,7 @@ export default function HeaderSnapshot(){return (
       {"\n"}
     </div>
     {"\n"}
-    <div aria-hidden={"true"} className={"tc-ui-header-spacer"}></div>
+    <div aria-hidden={true} className={"tc-ui-header-spacer"}></div>
     {"\n"}
   </div>
 )}
