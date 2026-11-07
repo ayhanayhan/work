@@ -409,6 +409,15 @@ export class WebsiteService{
       .sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
       .map(x=>({id:x.id,phone:x.phone,slug:x.slug,createdAt:x.createdAt}));
   }
+  async completeBlogCallback(id:string){
+    if(!/^[0-9a-f-]{36}$/.test(id))throw new BadRequestException('Geçersiz başvuru.');
+    const key='marketing_blog_callback_v1_'+id;
+    const row=await this.prisma.platformSetting.findUnique({where:{key}});
+    if(!row)throw new BadRequestException('Başvuru bulunamadı.');
+    // Delete completed phone records rather than retaining personal data indefinitely.
+    await this.prisma.platformSetting.delete({where:{key}});
+    return {ok:true};
+  }
   async submitBlogCallback(raw:any,ip:string){
     const dial=str(raw?.dial,5).trim(),phone=str(raw?.phone,24).replace(/[\s()\-]/g,'');
     const slug=str(raw?.slug,150),consent=raw?.consent===true;
