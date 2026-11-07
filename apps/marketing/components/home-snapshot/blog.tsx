@@ -1,4 +1,4 @@
-import {moduleById,fieldFor,type HomeContent} from '@/lib/home-cms';
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
 import {blogPath,type BlogPost} from '@/lib/blog';
 import BlogCards from './blog-cards';
 /* Static React snapshot of original Ticarti homepage: blog.
