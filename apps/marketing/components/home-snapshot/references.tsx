@@ -1,4 +1,5 @@
 import {moduleById,fieldFor,safeAssetUrl,textFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 /* Static React snapshot of original Ticarti homepage: references.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
@@ -13,11 +14,11 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
         <p aria-hidden={true} className={"tc-press__title tc-press__title--m"}>
           {"\n"}
           <span data-tc-content-key={"span-141"}>
-            {fieldFor(module,'heading',locale)||"Bir mağazadan,"}
+            {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Bir mağazadan,"}
           </span>
           {"\n"}
           <span data-tc-content-key={"span-142"}>
-            {fieldFor(module,'heading',locale)?null:"sınırsız olasılığa"}
+            {module?.configured?null:"sınırsız olasılığa"}
           </span>
           {"\n"}
         </p>
@@ -30,7 +31,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
               {"\n"}
               <ul className={"tc-press__track"} role={"list"}>
                 {"\n"}
-                {module?.items?.length?items.map(item=><li key={item.id} className="tc-press__slide">
+                {module?.configured?items.map(item=><li key={item.id} className="tc-press__slide">
                   <img alt={textFor(item.fields?.heading,locale)||'Referans'} className="tc-press__img" decoding="async"
                     loading="lazy" src={safeAssetUrl(item.assets?.image,'/assets/images/ticarti-butik-girisimci.webp')}/>
                   {item.assets?.logo?<img className="tc-press__entry-logo" src={safeAssetUrl(item.assets.logo,'')} alt={textFor(item.fields?.heading,locale)||'Logo'}/>:null}
