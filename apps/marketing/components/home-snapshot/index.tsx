@@ -2,7 +2,7 @@
  * Modules may be connected to Master one by one without restructuring the page.
  */
 import HeroSection from './hero';
-import type {HomeContent} from '@/lib/home-cms';
+import type {HomeContent} from '@/lib/home-content';
 import type {BlogPost} from '@/lib/blog';
 import AnimatedHeadingSection from './animated';
 import BuilderSection from './builder';
