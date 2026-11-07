@@ -1,5 +1,5 @@
 import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath} from '@/lib/site-seo';
-import {redirect} from 'next/navigation';
+import {redirect,permanentRedirect} from 'next/navigation';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
@@ -117,14 +117,15 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','de','ru','ar'].includes(slug[0])))||(slug.length===2&&['tr','en','de','ru','ar'].includes(slug[0])&&slug[1]==='index.html')){
     const lang=['tr','en','de','ru','ar'].includes(slug[0]||'')?slug[0]:'tr';
     const canonical=absolute(lang==='tr'?'/':'/'+lang+'/');
+    const preview=await previewHost();
     const title=seoEntry.title||'Ticarti | E-Ticaretin Yeni Hali - Mağazanı Kur, Tek Yerden Yönet';
     const description=seoEntry.description||'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.';
     const ogImage=seoImage(seoEntry.ogImage||seo?.defaultOgImage);
     const finalCanonical=seoEntry.canonicalPath?absolute(seoEntry.canonicalPath):canonical;
-    const languages=Object.fromEntries(['tr','en','de','ru','ar'].map(l=>[l,absolute(l==='tr'?'/':'/'+l+'/')]));
+    const languages=Object.fromEntries((await getWebsiteLocales()).map(l=>[l,absolute(l==='tr'?'/':'/'+l+'/')]));
     return {title,description,metadataBase:new URL(BASE),
       alternates:{canonical:finalCanonical,languages},
-      robots:seo?.allowIndexing===false||seoEntry.noindex?{index:false,follow:false}:{index:true,follow:true},
+      robots:preview||seo?.allowIndexing===false||seoEntry.noindex?{index:false,follow:false}:{index:true,follow:true},
       openGraph:{title:seoEntry.ogTitle||title,description:seoEntry.ogDescription||description,
         url:finalCanonical,type:'website',siteName:seo?.siteName||'Ticarti',
         ...(ogImage?{images:[{url:ogImage}]}:{})},
@@ -171,7 +172,10 @@ export default async function MarketingPage({params,searchParams}:Props){
   const seo=await getWebsiteSeo();
   const requestPath='/'+slug.join('/');
   const match=seo?.redirects?.find(x=>x.from.replace(/\/$/,'')===requestPath.replace(/\/$/,''));
-  if(match&&match.to!==match.from)redirect(match.to);
+  if(match&&match.to!==match.from){
+    if(match.permanent)permanentRedirect(match.to);
+    redirect(match.to);
+  }
 
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','de','ru','ar'].includes(slug[0])))||(slug.length===2&&['tr','en','de','ru','ar'].includes(slug[0])&&slug[1]==='index.html')){
     const locale=slug[0]&&['tr','en','de','ru','ar'].includes(slug[0])?slug[0]:'tr';
