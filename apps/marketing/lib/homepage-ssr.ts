@@ -164,7 +164,7 @@ export function renderFooterLanguages(html:string,activeLocales:string[],lang:st
   if(!list.length)return html.slice(0,start)+html.slice(end);
   const entries=list.map(locale=>{
     const url=(locale==='tr'?'':'/'+locale)+'/'+suffix;
-    return '<li'+(locale===lang?' class="is-active"':'')+'><a class="lang-item" href="'+safe(url.replace(/\\/+/g,'/'))+'" lang="'+safe(locale)+'"'+(locale===lang?' aria-current="page"':'')+'>'+
+    return '<li'+(locale===lang?' class="is-active"':'')+'><a class="lang-item" href="'+safe(url.replace(/\/+/g,'/'))+'" lang="'+safe(locale)+'"'+(locale===lang?' aria-current="page"':'')+'>'+
       '<span class="lang-name">'+safe(localeNames[locale]||locale.toUpperCase())+'</span></a></li>';
   }).join('');
   const replacement='<div class="footer-lang-wrap"><details class="lang-wrap">'+
