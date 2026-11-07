@@ -78,7 +78,7 @@ export default function ChannelsSection(){
                   </div>
                   {"\n"}
                   <div className={"tc-ops__item"}>
-                    <span aria-hidden={"true"} className={"tc-ops__check"}>
+                    <span aria-hidden={true} className={"tc-ops__check"}>
                       {"✓"}
                     </span>
                     <span data-tc-content-key={"span-096"}>
@@ -90,7 +90,7 @@ export default function ChannelsSection(){
                   </div>
                   {"\n"}
                   <div className={"tc-ops__item"}>
-                    <span aria-hidden={"true"} className={"tc-ops__check"}>
+                    <span aria-hidden={true} className={"tc-ops__check"}>
                       {"✓"}
                     </span>
                     <span data-tc-content-key={"span-098"}>
@@ -102,7 +102,7 @@ export default function ChannelsSection(){
                   </div>
                   {"\n"}
                   <div className={"tc-ops__item"}>
-                    <span aria-hidden={"true"} className={"tc-ops__check"}>
+                    <span aria-hidden={true} className={"tc-ops__check"}>
                       {"✓"}
                     </span>
                     <span data-tc-content-key={"span-100"}>
@@ -131,7 +131,7 @@ export default function ChannelsSection(){
               <span className={"tc-sales-channels__link-label"} data-tc-content-key={"span-103"}>
                 {"Tüm özellikleri keşfet"}
               </span>
-              <span aria-hidden={"true"} className={"tc-sales-channels__link-arrow"}>
+              <span aria-hidden={true} className={"tc-sales-channels__link-arrow"}>
                 {"→"}
               </span>
             </a>
@@ -252,7 +252,7 @@ export default function ChannelsSection(){
               <span className={"tc-sales-channels__link-label"} data-tc-content-key={"span-114"}>
                 {"Pazaryeri bağlantılarını incele"}
               </span>
-              <span aria-hidden={"true"} className={"tc-sales-channels__link-arrow"}>
+              <span aria-hidden={true} className={"tc-sales-channels__link-arrow"}>
                 {"→"}
               </span>
             </a>
