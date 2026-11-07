@@ -1,15 +1,18 @@
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
+import {SimpleHtml} from './simple-html';
 import FooterCallback from './bottomCta-callback';
 /* Static React snapshot of original Ticarti homepage: bottomCta.
  * Preserves DOM/classes/content; no CMS, fetch, innerHTML, or client text replacement.
  */
-export default function BottomCtaSection(){
+export default function BottomCtaSection({home,locale='tr'}:{home?:HomeContent|null;locale?:string}){
+  const module=moduleById(home,'bottomCta');
   return (
     <section className={"tc-bottom-cta"}>
       {"\n"}
       <div className={"tc-bottom-cta__inner"}>
         {"\n"}
         <h2 className={"tc-bottom-cta__heading"} data-tc-content-key={"h2-153"}>
-          {"E-ticaret siteni oluştur. 14 gün ücretsiz dene."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"E-ticaret siteni oluştur. 14 gün ücretsiz dene."}
         </h2>
         {"\n"}
         <div className={"tc-bottom-cta__subtitle"}>
@@ -17,7 +20,7 @@ export default function BottomCtaSection(){
         </div>
         {"\n"}
         <p className={"tc-bottom-cta__offer"} data-tc-content-key={"p-154"}>
-          {"Lansmana özel %50 indirimi kaçırma."}
+          {module?.configured?<SimpleHtml html={fieldFor(module,'offer',locale)}/>:"Lansmana özel %50 indirimi kaçırma."}
         </p>
         {"\n"}
         <FooterCallback />
