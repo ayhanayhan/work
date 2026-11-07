@@ -78,7 +78,7 @@ export default function ReferencesSection({home,locale='tr'}:{home?:HomeContent|
           <h2 className={"tc-press__title"}>
             {"\n"}
             <span data-tc-content-key={"span-143"}>
-              {"Bir mağazadan,"}
+              {fieldFor(module,'heading',locale)||"Bir mağazadan,"}
             </span>
             {"\n"}
             <span data-tc-content-key={"span-144"}>
