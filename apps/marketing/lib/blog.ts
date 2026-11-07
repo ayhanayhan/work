@@ -1,4 +1,4 @@
-export const BLOG_LOCALES=['tr','en','pt','ru'] as const;
+export const BLOG_LOCALES=['tr','en','de','ru','ar'] as const;
 export type BlogLocale=string;
 export type BlogPost={
   id:string;slug:string;category:string;categoryId?:string|null;title:string;excerpt:string;featuredImage:string;content:string;
@@ -34,8 +34,9 @@ export const blogPath=(lang:BlogLocale,slug?:string)=>blogRoot(lang)+'/blog'+(sl
 export const blogLabels:Record<string,{read:string;all:string;related:string;featured:string;filter:string;blogDescription:string}>={
   tr:{read:'Yazıyı oku',all:'Tüm yazılar',related:'Diğer yazılar',featured:'ÖNE ÇIKAN YAZI',filter:'Tümü',blogDescription:'E-ticaret ve mağaza yönetimi üzerine yazılar.'},
   en:{read:'Read article',all:'All articles',related:'Other articles',featured:'FEATURED ARTICLE',filter:'All',blogDescription:'Articles about e-commerce and store management.'},
-  pt:{read:'Ler artigo',all:'Todos os artigos',related:'Outros artigos',featured:'ARTIGO EM DESTAQUE',filter:'Todos',blogDescription:'Artigos sobre comércio eletrónico e gestão de lojas.'},
-  ru:{read:'Читать статью',all:'Все статьи',related:'Другие статьи',featured:'ИЗБРАННАЯ СТАТЬЯ',filter:'Все',blogDescription:'Статьи об электронной коммерции и управлении магазином.'}
+  de:{read:'Artikel lesen',all:'Alle Artikel',related:'Weitere Artikel',featured:'EMPFOHLENER ARTIKEL',filter:'Alle',blogDescription:'Artikel über E-Commerce und Shopverwaltung.'},
+  ru:{read:'Читать статью',all:'Все статьи',related:'Другие статьи',featured:'ИЗБРАННАЯ СТАТЬЯ',filter:'Все',blogDescription:'Статьи об электронной коммерции и управлении магазином.'},
+  ar:{read:'اقرأ المقال',all:'جميع المقالات',related:'مقالات أخرى',featured:'مقال مميز',filter:'الكل',blogDescription:'مقالات عن التجارة الإلكترونية وإدارة المتاجر.'}
 };
 export const blogLabel=(lang:string)=>blogLabels[lang]||blogLabels.en;
 const validDate=(v:unknown)=>typeof v==='string'&&!Number.isNaN(Date.parse(v))?v:null;
