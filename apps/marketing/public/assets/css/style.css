@@ -14532,16 +14532,3 @@ html.tc-page-auth .tc-legal-back {font-size:14px;color:#3e5d17;text-decoration:u
 .tc-page-contact .tc-contact-form__status {min-height:18px;margin:0;color:#246729;font-size:13px;line-height:1.5}
 .tc-page-contact .tc-contact-form__status.is-error {color:#b42318}
 @media(max-width:700px){.tc-page-contact .tc-contact-form__fields{grid-template-columns:1fr}.tc-page-contact .tc-contact-form{padding:20px}}
-
-/* React homepage: the original hero repeats cards only above 1150px. */
-@media (max-width:1150px){.tc-site-hero__track>.tc-ui-card[data-clone]{display:none!important}}
-
-/* Existing homepage order-feed entrance, now driven by React list state. */
-@keyframes tc-react-order-enter{from{opacity:.7;transform:translateY(-28px)}to{opacity:1;transform:translateY(0)}}
-.tc-orders__list>.tc-order--react-enter{animation:tc-react-order-enter 460ms cubic-bezier(.22,.61,.36,1) both}
-@media(prefers-reduced-motion:reduce){.tc-orders__list>.tc-order--react-enter{animation:none}}
-
-/* The original radar sweep is now a CSS animation controlled by React visibility. */
-@keyframes tc-react-radar-sweep{to{transform:rotate(360deg)}}
-.tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:tc-react-radar-sweep 8s linear infinite}
-@media(prefers-reduced-motion:reduce){.tc-page-home .tc-radar.is-scanning .tc-radar__beam{animation:none}}
