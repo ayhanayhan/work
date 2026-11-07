@@ -14532,3 +14532,6 @@ html.tc-page-auth .tc-legal-back {font-size:14px;color:#3e5d17;text-decoration:u
 .tc-page-contact .tc-contact-form__status {min-height:18px;margin:0;color:#246729;font-size:13px;line-height:1.5}
 .tc-page-contact .tc-contact-form__status.is-error {color:#b42318}
 @media(max-width:700px){.tc-page-contact .tc-contact-form__fields{grid-template-columns:1fr}.tc-page-contact .tc-contact-form{padding:20px}}
+
+/* React homepage: the original hero repeats cards only above 1150px. */
+@media (max-width:1150px){.tc-site-hero__track>.tc-ui-card[data-clone]{display:none!important}}
