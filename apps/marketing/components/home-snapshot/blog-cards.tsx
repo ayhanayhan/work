@@ -1,7 +1,7 @@
 import type {BlogPost} from '@/lib/blog';
 import {blogPath,safeImage} from '@/lib/blog';
 export default function BlogCards({posts,locale}:{posts:BlogPost[];locale:string}){
- return <>{posts.map(post=><article key={post.id} className="card-items list-item box card-visible tc-blog__card">
+ return <>{posts.map(post=><article key={post.id} className="card-items list-item box card-visible tc-blog__card" data-tc-blog-category={post.category}>
    <div className="card-wrap">
      <a aria-label={post.title} className="tc-blog__card-link" href={blogPath(locale,post.slug)}>
        <div className="bg-imge"><div className="img">
