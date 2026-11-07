@@ -101,8 +101,8 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   const {slug=[]}=await params;
   // Homepage is a static React snapshot until modules are deliberately connected.
   // No Master, CMS, API or HTML-template reads are permitted on this route.
-  if(slug.length===0||(slug.length===1&&['tr','en','pt','ru'].includes(slug[0]))){
-    const lang=slug[0]||'tr';
+  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
+    const lang=['tr','en','pt','ru'].includes(slug[0]||'')?slug[0]:'tr';
     const canonical=absolute(lang==='tr'?'/':'/'+lang+'/');
     return {title:'Ticarti | E-Ticaretin Yeni Hali - Mağazanı Kur, Tek Yerden Yönet',
       description:'Ticarti ile e-ticaret siteni oluştur, tek yerden yönet.',
@@ -166,7 +166,7 @@ const HOME_VISUAL_SCRIPTS=[
 ];
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
-  if(slug.length===0||(slug.length===1&&['tr','en','pt','ru'].includes(slug[0]))){
+  if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','pt','ru'].includes(slug[0])))||(slug.length===2&&['tr','en','pt','ru'].includes(slug[0])&&slug[1]==='index.html')){
     return <>
       <div className="tc-page-home"><HomeSnapshot/></div>
       <LegacyScripts sources={HOME_VISUAL_SCRIPTS} htmlClasses="tc-page-home"/>
