@@ -17,7 +17,7 @@ export const dynamic='force-dynamic';
 const BASE=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
 const absolute=(path:string)=>BASE+path;
 const resolveLang=async(slug:string[]):Promise<BlogLocale>=>slug.length&&(await getWebsiteLocales()).includes(slug[0])?slug[0]:'tr';
-const localeLabel:Record<string,string>={tr:'tr_TR',en:'en_US',pt:'pt_PT',ru:'ru_RU'};
+const localeLabel:Record<string,string>={tr:'tr_TR',en:'en_US',de:'de_DE',ar:'ar_SA',ru:'ru_RU'};
 async function previewHost(){
   const h=await headers();
   if(h.get('x-ticarti-site-proxy')==='1'&&h.get('x-forwarded-host')==='ticarti.com')return false;
