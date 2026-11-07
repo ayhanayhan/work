@@ -37,6 +37,7 @@ export default function HomepageEditor(){
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
   const [error,setError]=useState(''),[message,setMessage]=useState('');
   const [dragged,setDragged]=useState<string|null>(null);
+  const [blogFeed,setBlogFeed]=useState<{published:number;draft:number;archived:number;scheduled:number;localized:number}|null>(null);
 
   const load=useCallback(async()=>{
     if(restoring)return;
@@ -50,9 +51,29 @@ export default function HomepageEditor(){
   },[request,restoring]);
   useEffect(()=>{void load()},[load]);
   useEffect(()=>{
+    if(active!=='blog'||restoring)return;
+    let cancelled=false;
+    void (async()=>{
+      try{
+        const snapshot=await request('/superadmin/website/blog');
+        const now=Date.now();
+        const posts=Array.isArray(snapshot?.posts)?snapshot.posts:[];
+        const activeLocale=lang||languageList.find(x=>x.isDefault)?.locale||'tr';
+        const valid=(p:any)=>{const t=p?.translations?.[activeLocale];return t?.enabled!==false&&!!t?.title?.trim()&&!!t?.content?.trim()};
+        if(!cancelled)setBlogFeed({
+          published:posts.filter((p:any)=>p.status==='PUBLISHED'&&(!p.scheduledAt||Date.parse(p.scheduledAt)<=now)).length,
+          draft:posts.filter((p:any)=>p.status==='DRAFT').length,
+          archived:posts.filter((p:any)=>p.status==='ARCHIVED').length,
+          scheduled:posts.filter((p:any)=>p.status==='PUBLISHED'&&p.scheduledAt&&Date.parse(p.scheduledAt)>now).length,
+          localized:posts.filter((p:any)=>p.status==='PUBLISHED'&&(!p.scheduledAt||Date.parse(p.scheduledAt)<=now)&&valid(p)).length
+        });
+      }catch(e){if(!cancelled)setError('Blog yayın durumu okunamadı: '+errorText(e))}
+    })();
+    return ()=>{cancelled=true};
+  },[active,lang,languageList,request,restoring]);
+  useEffect(()=>{
     const selected=data?.modules?.find(x=>x.id===active);
     setWorking(selected?JSON.parse(JSON.stringify(selected)):null);
-    setMessage('');setError('');
   },[data,active]);
   const patch=(updates:Partial<Module>)=>setWorking(x=>x?{...x,...updates}:x);
   const patchField=(key:string,value:string)=>setWorking(x=>x?{...x,fields:{...x.fields,[key]:{...(x.fields[key]||{}),[lang]:value}}}:x);
@@ -64,10 +85,18 @@ export default function HomepageEditor(){
     if(!working||!data||localesLoading||localesError||!languageList.length)return;
     setSaving(true);setError('');setMessage('');
     try{
+      // Read the newest CMS version: saving another module should not invalidate
+      // the current editor, but concurrent changes to this same module must be protected.
+      const latest=await request('/superadmin/website/home') as Snapshot;
+      const previous=data.modules.find(x=>x.id===working.id);
+      const remote=latest.modules.find(x=>x.id===working.id);
+      if(!remote||JSON.stringify(remote)!==JSON.stringify(previous)){
+        throw new Error('Bu modül başka bir oturumda değişmiş. Yazdıkların ekranda korunuyor; önce diğer değişiklikleri kontrol et.');
+      }
       const response=await request('/superadmin/website/home/'+encodeURIComponent(working.id),{
-        method:'PATCH',body:JSON.stringify({version:data.version,enabled:working.enabled,fields:working.fields,items:working.items})
+        method:'PATCH',body:JSON.stringify({version:latest.version,enabled:working.enabled,fields:working.fields,items:working.items})
       });
-      setData(old=>old?{version:response.version,modules:old.modules.map(x=>x.id===working.id?response.module:x)}:old);
+      setData({...latest,version:response.version,modules:latest.modules.map(x=>x.id===working.id?response.module:x)});
       if(working.id==='faq'){
         try{
           const publicFaq=await request('/public/website/faq?lang='+encodeURIComponent(lang));
@@ -77,7 +106,7 @@ export default function HomepageEditor(){
             '. '+(!publicFaq.enabled?'SSS modülü pasif.':valid.length===0?'Aktif sorular için bu dilde hem soru hem cevap doldurulmalı.':'Bu sorular anasayfada gösterilmelidir.'));
         }catch(e:any){setMessage('SSS kaydedildi ancak yayın API kontrolü başarısız: '+(e?.message||'Bilinmeyen hata'));}
       }else setMessage('Modül kaydedildi.');
-    }catch(e){setError(errorText(e))}
+    }catch(e){setError('Modül kaydedilemedi: '+errorText(e))}
     finally{setSaving(false)}
   };
   const importFile=async(file:File)=>{
@@ -124,7 +153,7 @@ export default function HomepageEditor(){
       {message?<div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{message}</div>:null}
       {loading?<div className="grid min-h-64 place-items-center"><LoaderCircle className="animate-spin"/></div>:<div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)]">
         <Card><CardHeader><CardHeading><Layers3 className="me-2 inline size-4"/>Anasayfa Modülleri</CardHeading></CardHeader><CardContent className="grid content-start gap-1 p-3">
-          {(data?.modules||[]).map((m,i)=><button key={m.id} className={'flex items-center justify-between rounded-lg px-3 py-3 text-left '+(active===m.id?'bg-muted text-primary':'hover:bg-muted/50')} type="button" onClick={()=>setActive(m.id)}><span className="flex min-w-0 items-center gap-3"><span className="text-xs text-muted-foreground">{String(i+1).padStart(2,'0')}</span><span className="truncate text-sm font-medium">{m.title}</span></span>{m.enabled===false?<Badge appearance="light" variant="secondary">Pasif</Badge>:null}</button>)}
+          {(data?.modules||[]).map((m,i)=><button key={m.id} className={'flex items-center justify-between rounded-lg px-3 py-3 text-left '+(active===m.id?'bg-muted text-primary':'hover:bg-muted/50')} type="button" onClick={()=>{setActive(m.id);setError('');setMessage('')}}><span className="flex min-w-0 items-center gap-3"><span className="text-xs text-muted-foreground">{String(i+1).padStart(2,'0')}</span><span className="truncate text-sm font-medium">{m.title}</span></span>{m.enabled===false?<Badge appearance="light" variant="secondary">Pasif</Badge>:null}</button>)}
         </CardContent></Card>
         {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector} · Görünüm sınıfları değiştirilmez.</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
           <div className="flex flex-wrap gap-2 border-b pb-4">{languageList.map(x=><Button size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)} key={x.locale}>{x.label||x.locale}</Button>)}</div>
@@ -151,7 +180,13 @@ export default function HomepageEditor(){
             <p className="mt-1 text-muted-foreground">Bu sayfanın açık olduğu dilde soru ve cevap alanları dolu olan aktif kayıtlar, anasayfanın sunucu HTML çıktısına ve aynı içerikli FAQPage JSON-LD şemasına eklenir. Eksik çeviriler başka bir dilden doldurulmaz.</p>
             <p className="mt-2 text-xs text-muted-foreground">Bu modülün yazılarını ve sırasını buradan yönetin. Eski HTML şablonundaki örnek sorular otomatik olarak sisteme aktarılmaz.</p>
           </div>:null}
-          {working.id==='blog'?<div className="rounded-lg border p-4 text-sm"><b>Blog içerikleri ayrı yönetilir.</b><p className="mt-1 text-muted-foreground">Bu bölüm yalnızca başlığı ve açıklamayı belirler. Carousel kartları yayındaki kurumsal blog yazılarından otomatik çekilir.</p><a href="/website/blog" className="mt-2 inline-block font-medium text-primary underline">Blog içeriklerini yönet</a></div>:null}
+          {working.id==='blog'?<div className="rounded-lg border p-4 text-sm">
+            <b>Blog içerikleri ayrı yönetilir.</b>
+            <p className="mt-1 text-muted-foreground">Bu modül blog bölümünün başlığını düzenler. Kartlar yalnızca aktif dilde yayımlanmış yazılardan otomatik gelir.</p>
+            {blogFeed?<p className="mt-2">Toplam: {blogFeed.published+blogFeed.draft+blogFeed.archived+blogFeed.scheduled} · Yayında: {blogFeed.published} · Taslak: {blogFeed.draft} · Zamanlanmış: {blogFeed.scheduled} · Arşiv: {blogFeed.archived} · <strong>{lang.toUpperCase()} dilinde anasayfada gösterilebilir: {blogFeed.localized}</strong></p>:<p className="mt-2">Yayın durumu yükleniyor…</p>}
+            {blogFeed&&blogFeed.localized===0?<p className="mt-2 text-amber-700">Anasayfada yazı görünmesi için yazının Yayın durumunda olması, zamanının gelmesi ve bu dilde başlık ile içerik bulunması gerekir.</p>:null}
+            <a href="/website/blog" className="mt-2 inline-block font-medium text-primary underline">Blog içeriklerini yönet</a>
+          </div>:null}
           <div className="flex justify-end border-t pt-5"><Button disabled={saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Modülü Kaydet</Button></div>
         </CardContent></Card>:null}
       </div>}
