@@ -18,9 +18,9 @@ const pageChoices=[
 ] as const;
 type Locale={locale:string;label:string;isDefault:boolean};
 type SeoValues={title:string;description:string;ogTitle:string;ogDescription:string;ogImage:string;twitterTitle:string;twitterDescription:string;canonicalPath:string;noindex:boolean};
-type SeoData={version:number;siteName:string;defaultOgImage:string;organizationLogo:string;robotsText:string;allowIndexing:boolean;pages:Record<string,Record<string,Partial<SeoValues>>>;redirects:{from:string;to:string;permanent:boolean}[]};
+type SeoData={version:number;siteName:string;defaultOgImage:string;organizationLogo:string;googleVerification:string;bingVerification:string;robotsText:string;allowIndexing:boolean;pages:Record<string,Record<string,Partial<SeoValues>>>;redirects:{from:string;to:string;permanent:boolean}[]};
 const empty:SeoValues={title:'',description:'',ogTitle:'',ogDescription:'',ogImage:'',twitterTitle:'',twitterDescription:'',canonicalPath:'',noindex:false};
-const base:SeoData={version:0,siteName:'Ticarti',defaultOgImage:'',organizationLogo:'/assets/images/ticarti-logo.svg',robotsText:'',allowIndexing:true,pages:{},redirects:[]};
+const base:SeoData={version:0,siteName:'Ticarti',defaultOgImage:'',organizationLogo:'/assets/images/ticarti-logo.svg',googleVerification:'',bingVerification:'',robotsText:'',allowIndexing:true,pages:{},redirects:[]};
 export default function WebsiteSeoEditor(){
  const {request,locales,restoring}=useMasterSession();
  const [data,setData]=useState<SeoData>(base),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[changed,setChanged]=useState(false);
@@ -70,9 +70,17 @@ export default function WebsiteSeoEditor(){
        <MediaField label="Varsayılan sosyal paylaşım görseli" value={data.defaultOgImage} onChange={v=>set({defaultOgImage:String(v)})}/>
        <MediaField label="Kurumsal logo (Schema)" value={data.organizationLogo} onChange={v=>set({organizationLogo:String(v)})}/>
       </div>
+      <div className="grid gap-4 md:grid-cols-2">
+       <label className="grid gap-2 text-sm font-medium">Google Search Console doğrulama kodu
+        <Input value={data.googleVerification} onChange={e=>set({googleVerification:e.target.value.trim()})} placeholder="google-site-verification kodu"/>
+       </label>
+       <label className="grid gap-2 text-sm font-medium">Bing Webmaster Tools doğrulama kodu
+        <Input value={data.bingVerification} onChange={e=>set({bingVerification:e.target.value.trim()})} placeholder="msvalidate.01 kodu"/>
+       </label>
+      </div>
       <label className="grid gap-2 text-sm font-medium">robots.txt özel kuralları
        <Textarea rows={4} value={data.robotsText} onChange={e=>set({robotsText:e.target.value})} placeholder="Boş bırakılırsa güvenli varsayılan kurallar kullanılır."/>
-       <span className="text-xs font-normal text-muted-foreground">Sitemap adresi sistem tarafından otomatik eklenir. Tam robots.txt içeriği yerine özel kurallar ekleyebilirsiniz.</span>
+       <span className="text-xs font-normal text-muted-foreground">Yalnızca Allow: /yol ve Disallow: /yol satırları ekleyin. Sitemap adresi sistem tarafından eklenir.</span>
       </label>
     </CardContent></Card>
     <Card><CardContent className="grid gap-5 p-5">
@@ -110,11 +118,11 @@ export default function WebsiteSeoEditor(){
       </div>
     </CardContent></Card>
     <Card><CardContent className="grid gap-4 p-5">
-      <div><h2 className="font-semibold">301 / 302 yönlendirmeleri</h2><p className="text-sm text-muted-foreground">Site içi adresleri yönetin. Kendi kendine yönlendirme ve tekrar eden kaynak adresleri engellenir.</p></div>
+      <div><h2 className="font-semibold">Kalıcı / geçici yönlendirmeler</h2><p className="text-sm text-muted-foreground">Site içi adresleri yönetin. Kendi kendine yönlendirme ve tekrar eden kaynak adresleri engellenir.</p></div>
       {data.redirects.map((row,i)=><div key={i} className="grid gap-2 md:grid-cols-[1fr_1fr_auto_auto]">
        <Input placeholder="/eski-adres" value={row.from} onChange={e=>set({redirects:data.redirects.map((r,n)=>n===i?{...r,from:e.target.value}:r)})}/>
        <Input placeholder="/yeni-adres" value={row.to} onChange={e=>set({redirects:data.redirects.map((r,n)=>n===i?{...r,to:e.target.value}:r)})}/>
-       <label className="flex items-center gap-2 text-sm"><Switch checked={row.permanent} onCheckedChange={v=>set({redirects:data.redirects.map((r,n)=>n===i?{...r,permanent:v}:r)})}/>301</label>
+       <label className="flex items-center gap-2 text-sm"><Switch checked={row.permanent} onCheckedChange={v=>set({redirects:data.redirects.map((r,n)=>n===i?{...r,permanent:v}:r)})}/>Kalıcı (308)</label>
        <Button size="icon" variant="outline" onClick={()=>set({redirects:data.redirects.filter((_,n)=>n!==i)})}><Trash2 className="size-4"/></Button>
       </div>)}
       <Button className="justify-self-start" variant="outline" onClick={()=>set({redirects:[...data.redirects,{from:'',to:'',permanent:true}]})}><Plus className="size-4"/>Yönlendirme ekle</Button>
