@@ -1,7 +1,7 @@
 /** Site SEO is sourced only from the public platform SEO resource, never mock data. */
 export type PageSeo={title?:string;description?:string;ogTitle?:string;ogDescription?:string;ogImage?:string;twitterTitle?:string;twitterDescription?:string;canonicalPath?:string;noindex?:boolean};
 export type WebsiteSeo={
- siteName:string;defaultOgImage:string;organizationLogo:string;robotsText:string;allowIndexing:boolean;
+ siteName:string;defaultOgImage:string;organizationLogo:string;robotsText:string;allowIndexing:boolean;googleVerification?:string;bingVerification?:string;
  pages:Record<string,Record<string,PageSeo>>;
  redirects:{from:string;to:string;permanent:boolean}[];
 };
