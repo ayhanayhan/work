@@ -47,8 +47,8 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
   const api=(process.env.API_ORIGIN||'').replace(/\/$/,'');
   if(!api)return [];
   try{
-    const res=await fetch(api+'/v1/public/website/blog?lang='+encodeURIComponent(lang),{next:{revalidate:60},signal:AbortSignal.timeout(4000)});
-    if(!res.ok)return [];
+    const res=await fetch(api+'/v1/public/website/blog?lang='+encodeURIComponent(lang),{cache:'no-store',signal:AbortSignal.timeout(7000)});
+    if(!res.ok){console.error('[marketing-blog] Feed HTTP '+res.status+' for '+lang);return [];}
     const result=await res.json() as {posts?:unknown[]};
     if(!Array.isArray(result.posts))return [];
     return result.posts.filter((entry:any)=>entry&&entry.status==='PUBLISHED'&&
@@ -69,7 +69,7 @@ export async function getBlogPosts(lang:BlogLocale='tr'):Promise<BlogPost[]>{
       ogImage:String(entry.ogImage||''),canonicalUrl:String(entry.canonicalUrl||''),noIndex:entry.noIndex===true,
       publishedAt:validDate(entry.publishedAt),updatedAt:validDate(entry.updatedAt)
     }));
-  }catch{return [];}
+  }catch(e){console.error('[marketing-blog] Unable to load published blog for '+lang,e);return [];}
 }
 function inlineMarkdown(raw:string){
   const tokens:string[]=[];
