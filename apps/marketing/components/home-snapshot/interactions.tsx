@@ -243,6 +243,11 @@ export default function HomeInteractions({children}:Props){
   useEffect(()=>{
     const root=rootRef.current,track=root?.querySelector<HTMLElement>('.tc-press__track');
     if(track)track.style.transform='translateX('+(-pressIndex*100)+'%)';
+    const press=root?.querySelector<HTMLElement>('.tc-press__carousel');
+    if(press){
+      const single=press.querySelectorAll('.tc-press__slide').length<=1;
+      press.querySelectorAll<HTMLButtonElement>('.tc-press__arrow').forEach(btn=>{btn.hidden=single});
+    }
   },[pressIndex]);
 
   useEffect(()=>{
@@ -347,6 +352,7 @@ export default function HomeInteractions({children}:Props){
   const onMouseOver=(event:MouseEvent<HTMLDivElement>)=>{
     if(window.matchMedia('(max-width: 991px)').matches)return;
     const target=event.target as HTMLElement;
+    if(target.closest('.tc-press__carousel'))setPressHover(true);
     const trigger=target.closest<HTMLElement>('.primary-menu a.has-mega[data-mega-slug]');
     if(trigger?.dataset.megaSlug)setMega(trigger.dataset.megaSlug);
   };
@@ -355,6 +361,8 @@ export default function HomeInteractions({children}:Props){
     const target=event.target as HTMLElement;
     const menu=target.closest<HTMLElement>('.tc-mega-navigation,.primary-menu');
     const destination=event.relatedTarget as Node|null;
+    const press=target.closest<HTMLElement>('.tc-press__carousel');
+    if(press&&(!destination||!press.contains(destination)))setPressHover(false);
     if(menu&&(!destination||!menu.contains(destination))){
       // Allow pointer transition from trigger row to mega navigation.
       if(menu.classList.contains('tc-mega-navigation'))setMega(null);
