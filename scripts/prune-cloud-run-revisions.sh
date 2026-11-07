@@ -84,14 +84,14 @@ if [ "$APPLY" -ne 1 ]; then
 fi
 
 node - "$PLAN_JSON" <<'JS'
-const plan=require(process.argv[2]);
+const plan=JSON.parse(require('node:fs').readFileSync(process.argv[2],'utf8'));
 console.log('Deletion candidates:',plan.deleteItems.length,'Remaining:',plan.skipItems.length);
 JS
 
 # Use the current plan and let Cloud Run reject any revision which becomes
 # traffic-serving in the meantime (no --clear-tags, --to-latest or traffic edits).
 node - "$PLAN_JSON" <<'JS' | while IFS= read -r revision; do
-const plan=require(process.argv[2]);
+const plan=JSON.parse(require('node:fs').readFileSync(process.argv[2],'utf8'));
 for(const row of plan.deleteItems)console.log(row.name);
 JS
   [ -n "$revision" ] || continue
