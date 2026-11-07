@@ -68,7 +68,7 @@ export default function WebsiteBlogCategories(){
   };
   const importTicartiCategories=async()=>{
     if(saving||loading||localesLoading||localesError||!locales.length)return;
-    const supported=['tr','en','pt','ru'];
+    const supported=['tr','en','de','ru','ar'];
     const enabled=locales.map(x=>x.locale);
     const unsupported=enabled.filter(x=>!supported.includes(x));
     setSaving(true);setError('');setMessage('');
@@ -130,7 +130,7 @@ export default function WebsiteBlogCategories(){
   return <>
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Blog Kategorileri</h1>
       <ToolbarDescription>Ticarti.com blogunun çok dilli kategorilerini ve SEO alanlarını yönetin.</ToolbarDescription>
-    </ToolbarHeading><ToolbarActions><Button variant="outline" disabled={saving||loading||localesLoading||!!localesError} onClick={()=>void importTicartiCategories()}><Download className="size-4"/>8 Kategoriyi 4 Dilde Ekle</Button><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button>
+    </ToolbarHeading><ToolbarActions><Button variant="outline" disabled={saving||loading||localesLoading||!!localesError} onClick={()=>void importTicartiCategories()}><Download className="size-4"/>8 Kategoriyi 5 Dilde Ekle</Button><Button variant="outline" onClick={()=>void load()} disabled={loading}><RefreshCw className="size-4"/>Yenile</Button>
       <Button disabled={localesLoading||!!localesError||!locales.length} onClick={()=>{setEdit(newCategory());setLang(locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'');setError('')}}><Plus className="size-4"/>Yeni Kategori</Button>
     </ToolbarActions></Toolbar></Container>
     <Container className="pb-10">
