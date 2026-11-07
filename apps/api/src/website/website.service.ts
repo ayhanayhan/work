@@ -69,7 +69,7 @@ export class WebsiteService{
       const saved=(Array.isArray(data?.modules)?data.modules:[]).find((x:any)=>x?.id===m.id);
       return saved?{...m,...saved,title:m.title,selector:m.selector}:{...m};
     });
-    return {version:Number(data?.version)||0,modules};
+    return {version:Number(data?.version)||0,modules:modules.sort((x,y)=>x.sortOrder-y.sortOrder)};
   }
   async publicHome(lang='tr'){
     const data=await this.home();
@@ -87,6 +87,21 @@ export class WebsiteService{
     const version=snapshot.version+1;
     await this.put(HOME_KEY,{version,modules});
     return {version,module};
+  }
+  async reorderHome(body:any){
+    const snapshot=await this.home();
+    if(Number(body?.version)!==snapshot.version)
+      throw new ConflictException('Anasayfa sırası başka bir oturumda değişti. Yenileyin.');
+    const ids=body?.ids;
+    if(!Array.isArray(ids)||ids.length!==MODULE_IDS.length||
+      new Set(ids).size!==MODULE_IDS.length||ids.some((id:any)=>!MODULE_IDS.includes(id)))
+      throw new BadRequestException('Sıralamada 10 benzersiz modül bulunmalıdır.');
+    const ranks=new Map<string,number>(ids.map((id:string,index:number)=>[id,index]));
+    const modules=snapshot.modules.map(m=>({...m,sortOrder:ranks.get(m.id)!}))
+      .sort((x,y)=>x.sortOrder-y.sortOrder);
+    const version=snapshot.version+1;
+    await this.put(HOME_KEY,{version,modules});
+    return {version,modules};
   }
   async importHome(body:any){
     if(!Array.isArray(body?.modules))throw new BadRequestException('Anasayfa içerik dosyası geçersiz.');
