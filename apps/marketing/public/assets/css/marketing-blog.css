@@ -78,3 +78,11 @@
  .tc-marketing-blog .tc-blog-list .card-wrap,.tc-marketing-blog .tc-blog-related .card-wrap{height:385px}
  .tc-marketing-blog .tc-blog-list .card .bg-imge .img{height:200px}
 }
+
+/* The one shared footer has one controlled payment-brand size everywhere. */
+.tc-site-footer .tc-footer-payments{display:flex;justify-content:flex-end;align-items:center;}
+.tc-site-footer .tc-footer-payments img{display:block;width:min(100%,280px)!important;max-width:280px!important;height:auto!important;object-fit:contain;}
+@media(max-width:767px){
+ .tc-site-footer .tc-footer-payments{justify-content:center;}
+ .tc-site-footer .tc-footer-payments img{width:min(100%,245px)!important;}
+}
