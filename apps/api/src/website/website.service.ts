@@ -247,6 +247,96 @@ export class WebsiteService{
     await this.put(HOME_KEY,{version,modules});
     return {version,module};
   }
+  /** Save a whole homepage language in one versioned snapshot.
+   * Other languages and other modules' media/metadata are preserved.
+   */
+  async updateHomeLocale(lang:string,body:any){
+    if(!/^[a-z]{2,3}(?:-[A-Za-z]{2,4})?$/.test(lang))throw new BadRequestException('Dil kodu geçersiz.');
+    const snapshot=await this.home();
+    if(Number(body?.version)!==snapshot.version)throw new ConflictException('Anasayfa başka bir oturumda değişti. Yenileyin.');
+    if(!Array.isArray(body?.modules))throw new BadRequestException('Anasayfa modülleri eksik.');
+    const inputs=body.modules;
+    if(inputs.length!==MODULE_IDS.length||new Set(inputs.map((x:any)=>x?.id)).size!==MODULE_IDS.length||
+       inputs.some((x:any)=>!MODULE_IDS.includes(x?.id)))throw new BadRequestException('10 modülün tamamı gönderilmelidir.');
+    const mergeValues=(before:any,incoming:any,keys:string[])=>{
+      const result=structuredClone(before||{});
+      for(const key of keys){
+        result[key]={...(result[key]||{})};
+        result[key][lang]=str(incoming?.[key]?.[lang],8000);
+      }
+      return result;
+    };
+    const modules=snapshot.modules.map(previous=>{
+      const incoming=inputs.find((x:any)=>x.id===previous.id);
+      const fields=mergeValues(previous.fields,incoming.fields,MODULE_FIELDS[previous.id]);
+      if(previous.id==='faq'){
+        const existing=(previous.items||[]).filter((item:any)=>
+          !Object.prototype.hasOwnProperty.call(item.fields?.question||{},lang)
+          &&!Object.prototype.hasOwnProperty.call(item.fields?.answer||{},lang)
+          &&!String(item.id||'').startsWith('faq-locale-'+lang+'-'));
+        const local=safeItems('faq',incoming.items||[]);
+        if(local.some((item:any)=>!Object.keys(item.fields?.question||{}).every(x=>x===lang)
+           ||!Object.keys(item.fields?.answer||{}).every(x=>x===lang)))
+          throw new BadRequestException('SSS kayıtları sadece seçilen dile ait olmalı.');
+        const others=existing.map((item:any)=>{
+          const fields=structuredClone(item.fields||{});
+          delete fields.question?.[lang];delete fields.answer?.[lang];
+          return {...item,fields};
+        }).filter((item:any)=>Object.values(item.fields?.question||{}).some(Boolean)||
+          Object.values(item.fields?.answer||{}).some(Boolean));
+        return {...previous,configured:true,fields,items:[...others,...local],enabled:incoming.enabled!==false};
+      }
+      const existingItems=Array.isArray(previous.items)?previous.items:[];
+      const sentItems=Array.isArray(incoming.items)?incoming.items:[];
+      if(sentItems.length>100)throw new BadRequestException('Çok fazla kayıt.');
+      const items=existingItems.map((old:any)=>{
+        const update=sentItems.find((x:any)=>x.id===old.id);
+        return update?{...old,fields:mergeValues(old.fields,update.fields,ITEM_FIELDS[previous.id]||[])}:old;
+      });
+      // New cards explicitly added in this language retain their image, link and locale fields.
+      for(const newEntry of sentItems.filter((x:any)=>!existingItems.some((old:any)=>old.id===x.id))){
+        items.push(...safeItems(previous.id,[newEntry]));
+      }
+      const logos=previous.id==='hero'?(incoming.logos||previous.logos||[]).map((logo:any)=>{
+        const old=(previous.logos||[]).find((item:any)=>item.id===logo.id);
+        return {...(old||logo),fields:{title:{
+          ...(old?.fields?.title||{}),[lang]:str(logo.fields?.title?.[lang],220)
+        }}};
+      }):previous.logos;
+      return {...previous,configured:incoming.configured===true||previous.configured===true,
+        fields,items,logos,enabled:incoming.enabled!==false,
+        ctaEnabled:previous.id==='hero'?incoming.ctaEnabled!==false:previous.ctaEnabled,
+        categoryIds:previous.id==='blog'?safeCategories(incoming.categoryIds||[]):previous.categoryIds};
+    });
+    // Set each module's persisted order from its order in the language editor.
+    const ranks=new Map<string,number>(inputs.map((x:any,i:number)=>[x.id,i]));
+    for(const m of modules)m.sortOrder=ranks.get(m.id)!;
+    const version=snapshot.version+1;
+    await this.put(HOME_KEY,{version,modules});
+    return {version,modules};
+  }
+  /** One-off, admin initiated cleanup of the old FAQ records only.
+   * A marker ensures opening the editor later never clears newly authored questions.
+   */
+  async clearExistingFaqOnce(){
+    const marker='marketing_faq_clear_existing_20261108_v2';
+    return this.prisma.$transaction(async tx=>{
+      const done=await tx.platformSetting.findUnique({where:{key:marker}});
+      if(done)return {alreadyCleared:true};
+      const record=await tx.platformSetting.findUnique({where:{key:HOME_KEY}});
+      const saved=record?.value&&typeof record.value==='object'&&!Array.isArray(record.value)?record.value as any:null;
+      const defaults=defaultModules();
+      const originals=Array.isArray(saved?.modules)?saved.modules:defaults;
+      const modules=originals.map((m:any)=>m.id==='faq'?{...m,items:[],configured:true}:m);
+      if(!modules.some((m:any)=>m.id==='faq'))modules.push({...defaults.find(m=>m.id==='faq')!,configured:true,items:[]});
+      const version=(Number(saved?.version)||0)+1;
+      await tx.platformSetting.upsert({where:{key:HOME_KEY},
+        create:{key:HOME_KEY,value:{...(saved||{}),version,modules}},
+        update:{value:{...(saved||{}),version,modules}}});
+      await tx.platformSetting.create({data:{key:marker,value:{completedAt:new Date().toISOString(),version}}});
+      return {alreadyCleared:false,version};
+    },{isolationLevel:'Serializable'});
+  }
   async reorderHome(body:any){
     const snapshot=await this.home();
     if(Number(body?.version)!==snapshot.version)
