@@ -42,3 +42,8 @@ export function menuLabel(labels:Localized|undefined,locale:string){
 export function menuLocaleFromPath(path:string){
  return path.match(/^\/(tr|en|de|ru|ar|bg|uk|id|vi)(?:\/|$)/)?.[1]||'tr';
 }
+
+/** Compatibility for older navigation components; new menus use menuTree. */
+export function groupFor(data:Navigation|null|undefined,id:string){
+ return data?.groups?.find(group=>group.id===id);
+}
