@@ -12,6 +12,12 @@ async function main(){
  const initial=await svc.snapshot();
  assert.equal(initial.version,0);
  assert.deepEqual(initial.tools.map(x=>x.id),[...TOOL_IDS]);
+ assert.equal(initial.tools.length,11);
+ for(const id of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']){
+  const entry=initial.tools.find((x:any)=>x.id===id+'-komisyon-hesaplama');
+  assert.ok(entry,'Missing marketplace tool '+id);
+  assert.equal(entry?.status,'DRAFT');
+ }
  assert.equal((await svc.publicList('tr')).length,0,'Draft tools cannot be indexed or visited');
  await assert.rejects(svc.publicDetail('kdv-hesaplama','tr'));
  const updated=structuredClone(initial);
@@ -38,6 +44,6 @@ async function main(){
  const invalid=structuredClone(published);
  invalid.tools.find((x:any)=>x.id==='kdv-hesaplama').image='javascript:alert(1)';
  await assert.rejects(svc.save(invalid),'Unsafe asset URL must be rejected');
- console.log('PASS: tools CMS six records, drafts hidden, locale isolation, sections/FAQs/SEO, version conflicts and URL validation');
+ console.log('PASS: tools CMS eleven independent records, drafts hidden, locale isolation, sections/FAQs/SEO, version conflicts and URL validation');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
