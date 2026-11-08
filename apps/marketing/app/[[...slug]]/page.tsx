@@ -19,7 +19,7 @@ export const dynamic='force-dynamic';
 const BASE=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
 const absolute=(path:string)=>BASE+path;
 const toolRequest=(segments:string[])=>{
- const locale=['tr','en','de','ru','ar'].includes(segments[0])?segments[0]:'tr';
+ const locale=['tr','en','de','ru','ar','bg','uk','id','vi'].includes(segments[0])?segments[0]:'tr';
  const rest=locale==='tr'&&segments[0]!=='tr'?segments:segments.slice(1);
  return rest[0]==='araclar'&&rest.length<=2?{locale,slug:rest[1]||''}:null;
 };
