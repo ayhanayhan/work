@@ -37,6 +37,31 @@ function fromGroups(groups:any[]):MenuTree{
  }
  return {header:roots,footer:groups.filter(g=>/^footer-\d+$/.test(g.id)).map(heading)};
 }
+const MARKETPLACE_LINKS=[
+ ['trendyol','Trendyol Komisyon Hesaplama'],
+ ['amazon','Amazon Komisyon Hesaplama'],
+ ['hepsiburada','Hepsiburada Komisyon Hesaplama'],
+ ['n11','n11 Komisyon Hesaplama'],
+ ['ciceksepeti','ÇiçekSepeti Komisyon Hesaplama'],
+ ['pazarama','Pazarama Komisyon Hesaplama']
+] as const;
+function seedMarketplaceMenu(tree:MenuTree):MenuTree{
+ const upgrade=(nodes:MenuNode[]):MenuNode[]=>nodes.map(node=>{
+  if(node.url==='/araclar'){
+   const existing=new Set((node.children||[]).map(child=>child.url));
+   const additions=MARKETPLACE_LINKS.filter(([slug])=>
+    !existing.has('/araclar/'+slug+'-komisyon-hesaplama'))
+    .map(([slug,title])=>({
+     id:'marketplace-'+slug,label:{tr:title},url:'/araclar/'+slug+'-komisyon-hesaplama',
+     enabled:false,children:[] as MenuNode[]
+    }));
+   return {...node,children:[...(node.children||[]),...additions]};
+  }
+  return {...node,children:upgrade(node.children||[])};
+ });
+ // Only the Header tree gets commission links. Footer keeps its compact structure.
+ return {...tree,header:upgrade(tree.header)};
+}
 function validateTree(menus:any):MenuTree{
  if(!menus||!Array.isArray(menus.header)||!Array.isArray(menus.footer))
   throw new BadRequestException('Header ve Footer menü ağaçları zorunludur.');
@@ -64,8 +89,10 @@ export class WebsiteNavigationService{
   const row=await this.prisma.platformSetting.findUnique({where:{key:KEY}});
   const saved=row?.value as any;
   const base=saved&&Array.isArray(saved.groups)?saved:defaultNavigation;
-  const menus=saved?.menus&&Array.isArray(saved.menus.header)&&Array.isArray(saved.menus.footer)
-   ?saved.menus:fromGroups(base.groups);
+  const existing=saved?.menus&&Array.isArray(saved.menus.header)&&Array.isArray(saved.menus.footer)
+   ?saved.menus as MenuTree:fromGroups(base.groups);
+  // One-time migration: respect user deletions after the first upgraded save.
+  const menus=saved?.marketplaceLinksMigration===1?existing:seedMarketplaceMenu(existing);
   return {version:Number(base.version)||0,menus,groups:base.groups};
  }
  async save(input:any){
@@ -74,7 +101,7 @@ export class WebsiteNavigationService{
    throw new ConflictException('Menü başka oturumda güncellendi. Yenileyin.');
   // Accept the former grouped format for compatibility with existing clients.
   const menus=validateTree(input?.menus||fromGroups(input?.groups||previous.groups));
-  const next={version:previous.version+1,menus,groups:previous.groups};
+  const next={version:previous.version+1,menus,groups:previous.groups,marketplaceLinksMigration:1};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
