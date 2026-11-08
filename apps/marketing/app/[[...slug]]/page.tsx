@@ -1,6 +1,6 @@
 import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath,type WebsiteSeo} from '@/lib/site-seo';
 import {redirect,permanentRedirect,notFound} from 'next/navigation';
-import {ToolIndex,ToolArticle,listTools,toolDetail,toolPath} from '@/components/tools-pages';
+import {ToolArticle,listTools,toolDetail,toolPath} from '@/components/tools-pages';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
@@ -118,12 +118,12 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   const {slug=[]}=await params;
   const route=toolRequest(slug);
   if(route){
-   const path=toolPath(route.locale,route.slug||undefined);
-   const tool=route.slug?await toolDetail(route.slug,route.locale):null;
-   if(route.slug&&!tool)return {title:'Sayfa bulunamadı',robots:{index:false,follow:false}};
-   const title=tool?.fields.seoTitle||tool?.title||'Ücretsiz Araçlar | Ticarti';
-   const description=tool?.fields.seoDescription||tool?.fields.intro||
-     'E-ticaret için ücretsiz araçlar ve hesaplama sayfaları.';
+   if(!route.slug)return {title:'Sayfa bulunamadı',robots:{index:false,follow:false}};
+   const path=toolPath(route.locale,route.slug);
+   const tool=await toolDetail(route.slug,route.locale);
+   if(!tool)return {title:'Sayfa bulunamadı',robots:{index:false,follow:false}};
+   const title=tool.fields.seoTitle||tool.title;
+   const description=tool.fields.seoDescription||tool.fields.intro||'';
    const preview=await previewHost();
    const canonical=absolute(path);
    return {title,description,metadataBase:new URL(BASE),
@@ -202,13 +202,11 @@ export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
   const route=toolRequest(slug);
   if(route){
-   if(route.slug){
-    const tool=await toolDetail(route.slug,route.locale);
-    if(!tool)notFound();
-    const other=await listTools(route.locale);
-    return <ToolArticle locale={route.locale} tool={tool} other={other}/>;
-   }
-   return <ToolIndex locale={route.locale} tools={await listTools(route.locale)}/>;
+   if(!route.slug)notFound();
+   const tool=await toolDetail(route.slug,route.locale);
+   if(!tool)notFound();
+   const other=await listTools(route.locale);
+   return <ToolArticle locale={route.locale} tool={tool} other={other}/>;
   }
   const seo=await getWebsiteSeo();
   const requestPath='/'+slug.join('/');
