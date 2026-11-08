@@ -42,6 +42,7 @@ if [ "$API" -eq 1 ]; then
   echo "=== Testing changed API code ==="
   npm --workspace @commerce/api run test:website-blog
   npm --workspace @commerce/api run test:website-tools
+  npm --workspace @commerce/api run test:website-navigation
   npm --workspace @commerce/api run test:callback
   npm --workspace @commerce/api run test:media
   # Catch TypeScript failures locally before paying for a Cloud Build.
