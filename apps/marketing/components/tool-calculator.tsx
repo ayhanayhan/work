@@ -26,7 +26,7 @@ function generateQr(value:string){
 export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:string}){
  const t=translations[locale]||translations.en,marketplace=feeSlugs.some(x=>id===x+'-komisyon-hesaplama'),amazon=id==='amazon-komisyon-hesaplama',qr=id==='qr-kod-olusturucu';
  const [v,setV]=useState<Record<string,string>>({amount:'1000',vat:'20',price:'1000',rate:amazon?'10':'',units:'1',shipping:'0',cost:'0',other:'0',feeVat:'20',
-  width:'30',length:'20',height:'10',weight:'1',divisor:'3000',gross:'50000',net:'40000',month:'1',
+  customerShipping:'0',width:'30',length:'20',height:'10',weight:'1',divisor:'3000',gross:'50000',net:'40000',month:'1',
   product:'1000',freight:'0',insurance:'0',exchange:'1',duty:'0',extraDuty:'0',excise:'0',fees:'0',text:'https://ticarti.com'});
  const [included,setIncluded]=useState(false),[commissionIncluded,setCommissionIncluded]=useState(false),[salaryMode,setSalaryMode]=useState('gross');
  const [category,setCategory]=useState('Diğer'),[result,setResult]=useState<Result|null>(null),[error,setError]=useState(''),[svg,setSvg]=useState('');
@@ -62,7 +62,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
    }else if(marketplace){
     if(v.rate==='')throw Error();
     const r=commission({price:n('price'),rate:n('rate'),rateIncludesVat:commissionIncluded,
-     commissionVat:n('feeVat'),shipping:n('shipping'),productCost:n('cost'),other:n('other'),units:n('units')});
+     commissionVat:n('feeVat'),shipping:n('shipping'),productCost:n('cost'),other:n('other'),units:n('units'),shippingCollected:amazon?n('customerShipping'):0});
     items=[['Satış / Sales',m(r.sale)],['Komisyon / Fee',m(r.fee)],['Komisyon KDV',m(r.tax)],
      ['Total fee / Toplam kesinti',m(r.total)],['Other costs / Giderler',m(r.expenses)],
      ['Remaining / Kalan',m(r.remainder)],['Margin / Kalan oran',f(r.margin)+'%']];
@@ -95,7 +95,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
    {marketplace?<>
     {amazon?select(t[34],category,x=>{setCategory(x);const c=amazonCategories.find(a=>a.label===x);if(c)set('rate',String(c.rate));},
      amazonCategories.map(x=>[x.label,x.label])):null}
-    {field('price',5,'0.01')}{field('rate',6)}
+    {field('price',5,'0.01')}{amazon?<label className="tc-tool-field"><span>{locale==='tr'?'Alıcıdan tahsil edilen kargo (₺)':'Customer-paid shipping (TRY)'}</span><input type="number" min="0" step="any" required value={v.customerShipping} onChange={e=>set('customerShipping',e.target.value)}/></label>:null}{field('rate',6)}
     {!amazon?<p className="tc-tool-wide tc-tool-note">{t[35]}</p>:null}
     {field('units',7,'1')}{field('shipping',8)}{field('cost',9)}{field('other',10)}{field('feeVat',11)}
     <label className="tc-tool-check"><input type="checkbox" checked={commissionIncluded} onChange={e=>setCommissionIncluded(e.target.checked)}/>{t[13]}</label>
