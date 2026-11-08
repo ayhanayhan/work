@@ -24,6 +24,28 @@ const FIELD_LABELS:Record<string,string>={heading:'Başlık',description:'Açık
 const MODULE_FIELDS:Record<string,string[]>={hero:['heading','description','offer','button','buttonUrl','formButton','consentText','consentLinkText','phonePlaceholder','phoneEmpty','phoneInvalid','kvkkRequired','notConnected'],animated:['heading','description'],builder:[],radar:['heading','description'],channels:['heading','description'],showcase:['heading','description'],references:['heading'],bottomCta:['heading','offer'],blog:['heading','description'],faq:['heading','description','button','buttonUrl']};
 const ENTRY_FIELDS:Record<string,string[]>={hero:['heading','description'],animated:['heading'],builder:['heading','description'],radar:['heading','description'],channels:['description','button'],showcase:['heading','role','description','button'],references:['heading','description'],faq:['question','answer']};
 const errorText=(e:any)=>e?.message||'İşlem başarısız.';
+const faqLocale=(item:Entry)=>/^faq-locale-([a-z]{2,3}(?:-[a-z]{2,4})?)-/.exec(item.id)?.[1]||'';
+/** Old records held 5 translations per item. Split them into genuinely independent
+ * locale records, preserving every localized question and answer and its original order.
+ * The conversion is persisted only when the editor's Save action is used.
+ */
+const separateFaqLanguages=(items:Entry[]):Entry[]=>items.flatMap(entry=>{
+  if(faqLocale(entry))return [entry];
+  const keys=new Set([...Object.keys(entry.fields?.question||{}),...Object.keys(entry.fields?.answer||{})]);
+  if(!keys.size)return [entry];
+  return [...keys].sort().map(locale=>({
+    ...entry,id:'faq-locale-'+locale+'-'+entry.id,
+    fields:{...entry.fields,
+      question:{[locale]:entry.fields?.question?.[locale]||''},
+      answer:{[locale]:entry.fields?.answer?.[locale]||''}}
+  }));
+});
+const belongsToFaqLanguage=(item:Entry,locale:string)=>{
+  const own=faqLocale(item);
+  if(own)return own===locale;
+  return Object.prototype.hasOwnProperty.call(item.fields?.question||{},locale)
+    ||Object.prototype.hasOwnProperty.call(item.fields?.answer||{},locale);
+};
 const newItem=():Entry=>({id:'item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{},assets:{image:'',logo:''},links:{href:''},storeId:''});
 
 export default function HomepageEditor(){
@@ -76,13 +98,27 @@ export default function HomepageEditor(){
   },[active,lang,languageList,request,restoring]);
   useEffect(()=>{
     const selected=data?.modules?.find(x=>x.id===active);
-    setWorking(selected?JSON.parse(JSON.stringify(selected)):null);
+    if(selected?.id==='faq'){
+      const normalized=JSON.parse(JSON.stringify(selected)) as Module;
+      normalized.items=separateFaqLanguages(normalized.items);
+      setWorking(normalized);
+    }else setWorking(selected?JSON.parse(JSON.stringify(selected)):null);
   },[data,active]);
   const patch=(updates:Partial<Module>)=>setWorking(x=>x?{...x,...updates}:x);
   const patchField=(key:string,value:string)=>setWorking(x=>x?{...x,fields:{...x.fields,[key]:{...(x.fields[key]||{}),[lang]:value}}}:x);
   const patchItem=(id:string,change:(item:Entry)=>Entry)=>setWorking(x=>x?{...x,items:x.items.map(item=>item.id===id?change(item):item)}:x);
   const patchLogo=(id:string,change:(entry:LogoEntry)=>LogoEntry)=>setWorking(x=>x?{...x,logos:(x.logos||[]).map(item=>item.id===id?change(item):item)}:x);
   const addLogo=()=>setWorking(x=>x?{...x,logos:[...(x.logos||[]),{id:'logo-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),enabled:true,fields:{title:{}},assets:{image:''},storeId:''}]}:x);
+  const moveVisible=(from:number,to:number)=>{
+    if(!working||from===to)return;
+    if(working.id!=='faq'){move(from,to);return;}
+    const local=working.items.filter(item=>belongsToFaqLanguage(item,lang));
+    if(to<0||to>=local.length||from<0||from>=local.length)return;
+    const changed=[...local];
+    const [selected]=changed.splice(from,1);changed.splice(to,0,selected);
+    let index=0;
+    patch({items:working.items.map(item=>belongsToFaqLanguage(item,lang)?changed[index++]:item)});
+  };
   const move=(from:number,to:number)=>{
     setWorking(x=>{if(!x||to<0||to>=x.items.length||from===to)return x;const items=[...x.items];const [item]=items.splice(from,1);items.splice(to,0,item);return {...x,items}});
   };
@@ -152,6 +188,7 @@ export default function HomepageEditor(){
   const entries=working?ENTRY_FIELDS[working.id]||[]:[];
   const hasImage=['hero','builder','showcase','references'].includes(working?.id||'');
   const hasLink=['hero','showcase','references'].includes(working?.id||'');
+  const visibleItems=working?.id==='faq'?working.items.filter(item=>belongsToFaqLanguage(item,lang)):(working?.items||[]);
   const itemLabel=(x:Entry,i:number)=>x.fields?.heading?.[lang]||x.fields?.question?.[lang]||x.fields?.heading?.tr||x.fields?.question?.tr||'Kayıt '+(i+1);
   const unchanged=!!working&&!!data&&JSON.stringify(data.modules.find(x=>x.id===working.id))===JSON.stringify(working);
   const editorState=!working?'':saving?'Kaydediliyor':unchanged?'Kaydedildi':'Kaydedilmemiş değişiklikler';
@@ -214,13 +251,16 @@ export default function HomepageEditor(){
               <label className="grid gap-2 text-sm">Mağaza seçimi (yakında bağlanacak)<select disabled className="h-10 rounded-md border bg-muted/50 px-3 text-sm"><option>Mağaza kaynağı daha sonra bağlanacak</option></select></label>
             </div>)}
           </div></details>:null}
-          {entries.length?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan kayıtlar'} ({working.items.length})</summary><div className="mt-4 grid gap-4">
-            <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':working.id==='hero'?'Slider Referans Kartları':working.id==='references'?'Referans Görselleri':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve cevapları üstte seçtiğiniz anasayfa dili için düzenleyin.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. Mağaza eşleştirmesi sonraki aşamada açılacak.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
-            {working.items.map((entry,i)=><details key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=working.items.findIndex(x=>x.id===dragged);if(from>=0)move(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
+          {entries.length?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan kayıtlar'} ({visibleItems.length})</summary><div className="mt-4 grid gap-4">
+            <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':working.id==='hero'?'Slider Referans Kartları':working.id==='references'?'Referans Görselleri':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve cevapları üstte seçtiğiniz anasayfa dili için düzenleyin.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. Mağaza eşleştirmesi sonraki aşamada açılacak.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,working.id==='faq'?{
+              ...newItem(),id:'faq-locale-'+lang+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),
+              fields:{question:{[lang]:''},answer:{[lang]:''}}
+            }:newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
+            {visibleItems.map((entry,i)=><details key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=visibleItems.findIndex(x=>x.id===dragged);if(from>=0)moveVisible(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
               <summary className="cursor-pointer select-none py-1 text-sm font-semibold">{itemLabel(entry,i)}</summary>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-2"><GripVertical className="size-4 cursor-grab text-muted-foreground"/><span className="min-w-0 truncate text-sm font-semibold">{itemLabel(entry,i)}</span></div>
-                <div className="flex items-center gap-2"><Switch checked={entry.enabled!==false} onCheckedChange={enabled=>patchItem(entry.id,x=>({...x,enabled}))}/><Button size="icon" variant="outline" disabled={i===0} onClick={()=>move(i,i-1)}><ArrowUp className="size-4"/></Button><Button size="icon" variant="outline" disabled={i===working.items.length-1} onClick={()=>move(i,i+1)}><ArrowDown className="size-4"/></Button><Button size="icon" variant="outline" onClick={()=>{if(window.confirm('Bu kaydı kaldırmak istiyor musunuz?'))patch({items:working.items.filter(x=>x.id!==entry.id)})}}><Trash2 className="size-4"/></Button></div>
+                <div className="flex items-center gap-2"><Switch checked={entry.enabled!==false} onCheckedChange={enabled=>patchItem(entry.id,x=>({...x,enabled}))}/><Button size="icon" variant="outline" disabled={i===0} onClick={()=>moveVisible(i,i-1)}><ArrowUp className="size-4"/></Button><Button size="icon" variant="outline" disabled={i===visibleItems.length-1} onClick={()=>moveVisible(i,i+1)}><ArrowDown className="size-4"/></Button><Button size="icon" variant="outline" onClick={()=>patch({items:working.items.filter(x=>x.id!==entry.id)})}><Trash2 className="size-4"/></Button></div>
               </div>
               <div className="grid gap-4">{entries.map(key=><label key={key} className="grid gap-1.5 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key} · {lang.toUpperCase()}</span>{['description','answer'].includes(key)?<Textarea rows={2} className="max-h-48 overflow-y-auto resize-y" value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>:<Input value={entry.fields?.[key]?.[lang]||''} onChange={e=>patchItem(entry.id,x=>({...x,fields:{...x.fields,[key]:{...(x.fields?.[key]||{}),[lang]:e.target.value}}}))}/>}</label>)}
                 {hasImage?<MediaField label="Görsel" value={entry.assets?.image||''} onChange={image=>patchItem(entry.id,x=>({...x,assets:{...x.assets,image}}))}/>:null}
@@ -228,7 +268,7 @@ export default function HomepageEditor(){
                 {['hero','references'].includes(working.id)?<label className="grid gap-2 text-sm">Mağaza seçimi (yakında bağlanacak)<select disabled className="h-10 rounded-md border bg-muted/50 px-3 text-sm"><option>Mağaza kaynağı daha sonra bağlanacak</option></select></label>:null}
                 {hasLink?<label className="grid gap-2 text-sm"><span className="font-medium">Bağlantı adresi</span><Input value={entry.links?.href||''} placeholder="https:// veya sayfa bağlantısı" onChange={e=>patchItem(entry.id,x=>({...x,links:{...x.links,href:e.target.value}}))}/></label>:null}
               </div>
-            </details>)}{!working.items.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
+            </details>)}{!visibleItems.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
           </div></details>:null}
           {working.id==='faq'?<div className="rounded-lg border p-4 text-sm">
             <b>SEO / FAQPage</b>
