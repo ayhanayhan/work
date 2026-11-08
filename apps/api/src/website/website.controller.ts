@@ -46,6 +46,9 @@ export class WebsiteController {
   @Patch('superadmin/website/seo')
   updateSeo(@Body() body:any){return this.svc.updateWebsiteSeo(body)}
   @UseGuards(SuperAdminAuthGuard)
+  @Post('superadmin/website/faq/seed-initial')
+  seedInitialFaq(){return this.svc.seedInitialFaq()}
+  @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/website/home')
   home(){return this.svc.home()}
   @UseGuards(SuperAdminAuthGuard)
