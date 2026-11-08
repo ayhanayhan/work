@@ -1,6 +1,5 @@
 import {FooterTree} from '@/components/navigation-tree';
-import MenuGroupItems from '@/components/navigation-links';
-import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
+import type {Navigation} from '@/lib/navigation';
 import FooterLanguagePicker from '@/components/footer-language-picker';
 /* Original Ticarti footer markup converted to native JSX. */
 export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){return (
