@@ -2,10 +2,12 @@ import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import defaultNavigation = require('./data/marketing-navigation-default.json');
 import translatedLabels = require('./data/marketing-navigation-translations.json');
+import featuredDefaults = require('./data/marketing-navigation-featured.json');
 
 const KEY='marketing_navigation_v1';
 type LocaleText=Record<string,string>;
-export type MenuNode={id:string;label:LocaleText;url:string;enabled:boolean;children:MenuNode[]};
+export type MenuFeatured={eyebrow:LocaleText;description:LocaleText;buttonLabel:LocaleText;buttonUrl:string};
+export type MenuNode={id:string;label:LocaleText;url:string;enabled:boolean;children:MenuNode[];featured?:MenuFeatured};
 export type MenuTree={header:MenuNode[];footer:MenuNode[]};
 const text=(value:unknown,max:number)=>String(value??'').trim().slice(0,max);
 const safeUrl=(url:string)=>!url||url.startsWith('/')&&!url.startsWith('//')||url.startsWith('#')||/^https:\/\/[^\s]+$/.test(url);
@@ -31,6 +33,8 @@ function fromGroups(groups:any[]):MenuTree{
   defaultRoot('nav-resources','Kaynaklar','#')
  ];
  for(const root of roots){
+  if(root.id==='nav-solutions'||root.id==='nav-resources')
+   root.featured=(featuredDefaults as Record<string,MenuFeatured>)[root.id];
   if(root.id==='nav-solutions')root.children=['header-companies-1','header-companies-2','header-companies-3','header-companies-4']
     .map(find).filter(Boolean).map(heading);
   if(root.id==='nav-resources')root.children=['header-resources-1','header-resources-2','header-resources-3']
@@ -44,6 +48,7 @@ function translated(label:string):LocaleText{
  return {tr:label,...(seedTranslations[label]||{})};
 }
 // One-time fill: never overwrite translations entered by a user.
+const seededFeatured=featuredDefaults as Record<string,MenuFeatured>;
 function completeExistingTranslations(tree:MenuTree):MenuTree{
  const fill=(items:MenuNode[]):MenuNode[]=>items.map(node=>{
   const original=node.label?.tr;
@@ -51,7 +56,19 @@ function completeExistingTranslations(tree:MenuTree):MenuTree{
   const label={...node.label};
   if(known)for(const locale of MENU_LOCALES)
    if(locale!=='tr'&&label[locale]===undefined&&known[locale])label[locale]=known[locale];
-  return {...node,label,children:fill(node.children||[])};
+  const featured=node.featured?{
+   eyebrow:{...node.featured.eyebrow},
+   description:{...node.featured.description},
+   buttonLabel:{...node.featured.buttonLabel},
+   buttonUrl:node.featured.buttonUrl
+  }:seededFeatured[node.id]?JSON.parse(JSON.stringify(seededFeatured[node.id])) as MenuFeatured:undefined;
+  if(featured&&node.featured&&seededFeatured[node.id]){
+   for(const field of ['eyebrow','description','buttonLabel'] as const)
+    for(const locale of MENU_LOCALES)
+     if(featured[field][locale]===undefined)
+      featured[field][locale]=seededFeatured[node.id][field][locale]||'';
+  }
+  return {...node,label,children:fill(node.children||[]),...(featured?{featured}:{})};
  });
  return {header:fill(tree.header),footer:fill(tree.footer)};
 }
@@ -94,8 +111,19 @@ function validateTree(menus:any):MenuTree{
    if(!safeUrl(url))throw new BadRequestException('Geçersiz menü URL.');
    seen.add(id);if(++count>250)throw new BadRequestException('En fazla 250 menü öğesi kullanılabilir.');
    if(!Array.isArray(row.children))throw new BadRequestException('Alt menüler dizi olmalıdır.');
+   let featured:MenuFeatured|undefined;
+   if(row.featured){
+    const value=row.featured;
+    featured={
+     eyebrow:localize(value.eyebrow,160),
+     description:localize(value.description,1000),
+     buttonLabel:localize(value.buttonLabel,160),
+     buttonUrl:text(value.buttonUrl,500)
+    };
+    if(!safeUrl(featured.buttonUrl))throw new BadRequestException('Geçersiz menü CTA URL.');
+   }
    return {id,label:localize(row.label,160),url,enabled:row.enabled!==false,
-    children:parse(row.children,depth+1)};
+    children:parse(row.children,depth+1),...(featured?{featured}:{})};
   });
  };
  return {header:parse(menus.header,0),footer:parse(menus.footer,0)};
