@@ -16,8 +16,8 @@ change the shared component and the shared stylesheet, not the individual pages.
 Each homepage module has a stable component with the original, locked JSX appearance.
 The module’s `configured` field decides who owns its content:
 
-* **Not configured in Master:** preserve the existing original section and copy.
-  Do not remove it simply because the API has an empty list.
+* **Not configured in Master:** preserve the existing original section and copy for modules still being migrated.
+  **Exception:** FAQ is fully CMS-controlled; it stays hidden until saved questions exist.
 * **Configured in Master:** render only explicitly saved CMS values for the current
   language through the matching `*-cms.tsx` renderer.
 * **Configured, no content for selected language:** render nothing. Do not inject
