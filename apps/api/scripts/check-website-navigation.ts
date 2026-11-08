@@ -24,17 +24,17 @@ async function main(){
  const before=originalCount(original.menus.header)+originalCount(original.menus.footer);
  const edited=structuredClone(original);
  const parent=edited.menus.header.find((x:any)=>x.id==='nav-resources').children[1];
- const child=parent.children[0];
+ const child=parent.children[1];
  child.label.en='Custom label';
- const moved=parent.children.splice(0,1)[0];
+ const moved=parent.children.splice(1,1)[0];
  parent.children[0].children.push(moved);
  // WordPress-style nested submenu, no link loss.
  assert.equal(originalCount(edited.menus.header)+originalCount(edited.menus.footer),before);
  const updated=await service.save({version:edited.version,menus:edited.menus});
  assert.equal(updated.version,1);
- assert.equal((await service.get()).menus.header[2].children[1].children[0].children.length,6);
- assert.equal(updated.menus.header[2].children[1].children[0].children[0].label.en,'Custom label');
- assert.equal((await service.publicNavigation()).menus.header[2].children[1].children[0].children[0].url,child.url);
+ assert.equal((await service.get()).menus.header[2].children[1].children[0].children.length,7);
+ assert.equal(updated.menus.header[2].children[1].children[0].children[6].label.en,'Custom label');
+ assert.equal((await service.publicNavigation()).menus.header[2].children[1].children[0].children[6].url,child.url);
  await assert.rejects(service.save({version:0,menus:edited.menus}),'Stale version must be rejected');
  const unsafe=structuredClone(updated.menus);
  unsafe.footer[0].children[0].url='javascript:alert(1)';
