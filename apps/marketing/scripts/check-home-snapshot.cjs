@@ -109,6 +109,21 @@ assert.ok(homeStart>=0&&page.includes('<HomeSnapshot home={home}'),'Native React
 assert.ok(!page.includes("'/assets/js/pages/website-home-cms.js'"),'Client CMS patching must not be loaded');
 assert.ok(!page.includes("'/assets/js/pages/orders-preview.js'"),'No mocked order feed');
 assert.ok(page.includes('<SiteShell>'),'Homepage must use shared header/footer and interactions shell');
+const homepageSource=fs.readFileSync(path.join(dir,'index.tsx'),'utf8');
+const shellSource=fs.readFileSync(path.resolve(__dirname,'../components/site-shell.tsx'),'utf8');
+const blogSource=fs.readFileSync(path.resolve(__dirname,'../components/blog-pages.tsx'),'utf8');
+assert.ok(!homepageSource.includes('<HeaderSnapshot')&&!homepageSource.includes('<FooterSnapshot'),
+ 'Homepage content modules must not duplicate site header or footer');
+assert.ok(shellSource.includes('<HeaderSnapshot/>')&&shellSource.includes('<FooterSnapshot/>'),
+ 'One central shell must own both header and footer');
+assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
+ 'Blog and homepage must use the exact same header/footer shell');
+for(const id of ['hero','faq','builder','radar','channels','showcase','references','bottomCta','animated']){
+ const original=fs.readFileSync(path.join(dir,id+'.tsx'),'utf8');
+ assert.ok(original.includes('module?.configured')&&original.includes("CmsSection"),
+  'Each migrated module must preserve original appearance until configured: '+id);
+}
+
 assert.ok(!page.includes('HOME_VISUAL_SCRIPTS'),'No legacy homepage script injection');
 const behavior=fs.readFileSync(path.join(dir,'interactions.tsx'),'utf8');
 assert.ok(!behavior.includes('innerHTML') || behavior.includes('No legacy <script> injection'),'No runtime HTML replacement');
