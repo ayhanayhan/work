@@ -1,3 +1,4 @@
+import {FooterTree} from '@/components/navigation-tree';
 import MenuGroupItems from '@/components/navigation-links';
 import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
 import FooterLanguagePicker from '@/components/footer-language-picker';
@@ -12,62 +13,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
         <div className={"footer-top-row"}>
           <nav aria-label={"Footer"} className={"footer-nav-columns"}>
             {"\n"}
-            <div className={"footer-menu-wrap"}>
-              {"\n"}
-              <div className={"footer-menu-title"}>
-                <h3 data-tc-content-key={"h3-244"}>
-                  {menuLabel(groupFor(navigation,'footer-1')?.title,locale)||"Ticarti"}
-                </h3>
-              </div>
-              {"\n"}
-              <ul className={"footer-menu-link"}>
-                <MenuGroupItems data={navigation} id="footer-1" locale={locale} style="footer"/>
-              </ul>
-              {"\n"}
-            </div>
-            {"\n"}
-            <div className={"footer-menu-wrap"}>
-              {"\n"}
-              <div className={"footer-menu-title"}>
-                <h3 data-tc-content-key={"h3-252"}>
-                  {menuLabel(groupFor(navigation,'footer-2')?.title,locale)||"Kurumsal"}
-                </h3>
-              </div>
-              {"\n"}
-              <ul className={"footer-menu-link"}>
-                <MenuGroupItems data={navigation} id="footer-2" locale={locale} style="footer"/>
-              </ul>
-              {"\n"}
-            </div>
-            {"\n"}
-            <div className={"footer-menu-wrap"}>
-              {"\n"}
-              <div className={"footer-menu-title"}>
-                <h3 data-tc-content-key={"h3-260"}>
-                  {menuLabel(groupFor(navigation,'footer-3')?.title,locale)||"E-ticaret ve e-ihracat"}
-                </h3>
-              </div>
-              {"\n"}
-              <ul className={"footer-menu-link"}>
-                <MenuGroupItems data={navigation} id="footer-3" locale={locale} style="footer"/>
-              </ul>
-              {"\n"}
-            </div>
-            {"\n"}
-            <div className={"footer-menu-wrap"}>
-              {"\n"}
-              <div className={"footer-menu-title"}>
-                <h3 data-tc-content-key={"h3-268"}>
-                  {menuLabel(groupFor(navigation,'footer-4')?.title,locale)||"Kaynaklar"}
-                </h3>
-              </div>
-              {"\n"}
-              <ul className={"footer-menu-link"}>
-                <MenuGroupItems data={navigation} id="footer-4" locale={locale} style="footer"/>
-              </ul>
-              {"\n"}
-            </div>
-            {"\n"}
+            <FooterTree navigation={navigation} locale={locale}/>
           </nav>
         </div>
         {"\n"}
