@@ -2,6 +2,39 @@
   "version": 0,
   "groups": [
     {
+      "id": "header-primary",
+      "area": "header",
+      "title": {
+        "tr": "Üst Menü"
+      },
+      "links": [
+        {
+          "id": "nav-solutions",
+          "label": {
+            "tr": "Çözümler"
+          },
+          "url": "#",
+          "enabled": true
+        },
+        {
+          "id": "nav-features",
+          "label": {
+            "tr": "Özellikler"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "nav-resources",
+          "label": {
+            "tr": "Kaynaklar"
+          },
+          "url": "#",
+          "enabled": true
+        }
+      ]
+    },
+    {
       "id": "header-companies-1",
       "area": "header",
       "title": {
