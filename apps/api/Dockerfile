@@ -11,7 +11,7 @@ RUN npx prisma generate
 
 COPY nest-cli.json tsconfig.json ./
 COPY src ./src
-RUN npm run build && test -f dist/main.js && node -e "require('./dist/website/website-pages.service.js'); console.log('Website pages module import OK')" \
+RUN npm run build && test -f dist/main.js && test -f dist/website/data/ticarti-blog-initial.json && node -e "require('./dist/website/website-pages.service.js'); console.log('Website pages module import OK')" \
  && node -e "const sharp=require('sharp'); const {convertPlatformMediaBuffer}=require('./dist/superadmin/platform-media.service.js'); sharp({create:{width:8,height:8,channels:3,background:'#82b237'}}).jpeg().toBuffer().then(convertPlatformMediaBuffer).then(b=>sharp(b).metadata()).then(m=>{if(m.format!=='webp')throw Error('Not WebP');console.log('Platform JPEG -> WebP runtime OK')}).catch(e=>{console.error(e);process.exit(1)})"
 
 COPY docker-entrypoint.sh db-init.sh ./
