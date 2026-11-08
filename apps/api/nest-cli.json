@@ -3,7 +3,8 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "theme-presets/**/*.json"
+      "theme-presets/**/*.json",
+      "website/data/**/*.json"
     ],
     "watchAssets": true
   }
