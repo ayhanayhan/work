@@ -58,7 +58,6 @@ export default function HomepageEditor(){
  const [draft,setDraft]=useState<Snapshot|null>(null);
  const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false);
  const [error,setError]=useState(''),[message,setMessage]=useState('');
- const [dragged,setDragged]=useState<string|null>(null);
  const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
  const [faqDrag,setFaqDrag]=useState<string|null>(null);
  const activeLocale=lang||locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'tr';
@@ -183,8 +182,7 @@ export default function HomepageEditor(){
      <CardContent className="grid gap-4 p-5" >
       <div id={'home-section-'+m.id} className="flex scroll-mt-24 flex-wrap items-center justify-between gap-3">
        <div className="flex items-center gap-3">
-        <GripVertical className="size-4 text-muted-foreground" draggable
-         onDragStart={()=>setDragged(m.id)} onDragEnd={()=>setDragged(null)}/>
+        <GripVertical className="size-4 text-muted-foreground" aria-hidden="true"/>
         <div><h2 className="text-base font-semibold">{m.title}</h2>
          <span className="text-xs text-muted-foreground">{activeLocale.toUpperCase()} · Bölüm {index+1}</span>
         </div>
@@ -251,8 +249,11 @@ export default function HomepageEditor(){
          </summary>
          <div className="mt-3 grid gap-3">
           <div className="flex flex-wrap items-center gap-2">
-           <GripVertical className="size-4 cursor-grab" draggable
-             onDragStart={()=>setFaqDrag(entry.id)} onDragEnd={()=>setFaqDrag(null)}/>
+           <span draggable onDragStart={()=>setFaqDrag(entry.id)} onDragEnd={()=>setFaqDrag(null)}
+             role="button" tabIndex={0} aria-label="Kaydı sürükleyerek sırala"
+             className="inline-flex cursor-grab items-center">
+            <GripVertical className="size-4" aria-hidden="true"/>
+           </span>
            <Switch checked={entry.enabled!==false}
             onCheckedChange={enabled=>patchEntry(m.id,entry.id,x=>({...x,enabled}))}/>
            <Button size="icon" variant="outline" disabled={i===0} onClick={()=>reorderEntries(m,i,i-1)}>
