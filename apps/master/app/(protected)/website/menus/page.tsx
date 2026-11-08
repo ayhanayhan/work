@@ -105,18 +105,18 @@ export default function NavigationEditor(){
      </label>
      <div className="flex justify-between gap-3">
       <h3 className="font-semibold">Bağlantılar ({group.links.length})</h3>
-      <Button size="sm" variant="outline" disabled={group.links.length>=40}
+      {group.id!=='header-primary'?<Button size="sm" variant="outline" disabled={group.links.length>=40}
        onClick={()=>setGroup(g=>({...g,links:[...g.links,{id:id(),label:{},url:'',enabled:true}]}))}>
-       <Plus className="size-4"/>Bağlantı Ekle</Button>
+       <Plus className="size-4"/>Bağlantı Ekle</Button>:<span className="text-xs text-muted-foreground">Üst menü: 3 sabit konum</span>}
      </div>
      {group.links.map((link,index)=><div key={link.id} className="grid gap-3 rounded-lg border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
        <span className="text-xs text-muted-foreground">Bağlantı {index+1}</span>
        <div className="flex items-center gap-2">
         <Switch checked={link.enabled} onCheckedChange={value=>changeLink(link.id,item=>({...item,enabled:value}))}/>
-        <Button variant="outline" size="sm" disabled={index===0} onClick={()=>move(index,-1)}><ArrowUp className="size-4"/></Button>
-        <Button variant="outline" size="sm" disabled={index===group.links.length-1} onClick={()=>move(index,1)}><ArrowDown className="size-4"/></Button>
-        <Button variant="outline" size="sm" onClick={()=>setGroup(g=>({...g,links:g.links.filter(x=>x.id!==link.id)}))}><Trash2 className="size-4"/></Button>
+        <Button variant="outline" size="sm" disabled={index===0||group.id==='header-primary'} onClick={()=>move(index,-1)}><ArrowUp className="size-4"/></Button>
+        <Button variant="outline" size="sm" disabled={index===group.links.length-1||group.id==='header-primary'} onClick={()=>move(index,1)}><ArrowDown className="size-4"/></Button>
+        <Button variant="outline" size="sm" disabled={group.id==='header-primary'} onClick={()=>setGroup(g=>({...g,links:g.links.filter(x=>x.id!==link.id)}))}><Trash2 className="size-4"/></Button>
        </div>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
