@@ -1,5 +1,6 @@
 import {BadRequestException,ConflictException,Injectable,NotFoundException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
+import translations = require('./data/marketing-navigation-translations.json');
 
 const KEY='marketing_tools_pages_v1';
 export const TOOL_IDS=['qr-kod-olusturucu','kdv-hesaplama',
@@ -28,12 +29,29 @@ function cleanLocalized(value:any,max=12000):Dict{
  }
  return result;
 }
+const seedTitle=(title:string):Dict=>({tr:title,...((translations as Record<string,Dict>)[title]||{})});
 const initial=()=>TOOL_IDS.map((id,index)=>({
- id,sortOrder:index,status:'DRAFT',image:'',
- fields:Object.fromEntries(SCALAR_FIELDS.map(field=>[field,field==='title'?{tr:INITIAL_TITLES[index]}:{}])),
+ id,sortOrder:index,status:'PUBLISHED',image:'',
+ fields:Object.fromEntries(SCALAR_FIELDS.map(field=>[
+  field,field==='title'||field==='calculatorTitle'?seedTitle(INITIAL_TITLES[index]):{}
+ ])),
  sections:[] as Array<{id:string;kind:string;title:Dict;body:Dict;image:string}>,
  faqs:[] as Array<{id:string;question:Dict;answer:Dict}>
 }));
+// This upgrades only untouched starter drafts, never manually authored drafts.
+function isUntouchedStarter(tool:any):boolean{
+ if(tool?.status!=='DRAFT'||tool?.image||tool?.sections?.length||tool?.faqs?.length)return false;
+ const title=tool.fields?.title;
+ const expected=INITIAL_TITLES[TOOL_IDS.indexOf(tool.id as typeof TOOL_IDS[number])];
+ if(!expected||title?.tr!==expected)return false;
+ return Object.entries(tool.fields||{}).every(([key,value])=>
+  key==='title'||!Object.values(value as Record<string,string>||{}).some(Boolean));
+}
+function upgradeStarter(tool:any,seed:any){
+ return {...tool,status:'PUBLISHED',
+  fields:{...tool.fields,title:{...seed.fields.title,...tool.fields.title},
+   calculatorTitle:{...seed.fields.calculatorTitle,...tool.fields.calculatorTitle}}};
+}
 function normalize(raw:any,prev:any){
  const valid=TOOL_IDS.find(id=>id===raw?.id);
  if(!valid)throw new BadRequestException('Tanımsız araç kimliği.');
@@ -77,7 +95,10 @@ export class WebsiteToolsService {
   const raw=row?.value as any;
   const defaults=initial();
   const existing=Array.isArray(raw?.tools)?raw.tools:[];
-  return {version:Number(raw?.version)||0,tools:defaults.map(item=>existing.find((x:any)=>x.id===item.id)||item)};
+  return {version:Number(raw?.version)||0,tools:defaults.map(item=>{
+   const old=existing.find((x:any)=>x.id===item.id);
+   return old?(raw?.toolDemoMigration===1||!isUntouchedStarter(old)?old:upgradeStarter(old,item)):item;
+  })};
  }
  async save(body:any){
   const before=await this.snapshot();
@@ -95,7 +116,7 @@ export class WebsiteToolsService {
   const previousTools=(previousRow?.value as any)?.tools;
   const archived=Array.isArray(previousTools)?
    previousTools.filter((item:any)=>item?.id==='pazaryeri-komisyon-hesaplama'):[];
-  const next={version:before.version+1,tools:[...tools,...archived]};
+  const next={version:before.version+1,tools:[...tools,...archived],toolDemoMigration:1};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
