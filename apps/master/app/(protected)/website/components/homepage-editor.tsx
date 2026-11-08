@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
+import {useCallback,useEffect,useMemo,useState} from 'react';
 import {ArrowDown,ArrowUp,GripVertical,Image,Layers3,LoaderCircle,Plus,RefreshCw,Save,Trash2,Upload} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
@@ -39,7 +39,6 @@ export default function HomepageEditor(){
   const [dragged,setDragged]=useState<string|null>(null);
   const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
   const [blogFeed,setBlogFeed]=useState<{published:number;draft:number;archived:number;scheduled:number;localized:number}|null>(null);
-  const faqInitialLoadRef=useRef(false);
 
 
   const load=useCallback(async()=>{
@@ -75,31 +74,6 @@ export default function HomepageEditor(){
     })();
     return ()=>{cancelled=true};
   },[active,lang,languageList,request,restoring]);
-  // A previously requested one-time import is initiated from the existing
-  // authenticated FAQ editor, never on API startup or public page requests.
-  // No button or file picker is required.
-  useEffect(()=>{
-    if(restoring||loading||active!=='faq'||!data||faqInitialLoadRef.current)return;
-    faqInitialLoadRef.current=true;
-    let alive=true;
-    void (async()=>{
-      try{
-        const result=await request('/superadmin/website/faq/seed-initial',{method:'POST',body:'{}'});
-        if(!alive)return;
-        const updated=await request('/superadmin/website/home') as Snapshot;
-        if(!alive)return;
-        setData(updated);
-        if(!result.alreadySeeded){
-          setMessage('SSS kayıtları eklendi: '+(result.inserted||0)+' yeni soru. Dil sekmelerinden düzenleyebilirsiniz.');
-        }
-      }catch(e){
-        if(!alive)return;
-        faqInitialLoadRef.current=false;
-        setError('SSS kayıtları getirilemedi: '+errorText(e));
-      }
-    })();
-    return ()=>{alive=false};
-  },[active,restoring,loading,data?.version,request]);
   useEffect(()=>{
     const selected=data?.modules?.find(x=>x.id===active);
     setWorking(selected?JSON.parse(JSON.stringify(selected)):null);
@@ -164,10 +138,13 @@ export default function HomepageEditor(){
       const known=new Set(Object.keys(MODULE_FIELDS));
       const modules=raw.modules.filter((x:any)=>known.has(x?.id));
       if(!modules.length)throw new Error('İçe aktarılacak bilinen modül bulunamadı.');
+      const faqOnly=modules.length===1&&modules[0].id==='faq';
+      if(raw?.type==='ticarti-faq-import-v1'&&!faqOnly)
+        throw new Error('SSS dosyasında yalnızca FAQ modülü bulunmalı.');
       const dataNow=await request('/superadmin/website/home');
-      if(dataNow.version>0&&!window.confirm('Mevcut anasayfa içerikleri var. Arşivdeki verilerle değiştirmek istiyor musunuz?')){setSaving(false);return}
+      if(dataNow.version>0&&!faqOnly&&!window.confirm('Mevcut anasayfa içerikleri var. Arşivdeki verilerle değiştirmek istiyor musunuz?')){setSaving(false);return}
       await request('/superadmin/website/home-import',{method:'PATCH',body:JSON.stringify({version:dataNow.version,modules})});
-      await load();setMessage('Orijinal anasayfa metinleri ve tüm tekrar eden kayıtlar içe aktarıldı. Görsel tasarım değişmedi.');
+      await load();setMessage(faqOnly?'SSS soru ve cevapları beş dilde içe aktarıldı. Diğer modüller korunuyor.':'Anasayfa içerikleri içe aktarıldı.');
     }catch(e){setError(errorText(e))}
     finally{setSaving(false)}
   };
