@@ -38,9 +38,12 @@ async function main(){
  for(const node of [...all(initial.menus.header),...all(initial.menus.footer)]){
   for(const locale of locales)assert.ok(node.label[locale],node.id+' is missing '+locale);
  }
- const draft=await service.publicNavigation('tr');
- assert.ok(paths.every(url=>published(draft.menus.footer,url)?.enabled===false),
-  'Draft tool links must not be visible to visitors');
+ const starter=await service.publicNavigation('tr');
+ assert.ok(paths.every(url=>published(starter.menus.footer,url)?.enabled===true),
+  'All eleven published starter pages must appear in Footer');
+ const vietnamese=await service.publicNavigation('vi');
+ assert.ok(paths.every(url=>published(vietnamese.menus.footer,url)?.enabled===true),
+  'Footer must show translated starter pages in all nine languages');
  tools={tools:[{id:'kdv-hesaplama',status:'PUBLISHED',fields:{
   title:{tr:'KDV Hesaplama',en:'VAT Calculator'}}}]};
  const turkish=await service.publicNavigation('tr');
