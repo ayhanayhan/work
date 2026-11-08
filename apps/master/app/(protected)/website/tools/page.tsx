@@ -10,7 +10,7 @@ import {Card,CardContent} from '@/components/ui/card';
 import {MediaField} from '@/app/(protected)/catalog/components/catalog-fields';
 
 type Localized=Record<string,string>;
-type Section={id:string;title:Localized;body:Localized;image:string};
+type Section={id:string;kind:'text'|'list'|'steps'|'notice';title:Localized;body:Localized;image:string};
 type FAQ={id:string;question:Localized;answer:Localized};
 type Tool={id:string;sortOrder:number;status:'DRAFT'|'PUBLISHED';image:string;
  fields:Record<string,Localized>;sections:Section[];faqs:FAQ[]};
@@ -64,14 +64,14 @@ export default function ToolsEditor(){
   [items[i],items[to]]=[items[to],items[i]];
   return {...x,[list]:items};
  });
- const editSection=(sectionId:string,key:'title'|'body'|'image',value:string)=>edit(x=>({...x,
+ const editSection=(sectionId:string,key:'title'|'body'|'image'|'kind',value:string)=>edit(x=>({...x,
   sections:x.sections.map(section=>section.id!==sectionId?section:{
-   ...section,[key]:key==='image'?value:{...section[key],[locale]:value}
+   ...section,[key]:key==='image'||key==='kind'?value:{...section[key],[locale]:value}
   })}));
  const editFaq=(faqId:string,key:'question'|'answer',value:string)=>edit(x=>({...x,
   faqs:x.faqs.map(faq=>faq.id!==faqId?faq:{...faq,[key]:{...faq[key],[locale]:value}})
  }));
- const add=(type:'sections'|'faqs')=>edit(x=>type==='sections'?{...x,sections:[...x.sections,{id:uid('section'),title:{},body:{},image:''}]}:
+ const add=(type:'sections'|'faqs')=>edit(x=>type==='sections'?{...x,sections:[...x.sections,{id:uid('section'),kind:'text',title:{},body:{},image:''}]}:
   {...x,faqs:[...x.faqs,{id:uid('faq'),question:{},answer:{}}]});
  const remove=(type:'sections'|'faqs',rowId:string)=>edit(x=>({...x,
   [type]:x[type].filter(row=>row.id!==rowId)}));
@@ -153,6 +153,15 @@ export default function ToolsEditor(){
         <Button size="sm" variant="outline" disabled={index===current.sections.length-1} onClick={()=>move('sections',index,1)}><ArrowDown className="size-4"/></Button>
         <Button size="sm" variant="outline" onClick={()=>remove('sections',section.id)}><Trash2 className="size-4"/></Button>
        </div>
+       <label className="grid gap-1 text-sm">Bölüm türü
+        <select className="h-10 rounded-md border bg-background px-3" value={section.kind||'text'}
+         onChange={e=>editSection(section.id,'kind',e.target.value)}>
+         <option value="text">Açıklama</option>
+         <option value="list">Madde işaretli liste</option>
+         <option value="steps">Numaralı adımlar</option>
+         <option value="notice">Bilgilendirme notu</option>
+        </select>
+       </label>
        <label className="grid gap-1 text-sm">Başlık
         <Input value={section.title?.[locale]||''} onChange={e=>editSection(section.id,'title',e.target.value)}/></label>
        <label className="grid gap-1 text-sm">Metin
