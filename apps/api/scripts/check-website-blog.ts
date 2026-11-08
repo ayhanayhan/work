@@ -20,10 +20,12 @@ const extra=mergeFaqSeed({...customized,items:[
 ]});
 assert.equal(extra.module.items.length,31,'New seed must preserve manually entered FAQ items');
 const store=new Map<string,any>();
-const prisma={platformSetting:{
+const prisma:any={platformSetting:{
   async findUnique({where:{key}}:any){return store.has(key)?{value:structuredClone(store.get(key))}:null},
-  async upsert({where:{key},create,update}:any){const value=store.has(key)?update.value:create.value;store.set(key,structuredClone(value));return {value}}
+  async upsert({where:{key},create,update}:any){const value=store.has(key)?update.value:create.value;store.set(key,structuredClone(value));return {value}},
+  async create({data}:any){if(store.has(data.key))throw Object.assign(new Error('Duplicate key'),{code:'P2002'});store.set(data.key,structuredClone(data.value));return data}
 }};
+prisma.$transaction=async(fn:(tx:any)=>Promise<any>)=>fn(prisma);
 const svc=new WebsiteService(prisma as any);
 const post={
   id:'example',slug:'ornek-yazi',status:'PUBLISHED',featuredImage:'',authorName:'Ticarti',
@@ -197,6 +199,19 @@ async function test(){
     'Public React homepage receives saved order and excludes disabled sections');
   await assert.rejects(svc.reorderHome({version:oldHome.version,ids}),
     'Concurrent module ordering must reject stale versions');
-  console.log('PASS: active locales, blog authors, persisted native homepage ordering, FAQ and SEO');
+  const beforeFaqSeed=(await svc.home()).modules.find(x=>x.id==='faq')!;
+  const seedResult=await svc.seedInitialFaq();
+  assert.equal(seedResult.inserted,30,'First database seed inserts thirty FAQ questions');
+  const afterFaqSeed=(await svc.home()).modules.find(x=>x.id==='faq')!;
+  assert.equal(afterFaqSeed.items.length,31,'Previously edited FAQ entry must survive the first seed');
+  assert.deepEqual(afterFaqSeed.items.find((x:any)=>x.id==='faq-1')?.fields,
+    beforeFaqSeed.items.find((x:any)=>x.id==='faq-1')?.fields,
+    'Seed must preserve custom FAQ translations');
+  assert.equal(afterFaqSeed.enabled,false,'Seed must preserve deliberately disabled FAQ state');
+  const rerun=await svc.seedInitialFaq();
+  assert.equal(rerun.alreadySeeded,true,'Subsequent API starts must not repeat the seed');
+  assert.equal((await svc.home()).modules.find(x=>x.id==='faq')!.items.length,31,
+    'Second run cannot create duplicate entries');
+  console.log('PASS: active locales, blog authors, persisted native homepage ordering, FAQ and SEO + idempotent five-language FAQ migration');
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
