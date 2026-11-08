@@ -27,13 +27,14 @@ export function desi(width:number,length:number,height:number,weight:number,divi
 }
 export function commission(input:{
  price:number;rate:number;rateIncludesVat:boolean;commissionVat:number;
- shipping:number;productCost:number;other:number;units:number;
+ shipping:number;productCost:number;other:number;units:number;shippingCollected?:number;
 }){
  const {price,rate,rateIncludesVat,commissionVat,shipping,productCost,other,units}=input;
- if(![price,rate,commissionVat,shipping,productCost,other,units].every(x=>Number.isFinite(x))||
+ if(![price,rate,commissionVat,shipping,productCost,other,units,input.shippingCollected??0].every(x=>Number.isFinite(x))||
   price<=0||units<1||units>100000||rate<0||rate>100||commissionVat<0||commissionVat>100||
-  Math.min(shipping,productCost,other)<0)throw Error('invalid');
- const sale=price*units;
+  Math.min(shipping,productCost,other,input.shippingCollected??0)<0)throw Error('invalid');
+ // Amazon referral fees include customer-paid shipping in the charged selling total.
+ const sale=(price+(input.shippingCollected??0))*units;
  const raw=sale*rate/100;
  const fee=rateIncludesVat?raw/(1+commissionVat/100):raw;
  const tax=rateIncludesVat?raw-fee:fee*commissionVat/100;
