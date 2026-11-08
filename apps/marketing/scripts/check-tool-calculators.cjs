@@ -1,0 +1,44 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const Module=require('node:module');
+const assert=require('node:assert/strict');
+const ts=require('typescript');
+const root=path.resolve(__dirname,'..');
+function load(relative){
+ const file=path.join(root,relative),code=fs.readFileSync(file,'utf8');
+ const js=ts.transpileModule(code,{compilerOptions:{
+  module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020,isolatedModules:true
+ }}).outputText;
+ const m=new Module(file,module);
+ m.filename=file;m.paths=module.paths;
+ m._compile(js,file);
+ return m.exports;
+}
+const c=load('lib/calculators.ts');
+const {qrcodegen}=load('lib/vendor/qrcodegen.ts');
+const almost=(a,b,tolerance=.03)=>assert.ok(Math.abs(a-b)<=tolerance,a+' != '+b);
+let r=c.vat(1000,20,false);
+almost(r.net,1000);almost(r.tax,200);almost(r.gross,1200);
+r=c.vat(1200,20,true);almost(r.net,1000);almost(r.tax,200);
+r=c.desi(30,20,10,1,3000);almost(r.desi,2);almost(r.chargeable,2);
+r=c.commission({price:1000,rate:15,rateIncludesVat:false,
+ commissionVat:20,shipping:30,productCost:400,other:20,units:1});
+almost(r.fee,150);almost(r.tax,30);almost(r.total,180);almost(r.remainder,370);
+r=c.commission({price:1000,rate:18,rateIncludesVat:true,
+ commissionVat:20,shipping:0,productCost:0,other:0,units:1});
+almost(r.fee,150);almost(r.tax,30);almost(r.remainder,820);
+r=c.salary2026(33030,1);almost(r.net,28075.5);almost(r.incomeTax,0);almost(r.stamp,0);
+r=c.salary2026(50000,3);
+const reverse=c.salaryNetToGross(r.net,3);
+almost(reverse.gross,50000,.25);
+r=c.customs({price:1000,freight:0,insurance:0,exchange:1,dutyRate:10,
+ extraDutyRate:0,exciseRate:0,vatRate:20,other:0});
+almost(r.duty,100);almost(r.vat,220);almost(r.landed,1320);
+const svgQr=qrcodegen.QrCode.encodeText('https://ticarti.com',qrcodegen.QrCode.Ecc.MEDIUM);
+assert.ok(svgQr.size>=21);
+assert.equal(typeof svgQr.getModule(0,0),'boolean');
+for(const slug of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']){
+ assert.ok(fs.readFileSync(path.join(root,'components/tool-calculator.tsx'),'utf8')
+  .includes("'"+slug+"'"),slug+' missing from marketplace calculator');
+}
+console.log('PASS: QR encoding, VAT, desi, marketplace commission including fee VAT, 2026 SGK/payroll net-to-gross and customs CIF');
