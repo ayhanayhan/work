@@ -73,6 +73,31 @@ for(const expected of ['Dinamik Hero Başlığı','Referans açıklaması','Mark
   assert.ok(cmsMarkup.includes(expected),'CMS fixture not rendered: '+expected);
 }
 assert.ok(cmsMarkup.includes('href="/blog/ornek-makale"'),'Blog card links to real post route');
+const cmsHero=compileFile(path.join(dir,'hero-cms.tsx')).default;
+const singleCard=renderToStaticMarkup(React.createElement(cmsHero,{
+ home:{version:1,locale:'tr',modules:[cmsFixture.modules[0]]},locale:'tr'
+}));
+assert.equal((singleCard.match(/class="tc-ui-card"/g)||[]).length,1,
+ 'One CMS reference must render exactly one slider card');
+assert.equal((singleCard.match(/class="tc-site-hero__arrow/g)||[]).length,0,
+ 'One slide must not show navigation arrows');
+assert.ok(singleCard.includes('data-cms-card-count="1"'),
+ 'Short CMS carousels must disable infinite-loop centering');
+const localizedFaq=compileFile(path.join(dir,'faq-cms.tsx')).default;
+const faqRecord={...cmsFixture.modules.find(x=>x.id==='faq'),
+ fields:{heading:{tr:'Sorular',en:'Questions'}},
+ items:[{id:'q-bilingual',enabled:true,fields:{
+ question:{tr:'Nasıl başlanır?',en:'How do I start?'},
+ answer:{tr:'Mağaza kurun.',en:'Create a store.'}
+ }}]};
+const englishFaq=renderToStaticMarkup(React.createElement(localizedFaq,{
+ home:{version:1,locale:'en',modules:[faqRecord]},locale:'en'
+}));
+assert.ok(englishFaq.includes('How do I start?')&&englishFaq.includes('Create a store.'),
+ 'FAQ question and answer must both use the globally selected homepage locale');
+assert.ok(!englishFaq.includes('Nasıl başlanır?')&&!englishFaq.includes('Mağaza kurun.'),
+ 'English FAQ must not display Turkish question or answer');
+
 assert.ok(!cmsMarkup.includes('id="tc-phone-main-hero"'),'Hero CTA toggle must hide just the hero form');
 // Unconnected sections must preserve the existing visual design and static content.
 for(const className of ['tc-site-hero','tc-animated-heading','tc-builder-section',
