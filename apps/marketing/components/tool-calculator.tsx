@@ -34,7 +34,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
  const n=(key:string)=>toNumber(v[key]),m=(a:number)=>money(a,locale),f=(a:number)=>format(a,locale);
  const field=(key:string,index:number,min='0')=><label className="tc-tool-field" key={key}>
   <span>{t[index]}</span><input type="number" min={min} step="any" required value={v[key]} onChange={e=>set(key,e.target.value)}/></label>;
- const select=(label:string,value:string,onChange:(x:string)=>void,options:Array<[string,string]>)=>
+ const select=(label:string,value:string,onChange:(x:string)=>void,options:string[][])=>
   <label className="tc-tool-field"><span>{label}</span><select value={value} onChange={e=>onChange(e.target.value)}>
    {options.map(([value,title])=><option value={value} key={value}>{title}</option>)}</select></label>;
  const compute=(e:FormEvent<HTMLFormElement>)=>{
