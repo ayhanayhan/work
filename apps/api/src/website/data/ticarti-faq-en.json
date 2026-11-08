@@ -1,0 +1,152 @@
+[
+  {
+    "id": "faq-original-01",
+    "question": "What is an e-commerce package?",
+    "answer": "An e-commerce package is a software service combining store management, product catalog, orders, payments and marketing tools for online sales."
+  },
+  {
+    "id": "faq-original-02",
+    "question": "How do I set up a store with a ready-made e-commerce package?",
+    "answer": "First create an account and store details, then configure products, payment methods, shipping and the storefront appearance."
+  },
+  {
+    "id": "faq-original-03",
+    "question": "What should I consider when choosing a package?",
+    "answer": "Consider product and order volumes, the number of warehouses, countries served, required integrations and team permissions."
+  },
+  {
+    "id": "faq-original-04",
+    "question": "What is the difference between Ticarti Start, Grow and Scale?",
+    "answer": "Start is an example tier for basic store management, Grow for multiple warehouses and advanced marketing, and Scale for more complex operations. Exact limits should be specified in the agreement."
+  },
+  {
+    "id": "faq-original-05",
+    "question": "Who is the Plus package suitable for?",
+    "answer": "It is a custom solution defined through needs analysis for large businesses with multiple brands, countries, warehouses, stores or dedicated ERP/WMS integrations."
+  },
+  {
+    "id": "faq-original-06",
+    "question": "Can I upgrade my package later?",
+    "answer": "Upgrade and pricing terms are defined by the agreement; you can consider more comprehensive plans as your store grows."
+  },
+  {
+    "id": "faq-original-07",
+    "question": "Can I pay monthly or annually?",
+    "answer": "Payment periods and renewal terms should be confirmed before purchase. Monthly amounts displayed on the sample page are illustrative."
+  },
+  {
+    "id": "faq-original-08",
+    "question": "Do prices include VAT?",
+    "answer": "The illustrative package prices on the page are labeled as VAT-inclusive. Final prices and payment terms must be confirmed before purchase."
+  },
+  {
+    "id": "faq-original-09",
+    "question": "Is there a free trial?",
+    "answer": "You can try Ticarti free for 14 days. The trial scope and terms applying afterward are presented during registration."
+  },
+  {
+    "id": "faq-original-10",
+    "question": "Can I try my e-commerce website on Ticarti for free?",
+    "answer": "You can create a store and try Ticarti free for 14 days. There is no promise of a permanently free plan; you can select a suitable package afterward."
+  },
+  {
+    "id": "faq-original-11",
+    "question": "Is a domain name included in the packages?",
+    "answer": "Connecting a custom domain and purchasing the domain are separate steps. Purchase terms should state whether the domain fee is included."
+  },
+  {
+    "id": "faq-original-12",
+    "question": "Are SSL certificates and hosting included?",
+    "answer": "Hosting, SSL and renewal coverage should be specified in the service terms for the selected plan."
+  },
+  {
+    "id": "faq-original-13",
+    "question": "Can I change my theme?",
+    "answer": "Theme customization options may depend on your package and any custom design requirements."
+  },
+  {
+    "id": "faq-original-14",
+    "question": "How do I set up a virtual POS?",
+    "answer": "Depending on the payment provider, you complete application, verification and technical connection steps. Approval times vary by provider."
+  },
+  {
+    "id": "faq-original-15",
+    "question": "Can I connect my own virtual POS account?",
+    "answer": "Supported providers and account-connection terms depend on the available integrations."
+  },
+  {
+    "id": "faq-original-16",
+    "question": "Are installment payments available?",
+    "answer": "Installment options depend on the payment provider, contract and permissions of the merchant account."
+  },
+  {
+    "id": "faq-original-17",
+    "question": "Are there limits on products or traffic?",
+    "answer": "Product and traffic limits should be stated in each package's current technical terms. Labels on the example page are for draft presentation purposes."
+  },
+  {
+    "id": "faq-original-18",
+    "question": "How do shipping integrations work?",
+    "answer": "When shipping providers are connected, workflows from order to dispatch can be monitored in one panel."
+  },
+  {
+    "id": "faq-original-19",
+    "question": "Are marketplace integrations included?",
+    "answer": "Availability and scope of marketplace connections may vary by package."
+  },
+  {
+    "id": "faq-original-20",
+    "question": "Can I manage multiple warehouses?",
+    "answer": "Example Grow and higher plans show multiple warehouses and stock transfers. Exact limits must be verified before publication."
+  },
+  {
+    "id": "faq-original-21",
+    "question": "Can I sell internationally and use multiple currencies?",
+    "answer": "The scope of language, currency and country-specific store settings is assessed according to the selected plan."
+  },
+  {
+    "id": "faq-original-22",
+    "question": "Can I migrate to Ticarti from another platform?",
+    "answer": "Migration depends on available formats for product, customer and order data. A technical scope assessment comes first."
+  },
+  {
+    "id": "faq-original-23",
+    "question": "Is platform migration paid?",
+    "answer": "Data volume, themes, integrations and custom development may affect the cost. The final scope is set during the quotation stage."
+  },
+  {
+    "id": "faq-original-24",
+    "question": "Do I need programming skills to set up a store?",
+    "answer": "Basic store settings can be managed in the admin panel. Custom theme or integration projects may need technical work."
+  },
+  {
+    "id": "faq-original-25",
+    "question": "Is 24/7 support included in every package?",
+    "answer": "Support hours and channels may vary by contract. The '24/7' label is not a confirmed service commitment."
+  },
+  {
+    "id": "faq-original-26",
+    "question": "Do e-commerce software updates cost extra?",
+    "answer": "Standard updates and custom development pricing should be clarified in the service agreement."
+  },
+  {
+    "id": "faq-original-27",
+    "question": "Is there a first-three-months-free campaign?",
+    "answer": "The 'first 3 months free' label is a sample promotion; its availability and terms will be confirmed in an official offer."
+  },
+  {
+    "id": "faq-original-28",
+    "question": "Can I see a demo without buying a package?",
+    "answer": "Demo and trial access options depend on the current terms offered by the sales team."
+  },
+  {
+    "id": "faq-original-29",
+    "question": "Is Ticarti suitable for large retail chains?",
+    "answer": "Multi-brand, multi-store or multi-country retail operations are assessed through special integration and process analysis under Plus."
+  },
+  {
+    "id": "faq-original-30",
+    "question": "Can I manage payments and orders in one panel?",
+    "answer": "The Ticarti store panel aims to manage payments and orders centrally. Available integrations should be checked separately."
+  }
+]
