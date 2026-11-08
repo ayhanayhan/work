@@ -49,6 +49,14 @@ export class WebsiteController {
   @Post('superadmin/website/faq/seed-initial')
   seedInitialFaq(){return this.svc.seedInitialFaq()}
   @UseGuards(SuperAdminAuthGuard)
+  @Post('superadmin/website/faq/clear-existing-once')
+  clearExistingFaq(){return this.svc.clearExistingFaqOnce()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/home-locale/:lang')
+  updateHomeLocale(@Param('lang') lang:string,@Body() body:any){
+    return this.svc.updateHomeLocale(lang,body);
+  }
+  @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/website/home')
   home(){return this.svc.home()}
   @UseGuards(SuperAdminAuthGuard)
