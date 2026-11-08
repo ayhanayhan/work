@@ -6,7 +6,6 @@ import LegacyScripts from '@/components/legacy-scripts';
 import HomeSnapshot from '@/components/home-snapshot';
 import {getHomeContent} from '@/lib/home-cms';
 import {moduleById,textFor} from '@/lib/home-content';
-import HomeInteractions from '@/components/home-snapshot/interactions';
 import BlogInteractions from '@/components/blog-interactions';
 import {BlogArchive,BlogArticle} from '@/components/blog-pages';
 import SiteShell from '@/components/site-shell';
@@ -115,8 +114,7 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
   const seoLocale=slug.length&&['tr','en','de','ru','ar'].includes(slug[0])?slug[0]:'tr';
   const seoEntry=metadataFor(seo,seoPage,seoLocale);
 
-  // Homepage is a static React snapshot until modules are deliberately connected.
-  // No Master, CMS, API or HTML-template reads are permitted on this route.
+  // The homepage keeps original JSX layout while selected modules receive server-side Master data.
   if(slug.length===0||(slug.length===1&&(slug[0]==='index.html'||['tr','en','de','ru','ar'].includes(slug[0])))||(slug.length===2&&['tr','en','de','ru','ar'].includes(slug[0])&&slug[1]==='index.html')){
     const lang=['tr','en','de','ru','ar'].includes(slug[0]||'')?slug[0]:'tr';
     const canonical=absolute(lang==='tr'?'/':'/'+lang+'/');
