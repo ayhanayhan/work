@@ -34,6 +34,8 @@ if [ "$API" -eq 1 ]; then
   npm --workspace @commerce/api run test:media
   # Catch TypeScript failures locally before paying for a Cloud Build.
   npm --workspace @commerce/api run build
+  echo "=== Smoke-testing compiled production API modules ==="
+  node -e "const {assertFaqSeeds}=require('./apps/api/dist/website/faq-seed.js'); assertFaqSeeds(); require('./apps/api/dist/website/website.service.js'); const blog=require('./apps/api/dist/website/data/ticarti-blog-initial.json'); if(blog.articles?.length!==10)throw Error('Blog seed invalid'); console.log('Production API imports OK')"
   SERVICE="commerce-api"
   IMAGE="${API_REGION}-docker.pkg.dev/${PROJECT}/cloud-run-source-deploy/${SERVICE}:code-$(git rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
   OLD="$(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$API_REGION" --format=json |
