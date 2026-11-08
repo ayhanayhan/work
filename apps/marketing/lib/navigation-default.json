@@ -567,22 +567,6 @@
       },
       "links": [
         {
-          "id": "link-2-0",
-          "label": {
-            "tr": "Ücretsiz araçlar ve hesaplayıcılar",
-            "en": "Free tools and calculators",
-            "de": "Kostenlose Tools und Rechner",
-            "ru": "Бесплатные инструменты и калькуляторы",
-            "ar": "أدوات وحاسبات مجانية",
-            "bg": "Безплатни инструменти и калкулатори",
-            "uk": "Безкоштовні інструменти й калькулятори",
-            "id": "Alat dan kalkulator gratis",
-            "vi": "Công cụ và máy tính miễn phí"
-          },
-          "url": "/araclar",
-          "enabled": true
-        },
-        {
           "id": "link-2-1",
           "label": {
             "tr": "E-ticaret nasıl kurulur?",
@@ -1177,22 +1161,6 @@
             "vi": "Blog"
           },
           "url": "/blog/",
-          "enabled": true
-        },
-        {
-          "id": "footer-link-3-1",
-          "label": {
-            "tr": "Ücretsiz araçlar",
-            "en": "Free tools",
-            "de": "Kostenlose Tools",
-            "ru": "Бесплатные инструменты",
-            "ar": "أدوات مجانية",
-            "bg": "Безплатни инструменти",
-            "uk": "Безкоштовні інструменти",
-            "id": "Alat gratis",
-            "vi": "Công cụ miễn phí"
-          },
-          "url": "/araclar",
           "enabled": true
         },
         {
