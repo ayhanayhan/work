@@ -271,9 +271,7 @@ export class WebsiteService{
       const fields=mergeValues(previous.fields,incoming.fields,MODULE_FIELDS[previous.id]);
       if(previous.id==='faq'){
         const existing=(previous.items||[]).filter((item:any)=>
-          !Object.prototype.hasOwnProperty.call(item.fields?.question||{},lang)
-          &&!Object.prototype.hasOwnProperty.call(item.fields?.answer||{},lang)
-          &&!String(item.id||'').startsWith('faq-locale-'+lang+'-'));
+          !String(item.id||'').startsWith('faq-locale-'+lang+'-'));
         const local=safeItems('faq',incoming.items||[]);
         if(local.some((item:any)=>!Object.keys(item.fields?.question||{}).every(x=>x===lang)
            ||!Object.keys(item.fields?.answer||{}).every(x=>x===lang)))
