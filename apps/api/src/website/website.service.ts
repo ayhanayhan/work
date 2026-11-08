@@ -90,18 +90,22 @@ export class WebsiteService{
         if(done)return {alreadySeeded:true,inserted:0};
         const row=await tx.platformSetting.findUnique({where:{key:HOME_KEY}});
         const saved=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value as any:null;
-        const modules=defaultModules().map(m=>{
-          const previous=Array.isArray(saved?.modules)?saved.modules.find((x:any)=>x?.id===m.id):null;
-          return previous?{...m,...previous}:m;
-        });
+        // Keep the exact saved module ordering and records; append only missing
+        // default modules instead of reconstructing the entire homepage snapshot.
+        const defaults=defaultModules();
+        const existing=Array.isArray(saved?.modules)?saved.modules:[];
+        const modules=[
+          ...existing.map((record:any)=>structuredClone(record)),
+          ...defaults.filter(m=>!existing.some((x:any)=>x?.id===m.id))
+        ];
         const index=modules.findIndex(x=>x.id==='faq');
         const merged=mergeFaqSeed(modules[index]);
         modules[index]=merged.module;
         const version=(Number(saved?.version)||0)+1;
         await tx.platformSetting.upsert({
           where:{key:HOME_KEY},
-          create:{key:HOME_KEY,value:{version,modules}},
-          update:{value:{version,modules}}
+          create:{key:HOME_KEY,value:{...(saved||{}),version,modules}},
+          update:{value:{...(saved||{}),version,modules}}
         });
         await tx.platformSetting.create({
           data:{key:FAQ_SEED_MARKER,value:{version,added:merged.inserted,filled:merged.filled,locales:['tr','en','de','ru','ar'],completedAt:new Date().toISOString()}}
