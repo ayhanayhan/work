@@ -1,0 +1,10 @@
+/* Additional nesting only: original Ticarti header/footer appearance is retained. */
+.tc-site-header .tc-ui-tree-root{min-width:0}
+.tc-site-header .tc-ui-tree-children{padding-inline-start:16px;margin:4px 0 8px;border-inline-start:1px solid #e7e7e7}
+.tc-site-header .tc-ui-tree-children .tc-ui-link-item{font-size:13px;line-height:1.45}
+.tc-site-header .tc-ui-link-heading{display:block;cursor:default}
+.tc-site-header .tc-ui-tree-branch>.tc-ui-link-heading{font-size:13px;font-weight:600}
+.tc-site-footer .tc-footer-tree-children{list-style:none;margin:5px 0 10px;padding-inline-start:14px;border-inline-start:1px solid #e9e9e9}
+.tc-site-footer .tc-footer-tree-children li{margin:6px 0}
+.tc-site-footer .tc-footer-tree-heading{font-weight:600}
+@media(max-width:991px){.tc-site-header .tc-ui-tree-children{padding-inline-start:14px}}
