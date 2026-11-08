@@ -49,3 +49,38 @@
  .tc-marketing-blog.tc-tools-page .tc-tools-list,.tc-marketing-blog.tc-tools-page .tc-tools-empty{width:calc(100% - 32px)}
  .tc-marketing-blog.tc-tools-page .tc-tools-single-layout{width:calc(100% - 32px)}
 }
+
+/* Calculator controls intentionally reuse Ticarti's editorial typography and borders. */
+.tc-marketing-blog.tc-tools-page .tc-tool-calc-heading{display:flex;gap:18px;align-items:center;margin:0 0 22px}
+.tc-marketing-blog.tc-tools-page .tc-tool-calc-heading svg{flex:0 0 70px}
+.tc-marketing-blog.tc-tools-page .tc-tool-calc-heading h2{margin:0 0 6px!important;font:500 26px/1.25 var(--tc-font-display)}
+.tc-marketing-blog.tc-tools-page .tc-tool-calc-heading p{margin:0;color:#626c65;font:400 14px/1.5 var(--tc-font-body)}
+.tc-marketing-blog.tc-tools-page .tc-tool-calc-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tc-marketing-blog.tc-tools-page .tc-tool-field{display:grid;gap:7px;min-width:0;font:400 14px/1.4 var(--tc-font-body);color:#303833}
+.tc-marketing-blog.tc-tools-page .tc-tool-field input,.tc-marketing-blog.tc-tools-page .tc-tool-field select,
+.tc-marketing-blog.tc-tools-page .tc-tool-field textarea{width:100%;min-height:44px;padding:10px 13px;box-sizing:border-box;background:#fff;color:#181b1a;
+ border:1px solid #d9ded7;border-radius:6px;font:400 15px/1.5 var(--tc-font-body);outline-offset:2px}
+.tc-marketing-blog.tc-tools-page .tc-tool-field input:focus-visible,.tc-marketing-blog.tc-tools-page .tc-tool-field textarea:focus-visible,
+.tc-marketing-blog.tc-tools-page .tc-tool-field select:focus-visible{outline:2px solid #8ec03f;border-color:#8ec03f}
+.tc-marketing-blog.tc-tools-page .tc-tool-check{grid-column:1/-1;display:flex;align-items:center;gap:10px;font:400 14px/1.4 var(--tc-font-body)}
+.tc-marketing-blog.tc-tools-page .tc-tool-check input{accent-color:#8ec03f;width:17px;height:17px;flex:0 0 auto}
+.tc-marketing-blog.tc-tools-page .tc-tool-wide,.tc-marketing-blog.tc-tools-page .tc-tool-actions{grid-column:1/-1}
+.tc-marketing-blog.tc-tools-page .tc-tool-note{margin:0;font:400 13px/1.55 var(--tc-font-body);color:#666f69}
+.tc-marketing-blog.tc-tools-page .tc-tool-submit,.tc-marketing-blog.tc-tools-page .tc-tool-download{
+ display:inline-flex;justify-content:center;align-items:center;min-height:46px;border:1px solid #f0f97b;border-radius:8px;
+ background:#f0f97b;color:#181b1a;padding:11px 26px;text-decoration:none;cursor:pointer;font:600 14px/1.4 var(--tc-font-body)}
+.tc-marketing-blog.tc-tools-page .tc-tool-submit:hover,.tc-marketing-blog.tc-tools-page .tc-tool-download:hover{background:#e6f265}
+.tc-marketing-blog.tc-tools-page .tc-tool-results{margin:25px 0 0;border-top:1px solid #e5e8e3;padding-top:23px}
+.tc-marketing-blog.tc-tools-page .tc-tool-results h3{margin:0 0 12px;font:500 22px/1.25 var(--tc-font-display)}
+.tc-marketing-blog.tc-tools-page .tc-tool-results dl{margin:0}
+.tc-marketing-blog.tc-tools-page .tc-tool-results dl>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+ border-bottom:1px solid #edf0eb;padding:9px 0;font:400 14px/1.5 var(--tc-font-body)}
+.tc-marketing-blog.tc-tools-page .tc-tool-results dd{margin:0;font-weight:600;text-align:end;font-variant-numeric:tabular-nums}
+.tc-marketing-blog.tc-tools-page .tc-tool-result-note{margin:15px 0 0;font:400 13px/1.55 var(--tc-font-body);color:#666f69}
+.tc-marketing-blog.tc-tools-page .tc-tool-error{color:#b42318;margin:12px 0;font:400 14px/1.4 var(--tc-font-body)}
+.tc-marketing-blog.tc-tools-page .tc-tool-svg{width:230px;max-width:100%;background:white;border:1px solid #e5e8e3;padding:12px;margin:0 0 18px}
+.tc-marketing-blog.tc-tools-page .tc-tool-svg svg{display:block;width:100%;height:auto}
+@media(max-width:600px){.tc-marketing-blog.tc-tools-page .tc-tool-calc-form{grid-template-columns:1fr}
+ .tc-marketing-blog.tc-tools-page .tc-tool-calc-heading{align-items:flex-start}
+ .tc-marketing-blog.tc-tools-page .tc-tool-results dl>div{gap:8px}
+}
