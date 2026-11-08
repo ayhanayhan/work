@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import {menuLabel,menuTree,type Navigation,type MenuNode} from '@/lib/navigation';
 const external=(url:string)=>url.startsWith('https://');
 const isVisible=(item:MenuNode)=>item.enabled&&Boolean(menuLabel(item.label,'tr')||Object.values(item.label||{}).some(Boolean));
@@ -36,11 +37,14 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
    <div className="tc-mega-menu"><div className="container"><div className="tc-mega-menu-card">
     <div className="tc-ui-layout tc-ui-layout--four_columns">
      <div className="tc-ui-featured column tc-ui-featured--cta-top">
-      <p className="tc-ui-overline">{menuLabel(top.label,locale)}</p>
-      <p className="tc-ui-col-title">Ticarti · Ticaretin yeni hali</p>
-      <div className="tc-ui-cta"><a href="/paketler.html">Ticarti'yi keşfet</a></div>
+      <p className="tc-ui-overline">{top.id==='nav-solutions'?'Ticarti ile ticaret':top.id==='nav-resources'?'Ticarti kaynakları':menuLabel(top.label,locale)}</p>
+      <p className="tc-ui-col-title">{top.id==='nav-solutions'?
+       'İşletmenin büyüklüğüne ve satış modeline göre tek altyapıda yönetim':
+       top.id==='nav-resources'?'E-ticaret operasyonlarını öğren, özellikleri keşfet ve doğru paketi seç':'Ticarti · Ticaretin yeni hali'}</p>
+      <div className="tc-ui-cta"><a href={top.id==='nav-resources'?'/paketler.html#tc-compare':'/paketler.html'}>
+       {top.id==='nav-resources'?'Tüm özellikleri keşfet':'Paketleri karşılaştır'}</a></div>
      </div>
-     {top.children.filter(isVisible).map(column=><div className="tc-ui-column-with-divider" key={column.id}>
+     {top.children.filter(isVisible).map(column=><Fragment key={column.id}>
       <div className="tc-ui-divider"/>
       <div className="tc-ui-column column">
        <p className="tc-ui-overline">{menuLabel(column.label,locale)}</p>
@@ -51,7 +55,7 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
         {column.children.filter(isVisible).map(item=><TreeLink item={item} key={item.id} locale={locale}/>)}
        </div>
       </div>
-     </div>)}
+     </Fragment>)}
     </div>
    </div></div></div>
   </ul>
