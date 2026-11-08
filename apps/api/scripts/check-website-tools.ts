@@ -17,7 +17,11 @@ async function main(){
   const entry=initial.tools.find((x:any)=>x.id===id+'-komisyon-hesaplama');
   assert.ok(entry,'Missing marketplace tool '+id);
   assert.equal(entry?.status,'PUBLISHED');
-  for(const locale of ['tr','en','de','ru','ar','bg','uk','id','vi'])assert.ok(entry?.fields.title[locale]);
+  for(const locale of ['tr','en','de','ru','ar','bg','uk','id','vi']){
+   assert.ok(entry?.fields.title[locale]);
+   assert.ok(entry?.fields.seoDescription[locale], 'Missing SEO '+entry?.id+' '+locale);
+  }
+  assert.ok(entry?.faqs.length>=2, 'Missing FAQs '+entry?.id);
  }
  assert.equal((await svc.publicList('tr')).length,11);
  assert.equal((await svc.publicList('vi')).length,11);
@@ -46,10 +50,14 @@ async function main(){
  const invalid=structuredClone(published);
  invalid.tools.find((x:any)=>x.id==='kdv-hesaplama').image='javascript:alert(1)';
  await assert.rejects(svc.save(invalid),'Unsafe asset URL must be rejected');
- saved={version:2,tools:initial.tools.map(x=>({...x,status:'DRAFT',fields:{...x.fields,title:{tr:x.fields.title.tr},calculatorTitle:{}}}))};
+ saved={version:2,tools:initial.tools.map(x=>({...x,status:'DRAFT',
+  faqs:[],sections:[],fields:{...x.fields,
+   ...Object.fromEntries(Object.keys(x.fields).map(key=>[key,
+    key==='title'?{tr:x.fields.title.tr}:{}]))
+  }}))};
  assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,11,'Untouched drafts migrate to published');
  saved.tools[0].fields.description={tr:'Özel içerik henüz hazır değil'};
  assert.equal((await svc.snapshot()).tools[0].status,'DRAFT','Customized drafts must remain private');
- console.log('PASS: eleven published multilingual starter tool pages, protected custom drafts, SEO, data validation and version checks');
+ console.log('PASS: eleven published localized SEO calculator articles with FAQs, preserved drafts and validation');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
