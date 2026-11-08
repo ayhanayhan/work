@@ -80,8 +80,10 @@ export default function HomepageEditor(){
    }
    const home=await request('/superadmin/website/home') as Snapshot;
    setSaved(home);setDraft(deepCopy(home));
-   const blog=await request('/superadmin/website/blog');
-   setBlogCategories(Array.isArray(blog?.categories)?blog.categories:[]);
+   try{
+    const blog=await request('/superadmin/website/blog');
+    setBlogCategories(Array.isArray(blog?.categories)?blog.categories:[]);
+   }catch{setBlogCategories([])}
   }catch(e:any){setError(e?.message||'İçerikler okunamadı.')}
   finally{setLoading(false)}
  },[request,restoring]);
