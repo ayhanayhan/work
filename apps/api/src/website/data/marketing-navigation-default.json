@@ -5,13 +5,29 @@
       "id": "header-primary",
       "area": "header",
       "title": {
-        "tr": "Üst Menü"
+        "tr": "Üst Menü",
+        "en": "Main menu",
+        "de": "Hauptmenü",
+        "ru": "Главное меню",
+        "ar": "القائمة الرئيسية",
+        "bg": "Главно меню",
+        "uk": "Головне меню",
+        "id": "Menu utama",
+        "vi": "Menu chính"
       },
       "links": [
         {
           "id": "nav-solutions",
           "label": {
-            "tr": "Çözümler"
+            "tr": "Çözümler",
+            "en": "Solutions",
+            "de": "Lösungen",
+            "ru": "Решения",
+            "ar": "الحلول",
+            "bg": "Решения",
+            "uk": "Рішення",
+            "id": "Solusi",
+            "vi": "Giải pháp"
           },
           "url": "#",
           "enabled": true
@@ -19,7 +35,15 @@
         {
           "id": "nav-features",
           "label": {
-            "tr": "Özellikler"
+            "tr": "Özellikler",
+            "en": "Features",
+            "de": "Funktionen",
+            "ru": "Возможности",
+            "ar": "الميزات",
+            "bg": "Функции",
+            "uk": "Можливості",
+            "id": "Fitur",
+            "vi": "Tính năng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -27,7 +51,15 @@
         {
           "id": "nav-resources",
           "label": {
-            "tr": "Kaynaklar"
+            "tr": "Kaynaklar",
+            "en": "Resources",
+            "de": "Ressourcen",
+            "ru": "Ресурсы",
+            "ar": "الموارد",
+            "bg": "Ресурси",
+            "uk": "Ресурси",
+            "id": "Sumber daya",
+            "vi": "Tài nguyên"
           },
           "url": "#",
           "enabled": true
@@ -38,13 +70,29 @@
       "id": "header-companies-1",
       "area": "header",
       "title": {
-        "tr": "İşletme ölçeği"
+        "tr": "İşletme ölçeği",
+        "en": "Business size",
+        "de": "Unternehmensgröße",
+        "ru": "Размер бизнеса",
+        "ar": "حجم الأعمال",
+        "bg": "Размер на бизнеса",
+        "uk": "Масштаб бізнесу",
+        "id": "Skala bisnis",
+        "vi": "Quy mô doanh nghiệp"
       },
       "links": [
         {
           "id": "link-1-0",
           "label": {
-            "tr": "Yeni başlayan işletmeler"
+            "tr": "Yeni başlayan işletmeler",
+            "en": "New businesses",
+            "de": "Neue Unternehmen",
+            "ru": "Начинающий бизнес",
+            "ar": "الشركات الناشئة",
+            "bg": "Новостартиращи фирми",
+            "uk": "Нові підприємства",
+            "id": "Bisnis baru",
+            "vi": "Doanh nghiệp mới"
           },
           "url": "/paketler.html#tc-pricing-top",
           "enabled": true
@@ -52,7 +100,15 @@
         {
           "id": "link-1-1",
           "label": {
-            "tr": "Büyüyen mağazalar"
+            "tr": "Büyüyen mağazalar",
+            "en": "Growing stores",
+            "de": "Wachsende Shops",
+            "ru": "Растущие магазины",
+            "ar": "المتاجر النامية",
+            "bg": "Развиващи се магазини",
+            "uk": "Магазини, що зростають",
+            "id": "Toko berkembang",
+            "vi": "Cửa hàng đang phát triển"
           },
           "url": "/paketler.html#tc-pricing-top",
           "enabled": true
@@ -60,7 +116,15 @@
         {
           "id": "link-1-2",
           "label": {
-            "tr": "Yüksek hacimli operasyonlar"
+            "tr": "Yüksek hacimli operasyonlar",
+            "en": "High-volume operations",
+            "de": "Großvolumiger Betrieb",
+            "ru": "Крупные операции",
+            "ar": "العمليات كبيرة الحجم",
+            "bg": "Операции с голям обем",
+            "uk": "Великі обсяги операцій",
+            "id": "Operasi volume tinggi",
+            "vi": "Vận hành quy mô lớn"
           },
           "url": "/paketler.html#tc-pricing-top",
           "enabled": true
@@ -68,7 +132,15 @@
         {
           "id": "link-1-3",
           "label": {
-            "tr": "Çok markalı yapılar"
+            "tr": "Çok markalı yapılar",
+            "en": "Multi-brand businesses",
+            "de": "Mehrmarken-Unternehmen",
+            "ru": "Мультибрендовый бизнес",
+            "ar": "الأعمال متعددة العلامات",
+            "bg": "Бизнес с много марки",
+            "uk": "Мультибрендовий бізнес",
+            "id": "Bisnis multi-merek",
+            "vi": "Doanh nghiệp đa thương hiệu"
           },
           "url": "/companies/enterprise.html",
           "enabled": true
@@ -76,7 +148,15 @@
         {
           "id": "link-1-4",
           "label": {
-            "tr": "Kurumsal e-ticaret"
+            "tr": "Kurumsal e-ticaret",
+            "en": "Enterprise e-commerce",
+            "de": "Enterprise-E-Commerce",
+            "ru": "Корпоративная электронная торговля",
+            "ar": "التجارة الإلكترونية للمؤسسات",
+            "bg": "Корпоративна електронна търговия",
+            "uk": "Корпоративна електронна комерція",
+            "id": "E-commerce perusahaan",
+            "vi": "Thương mại điện tử doanh nghiệp"
           },
           "url": "/companies/enterprise.html",
           "enabled": true
@@ -87,13 +167,29 @@
       "id": "header-companies-2",
       "area": "header",
       "title": {
-        "tr": "Ticaret operasyonları"
+        "tr": "Ticaret operasyonları",
+        "en": "Commerce operations",
+        "de": "Handelsprozesse",
+        "ru": "Торговые операции",
+        "ar": "عمليات التجارة",
+        "bg": "Търговски операции",
+        "uk": "Торговельні операції",
+        "id": "Operasional perdagangan",
+        "vi": "Vận hành thương mại"
       },
       "links": [
         {
           "id": "link-2-0",
           "label": {
-            "tr": "Ürün ve varyant yönetimi"
+            "tr": "Ürün ve varyant yönetimi",
+            "en": "Product and variant management",
+            "de": "Produkt- und Variantenverwaltung",
+            "ru": "Управление товарами и вариантами",
+            "ar": "إدارة المنتجات والمتغيرات",
+            "bg": "Управление на продукти и варианти",
+            "uk": "Керування товарами та варіантами",
+            "id": "Manajemen produk dan varian",
+            "vi": "Quản lý sản phẩm và biến thể"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -101,7 +197,15 @@
         {
           "id": "link-2-1",
           "label": {
-            "tr": "Sipariş ve iade"
+            "tr": "Sipariş ve iade",
+            "en": "Orders and returns",
+            "de": "Bestellungen und Retouren",
+            "ru": "Заказы и возвраты",
+            "ar": "الطلبات والمرتجعات",
+            "bg": "Поръчки и връщания",
+            "uk": "Замовлення та повернення",
+            "id": "Pesanan dan retur",
+            "vi": "Đơn hàng và hoàn trả"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -109,7 +213,15 @@
         {
           "id": "link-2-2",
           "label": {
-            "tr": "Depo, stok ve transfer"
+            "tr": "Depo, stok ve transfer",
+            "en": "Warehouses, inventory and transfers",
+            "de": "Lager, Bestand und Umlagerung",
+            "ru": "Склады, запасы и перемещения",
+            "ar": "المستودعات والمخزون والنقل",
+            "bg": "Складове, наличности и трансфери",
+            "uk": "Склади, залишки та переміщення",
+            "id": "Gudang, stok, dan transfer",
+            "vi": "Kho, tồn kho và điều chuyển"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -117,7 +229,15 @@
         {
           "id": "link-2-3",
           "label": {
-            "tr": "Ödeme ve checkout"
+            "tr": "Ödeme ve checkout",
+            "en": "Payments and checkout",
+            "de": "Zahlungen und Checkout",
+            "ru": "Платежи и оформление заказа",
+            "ar": "المدفوعات وإتمام الشراء",
+            "bg": "Плащания и финализиране",
+            "uk": "Оплата й оформлення замовлення",
+            "id": "Pembayaran dan checkout",
+            "vi": "Thanh toán và đặt hàng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -125,7 +245,15 @@
         {
           "id": "link-2-4",
           "label": {
-            "tr": "Müşteri yönetimi"
+            "tr": "Müşteri yönetimi",
+            "en": "Customer management",
+            "de": "Kundenverwaltung",
+            "ru": "Управление клиентами",
+            "ar": "إدارة العملاء",
+            "bg": "Управление на клиенти",
+            "uk": "Керування клієнтами",
+            "id": "Manajemen pelanggan",
+            "vi": "Quản lý khách hàng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -136,13 +264,29 @@
       "id": "header-companies-3",
       "area": "header",
       "title": {
-        "tr": "Satış ve büyüme"
+        "tr": "Satış ve büyüme",
+        "en": "Sales and growth",
+        "de": "Vertrieb und Wachstum",
+        "ru": "Продажи и рост",
+        "ar": "المبيعات والنمو",
+        "bg": "Продажби и растеж",
+        "uk": "Продажі та зростання",
+        "id": "Penjualan dan pertumbuhan",
+        "vi": "Bán hàng và tăng trưởng"
       },
       "links": [
         {
           "id": "link-3-0",
           "label": {
-            "tr": "Kampanya ve promosyonlar"
+            "tr": "Kampanya ve promosyonlar",
+            "en": "Campaigns and promotions",
+            "de": "Kampagnen und Aktionen",
+            "ru": "Кампании и акции",
+            "ar": "الحملات والعروض",
+            "bg": "Кампании и промоции",
+            "uk": "Кампанії та акції",
+            "id": "Kampanye dan promosi",
+            "vi": "Chiến dịch và khuyến mãi"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -150,7 +294,15 @@
         {
           "id": "link-3-1",
           "label": {
-            "tr": "Çok dilli satış"
+            "tr": "Çok dilli satış",
+            "en": "Multilingual selling",
+            "de": "Mehrsprachiger Verkauf",
+            "ru": "Многоязычные продажи",
+            "ar": "البيع متعدد اللغات",
+            "bg": "Многоезични продажби",
+            "uk": "Багатомовні продажі",
+            "id": "Penjualan multibahasa",
+            "vi": "Bán hàng đa ngôn ngữ"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -158,7 +310,15 @@
         {
           "id": "link-3-2",
           "label": {
-            "tr": "E-ihracat ve döviz"
+            "tr": "E-ihracat ve döviz",
+            "en": "Cross-border trade and currencies",
+            "de": "Grenzüberschreitender Handel und Währungen",
+            "ru": "Экспорт и валюты",
+            "ar": "التصدير الإلكتروني والعملات",
+            "bg": "Експорт и валути",
+            "uk": "Експорт та валюти",
+            "id": "Ekspor daring dan mata uang",
+            "vi": "Xuất khẩu trực tuyến và tiền tệ"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -166,7 +326,15 @@
         {
           "id": "link-3-3",
           "label": {
-            "tr": "SEO ve içerik"
+            "tr": "SEO ve içerik",
+            "en": "SEO and content",
+            "de": "SEO und Inhalte",
+            "ru": "SEO и контент",
+            "ar": "تحسين محركات البحث والمحتوى",
+            "bg": "SEO и съдържание",
+            "uk": "SEO та контент",
+            "id": "SEO dan konten",
+            "vi": "SEO và nội dung"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -174,7 +342,15 @@
         {
           "id": "link-3-4",
           "label": {
-            "tr": "E-posta ve sepet otomasyonu"
+            "tr": "E-posta ve sepet otomasyonu",
+            "en": "Email and cart automation",
+            "de": "E-Mail- und Warenkornautomatisierung",
+            "ru": "Автоматизация почты и корзины",
+            "ar": "أتمتة البريد والسلة",
+            "bg": "Автоматизация на имейли и колички",
+            "uk": "Автоматизація пошти й кошика",
+            "id": "Otomasi email dan keranjang",
+            "vi": "Tự động hóa email và giỏ hàng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -185,13 +361,29 @@
       "id": "header-companies-4",
       "area": "header",
       "title": {
-        "tr": "Entegrasyon ve analiz"
+        "tr": "Entegrasyon ve analiz",
+        "en": "Integrations and analytics",
+        "de": "Integrationen und Analysen",
+        "ru": "Интеграции и аналитика",
+        "ar": "التكاملات والتحليلات",
+        "bg": "Интеграции и анализи",
+        "uk": "Інтеграції та аналітика",
+        "id": "Integrasi dan analitik",
+        "vi": "Tích hợp và phân tích"
       },
       "links": [
         {
           "id": "link-4-0",
           "label": {
-            "tr": "Kargo ve lojistik"
+            "tr": "Kargo ve lojistik",
+            "en": "Shipping and logistics",
+            "de": "Versand und Logistik",
+            "ru": "Доставка и логистика",
+            "ar": "الشحن والخدمات اللوجستية",
+            "bg": "Доставки и логистика",
+            "uk": "Доставка та логістика",
+            "id": "Pengiriman dan logistik",
+            "vi": "Vận chuyển và hậu cần"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -199,7 +391,15 @@
         {
           "id": "link-4-1",
           "label": {
-            "tr": "Pazaryeri operasyonları"
+            "tr": "Pazaryeri operasyonları",
+            "en": "Marketplace operations",
+            "de": "Marktplatzprozesse",
+            "ru": "Работа с маркетплейсами",
+            "ar": "عمليات الأسواق الإلكترونية",
+            "bg": "Операции с маркетплейси",
+            "uk": "Операції з маркетплейсами",
+            "id": "Operasional marketplace",
+            "vi": "Vận hành sàn thương mại điện tử"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -207,7 +407,15 @@
         {
           "id": "link-4-2",
           "label": {
-            "tr": "ERP / WMS entegrasyonları"
+            "tr": "ERP / WMS entegrasyonları",
+            "en": "ERP / WMS integrations",
+            "de": "ERP-/WMS-Integrationen",
+            "ru": "Интеграции ERP / WMS",
+            "ar": "تكاملات ERP / WMS",
+            "bg": "ERP / WMS интеграции",
+            "uk": "Інтеграції ERP / WMS",
+            "id": "Integrasi ERP / WMS",
+            "vi": "Tích hợp ERP / WMS"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -215,7 +423,15 @@
         {
           "id": "link-4-3",
           "label": {
-            "tr": "Analitik ve raporlama"
+            "tr": "Analitik ve raporlama",
+            "en": "Analytics and reporting",
+            "de": "Analysen und Berichte",
+            "ru": "Аналитика и отчёты",
+            "ar": "التحليلات والتقارير",
+            "bg": "Анализи и отчети",
+            "uk": "Аналітика та звіти",
+            "id": "Analitik dan laporan",
+            "vi": "Phân tích và báo cáo"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -223,7 +439,15 @@
         {
           "id": "link-4-4",
           "label": {
-            "tr": "Kurulum ve taşıma desteği"
+            "tr": "Kurulum ve taşıma desteği",
+            "en": "Setup and migration support",
+            "de": "Einrichtung und Migration",
+            "ru": "Помощь с запуском и переносом",
+            "ar": "دعم الإعداد والترحيل",
+            "bg": "Помощ при настройка и миграция",
+            "uk": "Допомога з налаштуванням та міграцією",
+            "id": "Bantuan penyiapan dan migrasi",
+            "vi": "Hỗ trợ thiết lập và chuyển đổi"
           },
           "url": "/contacto.html",
           "enabled": true
@@ -234,13 +458,29 @@
       "id": "header-resources-1",
       "area": "header",
       "title": {
-        "tr": "Ürünü keşfet"
+        "tr": "Ürünü keşfet",
+        "en": "Explore the product",
+        "de": "Produkt entdecken",
+        "ru": "Изучить продукт",
+        "ar": "اكتشف المنتج",
+        "bg": "Разгледайте продукта",
+        "uk": "Огляд продукту",
+        "id": "Jelajahi produk",
+        "vi": "Khám phá sản phẩm"
       },
       "links": [
         {
           "id": "link-1-0",
           "label": {
-            "tr": "Paketler ve fiyatlandırma"
+            "tr": "Paketler ve fiyatlandırma",
+            "en": "Plans and pricing",
+            "de": "Pakete und Preise",
+            "ru": "Тарифы и цены",
+            "ar": "الخطط والأسعار",
+            "bg": "Планове и цени",
+            "uk": "Плани та ціни",
+            "id": "Paket dan harga",
+            "vi": "Gói dịch vụ và giá"
           },
           "url": "/paketler.html",
           "enabled": true
@@ -248,7 +488,15 @@
         {
           "id": "link-1-1",
           "label": {
-            "tr": "Özellik karşılaştırması"
+            "tr": "Özellik karşılaştırması",
+            "en": "Feature comparison",
+            "de": "Funktionsvergleich",
+            "ru": "Сравнение функций",
+            "ar": "مقارنة الميزات",
+            "bg": "Сравнение на функции",
+            "uk": "Порівняння функцій",
+            "id": "Perbandingan fitur",
+            "vi": "So sánh tính năng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -256,7 +504,15 @@
         {
           "id": "link-1-2",
           "label": {
-            "tr": "Ürün ve varyantlar"
+            "tr": "Ürün ve varyantlar",
+            "en": "Products and variants",
+            "de": "Produkte und Varianten",
+            "ru": "Товары и варианты",
+            "ar": "المنتجات والمتغيرات",
+            "bg": "Продукти и варианти",
+            "uk": "Товари та варіанти",
+            "id": "Produk dan varian",
+            "vi": "Sản phẩm và biến thể"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -264,7 +520,15 @@
         {
           "id": "link-1-3",
           "label": {
-            "tr": "Pazarlama araçları"
+            "tr": "Pazarlama araçları",
+            "en": "Marketing tools",
+            "de": "Marketing-Tools",
+            "ru": "Маркетинговые инструменты",
+            "ar": "أدوات التسويق",
+            "bg": "Маркетингови инструменти",
+            "uk": "Маркетингові інструменти",
+            "id": "Alat pemasaran",
+            "vi": "Công cụ tiếp thị"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -272,7 +536,15 @@
         {
           "id": "link-1-4",
           "label": {
-            "tr": "Çoklu depo yönetimi"
+            "tr": "Çoklu depo yönetimi",
+            "en": "Multi-warehouse management",
+            "de": "Verwaltung mehrerer Lager",
+            "ru": "Управление несколькими складами",
+            "ar": "إدارة المستودعات المتعددة",
+            "bg": "Управление на множество складове",
+            "uk": "Керування кількома складами",
+            "id": "Manajemen multi-gudang",
+            "vi": "Quản lý nhiều kho"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -283,13 +555,29 @@
       "id": "header-resources-2",
       "area": "header",
       "title": {
-        "tr": "Rehberler"
+        "tr": "Rehberler",
+        "en": "Guides",
+        "de": "Ratgeber",
+        "ru": "Руководства",
+        "ar": "الأدلة",
+        "bg": "Ръководства",
+        "uk": "Посібники",
+        "id": "Panduan",
+        "vi": "Hướng dẫn"
       },
       "links": [
         {
           "id": "link-2-0",
           "label": {
-            "tr": "Ücretsiz araçlar ve hesaplayıcılar"
+            "tr": "Ücretsiz araçlar ve hesaplayıcılar",
+            "en": "Free tools and calculators",
+            "de": "Kostenlose Tools und Rechner",
+            "ru": "Бесплатные инструменты и калькуляторы",
+            "ar": "أدوات وحاسبات مجانية",
+            "bg": "Безплатни инструменти и калкулатори",
+            "uk": "Безкоштовні інструменти й калькулятори",
+            "id": "Alat dan kalkulator gratis",
+            "vi": "Công cụ và máy tính miễn phí"
           },
           "url": "/araclar",
           "enabled": true
@@ -297,7 +585,15 @@
         {
           "id": "link-2-1",
           "label": {
-            "tr": "E-ticaret nasıl kurulur?"
+            "tr": "E-ticaret nasıl kurulur?",
+            "en": "How to start e-commerce?",
+            "de": "Wie startet man E-Commerce?",
+            "ru": "Как начать электронную торговлю?",
+            "ar": "كيف تبدأ التجارة الإلكترونية؟",
+            "bg": "Как да започнете онлайн търговия?",
+            "uk": "Як почати електронну торгівлю?",
+            "id": "Bagaimana memulai e-commerce?",
+            "vi": "Làm thế nào để bắt đầu bán hàng trực tuyến?"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -305,7 +601,15 @@
         {
           "id": "link-2-2",
           "label": {
-            "tr": "Doğru paket nasıl seçilir?"
+            "tr": "Doğru paket nasıl seçilir?",
+            "en": "How to choose the right plan?",
+            "de": "Wie wählt man den richtigen Tarif?",
+            "ru": "Как выбрать тариф?",
+            "ar": "كيف تختار الخطة المناسبة؟",
+            "bg": "Как да изберете подходящ план?",
+            "uk": "Як вибрати відповідний план?",
+            "id": "Bagaimana memilih paket yang tepat?",
+            "vi": "Cách chọn gói phù hợp?"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -313,7 +617,15 @@
         {
           "id": "link-2-3",
           "label": {
-            "tr": "Alan adı ve SSL"
+            "tr": "Alan adı ve SSL",
+            "en": "Domains and SSL",
+            "de": "Domains und SSL",
+            "ru": "Домены и SSL",
+            "ar": "النطاقات وSSL",
+            "bg": "Домейни и SSL",
+            "uk": "Домени та SSL",
+            "id": "Domain dan SSL",
+            "vi": "Tên miền và SSL"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -321,7 +633,15 @@
         {
           "id": "link-2-4",
           "label": {
-            "tr": "Kargo entegrasyonları"
+            "tr": "Kargo entegrasyonları",
+            "en": "Shipping integrations",
+            "de": "Versandintegrationen",
+            "ru": "Интеграции доставки",
+            "ar": "تكاملات الشحن",
+            "bg": "Интеграции за доставки",
+            "uk": "Інтеграції доставки",
+            "id": "Integrasi pengiriman",
+            "vi": "Tích hợp vận chuyển"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -329,7 +649,15 @@
         {
           "id": "link-2-5",
           "label": {
-            "tr": "E-ihracata başlangıç"
+            "tr": "E-ihracata başlangıç",
+            "en": "Getting started with cross-border sales",
+            "de": "Einstieg in den internationalen Handel",
+            "ru": "Начало международных продаж",
+            "ar": "بدء البيع عبر الحدود",
+            "bg": "Начало на международни продажби",
+            "uk": "Початок міжнародних продажів",
+            "id": "Memulai penjualan lintas negara",
+            "vi": "Bắt đầu bán hàng xuyên biên giới"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -340,13 +668,29 @@
       "id": "header-resources-3",
       "area": "header",
       "title": {
-        "tr": "Ticarti hakkında"
+        "tr": "Ticarti hakkında",
+        "en": "About Ticarti",
+        "de": "Über Ticarti",
+        "ru": "О Ticarti",
+        "ar": "حول Ticarti",
+        "bg": "За Ticarti",
+        "uk": "Про Ticarti",
+        "id": "Tentang Ticarti",
+        "vi": "Về Ticarti"
       },
       "links": [
         {
           "id": "link-3-0",
           "label": {
-            "tr": "Başarı hikâyeleri"
+            "tr": "Başarı hikâyeleri",
+            "en": "Success stories",
+            "de": "Erfolgsgeschichten",
+            "ru": "Истории успеха",
+            "ar": "قصص النجاح",
+            "bg": "Истории на успеха",
+            "uk": "Історії успіху",
+            "id": "Kisah sukses",
+            "vi": "Câu chuyện thành công"
           },
           "url": "/success-stories",
           "enabled": true
@@ -354,7 +698,15 @@
         {
           "id": "link-3-1",
           "label": {
-            "tr": "Müşteri deneyimleri"
+            "tr": "Müşteri deneyimleri",
+            "en": "Customer stories",
+            "de": "Kundenerfahrungen",
+            "ru": "Истории клиентов",
+            "ar": "تجارب العملاء",
+            "bg": "Клиентски истории",
+            "uk": "Історії клієнтів",
+            "id": "Cerita pelanggan",
+            "vi": "Trải nghiệm khách hàng"
           },
           "url": "/success-stories/crowdy.html",
           "enabled": true
@@ -362,7 +714,15 @@
         {
           "id": "link-3-2",
           "label": {
-            "tr": "Kurumsal çözümler"
+            "tr": "Kurumsal çözümler",
+            "en": "Enterprise solutions",
+            "de": "Unternehmenslösungen",
+            "ru": "Корпоративные решения",
+            "ar": "حلول المؤسسات",
+            "bg": "Корпоративни решения",
+            "uk": "Корпоративні рішення",
+            "id": "Solusi perusahaan",
+            "vi": "Giải pháp doanh nghiệp"
           },
           "url": "/companies/enterprise.html",
           "enabled": true
@@ -370,7 +730,15 @@
         {
           "id": "link-3-3",
           "label": {
-            "tr": "Sık sorulan sorular"
+            "tr": "Sık sorulan sorular",
+            "en": "Frequently asked questions",
+            "de": "Häufig gestellte Fragen",
+            "ru": "Частые вопросы",
+            "ar": "الأسئلة الشائعة",
+            "bg": "Често задавани въпроси",
+            "uk": "Поширені запитання",
+            "id": "Pertanyaan umum",
+            "vi": "Câu hỏi thường gặp"
           },
           "url": "/paketler.html#tc-faq",
           "enabled": true
@@ -378,7 +746,15 @@
         {
           "id": "link-3-4",
           "label": {
-            "tr": "İletişim"
+            "tr": "İletişim",
+            "en": "Contact",
+            "de": "Kontakt",
+            "ru": "Контакты",
+            "ar": "اتصل بنا",
+            "bg": "Контакти",
+            "uk": "Контакти",
+            "id": "Kontak",
+            "vi": "Liên hệ"
           },
           "url": "/contacto.html",
           "enabled": true
@@ -389,13 +765,29 @@
       "id": "footer-1",
       "area": "footer",
       "title": {
-        "tr": "Ticarti"
+        "tr": "Ticarti",
+        "en": "Ticarti",
+        "de": "Ticarti",
+        "ru": "Ticarti",
+        "ar": "Ticarti",
+        "bg": "Ticarti",
+        "uk": "Ticarti",
+        "id": "Ticarti",
+        "vi": "Ticarti"
       },
       "links": [
         {
           "id": "footer-link-0-0",
           "label": {
-            "tr": "Ticarti nedir?"
+            "tr": "Ticarti nedir?",
+            "en": "What is Ticarti?",
+            "de": "Was ist Ticarti?",
+            "ru": "Что такое Ticarti?",
+            "ar": "ما هو Ticarti؟",
+            "bg": "Какво е Ticarti?",
+            "uk": "Що таке Ticarti?",
+            "id": "Apa itu Ticarti?",
+            "vi": "Ticarti là gì?"
           },
           "url": "/",
           "enabled": true
@@ -403,7 +795,15 @@
         {
           "id": "footer-link-0-1",
           "label": {
-            "tr": "Paketler ve fiyatlandırma"
+            "tr": "Paketler ve fiyatlandırma",
+            "en": "Plans and pricing",
+            "de": "Pakete und Preise",
+            "ru": "Тарифы и цены",
+            "ar": "الخطط والأسعار",
+            "bg": "Планове и цени",
+            "uk": "Плани та ціни",
+            "id": "Paket dan harga",
+            "vi": "Gói dịch vụ và giá"
           },
           "url": "/paketler.html",
           "enabled": true
@@ -411,7 +811,15 @@
         {
           "id": "footer-link-0-2",
           "label": {
-            "tr": "Mağaza açma"
+            "tr": "Mağaza açma",
+            "en": "Start a store",
+            "de": "Shop eröffnen",
+            "ru": "Открыть магазин",
+            "ar": "إنشاء متجر",
+            "bg": "Създаване на магазин",
+            "uk": "Відкрити магазин",
+            "id": "Buka toko",
+            "vi": "Mở cửa hàng"
           },
           "url": "/paketler.html#tc-pricing-top",
           "enabled": true
@@ -419,7 +827,15 @@
         {
           "id": "footer-link-0-3",
           "label": {
-            "tr": "Tema ve vitrin"
+            "tr": "Tema ve vitrin",
+            "en": "Themes and storefront",
+            "de": "Themes und Storefront",
+            "ru": "Темы и витрина",
+            "ar": "القوالب وواجهة المتجر",
+            "bg": "Теми и витрина",
+            "uk": "Теми та вітрина",
+            "id": "Tema dan etalase",
+            "vi": "Giao diện và cửa hàng"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -427,7 +843,15 @@
         {
           "id": "footer-link-0-4",
           "label": {
-            "tr": "Ürün ve stok"
+            "tr": "Ürün ve stok",
+            "en": "Products and inventory",
+            "de": "Produkte und Bestand",
+            "ru": "Товары и запасы",
+            "ar": "المنتجات والمخزون",
+            "bg": "Продукти и наличности",
+            "uk": "Товари та залишки",
+            "id": "Produk dan stok",
+            "vi": "Sản phẩm và tồn kho"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -435,7 +859,15 @@
         {
           "id": "footer-link-0-5",
           "label": {
-            "tr": "Sipariş ve iade"
+            "tr": "Sipariş ve iade",
+            "en": "Orders and returns",
+            "de": "Bestellungen und Retouren",
+            "ru": "Заказы и возвраты",
+            "ar": "الطلبات والمرتجعات",
+            "bg": "Поръчки и връщания",
+            "uk": "Замовлення та повернення",
+            "id": "Pesanan dan retur",
+            "vi": "Đơn hàng và hoàn trả"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -443,7 +875,15 @@
         {
           "id": "footer-link-0-6",
           "label": {
-            "tr": "Pazarlama araçları"
+            "tr": "Pazarlama araçları",
+            "en": "Marketing tools",
+            "de": "Marketing-Tools",
+            "ru": "Маркетинговые инструменты",
+            "ar": "أدوات التسويق",
+            "bg": "Маркетингови инструменти",
+            "uk": "Маркетингові інструменти",
+            "id": "Alat pemasaran",
+            "vi": "Công cụ tiếp thị"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -454,13 +894,29 @@
       "id": "footer-2",
       "area": "footer",
       "title": {
-        "tr": "Kurumsal"
+        "tr": "Kurumsal",
+        "en": "Company",
+        "de": "Unternehmen",
+        "ru": "Компания",
+        "ar": "الشركة",
+        "bg": "Компания",
+        "uk": "Компанія",
+        "id": "Perusahaan",
+        "vi": "Doanh nghiệp"
       },
       "links": [
         {
           "id": "footer-link-1-0",
           "label": {
-            "tr": "Hakkımızda"
+            "tr": "Hakkımızda",
+            "en": "About us",
+            "de": "Über uns",
+            "ru": "О нас",
+            "ar": "من نحن",
+            "bg": "За нас",
+            "uk": "Про нас",
+            "id": "Tentang kami",
+            "vi": "Về chúng tôi"
           },
           "url": "/contacto.html",
           "enabled": true
@@ -468,7 +924,15 @@
         {
           "id": "footer-link-1-1",
           "label": {
-            "tr": "Kurumsal çözümler"
+            "tr": "Kurumsal çözümler",
+            "en": "Enterprise solutions",
+            "de": "Unternehmenslösungen",
+            "ru": "Корпоративные решения",
+            "ar": "حلول المؤسسات",
+            "bg": "Корпоративни решения",
+            "uk": "Корпоративні рішення",
+            "id": "Solusi perusahaan",
+            "vi": "Giải pháp doanh nghiệp"
           },
           "url": "/companies/enterprise.html",
           "enabled": true
@@ -476,7 +940,15 @@
         {
           "id": "footer-link-1-2",
           "label": {
-            "tr": "Başarı hikâyeleri"
+            "tr": "Başarı hikâyeleri",
+            "en": "Success stories",
+            "de": "Erfolgsgeschichten",
+            "ru": "Истории успеха",
+            "ar": "قصص النجاح",
+            "bg": "Истории на успеха",
+            "uk": "Історії успіху",
+            "id": "Kisah sukses",
+            "vi": "Câu chuyện thành công"
           },
           "url": "/success-stories/index.html",
           "enabled": true
@@ -484,7 +956,15 @@
         {
           "id": "footer-link-1-3",
           "label": {
-            "tr": "İletişim"
+            "tr": "İletişim",
+            "en": "Contact",
+            "de": "Kontakt",
+            "ru": "Контакты",
+            "ar": "اتصل بنا",
+            "bg": "Контакти",
+            "uk": "Контакти",
+            "id": "Kontak",
+            "vi": "Liên hệ"
           },
           "url": "/contacto.html",
           "enabled": true
@@ -492,7 +972,15 @@
         {
           "id": "footer-link-1-4",
           "label": {
-            "tr": "Uygulama Marketi"
+            "tr": "Uygulama Marketi",
+            "en": "App marketplace",
+            "de": "App-Marktplatz",
+            "ru": "Магазин приложений",
+            "ar": "متجر التطبيقات",
+            "bg": "Магазин за приложения",
+            "uk": "Маркетплейс застосунків",
+            "id": "Marketplace aplikasi",
+            "vi": "Chợ ứng dụng"
           },
           "url": "https://app.ticarti.com",
           "enabled": true
@@ -500,7 +988,15 @@
         {
           "id": "footer-link-1-5",
           "label": {
-            "tr": "Developer"
+            "tr": "Developer",
+            "en": "Developers",
+            "de": "Entwickler",
+            "ru": "Разработчикам",
+            "ar": "للمطورين",
+            "bg": "Разработчици",
+            "uk": "Розробникам",
+            "id": "Pengembang",
+            "vi": "Nhà phát triển"
           },
           "url": "https://dev.ticarti.com",
           "enabled": true
@@ -508,7 +1004,15 @@
         {
           "id": "footer-link-1-6",
           "label": {
-            "tr": "Yardım"
+            "tr": "Yardım",
+            "en": "Help",
+            "de": "Hilfe",
+            "ru": "Помощь",
+            "ar": "المساعدة",
+            "bg": "Помощ",
+            "uk": "Допомога",
+            "id": "Bantuan",
+            "vi": "Trợ giúp"
           },
           "url": "https://help.ticarti.com",
           "enabled": true
@@ -519,13 +1023,29 @@
       "id": "footer-3",
       "area": "footer",
       "title": {
-        "tr": "E-ticaret ve e-ihracat"
+        "tr": "E-ticaret ve e-ihracat",
+        "en": "E-commerce and cross-border sales",
+        "de": "E-Commerce und internationaler Handel",
+        "ru": "Электронная торговля и экспорт",
+        "ar": "التجارة الإلكترونية والتصدير",
+        "bg": "Електронна търговия и износ",
+        "uk": "Електронна комерція та експорт",
+        "id": "E-commerce dan ekspor",
+        "vi": "Thương mại điện tử và xuất khẩu"
       },
       "links": [
         {
           "id": "footer-link-2-0",
           "label": {
-            "tr": "E-ticaret paketleri"
+            "tr": "E-ticaret paketleri",
+            "en": "E-commerce plans",
+            "de": "E-Commerce-Pakete",
+            "ru": "Тарифы для интернет-магазина",
+            "ar": "خطط التجارة الإلكترونية",
+            "bg": "Планове за онлайн търговия",
+            "uk": "Плани електронної комерції",
+            "id": "Paket e-commerce",
+            "vi": "Gói thương mại điện tử"
           },
           "url": "/paketler.html",
           "enabled": true
@@ -533,7 +1053,15 @@
         {
           "id": "footer-link-2-1",
           "label": {
-            "tr": "Pazaryeri bağlantıları"
+            "tr": "Pazaryeri bağlantıları",
+            "en": "Marketplace integrations",
+            "de": "Marktplatzanbindungen",
+            "ru": "Интеграции с маркетплейсами",
+            "ar": "تكاملات الأسواق الإلكترونية",
+            "bg": "Връзки с маркетплейси",
+            "uk": "Інтеграції з маркетплейсами",
+            "id": "Integrasi marketplace",
+            "vi": "Kết nối sàn thương mại điện tử"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -541,7 +1069,15 @@
         {
           "id": "footer-link-2-2",
           "label": {
-            "tr": "Kargo entegrasyonları"
+            "tr": "Kargo entegrasyonları",
+            "en": "Shipping integrations",
+            "de": "Versandintegrationen",
+            "ru": "Интеграции доставки",
+            "ar": "تكاملات الشحن",
+            "bg": "Интеграции за доставки",
+            "uk": "Інтеграції доставки",
+            "id": "Integrasi pengiriman",
+            "vi": "Tích hợp vận chuyển"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -549,7 +1085,15 @@
         {
           "id": "footer-link-2-3",
           "label": {
-            "tr": "Çok dilli satış"
+            "tr": "Çok dilli satış",
+            "en": "Multilingual selling",
+            "de": "Mehrsprachiger Verkauf",
+            "ru": "Многоязычные продажи",
+            "ar": "البيع متعدد اللغات",
+            "bg": "Многоезични продажби",
+            "uk": "Багатомовні продажі",
+            "id": "Penjualan multibahasa",
+            "vi": "Bán hàng đa ngôn ngữ"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -557,7 +1101,15 @@
         {
           "id": "footer-link-2-4",
           "label": {
-            "tr": "Çoklu para birimi"
+            "tr": "Çoklu para birimi",
+            "en": "Multiple currencies",
+            "de": "Mehrere Währungen",
+            "ru": "Несколько валют",
+            "ar": "عملات متعددة",
+            "bg": "Множество валути",
+            "uk": "Кілька валют",
+            "id": "Multi-mata uang",
+            "vi": "Đa tiền tệ"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -565,7 +1117,15 @@
         {
           "id": "footer-link-2-5",
           "label": {
-            "tr": "SEO ve blog"
+            "tr": "SEO ve blog",
+            "en": "SEO and blog",
+            "de": "SEO und Blog",
+            "ru": "SEO и блог",
+            "ar": "تحسين البحث والمدونة",
+            "bg": "SEO и блог",
+            "uk": "SEO та блог",
+            "id": "SEO dan blog",
+            "vi": "SEO và blog"
           },
           "url": "/blog/",
           "enabled": true
@@ -573,7 +1133,15 @@
         {
           "id": "footer-link-2-6",
           "label": {
-            "tr": "Paket karşılaştırması"
+            "tr": "Paket karşılaştırması",
+            "en": "Plan comparison",
+            "de": "Tarifvergleich",
+            "ru": "Сравнение тарифов",
+            "ar": "مقارنة الخطط",
+            "bg": "Сравнение на планове",
+            "uk": "Порівняння планів",
+            "id": "Perbandingan paket",
+            "vi": "So sánh các gói"
           },
           "url": "/paketler.html#tc-compare",
           "enabled": true
@@ -584,13 +1152,29 @@
       "id": "footer-4",
       "area": "footer",
       "title": {
-        "tr": "Kaynaklar"
+        "tr": "Kaynaklar",
+        "en": "Resources",
+        "de": "Ressourcen",
+        "ru": "Ресурсы",
+        "ar": "الموارد",
+        "bg": "Ресурси",
+        "uk": "Ресурси",
+        "id": "Sumber daya",
+        "vi": "Tài nguyên"
       },
       "links": [
         {
           "id": "footer-link-3-0",
           "label": {
-            "tr": "Blog"
+            "tr": "Blog",
+            "en": "Blog",
+            "de": "Blog",
+            "ru": "Блог",
+            "ar": "المدونة",
+            "bg": "Блог",
+            "uk": "Блог",
+            "id": "Blog",
+            "vi": "Blog"
           },
           "url": "/blog/",
           "enabled": true
@@ -598,7 +1182,15 @@
         {
           "id": "footer-link-3-1",
           "label": {
-            "tr": "Ücretsiz araçlar"
+            "tr": "Ücretsiz araçlar",
+            "en": "Free tools",
+            "de": "Kostenlose Tools",
+            "ru": "Бесплатные инструменты",
+            "ar": "أدوات مجانية",
+            "bg": "Безплатни инструменти",
+            "uk": "Безкоштовні інструменти",
+            "id": "Alat gratis",
+            "vi": "Công cụ miễn phí"
           },
           "url": "/araclar",
           "enabled": true
@@ -606,7 +1198,15 @@
         {
           "id": "footer-link-3-2",
           "label": {
-            "tr": "Sık sorulan sorular"
+            "tr": "Sık sorulan sorular",
+            "en": "Frequently asked questions",
+            "de": "Häufig gestellte Fragen",
+            "ru": "Частые вопросы",
+            "ar": "الأسئلة الشائعة",
+            "bg": "Често задавани въпроси",
+            "uk": "Поширені запитання",
+            "id": "Pertanyaan umum",
+            "vi": "Câu hỏi thường gặp"
           },
           "url": "#tc-faq",
           "enabled": true
@@ -614,7 +1214,15 @@
         {
           "id": "footer-link-3-3",
           "label": {
-            "tr": "E-ticaret sitesi kurmak"
+            "tr": "E-ticaret sitesi kurmak",
+            "en": "Build an online store",
+            "de": "Online-Shop erstellen",
+            "ru": "Создать интернет-магазин",
+            "ar": "إنشاء متجر إلكتروني",
+            "bg": "Създаване на онлайн магазин",
+            "uk": "Створити інтернет-магазин",
+            "id": "Membuat toko online",
+            "vi": "Tạo cửa hàng trực tuyến"
           },
           "url": "/blog/e-ticaret-sitesi-kurma-rehberi.html",
           "enabled": true
@@ -622,7 +1230,15 @@
         {
           "id": "footer-link-3-4",
           "label": {
-            "tr": "Stok yönetimi"
+            "tr": "Stok yönetimi",
+            "en": "Inventory management",
+            "de": "Bestandsverwaltung",
+            "ru": "Управление запасами",
+            "ar": "إدارة المخزون",
+            "bg": "Управление на наличности",
+            "uk": "Керування запасами",
+            "id": "Manajemen stok",
+            "vi": "Quản lý tồn kho"
           },
           "url": "/blog/stok-yonetiminde-yapilan-hatalar.html",
           "enabled": true
@@ -630,7 +1246,15 @@
         {
           "id": "footer-link-3-5",
           "label": {
-            "tr": "Destek ve yardım"
+            "tr": "Destek ve yardım",
+            "en": "Support and help",
+            "de": "Support und Hilfe",
+            "ru": "Поддержка и помощь",
+            "ar": "الدعم والمساعدة",
+            "bg": "Поддръжка и помощ",
+            "uk": "Підтримка та допомога",
+            "id": "Dukungan dan bantuan",
+            "vi": "Hỗ trợ và trợ giúp"
           },
           "url": "https://help.ticarti.com",
           "enabled": true
