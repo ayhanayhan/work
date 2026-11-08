@@ -1,5 +1,6 @@
 import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
+import {isUntouchedStarter} from './website-tools.service';
 import defaultNavigation = require('./data/marketing-navigation-default.json');
 import translatedLabels = require('./data/marketing-navigation-translations.json');
 import featuredDefaults = require('./data/marketing-navigation-featured.json');
@@ -186,8 +187,13 @@ export class WebsiteNavigationService{
   // detail pages, regardless of their visibility in the Master menu editor.
   const row=await this.prisma.platformSetting.findUnique({where:{key:'marketing_tools_pages_v1'}});
   const tools=Array.isArray((row?.value as any)?.tools)?(row?.value as any).tools as any[]:[];
-  const published=new Set<string>(tools.filter(item=>item?.status==='PUBLISHED'&&
-   Boolean(item?.fields?.title?.[locale])).map(item=>'/araclar/'+item.id));
+  const published=new Set<string>(tools.filter(item=>
+   (item?.status==='PUBLISHED'&&Boolean(item?.fields?.title?.[locale]))||
+   (isUntouchedStarter(item)&&Boolean(seedTranslations[item.fields.title.tr]?.[locale]||locale==='tr'))
+  ).map(item=>'/araclar/'+item.id));
+  // No stored content yet: all eleven starter pages are published by default.
+  if(!tools.length)for(const [slug,title] of TOOL_MENU_ITEMS)
+   if(locale==='tr'||Boolean(seedTranslations[title]?.[locale]))published.add('/araclar/'+slug);
   const prune=(nodes:MenuNode[]):MenuNode[]=>nodes.map(node=>({
    ...node,
    enabled:node.enabled&&(!TOOL_PATHS.has(node.url)||published.has(node.url)),
