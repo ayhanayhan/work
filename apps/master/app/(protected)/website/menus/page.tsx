@@ -5,10 +5,12 @@ import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
 
 type Translations=Record<string,string>;
-type Node={id:string;label:Translations;url:string;enabled:boolean;children:Node[]};
+type Featured={eyebrow:Translations;description:Translations;buttonLabel:Translations;buttonUrl:string};
+type Node={id:string;label:Translations;url:string;enabled:boolean;children:Node[];featured?:Featured};
 type Tree={header:Node[];footer:Node[]};
 type Snapshot={version:number;menus:Tree};
 type Area=keyof Tree;
@@ -16,7 +18,8 @@ type Row={node:Node;depth:number;parentId:string|null;index:number};
 type Placement='before'|'after'|'inside';
 const copy=<T,>(v:T):T=>JSON.parse(JSON.stringify(v));
 const uuid=()=> 'menu-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
-const label=(node:Node,lang:string)=>node.label?.[lang]||node.label?.tr||Object.values(node.label||{}).find(Boolean)||'İsimsiz öğe';
+const label=(node:Node,lang:string)=>node.label?.[lang]||'Çeviri bekliyor';
+const SUPPORTED_LOCALES=[['tr','Türkçe'],['en','English'],['de','Deutsch'],['ru','Русский'],['ar','العربية'],['bg','Български'],['uk','Українська'],['id','Bahasa Indonesia'],['vi','Tiếng Việt']] as const;
 function flat(items:Node[],parentId:string|null=null,depth=0):Row[]{
  return items.flatMap((node,index)=>[{node,depth,parentId,index},...flat(node.children||[],node.id,depth+1)]);
 }
@@ -100,6 +103,13 @@ export default function MenuTreeEditor(){
  };
  const setField=(id:string,key:'label'|'url',value:string)=>{
   editNode(id,n=>key==='label'?{...n,label:{...n.label,[locale]:value}}:{...n,url:value});
+ };
+ const setFeatured=(id:string,key:'eyebrow'|'description'|'buttonLabel'|'buttonUrl',value:string)=>{
+  editNode(id,node=>{
+   const featured=node.featured||{eyebrow:{},description:{},buttonLabel:{},buttonUrl:''};
+   return {...node,featured:key==='buttonUrl'?{...featured,buttonUrl:value}:
+    {...featured,[key]:{...featured[key],[locale]:value}}};
+  });
  };
  const add=(parentId?:string)=>{
   const item:Node={id:uuid(),label:{[locale]:'Yeni bağlantı'},url:'',enabled:true,children:[]};
@@ -185,8 +195,8 @@ export default function MenuTreeEditor(){
     <Button variant={area==='footer'?'primary':'outline'} onClick={()=>chooseArea('footer')}>Footer Menüsü</Button>
    </div>
    <div className="flex flex-wrap gap-1">
-    {locales.map(lang=><Button key={lang.locale} size="sm" variant={locale===lang.locale?'primary':'outline'}
-     onClick={()=>setLocale(lang.locale)}>{lang.label||lang.locale}</Button>)}
+    {SUPPORTED_LOCALES.map(([code,name])=><Button key={code} size="sm" variant={locale===code?'primary':'outline'}
+     onClick={()=>setLocale(code)}>{locales.find(x=>x.locale===code)?.label||name}</Button>)}
    </div>
   </div>
   <div className="grid gap-3 rounded-lg border bg-card p-4">
@@ -244,6 +254,21 @@ export default function MenuTreeEditor(){
           <Input value={node.label?.[locale]||''} onChange={e=>setField(node.id,'label',e.target.value)}/></label>
          <label className="grid gap-1 text-sm">Bağlantı adresi
           <Input placeholder="/araclar" value={node.url} onChange={e=>setField(node.id,'url',e.target.value)}/></label>
+         {node.featured?<div className="sm:col-span-2 grid gap-3 rounded-md border bg-background p-4">
+          <h3 className="text-sm font-semibold">Mega menü tanıtım alanı ({locale})</h3>
+          <label className="grid gap-1 text-sm">Üst metin
+           <Input value={node.featured.eyebrow?.[locale]||''}
+            onChange={e=>setFeatured(node.id,'eyebrow',e.target.value)}/></label>
+          <label className="grid gap-1 text-sm">Tanıtım açıklaması
+           <Textarea rows={3} value={node.featured.description?.[locale]||''}
+            onChange={e=>setFeatured(node.id,'description',e.target.value)}/></label>
+          <label className="grid gap-1 text-sm">Buton metni
+           <Input value={node.featured.buttonLabel?.[locale]||''}
+            onChange={e=>setFeatured(node.id,'buttonLabel',e.target.value)}/></label>
+          <label className="grid gap-1 text-sm">Buton bağlantısı
+           <Input value={node.featured.buttonUrl||''}
+            onChange={e=>setFeatured(node.id,'buttonUrl',e.target.value)}/></label>
+         </div>:null}
          <div className="sm:col-span-2 flex justify-end">
           <Button variant="outline" size="sm" onClick={()=>setEditing(null)}>Tamam</Button>
          </div>
