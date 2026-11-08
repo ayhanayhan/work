@@ -33,7 +33,7 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
  const tree=menuTree(navigation);
  return <>{tree.header.filter(x=>x.enabled&&x.children?.some(isVisible)).map(top=>
   <ul key={top.id} className={'tc-nav-children bm-add-'+(top.id==='nav-solutions'?'companies':top.id==='nav-resources'?'resources':'custom')}
-   data-mega={top.id}>
+   data-mega={top.id} data-mobile-panel={mobile?'true':undefined}>
    <div className="tc-mega-menu"><div className="container"><div className="tc-mega-menu-card">
     <div className="tc-ui-layout tc-ui-layout--four_columns">
      <div className="tc-ui-featured column tc-ui-featured--cta-top">
