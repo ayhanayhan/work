@@ -76,7 +76,12 @@ async function main(){
  assert.equal(savedBlank.version,3);
  assert.equal((await service.get()).menus.header[0].label.vi,'');
  // Simulate a pre-migration saved group record: fill missing locales once.
- saved={version:4,groups:original.groups};
+ const legacyGroups=structuredClone(original.groups);
+ for(const group of legacyGroups){
+  group.title={tr:group.title.tr};
+  for(const item of group.links)item.label={tr:item.label.tr};
+ }
+ saved={version:4,groups:legacyGroups};
  const migrated=await service.get();
  assert.equal(migrated.menus.header[0].label.bg,'Решения');
  assert.equal(migrated.menus.header[0].featured?.buttonLabel.vi,'So sánh các gói');
