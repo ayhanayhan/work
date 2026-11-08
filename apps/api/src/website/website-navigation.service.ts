@@ -1,6 +1,7 @@
 import {BadRequestException,ConflictException,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import defaultNavigation = require('./data/marketing-navigation-default.json');
+import translatedLabels = require('./data/marketing-navigation-translations.json');
 
 const KEY='marketing_navigation_v1';
 type LocaleText=Record<string,string>;
@@ -37,6 +38,23 @@ function fromGroups(groups:any[]):MenuTree{
  }
  return {header:roots,footer:groups.filter(g=>/^footer-\d+$/.test(g.id)).map(heading)};
 }
+const MENU_LOCALES=['tr','en','de','ru','ar','bg','uk','id','vi'] as const;
+const seedTranslations=translatedLabels as Record<string,Record<string,string>>;
+function translated(label:string):LocaleText{
+ return {tr:label,...(seedTranslations[label]||{})};
+}
+// One-time fill: never overwrite translations entered by a user.
+function completeExistingTranslations(tree:MenuTree):MenuTree{
+ const fill=(items:MenuNode[]):MenuNode[]=>items.map(node=>{
+  const original=node.label?.tr;
+  const known=original&&seedTranslations[original];
+  const label={...node.label};
+  if(known)for(const locale of MENU_LOCALES)
+   if(locale!=='tr'&&label[locale]===undefined&&known[locale])label[locale]=known[locale];
+  return {...node,label,children:fill(node.children||[])};
+ });
+ return {header:fill(tree.header),footer:fill(tree.footer)};
+}
 const MARKETPLACE_LINKS=[
  ['trendyol','Trendyol Komisyon Hesaplama'],
  ['amazon','Amazon Komisyon Hesaplama'],
@@ -52,7 +70,7 @@ function seedMarketplaceMenu(tree:MenuTree):MenuTree{
    const additions=MARKETPLACE_LINKS.filter(([slug])=>
     !existing.has('/araclar/'+slug+'-komisyon-hesaplama'))
     .map(([slug,title])=>({
-     id:'marketplace-'+slug,label:{tr:title},url:'/araclar/'+slug+'-komisyon-hesaplama',
+     id:'marketplace-'+slug,label:translated(title),url:'/araclar/'+slug+'-komisyon-hesaplama',
      enabled:false,children:[] as MenuNode[]
     }));
    return {...node,children:[...(node.children||[]),...additions]};
@@ -92,7 +110,8 @@ export class WebsiteNavigationService{
   const existing=saved?.menus&&Array.isArray(saved.menus.header)&&Array.isArray(saved.menus.footer)
    ?saved.menus as MenuTree:fromGroups(base.groups);
   // One-time migration: respect user deletions after the first upgraded save.
-  const menus=saved?.marketplaceLinksMigration===1?existing:seedMarketplaceMenu(existing);
+  const seeded=saved?.marketplaceLinksMigration===1?existing:seedMarketplaceMenu(existing);
+  const menus=saved?.navigationTranslationsMigration===1?seeded:completeExistingTranslations(seeded);
   return {version:Number(base.version)||0,menus,groups:base.groups};
  }
  async save(input:any){
@@ -101,7 +120,7 @@ export class WebsiteNavigationService{
    throw new ConflictException('Menü başka oturumda güncellendi. Yenileyin.');
   // Accept the former grouped format for compatibility with existing clients.
   const menus=validateTree(input?.menus||fromGroups(input?.groups||previous.groups));
-  const next={version:previous.version+1,menus,groups:previous.groups,marketplaceLinksMigration:1};
+  const next={version:previous.version+1,menus,groups:previous.groups,marketplaceLinksMigration:1,navigationTranslationsMigration:1};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
