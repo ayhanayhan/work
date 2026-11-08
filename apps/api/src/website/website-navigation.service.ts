@@ -67,7 +67,7 @@ function validateTree(menus:any):MenuTree{
   throw new BadRequestException('Header ve Footer menü ağaçları zorunludur.');
  const seen=new Set<string>();let count=0;
  const parse=(rows:any[],depth:number):MenuNode[]=>{
-  if(depth>3||rows.length>50)throw new BadRequestException('Menü seviyesi veya öğe sayısı fazla.');
+  if((depth>3&&rows.length>0)||rows.length>50)throw new BadRequestException('Menü seviyesi veya öğe sayısı fazla.');
   return rows.map(row=>{
    if(!row||typeof row!=='object')throw new BadRequestException('Menü öğesi geçersiz.');
    const id=text(row.id,80),url=text(row.url,500);
