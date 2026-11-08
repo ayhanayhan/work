@@ -42,5 +42,6 @@ export function hasLocalizedContent(module:HomeModule|undefined,locale:string):b
 export function shouldRenderHomeModule(home:HomeContent|null|undefined,id:string,locale:string):boolean{
  const module=home?.modules?.find(m=>m.id===id);
  if(module?.enabled===false||home?.disabledModuleIds?.includes(id))return false;
+ if(id==='faq')return hasLocalizedContent(module,locale);
  return !module?.configured||hasLocalizedContent(module,locale);
 }
