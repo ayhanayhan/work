@@ -1,6 +1,24 @@
 import assert from 'node:assert/strict';
 import {WebsiteService} from '../src/website/website.service';
+import {mergeFaqSeed,assertFaqSeeds,FAQ_SEED_LOCALES} from '../src/website/faq-seed';
 
+assertFaqSeeds();
+const baseFaq=mergeFaqSeed({id:'faq',enabled:true,fields:{},items:[]});
+assert.equal(baseFaq.inserted,30,'Seed must contain thirty unique CMS questions');
+for(const locale of FAQ_SEED_LOCALES){
+ assert.equal(baseFaq.module.items.filter((item:any)=>item.fields.question[locale]&&item.fields.answer[locale]).length,30,
+  'Seed must provide 30 complete FAQ pairs in '+locale);
+}
+const customized=structuredClone(baseFaq.module);
+customized.items[0].fields.answer.en='Custom English answer';
+const secondRun=mergeFaqSeed(customized);
+assert.equal(secondRun.inserted,0,'Seed must not duplicate existing items');
+assert.equal(secondRun.module.items[0].fields.answer.en,'Custom English answer',
+ 'Seed must never overwrite edited translations');
+const extra=mergeFaqSeed({...customized,items:[
+ ...customized.items,{id:'customer-question',enabled:true,fields:{question:{tr:'Kendi sorum'},answer:{tr:'Kendi cevabım'}}}
+]});
+assert.equal(extra.module.items.length,31,'New seed must preserve manually entered FAQ items');
 const store=new Map<string,any>();
 const prisma={platformSetting:{
   async findUnique({where:{key}}:any){return store.has(key)?{value:structuredClone(store.get(key))}:null},
