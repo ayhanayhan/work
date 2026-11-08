@@ -23,6 +23,16 @@ for item in "$@"; do
 done
 echo "=== Changed services: $* ==="
 git rev-parse --short HEAD
+# Fail fast on Next.js TypeScript/build errors before paying for Cloud Build or
+# modifying a live Cloud Run service. This is especially important for api master.
+if [[ "$BACKEND_ONLY" == *"apphosting:commerce-master"* ]]; then
+  echo "=== Preflight: Master Next.js production build ==="
+  npm --workspace @commerce/master run build
+fi
+if [[ "$BACKEND_ONLY" == *"apphosting:commerce-marketing"* ]]; then
+  echo "=== Preflight: Marketing Next.js production build ==="
+  npm --workspace @commerce/marketing run build
+fi
 if [[ "$BACKEND_ONLY" == *"apphosting:commerce-marketing"* ]]; then
   echo "=== Native Next.js homepage test ==="
   npm --workspace @commerce/marketing run test:home
