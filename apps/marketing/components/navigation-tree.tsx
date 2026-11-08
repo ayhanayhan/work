@@ -63,7 +63,7 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
  )}</>;
 }
 function FooterNode({item,locale,depth=0}:{item:MenuNode;locale:string;depth?:number}){
- if(!isVisible(item))return null;
+ if(!isVisible(item,locale))return null;
  const href=item.url&&item.url!=='#'?item.url:undefined;
  return <li>
   {href?<a href={href} target={external(href)?'_blank':undefined}
