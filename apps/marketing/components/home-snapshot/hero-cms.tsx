@@ -32,9 +32,9 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
   {items.length?<div className="tc-site-hero__carousel">
    <span aria-hidden="true" className="tc-site-hero__fade tc-site-hero__fade--l"/>
    <span aria-hidden="true" className="tc-site-hero__fade tc-site-hero__fade--r"/>
-   <button aria-label="Önceki kart" className="tc-site-hero__arrow tc-site-hero__arrow--prev" data-dir="prev" type="button">←</button>
-   <button aria-label="Sonraki kart" className="tc-site-hero__arrow tc-site-hero__arrow--next" data-dir="next" type="button">→</button>
-   <div className="tc-site-hero__viewport" id="skViewport"><div className="tc-site-hero__track" id="skTrack">
+   {items.length>1?<button aria-label="Önceki kart" className="tc-site-hero__arrow tc-site-hero__arrow--prev" data-dir="prev" type="button">←</button>:null}
+   {items.length>1?<button aria-label="Sonraki kart" className="tc-site-hero__arrow tc-site-hero__arrow--next" data-dir="next" type="button">→</button>:null}
+   <div className="tc-site-hero__viewport" id="skViewport"><div className="tc-site-hero__track" id="skTrack" data-cms-card-count={items.length}>
     <HeroCards items={items} locale={locale}/>
     {items.length>=4?<HeroCards clone items={items} locale={locale}/>:null}
     {items.length>=4?<HeroCards clone items={items} locale={locale}/>:null}
