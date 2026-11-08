@@ -88,7 +88,7 @@ export default function MenuTreeEditor(){
   finally{setLoading(false)}
  },[request,restoring]);
  useEffect(()=>{void load()},[load]);
- useEffect(()=>{if(locales.length)setLocale(old=>locales.some(l=>l.locale===old)?old:(locales.find(l=>l.isDefault)?.locale||locales[0].locale));},[locales]);
+ useEffect(()=>{if(locales.length)setLocale(old=>SUPPORTED_LOCALES.some(([code])=>code===old)?old:(locales.find(l=>l.isDefault)?.locale||'tr'));},[locales]);
  const dirty=!!saved&&!!draft&&JSON.stringify(saved.menus)!==JSON.stringify(draft.menus);
  const rows=useMemo(()=>draft?flat(draft.menus[area]):[],[draft,area]);
  const editNode=(id:string,fn:(node:Node)=>Node)=>{
