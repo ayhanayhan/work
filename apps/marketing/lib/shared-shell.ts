@@ -22,7 +22,8 @@ function removeBalancedDiv(html:string,anchor:string):string{
 export function stripLegacyShell(html:string){
  const header=html.includes('id="tc-global-header"')?'id="tc-global-header"':'id="tc-widget-014"';
  const footer=html.includes('id="tc-global-footer"')?'id="tc-global-footer"':'id="tc-widget-006"';
- let result=removeBalancedDiv(html,header);
- result=removeBalancedDiv(result,footer);
+ let result=html;
+ if(result.includes(header))result=removeBalancedDiv(result,header);
+ if(result.includes(footer))result=removeBalancedDiv(result,footer);
  return result;
 }
