@@ -36,3 +36,11 @@ export function hasLocalizedContent(module:HomeModule|undefined,locale:string):b
  if((module.logos||[]).some(item=>item.enabled!==false&&Boolean(textFor(item.fields?.title,locale))))return true;
  return false;
 }
+
+/** Preserve original static design on sections not yet migrated; Master-controlled
+ * sections show only the selected language and never use fallback copy. */
+export function shouldRenderHomeModule(home:HomeContent|null|undefined,id:string,locale:string):boolean{
+ const module=home?.modules?.find(m=>m.id===id);
+ if(module?.enabled===false||home?.disabledModuleIds?.includes(id))return false;
+ return !module?.configured||hasLocalizedContent(module,locale);
+}
