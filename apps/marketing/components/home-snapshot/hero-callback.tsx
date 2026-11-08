@@ -9,12 +9,30 @@ export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html
  const [consent,setConsent]=useState(false);
  const [error,setError]=useState('');
  const [kvkk,setKvkk]=useState('');
- const submit=(e:FormEvent<HTMLFormElement>)=>{
+ const [busy,setBusy]=useState(false);
+ const [website,setWebsite]=useState('');
+ const submit=async(e:FormEvent<HTMLFormElement>)=>{
    e.preventDefault();
-   const phoneError=!phone.trim()?(fieldFor(module,'phoneEmpty',locale)||'Telefon numaranızı girin.'):(validatePhone(phone,country.iso,country.dial)?(fieldFor(module,'phoneInvalid',locale)||validatePhone(phone,country.iso,country.dial)):'');
-   const consentError=consent?'':(fieldFor(module,'kvkkRequired',locale)||'Devam etmek için KVKK aydınlatmasını okuyup kutuyu işaretleyin.');
-   setKvkk(consentError);
-   setError(phoneError||(!consentError?(fieldFor(module,'notConnected',locale)||'Bu form henüz sunucuya bağlı değil; numaranız gönderilmedi.') :''));
+   if(busy)return;
+   const national=phone.replace(/[\\s()-]/g,'').replace(/^0(?=\\d)/,'');
+   const phoneError=!phone.trim()?(fieldFor(module,'phoneEmpty',locale)||'Telefon numaranızı girin.'):
+     validatePhone(phone,country.iso,country.dial);
+   const consentError=consent?'':(fieldFor(module,'kvkkRequired',locale)||'KVKK aydınlatma onayı gereklidir.');
+   setKvkk(consentError);setError(phoneError||'');
+   if(phoneError||consentError)return;
+   setBusy(true);
+   try{
+     const response=await fetch('/api/v1/public/contact/callback',{
+       method:'POST',headers:{'content-type':'application/json'},
+       body:JSON.stringify({dial:country.dial,phone:national,locale,source:'HOME',consent,website})
+     });
+     if(!response.ok)throw Error();
+     setPhone('');setConsent(false);setError(locale==='en'?'We received your request.':
+       locale==='de'?'Ihre Anfrage ist eingegangen.':
+       locale==='ru'?'Мы получили вашу заявку.':
+       locale==='ar'?'تم استلام طلبك.':'Talebinizi aldık, sizinle iletişime geçeceğiz.');
+   }catch{setError(locale==='en'?'Could not submit. Please try again.':'Talep gönderilemedi. Lütfen tekrar deneyin.');}
+   finally{setBusy(false);}
  };
  return (
 <form onSubmit={submit} className={"tc-callback-form tc-hero-callback"} data-tc-callback={""} noValidate>
@@ -169,12 +187,15 @@ export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html
             {"\n"}
             <input aria-invalid={!!error} aria-required={true} autoComplete={"tel-national"} id={"tc-phone-main-hero"} inputMode={"tel"} name={"phone"} value={phone} onChange={e=>{setPhone(e.target.value);setError('')}} placeholder={fieldFor(module,'phonePlaceholder',locale)||(country.iso==='TR'?'5xx xxx xx xx':'Telefon numarası')} required type={"tel"} />
             {"\n"}
-            <button className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
+            <button disabled={busy} className={"tc-site-hero__cta tc-site-hero__cta--1"} type={"submit"} data-tc-content-key={"button-059"}>
               {fieldFor(module,'formButton',locale)||"Sizi arayalım"}
             </button>
             {"\n"}
           </div>
           {"\n"}
+          <input type="text" name="website" autoComplete="off" tabIndex={-1}
+            aria-hidden="true" style={{position:'absolute',left:'-9999px'}}
+            value={website} onChange={e=>setWebsite(e.target.value)}/>
           <div className={"tc-kvkk"}>
             {"\n"}
             <input aria-describedby={"tc-kvkk-hero-error"} id={"tc-kvkk-hero"} name={"kvkk_read"} aria-invalid={!!kvkk} checked={consent} onChange={e=>{setConsent(e.target.checked);setKvkk('')}} required type={"checkbox"} value={"1"} />
