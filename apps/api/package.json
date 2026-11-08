@@ -14,7 +14,8 @@
     "theme:source-to-db": "tsx prisma/migrate-theme-source-to-db.ts",
     "test:website-blog": "tsx scripts/check-website-blog.ts",
     "test:media": "tsx scripts/check-platform-media.ts",
-    "test:callback": "tsx scripts/check-callback-forms.ts"
+    "test:callback": "tsx scripts/check-callback-forms.ts",
+    "test:website-tools": "tsx scripts/check-website-tools.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
