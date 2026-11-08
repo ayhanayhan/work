@@ -36,7 +36,7 @@ async function main(){
  await assert.rejects(service.save({version:1,menus:dup}),'Duplicate ID must be rejected');
  const deep=structuredClone(updated.menus);
  deep.header[0].children[0].children[0].children.push({
-  id:'too-deep',label:{tr:'Derin'},url:'/deep',enabled:true,children:[]});
+  id:'too-deep',label:{tr:'Derin'},url:'/deep',enabled:true,children:[{id:'level-five',label:{tr:'Beşinci'},url:'/five',enabled:true,children:[]}]});
  await assert.rejects(service.save({version:1,menus:deep}),'Max nesting must be enforced');
  console.log('PASS: WordPress-style nested navigation, legacy migration, no link loss, locales, safe URLs, duplicate protection and version checks');
 }
