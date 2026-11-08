@@ -170,6 +170,6 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
     </aside>:null}
   </div>
   <script type="application/ld+json"
-   dangerouslySetInnerHTML={{__html:JSON.stringify(jsonld).replace(/</g,'\u003c')}}/>
+   dangerouslySetInnerHTML={{__html:JSON.stringify(jsonld).replace(/</g,'\\u003c')}}/>
  </StoryFrame>;
 }
