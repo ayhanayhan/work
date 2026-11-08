@@ -166,5 +166,19 @@ export class WebsiteNavigationService{
    create:{key:KEY,value:next},update:{value:next}});
   return next;
  }
- async publicNavigation(){return this.get()}
+ async publicNavigation(locale='tr'){
+  const data=await this.get();
+  // Draft and untranslated tools must never point visitors to unpublished
+  // detail pages, regardless of their visibility in the Master menu editor.
+  const row=await this.prisma.platformSetting.findUnique({where:{key:'marketing_tools_pages_v1'}});
+  const tools=Array.isArray((row?.value as any)?.tools)?(row?.value as any).tools as any[]:[];
+  const published=new Set<string>(tools.filter(item=>item?.status==='PUBLISHED'&&
+   Boolean(item?.fields?.title?.[locale])).map(item=>'/araclar/'+item.id));
+  const prune=(nodes:MenuNode[]):MenuNode[]=>nodes.map(node=>({
+   ...node,
+   enabled:node.enabled&&(!TOOL_PATHS.has(node.url)||published.has(node.url)),
+   children:prune(node.children||[])
+  }));
+  return {...data,menus:{header:prune(data.menus.header),footer:prune(data.menus.footer)}};
+ }
 }
