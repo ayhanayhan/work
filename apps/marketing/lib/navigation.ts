@@ -26,10 +26,10 @@ export function menuTree(data:Navigation|null|undefined):MenuTree{
  if(data?.menus&&Array.isArray(data.menus.header)&&Array.isArray(data.menus.footer))return data.menus;
  return Array.isArray(data?.groups)?migrate(data.groups):{header:[],footer:[]};
 }
-export async function getNavigation():Promise<Navigation>{
+export async function getNavigation(locale='tr'):Promise<Navigation>{
  if(!API)return {version:0,menus:{header:[],footer:[]}};
  try{
-  const response=await fetch(API+'/v1/public/website/navigation',{
+  const response=await fetch(API+'/v1/public/website/navigation?lang='+encodeURIComponent(locale),{
    cache:'no-store',signal:AbortSignal.timeout(5000)});
   if(!response.ok)return {version:0,menus:{header:[],footer:[]}};
   const data=await response.json();
