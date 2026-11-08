@@ -11,7 +11,8 @@
     "check:design": "node scripts/design-lock.mjs",
     "postbuild": "node scripts/normalize-apphosting-standalone.mjs",
     "test:blog": "node scripts/check-blog-contract.cjs && node scripts/check-faq-contract.cjs",
-    "test:home": "node scripts/design-lock.mjs && node scripts/check-home-snapshot.cjs && tsc --noEmit --pretty false -p tsconfig.json"
+    "test:home": "node scripts/design-lock.mjs && node scripts/check-home-snapshot.cjs && npm run test:tools && tsc --noEmit --pretty false -p tsconfig.json",
+    "test:tools": "node scripts/check-tool-calculators.cjs"
   },
   "dependencies": {
     "next": "15.5.27",
