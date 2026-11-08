@@ -1,6 +1,7 @@
 import {BadRequestException,ConflictException,Injectable,NotFoundException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import translations = require('./data/marketing-navigation-translations.json');
+import editorial = require('./data/marketing-tools-editorial-2026.json');
 
 const KEY='marketing_tools_pages_v1';
 export const TOOL_IDS=['qr-kod-olusturucu','kdv-hesaplama',
@@ -29,28 +30,49 @@ function cleanLocalized(value:any,max=12000):Dict{
  }
  return result;
 }
+type ToolFaq={id:string;question:Dict;answer:Dict};
+type ToolSection={id:string;kind:string;title:Dict;body:Dict;image:string};
 const seedTitle=(title:string):Dict=>({tr:title,...((translations as Record<string,Dict>)[title]||{})});
-const initial=()=>TOOL_IDS.map((id,index)=>({
- id,sortOrder:index,status:'PUBLISHED',image:'',
- fields:Object.fromEntries(SCALAR_FIELDS.map(field=>[
-  field,field==='title'||field==='calculatorTitle'?seedTitle(INITIAL_TITLES[index]):{}
- ])),
- sections:[] as Array<{id:string;kind:string;title:Dict;body:Dict;image:string}>,
- faqs:[] as Array<{id:string;question:Dict;answer:Dict}>
-}));
-// This upgrades only untouched starter drafts, never manually authored drafts.
+const editorialRows=(editorial as {data:Array<{id:string;fields:Record<string,Dict>;faqs:ToolFaq[]}>}).data;
+const initial=()=>TOOL_IDS.map((id,index)=>{
+ const row=editorialRows.find(x=>x.id===id);
+ return {
+  id,sortOrder:index,status:'PUBLISHED',image:'',
+  fields:Object.fromEntries(SCALAR_FIELDS.map(field=>[
+   field,row?.fields?.[field]||((field==='title'||field==='calculatorTitle')?seedTitle(INITIAL_TITLES[index]):{})
+  ])) as Record<string,Dict>,
+  sections:[] as ToolSection[],
+  faqs:(row?.faqs||[]) as ToolFaq[]
+ };
+});
+/** Only default, never-authored records are eligible for automatic SEO migration.
+ * This intentionally leaves drafts and manually cleared fields untouched.
+ */
 export function isUntouchedStarter(tool:any):boolean{
  if(tool?.status!=='DRAFT'||tool?.image||tool?.sections?.length||tool?.faqs?.length)return false;
- const title=tool.fields?.title;
  const expected=INITIAL_TITLES[TOOL_IDS.indexOf(tool.id as typeof TOOL_IDS[number])];
- if(!expected||title?.tr!==expected)return false;
+ if(!expected||tool.fields?.title?.tr!==expected)return false;
  return Object.entries(tool.fields||{}).every(([key,value])=>
-  key==='title'||!Object.values((value||{}) as Record<string,string>).some(Boolean));
+  key==='title'||key==='calculatorTitle'||
+  !Object.values((value||{}) as Record<string,string>).some(Boolean));
 }
-function upgradeStarter(tool:any,seed:any){
+export function isBarePublishedStarter(tool:any):boolean{
+ if(tool?.status!=='PUBLISHED'||tool?.image||tool?.sections?.length||tool?.faqs?.length)return false;
+ const expected=INITIAL_TITLES[TOOL_IDS.indexOf(tool.id as typeof TOOL_IDS[number])];
+ if(!expected||tool.fields?.title?.tr!==expected)return false;
+ return Object.entries(tool.fields||{}).every(([key,value])=>
+  key==='title'||key==='calculatorTitle'||
+  !Object.values((value||{}) as Record<string,string>).some(Boolean));
+}
+function upgradeStarter(tool:any,seed:ReturnType<typeof initial>[number]){
  return {...tool,status:'PUBLISHED',
-  fields:{...tool.fields,title:{...seed.fields.title,...tool.fields.title},
-   calculatorTitle:{...seed.fields.calculatorTitle,...tool.fields.calculatorTitle}}};
+  fields:{...seed.fields,...Object.fromEntries(
+   Object.entries(tool.fields||{}).map(([key,value])=>{
+    const prior=value&&typeof value==='object'?value:{};
+    return [key,{...(seed.fields[key]||{}),...prior}];
+   })
+  )},
+  faqs:seed.faqs,sections:seed.sections};
 }
 function normalize(raw:any,prev:any){
  const valid=TOOL_IDS.find(id=>id===raw?.id);
@@ -97,7 +119,8 @@ export class WebsiteToolsService {
   const existing=Array.isArray(raw?.tools)?raw.tools:[];
   return {version:Number(raw?.version)||0,tools:defaults.map(item=>{
    const old=existing.find((x:any)=>x.id===item.id);
-   return old?(raw?.toolDemoMigration===1||!isUntouchedStarter(old)?old:upgradeStarter(old,item)):item;
+   return old?(raw?.toolSeoMigration===1||(!isUntouchedStarter(old)&&!isBarePublishedStarter(old))?
+    old:upgradeStarter(old,item)):item;
   })};
  }
  async save(body:any){
@@ -116,7 +139,7 @@ export class WebsiteToolsService {
   const previousTools=(previousRow?.value as any)?.tools;
   const archived=Array.isArray(previousTools)?
    previousTools.filter((item:any)=>item?.id==='pazaryeri-komisyon-hesaplama'):[];
-  const next={version:before.version+1,tools:[...tools,...archived],toolDemoMigration:1};
+  const next={version:before.version+1,tools:[...tools,...archived],toolDemoMigration:1,toolSeoMigration:1};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
