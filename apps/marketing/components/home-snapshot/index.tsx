@@ -2,7 +2,7 @@
  * Modules may be connected to Master one by one without restructuring the page.
  */
 import HeroSection from './hero';
-import {moduleById,hasLocalizedContent,type HomeContent} from '@/lib/home-content';
+import {shouldRenderHomeModule,type HomeContent} from '@/lib/home-content';
 import type {BlogPost} from '@/lib/blog';
 import AnimatedHeadingSection from './animated';
 import BuilderSection from './builder';
@@ -13,13 +13,10 @@ import ReferencesSection from './references';
 import BottomCtaSection from './bottomCta';
 import BlogSection from './blog';
 import FaqSection from './faq';
-import HeaderSnapshot from './header';
-import FooterSnapshot from './footer';
 export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeContent|null;posts?:BlogPost[];locale?:string}){
- const show=(id:string)=>hasLocalizedContent(moduleById(home,id),locale);
+ const show=(id:string)=>shouldRenderHomeModule(home,id,locale);
  return <>
   {"\n"}
-  <HeaderSnapshot />
   {"\n"}
   <div className={"tc-wide-container tc-home-main"}>
     {"\n"}
@@ -345,11 +342,10 @@ export default function HomeSnapshot({home,posts=[],locale='tr'}:{home?:HomeCont
     {"\n"}
   </div>
   {"\n"}
-  <BlogSection home={home} locale={locale} posts={posts}/>
+  {show("blog")?<BlogSection home={home} locale={locale} posts={posts}/>:null}
   {"\n"}
   {"\n"}
-  <FaqSection home={home} locale={locale}/>
+  {show("faq")?<FaqSection home={home} locale={locale}/>:null}
   {"\n"}
-  <FooterSnapshot />
   {"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"}
 </>}
