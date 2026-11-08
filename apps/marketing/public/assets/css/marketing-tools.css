@@ -37,3 +37,8 @@
 .tc-tool-sidebar a:last-child{border-bottom:0}
 @media(max-width:960px){.tc-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-tool-body{grid-template-columns:1fr}.tc-tool-sidebar{position:static}}
 @media(max-width:640px){.tc-tools-page .container{padding-inline:18px}.tc-tools-hero{padding:45px 0 27px}.tc-tools-grid{grid-template-columns:1fr}.tc-tools-card{padding:22px}.tc-tool-calculator-intro,.tc-tool-cta{padding:22px}}
+
+.tc-tool-list{padding-inline-start:25px;margin:0 0 18px;color:#555;line-height:1.85;font-size:16px}
+.tc-tool-list li{margin:0 0 9px;padding-inline-start:5px}
+.tc-tool-inline-note{padding:22px 24px;border-inline-start:3px solid #dce6a1;background:#fafbf5;border-radius:0 9px 9px 0}
+.tc-tool-inline-note .tc-tool-text{margin-bottom:0}
