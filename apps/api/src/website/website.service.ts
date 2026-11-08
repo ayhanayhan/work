@@ -269,6 +269,10 @@ export class WebsiteService{
     };
     const modules=snapshot.modules.map(previous=>{
       const incoming=inputs.find((x:any)=>x.id===previous.id);
+      // An editor save may include all homepage modules. Do not revalidate or
+      // rewrite untouched modules: legacy assets/links must not block another
+      // section's save, and unrelated translations must stay byte-for-byte intact.
+      if(previous.id!=='faq'&&JSON.stringify(incoming)===JSON.stringify(previous))return previous;
       const fields=mergeValues(previous.fields,incoming.fields,MODULE_FIELDS[previous.id]);
       if(previous.id==='faq'){
         const existing=(previous.items||[]).filter((item:any)=>
