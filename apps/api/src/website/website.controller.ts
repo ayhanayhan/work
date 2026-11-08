@@ -49,6 +49,9 @@ export class WebsiteController {
   @Post('superadmin/website/faq/seed-initial')
   seedInitialFaq(){return this.svc.seedInitialFaq()}
   @UseGuards(SuperAdminAuthGuard)
+  @Post('superadmin/website/faq/import-improved')
+  importImprovedFaq(){return this.svc.importImprovedFaq()}
+  @UseGuards(SuperAdminAuthGuard)
   @Post('superadmin/website/faq/clear-existing-once')
   clearExistingFaq(){return this.svc.clearExistingFaqOnce()}
   @UseGuards(SuperAdminAuthGuard)
