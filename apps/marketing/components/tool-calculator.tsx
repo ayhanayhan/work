@@ -83,10 +83,10 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
    {qr?<label className="tc-tool-field tc-tool-wide"><span>{t[32]}</span><textarea rows={3} maxLength={1200}
     required value={v.text} onChange={e=>set('text',e.target.value)}/></label>:null}
    {id==='kdv-hesaplama'?<>{field('amount',3)}{select(t[4],v.vat,x=>set('vat',x),['20','10','1','0'].map(x=>[x,x+'%']))}
-    <label className="tc-tool-check"><input type="checkbox" checked={included} onChange={e=>setIncluded(e.target.checked)}/>{t[12]}</label></>:null}
+    <label className="tc-tool-check"><input type="checkbox" checked={included} onChange={e=>{setIncluded(e.target.checked);setResult(null);}}/>{t[12]}</label></>:null}
    {id==='desi-hesaplama'?<>{field('width',19,'0.01')}{field('length',20,'0.01')}{field('height',21,'0.01')}
     {field('weight',22)}{select(t[23],v.divisor,x=>set('divisor',x),['3000','4000','5000'].map(x=>[x,x]))}</>:null}
-   {id==='maas-hesaplama'?<>{select(t[37],salaryMode,x=>setSalaryMode(x),[['gross',t[17]],['net',t[18]]])}
+   {id==='maas-hesaplama'?<>{select(t[37],salaryMode,x=>{setSalaryMode(x);setResult(null);},[['gross',t[17]],['net',t[18]]])}
     {salaryMode==='gross'?field('gross',14,'33030'):field('net',15,'28075.50')}
     {select(t[16],v.month,x=>set('month',x),Array.from({length:12},(_,i)=>[String(i+1),String(i+1)]))}</>:null}
    {id==='gumruk-vergisi-hesaplama'?<>{field('product',24)}{field('freight',25)}{field('insurance',26)}
@@ -98,7 +98,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
     {field('price',5,'0.01')}{amazon?<label className="tc-tool-field"><span>{locale==='tr'?'Alıcıdan tahsil edilen kargo (₺)':'Customer-paid shipping (TRY)'}</span><input type="number" min="0" step="any" required value={v.customerShipping} onChange={e=>set('customerShipping',e.target.value)}/></label>:null}{field('rate',6)}
     {!amazon?<p className="tc-tool-wide tc-tool-note">{t[35]}</p>:null}
     {field('units',7,'1')}{field('shipping',8)}{field('cost',9)}{field('other',10)}{field('feeVat',11)}
-    <label className="tc-tool-check"><input type="checkbox" checked={commissionIncluded} onChange={e=>setCommissionIncluded(e.target.checked)}/>{t[13]}</label>
+    <label className="tc-tool-check"><input type="checkbox" checked={commissionIncluded} onChange={e=>{setCommissionIncluded(e.target.checked);setResult(null);}}/>{t[13]}</label>
    </>:null}
    <div className="tc-tool-actions"><button type="submit" className="tc-tool-submit">{t[0]}</button></div>
   </form>
