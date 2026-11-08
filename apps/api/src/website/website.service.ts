@@ -2,7 +2,7 @@ import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectabl
 import {PrismaService} from '../prisma/prisma.service';
 import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
-import initialBlog from './data/ticarti-blog-initial.json';
+import initialBlog = require('./data/ticarti-blog-initial.json');
 import {FAQ_SEED_MARKER,mergeFaqSeed} from './faq-seed';
 
 const HOME_KEY='marketing_homepage_v1';
