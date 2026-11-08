@@ -289,7 +289,14 @@ export class WebsiteService{
       if(sentItems.length>100)throw new BadRequestException('Çok fazla kayıt.');
       const items=existingItems.map((old:any)=>{
         const update=sentItems.find((x:any)=>x.id===old.id);
-        return update?{...old,fields:mergeValues(old.fields,update.fields,ITEM_FIELDS[previous.id]||[])}:old;
+        return update?{
+          ...old,enabled:update.enabled!==false,
+          fields:mergeValues(old.fields,update.fields,ITEM_FIELDS[previous.id]||[]),
+          assets:{image:url(update.assets?.image??old.assets?.image),
+            logo:url(update.assets?.logo??old.assets?.logo)},
+          links:{href:link(update.links?.href??old.links?.href)},
+          storeId:str(update.storeId??old.storeId,90)
+        }:old;
       });
       // New cards explicitly added in this language retain their image, link and locale fields.
       for(const newEntry of sentItems.filter((x:any)=>!existingItems.some((old:any)=>old.id===x.id))){
