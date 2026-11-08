@@ -44,7 +44,7 @@ async function main(){
  const vietnamese=await service.publicNavigation('vi');
  assert.ok(paths.every(url=>published(vietnamese.menus.footer,url)?.enabled===true),
   'Footer must show translated starter pages in all nine languages');
- tools={tools:[{id:'kdv-hesaplama',status:'PUBLISHED',fields:{
+ tools={toolSeoMigration:1,tools:[{id:'kdv-hesaplama',status:'PUBLISHED',fields:{
   title:{tr:'KDV Hesaplama',en:'VAT Calculator'}}}]};
  const turkish=await service.publicNavigation('tr');
  assert.equal(published(turkish.menus.footer,'/araclar/kdv-hesaplama')?.enabled,true);
