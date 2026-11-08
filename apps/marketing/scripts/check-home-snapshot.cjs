@@ -56,8 +56,8 @@ for(const source of [callbackSource,footerCallbackSource]){
 const navigationFixture=require('../lib/navigation-default.json');
 const headerHtml=renderToStaticMarkup(React.createElement(load('header').default,{navigation:navigationFixture,locale:'tr'}));
 const footerHtml=renderToStaticMarkup(React.createElement(load('footer').default,{navigation:navigationFixture,locale:'tr'}));
-assert.ok(headerHtml.includes('href="/araclar"'),'Desktop and mobile mega menus must retain Tools link');
-assert.ok(footerHtml.includes('href="/araclar"'),'Resource footer must retain Tools link');
+assert.ok(!headerHtml.includes('href="/araclar"'),'Desktop header must not link to retired Tools index');
+assert.ok(!footerHtml.includes('href="/araclar"'),'Footer must not link to retired Tools index');
 const nestedFixture={version:2,menus:{
  header:[{id:'custom-primary',label:{tr:'Hizmetler'},url:'#',enabled:true,children:[
   {id:'custom-column',label:{tr:'Hesaplama'},url:'',enabled:true,children:[
