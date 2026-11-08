@@ -285,8 +285,11 @@ export class WebsiteService implements OnModuleInit{
     if(!locales.some(x=>x.locale===lang))return {enabled:false,configured:false,items:[],fields:{}};
     const home=await this.home();
     const module=home.modules.find((x:any)=>x.id==='faq');
-    return module?{enabled:module.enabled!==false,configured:home.version>0&&Array.isArray(module.items)&&module.items.length>0,
-      fields:module.fields,items:module.items}: {enabled:false,configured:false,fields:{},items:[]};
+    const items=(module?.items||[]).filter((item:any)=>item.enabled!==false
+      &&String(item.fields?.question?.[lang]||'').trim()
+      &&String(item.fields?.answer?.[lang]||'').trim());
+    return module?{enabled:module.enabled!==false,configured:module.configured===true,
+      fields:module.fields,items}: {enabled:false,configured:false,fields:{},items:[]};
   }
   async activeLocales(){return activePlatformLocales(this.prisma)}
   async blog(){
