@@ -104,9 +104,11 @@ export class WebsiteToolsService {
    throw new NotFoundException('Bu dilde yayımlanmış araç sayfası bulunamadı.');
   return {id:record.id,title:record.fields.title[locale],image:record.image,
    fields:Object.fromEntries(SCALAR_FIELDS.map(key=>[key,record.fields[key]?.[locale]||''])),
-   sections:record.sections.map(x=>({id:x.id,kind:x.kind||'text',title:x.title?.[locale]||'',body:x.body?.[locale]||'',image:x.image}))
-     .filter(x=>x.title||x.body),
-   faqs:record.faqs.map(x=>({id:x.id,question:x.question?.[locale]||'',answer:x.answer?.[locale]||''}))
-     .filter(x=>x.question&&x.answer)};
+   sections:record.sections.map((x:{id:string;kind?:string;title:Dict;body:Dict;image:string})=>({
+    id:x.id,kind:x.kind||'text',title:x.title?.[locale]||'',body:x.body?.[locale]||'',image:x.image
+   })).filter((x:{title:string;body:string})=>Boolean(x.title||x.body)),
+   faqs:record.faqs.map((x:{id:string;question:Dict;answer:Dict})=>({
+    id:x.id,question:x.question?.[locale]||'',answer:x.answer?.[locale]||''
+   })).filter((x:{question:string;answer:string})=>Boolean(x.question&&x.answer))};
  }
 }
