@@ -1,4 +1,3 @@
-import defaultNavigation from './navigation-default.json';
 export type Localized=Record<string,string>;
 export type NavigationLink={id:string;label:Localized;url:string;enabled:boolean};
 export type NavigationGroup={id:string;area:string;title:Localized;links:NavigationLink[]};
@@ -24,20 +23,20 @@ function migrate(groups:NavigationGroup[]):MenuTree{
 }
 export function menuTree(data:Navigation|null|undefined):MenuTree{
  if(data?.menus&&Array.isArray(data.menus.header)&&Array.isArray(data.menus.footer))return data.menus;
- return migrate(data?.groups||defaultNavigation.groups);
+ return Array.isArray(data?.groups)?migrate(data.groups):{header:[],footer:[]};
 }
 export async function getNavigation():Promise<Navigation>{
- if(!API)return defaultNavigation as Navigation;
+ if(!API)return {version:0,menus:{header:[],footer:[]}};
  try{
   const response=await fetch(API+'/v1/public/website/navigation',{
    cache:'no-store',signal:AbortSignal.timeout(5000)});
-  if(!response.ok)return defaultNavigation as Navigation;
+  if(!response.ok)return {version:0,menus:{header:[],footer:[]}};
   const data=await response.json();
-  return data&&(data.menus||Array.isArray(data.groups))?data:defaultNavigation as Navigation;
- }catch{return defaultNavigation as Navigation;}
+  return data&&(data.menus||Array.isArray(data.groups))?data:{version:0,menus:{header:[],footer:[]}};
+ }catch{return {version:0,menus:{header:[],footer:[]}};}
 }
 export function menuLabel(labels:Localized|undefined,locale:string){
- return labels?.[locale]||labels?.tr||Object.values(labels||{})[0]||'';
+ return labels?.[locale]||'';
 }
 export function menuLocaleFromPath(path:string){
  return path.match(/^\/(tr|en|de|ru|ar|bg|uk|id|vi)(?:\/|$)/)?.[1]||'tr';
