@@ -2,9 +2,15 @@ import {BadRequestException,ConflictException,Injectable,NotFoundException} from
 import {PrismaService} from '../prisma/prisma.service';
 
 const KEY='marketing_tools_pages_v1';
-export const TOOL_IDS=['qr-kod-olusturucu','kdv-hesaplama','pazaryeri-komisyon-hesaplama',
+export const TOOL_IDS=['qr-kod-olusturucu','kdv-hesaplama',
+  'trendyol-komisyon-hesaplama','amazon-komisyon-hesaplama',
+  'hepsiburada-komisyon-hesaplama','n11-komisyon-hesaplama',
+  'ciceksepeti-komisyon-hesaplama','pazarama-komisyon-hesaplama',
   'maas-hesaplama','gumruk-vergisi-hesaplama','desi-hesaplama'] as const;
-const INITIAL_TITLES=['QR Kod Oluşturucu','KDV Hesaplama','Pazaryeri Komisyon Hesaplama',
+const INITIAL_TITLES=['QR Kod Oluşturucu','KDV Hesaplama',
+  'Trendyol Komisyon Hesaplama','Amazon Komisyon Hesaplama',
+  'Hepsiburada Komisyon Hesaplama','n11 Komisyon Hesaplama',
+  'ÇiçekSepeti Komisyon Hesaplama','Pazarama Komisyon Hesaplama',
   'Net-Brüt Maaş Hesaplama','Gümrük Vergisi Hesaplama','Desi Hesaplama'];
 const SCALAR_FIELDS=['title','subtitle','intro','calculatorTitle','calculatorDescription',
   'description','howItWorksTitle','howItWorks','exampleTitle','example',
@@ -78,7 +84,7 @@ export class WebsiteToolsService {
   if(Number(body?.version)!==before.version)throw new ConflictException('Araç içeriği değişmiş. Yenileyin.');
   if(!Array.isArray(body?.tools)||body.tools.length!==TOOL_IDS.length||
     new Set(body.tools.map((x:any)=>x?.id)).size!==TOOL_IDS.length)
-    throw new BadRequestException('Altı araç kaydı birlikte gönderilmelidir.');
+    throw new BadRequestException('Araç kataloğundaki tüm kayıtlar birlikte gönderilmelidir.');
   const tools=before.tools.map(prev=>{
    const incoming=body.tools.find((x:any)=>x.id===prev.id);
    return normalize(incoming,prev);
