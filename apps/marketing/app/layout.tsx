@@ -24,7 +24,15 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const parts=route.split('/').filter(Boolean);
   const snapshotHome=parts.length===0||(parts.length===1&&['tr','en','de','ru','ar'].includes(parts[0]));
   const homeAlias=parts.length===1&&parts[0]==='index.html'||parts.length===2&&['tr','en','de','ru','ar'].includes(parts[0])&&parts[1]==='index.html';
-  const cls=snapshotHome||homeAlias?'tc-page-home':await htmlAttrs();
+  // Tools share the approved Blog archive/article template classes, not the
+  // homepage fallback used when a legacy static HTML template is absent.
+  const contentParts=parts[0]&&['tr','en','de','ru','ar','bg','uk','id','vi'].includes(parts[0])?parts.slice(1):parts;
+  const toolsPage=contentParts[0]==='araclar';
+  const cls=toolsPage?
+   (contentParts.length>1?
+    'tc-page-crowdy tc-vendor-aos tc-vendor-theme tc-page-stories tc-marketing-blog':
+    'tc-page-stories tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight tc-marketing-blog'):
+   snapshotHome||homeAlias?'tc-page-home':await htmlAttrs();
   const lang=route.match(/^\/(tr|en|de|ru|ar|bg|uk|id|vi)(?:\/|$)/)?.[1]||'tr';
   return <html lang={lang} dir={lang==='ar'?'rtl':'ltr'} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
