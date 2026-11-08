@@ -193,6 +193,11 @@ export default function FooterSnapshot(){return (
                     {"Blog"}
                   </a>
                 </li>
+                <li>
+                  <a href={"/araclar"}>
+                    {"Ücretsiz araçlar"}
+                  </a>
+                </li>
                 {"\n"}
                 <li>
                   <a href={"#tc-faq"} data-tc-content-key={"a-269"}>
