@@ -60,6 +60,7 @@ export default function HomepageEditor(){
  const [error,setError]=useState(''),[message,setMessage]=useState('');
  const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
  const [faqDrag,setFaqDrag]=useState<string|null>(null);
+ const [activeModule,setActiveModule]=useState('hero');
  const activeLocale=lang||locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'tr';
  useEffect(()=>{
   if(locales.length)setLang(previous=>locales.some(x=>x.locale===previous)?previous:
@@ -112,7 +113,7 @@ export default function HomepageEditor(){
  const removeEntry=(m:Module,entryId:string)=>patchModule(m.id,prev=>({...prev,
   items:prev.items.filter(x=>x.id!==entryId)}));
  const save=async()=>{
-  if(!saved||!draft||saving||localesLoading||localesError)return;
+  if(!saved||!draft||saving)return;
   setSaving(true);setError('');setMessage('');
   try{
    // Only the language chosen above is written; other locales remain untouched.
@@ -128,6 +129,8 @@ export default function HomepageEditor(){
    const result=await request('/superadmin/website/home-locale/'+encodeURIComponent(activeLocale),{
     method:'PATCH',body:JSON.stringify({version:saved.version,modules})
    }) as Snapshot;
+   if(!result||!Array.isArray(result.modules)||typeof result.version!=='number')
+    throw new Error('Sunucu kaydı doğrulamadı. Veriler güncellenmedi.');
    setSaved(result);setDraft(deepCopy(result));
    setMessage(activeLocale.toUpperCase()+' anasayfa içeriği kaydedildi.');
   }catch(e:any){setError(e?.message||'Kaydedilemedi.')}
@@ -148,12 +151,12 @@ export default function HomepageEditor(){
  return <Container className="grid gap-5 pb-12">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h1 className="text-xl font-semibold">Ticarti.com · Anasayfa</h1>
-    <p className="mt-1 text-sm text-muted-foreground">Önce dili seç, ardından bütün anasayfa bölümlerini düzenle.</p>
+    <p className="mt-1 text-sm text-muted-foreground">Dili ve soldaki modülü seçerek içeriği düzenle.</p>
    </div>
    <div className="flex items-center gap-2">
     <Button variant="outline" disabled={loading||saving} onClick={()=>void refresh()}>
      <RefreshCw className="size-4"/>Yenile</Button>
-    <Button disabled={loading||saving||!changed||!draft} onClick={()=>void save()}>
+    <Button disabled={loading||saving||!draft} onClick={()=>void save()}>
      {saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Bu Dili Kaydet
     </Button>
    </div>
@@ -172,11 +175,25 @@ export default function HomepageEditor(){
   {message?<p className="rounded-md border p-3 text-sm">{message}</p>:null}
   {loading?<div className="grid min-h-48 place-items-center"><LoaderCircle className="size-6 animate-spin"/></div>:null}
   {draft&&!loading?<>
-   <div className="flex flex-wrap gap-2">
-    {draft.modules.map(m=><a key={m.id} href={'#home-section-'+m.id}
-      className="rounded-md border px-3 py-2 text-xs font-medium hover:bg-muted">{m.title}</a>)}
-   </div>
-   {draft.modules.map((m,index)=>{
+   <div className="grid items-start gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
+    <nav className="sticky top-20 grid gap-1 rounded-lg border bg-card p-3" aria-label="Anasayfa modülleri">
+     <div className="px-2 pb-2 text-xs font-semibold text-muted-foreground">Modüller</div>
+     {draft.modules.map((module,index)=><div key={module.id} className="flex items-center gap-1">
+      <button type="button" onClick={()=>{setActiveModule(module.id);setError('');setMessage('')}}
+       className={'min-w-0 flex-1 rounded-md px-3 py-2 text-left text-sm '+(activeModule===module.id?'bg-primary text-primary-foreground':'hover:bg-muted')}>
+       <span className="block truncate">{module.title}</span>
+      </button>
+      <button type="button" aria-label={module.title+' yukarı taşı'} disabled={index===0}
+       className="rounded p-1 disabled:opacity-30" onClick={()=>reorderModules(index,index-1)}>
+       <ArrowUp className="size-3.5"/></button>
+      <button type="button" aria-label={module.title+' aşağı taşı'} disabled={index===draft.modules.length-1}
+       className="rounded p-1 disabled:opacity-30" onClick={()=>reorderModules(index,index+1)}>
+       <ArrowDown className="size-3.5"/></button>
+     </div>)}
+    </nav>
+    <div className="min-w-0">
+   {draft.modules.filter(module=>module.id===activeModule).map(m=>{
+    const index=draft.modules.findIndex(module=>module.id===m.id);
     const entries=visibleEntries(m);
     return <Card key={m.id}>
      <CardContent className="grid gap-4 p-5" >
@@ -195,10 +212,10 @@ export default function HomepageEditor(){
         <Switch checked={m.enabled!==false} onCheckedChange={enabled=>patchModule(m.id,prev=>({...prev,enabled}))}/>
        </div>
       </div>
-      {MODULE_FIELDS[m.id]?.length?<details open className="rounded-md border p-4">
-       <summary className="cursor-pointer text-sm font-semibold">Başlık, metin ve bağlantılar</summary>
-       <div className="mt-4 grid gap-3 md:grid-cols-2">
-        {MODULE_FIELDS[m.id].map(key=><label key={key} className="grid gap-2 text-sm">
+      {MODULE_FIELDS[m.id]?.length?<div className="grid gap-3">
+       <div className="text-sm font-semibold">İçerik</div>
+       <div className="grid gap-3 md:grid-cols-2">
+        {MODULE_FIELDS[m.id].filter(key=>!['consentText','consentLinkText','phonePlaceholder','phoneEmpty','phoneInvalid','kvkkRequired','notConnected'].includes(key)).map(key=><label key={key} className="grid gap-2 text-sm">
          <span>{LABELS[key]||key}</span>
          {['description','consentText'].includes(key)?
           <Textarea rows={3} value={m.fields?.[key]?.[activeLocale]||''}
@@ -207,7 +224,17 @@ export default function HomepageEditor(){
            onChange={e=>patchField(m.id,key,e.target.value)}/>}
         </label>)}
        </div>
-      </details>:null}
+       {m.id==='hero'?<details className="rounded-md border p-3">
+        <summary className="cursor-pointer text-sm font-medium">Gelişmiş form metinleri</summary>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+         {MODULE_FIELDS.hero.filter(key=>['consentText','consentLinkText','phonePlaceholder','phoneEmpty','phoneInvalid','kvkkRequired','notConnected'].includes(key)).map(key=><label key={key} className="grid gap-1 text-sm">
+          {LABELS[key]||key}
+          <Input value={m.fields?.[key]?.[activeLocale]||''}
+           onChange={e=>patchField(m.id,key,e.target.value)}/>
+         </label>)}
+        </div>
+       </details>:null}
+      </div>:null}
       {m.id==='hero'?<div className="flex items-center gap-2 text-sm">
        <Switch checked={m.ctaEnabled!==false} onCheckedChange={ctaEnabled=>patchModule(m.id,prev=>({...prev,ctaEnabled}))}/>
        Telefon CTA formu
@@ -303,7 +330,9 @@ export default function HomepageEditor(){
      </CardContent>
     </Card>;
    })}
-   <div className="flex justify-end"><Button disabled={saving||!changed} onClick={()=>void save()}>
+   </div>
+   </div>
+   <div className="flex justify-end"><Button disabled={loading||saving||!draft} onClick={()=>void save()}>
     {saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}
     {activeLocale.toUpperCase()} Anasayfasını Kaydet
    </Button></div>
