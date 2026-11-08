@@ -132,7 +132,7 @@ export default function ToolsEditor(){
        <option value="DRAFT">Taslak</option><option value="PUBLISHED">Yayında</option>
       </select>
      </div>
-     <p className="text-xs text-muted-foreground">Hesaplama motoru bir sonraki aşamada bağlanacak. Şu an yalnızca içerik ve yayın yapısı hazırlanıyor.</p>
+     <p className="text-xs text-muted-foreground">Hesaplama motoru Marketing üzerinde çalışır. Bu ekrandan çok dilli içerikleri, SSS ve SEO alanlarını yönetebilirsiniz.</p>
      <MediaField label="Öne çıkan görsel" value={current.image||''}
       onChange={image=>edit(x=>({...x,image}))}/>
     </CardContent></Card>
