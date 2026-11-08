@@ -58,6 +58,26 @@ const headerHtml=renderToStaticMarkup(React.createElement(load('header').default
 const footerHtml=renderToStaticMarkup(React.createElement(load('footer').default,{navigation:navigationFixture,locale:'tr'}));
 assert.ok(headerHtml.includes('href="/araclar"'),'Desktop and mobile mega menus must retain Tools link');
 assert.ok(footerHtml.includes('href="/araclar"'),'Resource footer must retain Tools link');
+const nestedFixture={version:2,menus:{
+ header:[{id:'custom-primary',label:{tr:'Hizmetler'},url:'#',enabled:true,children:[
+  {id:'custom-column',label:{tr:'Hesaplama'},url:'',enabled:true,children:[
+   {id:'parent-tool',label:{tr:'Araçlar'},url:'/araclar',enabled:true,children:[
+    {id:'nested-tool',label:{tr:'KDV hesaplayıcı'},url:'/araclar/kdv-hesaplama',enabled:true,children:[]}
+   ]}
+  ]}
+ ]}],
+ footer:[{id:'footer-test',label:{tr:'Kaynaklar'},url:'',enabled:true,children:[
+  {id:'footer-nested',label:{tr:'Araçlar'},url:'/araclar',enabled:true,children:[
+   {id:'footer-child',label:{tr:'KDV'},url:'/araclar/kdv-hesaplama',enabled:true,children:[]}
+  ]}
+ ]}]
+}};
+const nestedHeader=renderToStaticMarkup(React.createElement(load('header').default,{navigation:nestedFixture,locale:'tr'}));
+const nestedFooter=renderToStaticMarkup(React.createElement(load('footer').default,{navigation:nestedFixture,locale:'tr'}));
+assert.ok(nestedHeader.includes('data-mega-slug="custom-primary"'),'Custom root must become a mega menu');
+assert.ok(nestedHeader.includes('href="/araclar/kdv-hesaplama"'),'Nested mega link must render');
+assert.ok(nestedFooter.includes('tc-footer-tree-children')&&nestedFooter.includes('href="/araclar/kdv-hesaplama"'),
+ 'Nested footer link must render');
 const markup=renderToStaticMarkup(React.createElement(load('index').default));
 // The new integration updates only the selected modules. No browser text patches.
 const cmsFixture={version:1,locale:'tr',disabledModuleIds:[],consentContract:{key:'KVKK_NOTICE',contentKey:'kvkk-notice',href:'/kvkk.html'},modules:[
