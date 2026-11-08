@@ -39,13 +39,13 @@ const initial=()=>TOOL_IDS.map((id,index)=>({
  faqs:[] as Array<{id:string;question:Dict;answer:Dict}>
 }));
 // This upgrades only untouched starter drafts, never manually authored drafts.
-function isUntouchedStarter(tool:any):boolean{
+export function isUntouchedStarter(tool:any):boolean{
  if(tool?.status!=='DRAFT'||tool?.image||tool?.sections?.length||tool?.faqs?.length)return false;
  const title=tool.fields?.title;
  const expected=INITIAL_TITLES[TOOL_IDS.indexOf(tool.id as typeof TOOL_IDS[number])];
  if(!expected||title?.tr!==expected)return false;
  return Object.entries(tool.fields||{}).every(([key,value])=>
-  key==='title'||!Object.values(value as Record<string,string>||{}).some(Boolean));
+  key==='title'||!Object.values((value||{}) as Record<string,string>).some(Boolean));
 }
 function upgradeStarter(tool:any,seed:any){
  return {...tool,status:'PUBLISHED',
