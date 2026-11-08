@@ -16,7 +16,7 @@ const localize=(value:any,max:number):LocaleText=>{
 function fromGroups(groups:any[]):MenuTree{
  const find=(id:string)=>groups.find(g=>g.id===id);
  const items=(group:any):MenuNode[]=>Array.isArray(group?.links)?group.links.map((x:any)=>({
-  id:text(x.id,80),label:localize(x.label,160),url:text(x.url,500),
+  id:group.id==='header-primary'?text(x.id,80):text(group.id+'-'+x.id,80),label:localize(x.label,160),url:text(x.url,500),
   enabled:x.enabled!==false,children:[] as MenuNode[]
  })):[];
  const heading=(group:any):MenuNode=>({id:group.id,label:localize(group.title,160),
