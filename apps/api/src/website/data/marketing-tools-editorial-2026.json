@@ -204,24 +204,24 @@
           "question": {
             "tr": "QR kodu görseli nasıl kaliteli yazdırılır?",
             "en": "How can I print the QR code clearly?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "SVG vektör formatını kullanın, karelerin etrafındaki boşluğu koruyun ve baskıdan sonra tarama testi yapın.",
             "en": "Use the SVG vector file, preserve the quiet zone and test the printed code.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -229,24 +229,24 @@
           "question": {
             "tr": "QR kod üretirken bilgilerim paylaşılıyor mu?",
             "en": "Is my QR content sent to a third party?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Hayır. Kodunuz tarayıcıda oluşturulur ve metin üçüncü taraf QR hizmetine gönderilmez.",
             "en": "No. The encoder operates locally in your browser.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -454,24 +454,24 @@
           "question": {
             "tr": "KDV oranı nasıl seçilir?",
             "en": "Which VAT rate applies?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Ürün veya hizmetin mevzuattaki sınıflandırmasına göre %20, %10 veya %1 oranlarından uygun olanı kullanın; istisnaları ayrıca kontrol edin.",
             "en": "Use the rate legally applicable to the goods or services and verify any exemption.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -479,24 +479,24 @@
           "question": {
             "tr": "KDV tutarı satış gelirinden farklı mıdır?",
             "en": "Is VAT the same as sales revenue?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "KDV, satış fiyatına dahil veya ayrıca yansıtılan vergidir; muhasebede gelir ve KDV yükümlülüğü ayrı değerlendirilir.",
             "en": "VAT and net sales are shown separately.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -704,24 +704,24 @@
           "question": {
             "tr": "Trendyol'da kategori komisyonunu nereden bulurum?",
             "en": "Where can I find my Trendyol commission?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Satıcı panelindeki komisyon ve vade/ticari şartlar bölümünden ürününüzün güncel oranını kontrol edin.",
             "en": "Check the commission and commercial terms for your product in the seller panel.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -729,24 +729,24 @@
           "question": {
             "tr": "Komisyon sonrası kalan tutar kâr mı?",
             "en": "Is the remainder equal to net profit?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Tam net kâr değildir; satış KDV'si, stopaj, iadeler, reklam ve sabit işletme giderleri ayrıca hesaplanmalıdır.",
             "en": "No. It excludes items such as sales VAT, withholding, returns and fixed operating costs.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -954,24 +954,24 @@
           "question": {
             "tr": "Amazon kategori komisyonu sabit midir?",
             "en": "Do Amazon referral fees vary by category?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Her kategoride aynı değildir; bazı kategorilerde satış bedeline göre kademeli oran, kampanya veya özel satıcı teklifi bulunabilir.",
             "en": "Yes. Some categories also have price thresholds or promotional fees.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -979,24 +979,24 @@
           "question": {
             "tr": "Amazon'da alıcıdan alınan kargo komisyonu etkiler mi?",
             "en": "Does buyer-paid shipping affect Amazon referral fees?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Amazon'un ücretlendirme açıklamasında alıcıdan tahsil edilen toplam satış bedeline kargo ücreti de dahil olabilir. Formda tahsil edilen kargoyu ayrı girin.",
             "en": "Amazon's seller fee rules may include shipping charged to the buyer in the fee calculation.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -1204,24 +1204,24 @@
           "question": {
             "tr": "Hepsiburada'da komisyonu nasıl doğrularım?",
             "en": "Where can I verify my Hepsiburada commission?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "İş Ortağım panelindeki kategori bazlı güncel komisyon listesini ve sizin sözleşmenizi esas alın.",
             "en": "Check the current category fee and your agreement in the seller partner dashboard.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -1229,24 +1229,24 @@
           "question": {
             "tr": "Kargo giderini nerede hesaplarım?",
             "en": "How can I include shipping expenses?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Formdaki birim kargo maliyeti alanına kargo faturasına göre gerçek tutarı yazabilirsiniz.",
             "en": "Enter the seller-paid unit shipping cost in the form.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -1454,24 +1454,24 @@
           "question": {
             "tr": "n11 komisyon yüzdesi nasıl bulunur?",
             "en": "How do I find the n11 fee rate?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Ürün kategorinize ait satıcı komisyonunu n11 satıcı panelinden veya sözleşmeden kontrol edin.",
             "en": "Check the category commission in your n11 seller panel or agreement.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -1479,24 +1479,24 @@
           "question": {
             "tr": "Komisyon KDV dahilse ne yapılır?",
             "en": "What if the commission already includes VAT?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Komisyon oranı KDV dahil seçeneğini işaretleyin; hesaplayıcı KDV'yi toplam oran içinden ayrıştırır.",
             "en": "Select the inclusive-fee option so VAT is not added again.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -1704,24 +1704,24 @@
           "question": {
             "tr": "ÇiçekSepeti'nde çiçek ve hediye kategorileri aynı mı?",
             "en": "Are flower and gift commission rates identical?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Hayır. Kategori ve satıcı sözleşmesi farklı oranlar belirleyebilir; panelde ürünün gerçek oranı kontrol edilmelidir.",
             "en": "No. Product categories and seller agreements may have different rates.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -1729,24 +1729,24 @@
           "question": {
             "tr": "Paketleme masrafını nasıl dahil ederim?",
             "en": "How do I account for packaging?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Paketleme, taşıma ve diğer giderleri birim maliyet veya diğer gider alanlarına ekleyin.",
             "en": "Include packaging in the other per-item costs field.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -1954,24 +1954,24 @@
           "question": {
             "tr": "Pazarama komisyonu ürün grubuna göre değişir mi?",
             "en": "Does Pazarama commission vary?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Kategori, kampanya ve satıcı koşulları oranı etkileyebilir; Pazarama satıcı panelinizdeki rakamı kullanın.",
             "en": "Yes, it may vary by product group and merchant agreement.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -1979,24 +1979,24 @@
           "question": {
             "tr": "Hesaplama reklam giderini içerir mi?",
             "en": "Are advertising costs included?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Reklam, promosyon ve hizmet giderlerini ancak diğer giderler alanına eklerseniz hesaba katılır.",
             "en": "Only when you enter them as additional costs.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -2204,24 +2204,24 @@
           "question": {
             "tr": "Gelir vergisi kümülatif nasıl hesaplanır?",
             "en": "How is cumulative income tax calculated?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Vergiye tabi ücret matrahları yıl içinde birikir; içinde bulunulan ayın vergisi, güncel kümülatif toplam vergi ile önceki toplam arasındaki farktan hesaplanır.",
             "en": "The monthly tax is the difference between tax on the new cumulative wage base and the prior cumulative base, after exemptions.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -2229,24 +2229,24 @@
           "question": {
             "tr": "2026 SGK tavanı ne kadar?",
             "en": "What is the 2026 social security earnings ceiling?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "2026'da 4/a özel sektör aylık prime esas kazanç üst sınırı 297.270 TL'dir. Bu tutarın üzerindeki ücretin tamamına SGK primi uygulanmaz.",
             "en": "The standard monthly ceiling is TRY 297,270 for covered employees in 2026.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -2454,24 +2454,24 @@
           "question": {
             "tr": "CIF nedir?",
             "en": "What is CIF?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "Cost, Insurance, Freight: ürün bedeli, sigorta ve taşıma giderleri toplamıdır. Gümrük kıymetinde temel unsurlardan biridir.",
             "en": "It is the cost, insurance and freight value used in customs valuation.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -2479,24 +2479,24 @@
           "question": {
             "tr": "GTİP olmadan kesin gümrük vergisi bulunur mu?",
             "en": "Can customs duty be determined without the HS code?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Hayır. GTİP, menşe, serbest ticaret anlaşmaları ve vergilendirme tarihi oranı etkiler. Bu araç doğruladığınız oranlarla tahmin üretir.",
             "en": "No. The tariff code, origin and applicable agreements determine the actual rate.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
@@ -2704,24 +2704,24 @@
           "question": {
             "tr": "Desi hesabında 3000 veya 5000 ne zaman kullanılır?",
             "en": "Which volumetric divisor applies?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Welche Daten werden benötigt?",
+            "ru": "Какие данные нужно ввести?",
+            "ar": "ما البيانات المطلوبة؟",
+            "bg": "Какви данни са необходими?",
+            "uk": "Які дані потрібні?",
+            "id": "Data apa yang diperlukan?",
+            "vi": "Cần nhập những dữ liệu nào?"
           },
           "answer": {
             "tr": "3000 Türkiye içi bazı tarifelerde yaygındır; 5000 gibi bölenler belirli uluslararası taşımalarda kullanılabilir. Taşıyıcınızın sözleşmesini kontrol edin.",
             "en": "Many domestic Turkish tariffs use 3,000; some international services use 5,000. Check your carrier.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Geben Sie die Werte des konkreten Produkts oder Vorgangs sowie den passenden Tarif ein.",
+            "ru": "Укажите параметры сделки или товара и действующий тариф.",
+            "ar": "أدخل قيم المنتج أو المعاملة والنسبة المطبقة.",
+            "bg": "Въведете стойностите на продукта или сделката и приложимата ставка.",
+            "uk": "Вкажіть параметри товару або операції та чинну ставку.",
+            "id": "Masukkan nilai transaksi atau produk beserta tarif yang berlaku.",
+            "vi": "Nhập giá trị hàng hóa hoặc giao dịch cùng tỷ lệ áp dụng."
           }
         },
         {
@@ -2729,24 +2729,24 @@
           "question": {
             "tr": "Kargo fiyatı desiden nasıl hesaplanır?",
             "en": "How does volumetric weight affect shipping prices?",
-            "de": "Wie verwende ich diesen Rechner?",
-            "ru": "Как использовать инструмент?",
-            "ar": "كيف أستخدم هذه الحاسبة؟",
-            "bg": "Как се използва калкулаторът?",
-            "uk": "Як користуватися калькулятором?",
-            "id": "Bagaimana menggunakan kalkulator ini?",
-            "vi": "Cách sử dụng công cụ?"
+            "de": "Können sich die Tarife ändern?",
+            "ru": "Могут ли тарифы меняться?",
+            "ar": "هل يمكن أن تتغير النسب؟",
+            "bg": "Могат ли ставките да се променят?",
+            "uk": "Чи можуть ставки змінюватися?",
+            "id": "Bisakah tarif berubah?",
+            "vi": "Tỷ lệ có thể thay đổi không?"
           },
           "answer": {
             "tr": "Desi ile kg'dan büyük olan değere, taşıyıcının fiyat tablosu ve yuvarlama kuralları uygulanır. Bu araç tek başına kargo ücreti hesaplamaz.",
             "en": "Carriers apply their rates and rounding to the chargeable weight. This calculator does not quote shipping prices.",
-            "de": "Geben Sie die Werte ein und vergleichen Sie das Ergebnis unter den aktuellen Bedingungen.",
-            "ru": "Введите параметры и проверьте расчёт по актуальным условиям.",
-            "ar": "أدخل القيم وتحقق من النتيجة وفق الشروط الحالية.",
-            "bg": "Въведете стойностите и сравнете резултатите по актуалните условия.",
-            "uk": "Введіть дані та звірте результати з чинними умовами.",
-            "id": "Masukkan nilai dan periksa hasil dengan ketentuan yang berlaku.",
-            "vi": "Nhập dữ liệu và kiểm tra kết quả theo điều kiện hiện hành."
+            "de": "Ja. Prüfen Sie die geltenden Regeln, Gebühren und Vertragsbedingungen.",
+            "ru": "Да. Сверяйте действующие ставки, правила и договор.",
+            "ar": "نعم. تحقق من القواعد والرسوم وشروط العقود الحالية.",
+            "bg": "Да. Проверете текущите такси, правила и договори.",
+            "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
+            "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
+            "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
           }
         }
       ]
