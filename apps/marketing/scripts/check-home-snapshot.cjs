@@ -101,10 +101,15 @@ assert.ok(!englishFaq.includes('Nasıl başlanır?')&&!englishFaq.includes('Mağ
 assert.ok(!cmsMarkup.includes('id="tc-phone-main-hero"'),'Hero CTA toggle must hide just the hero form');
 // Unconnected sections must preserve the existing visual design and static content.
 for(const className of ['tc-site-hero','tc-animated-heading','tc-builder-section',
- 'tc-dashboard-radar','tc-sales-channels','tc-showcase','tc-press','tc-bottom-cta','tc-faq']){
+ 'tc-dashboard-radar','tc-sales-channels','tc-showcase','tc-press','tc-bottom-cta']){
  assert.ok(markup.includes('class="'+className)||markup.includes('class="'+className+' '),
   'Original unconfigured homepage section was unexpectedly removed: '+className);
 }
+assert.ok(!markup.includes('class="tc-faq"'),
+ 'Unconfigured FAQ cannot render static sample questions');
+const faqSource=fs.readFileSync(path.join(dir,'faq.tsx'),'utf8');
+assert.ok(!faqSource.includes('E-ticaret paketi nedir?'),
+ 'FAQ may not contain hardcoded question copy');
 const configuredEmpty={
  version:2,locale:'en',modules:[
   {id:'hero',configured:true,enabled:true,fields:{heading:{tr:'Test Türkçe'}},items:[],logos:[]},
@@ -143,12 +148,13 @@ assert.ok(shellSource.includes('<HeaderSnapshot/>')&&shellSource.includes('<Foot
  'One central shell must own both header and footer');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
  'Blog and homepage must use the exact same header/footer shell');
-for(const id of ['hero','faq','builder','radar','channels','showcase','references','bottomCta','animated']){
+for(const id of ['hero','builder','radar','channels','showcase','references','bottomCta','animated']){
  const original=fs.readFileSync(path.join(dir,id+'.tsx'),'utf8');
  assert.ok(original.includes('module?.configured')&&original.includes("CmsSection"),
   'Each migrated module must preserve original appearance until configured: '+id);
 }
 
+assert.ok(faqSource.includes("from './faq-cms'"),'FAQ must use the CMS-only renderer');
 assert.ok(!page.includes('HOME_VISUAL_SCRIPTS'),'No legacy homepage script injection');
 const behavior=fs.readFileSync(path.join(dir,'interactions.tsx'),'utf8');
 assert.ok(!behavior.includes('innerHTML') || behavior.includes('No legacy <script> injection'),'No runtime HTML replacement');
