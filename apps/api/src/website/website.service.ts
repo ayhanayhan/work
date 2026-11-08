@@ -361,7 +361,12 @@ export class WebsiteService{
         if(text&&!String(fields[key][locale]||'').trim())fields[key][locale]=text;
       }
     }
-    const equal=JSON.stringify(current.items)===JSON.stringify(incoming);
+    const equal=current.items.length===incoming.length&&
+      current.items.every((entry:any,i:number)=>{
+        const candidate=incoming[i];
+        return entry.id===candidate.id&&entry.enabled===candidate.enabled&&
+          JSON.stringify(entry.fields)===JSON.stringify(candidate.fields);
+      });
     if(equal)return {version:snapshot.version,added:0,total:incoming.length,alreadyImported:true};
     const modules=snapshot.modules.map(m=>m.id==='faq'?{...m,configured:true,enabled:true,fields,items:incoming}:m);
     const version=snapshot.version+1;
