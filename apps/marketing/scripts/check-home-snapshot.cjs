@@ -53,6 +53,11 @@ for(const source of [callbackSource,footerCallbackSource]){
   assert.ok(source.includes('onSubmit={submit}'),'Callback submit must be handled by React');
   assert.ok(!source.includes('window.TicartiValidators'),'No legacy form globals');
 }
+const navigationFixture=require('../lib/navigation-default.json');
+const headerHtml=renderToStaticMarkup(React.createElement(load('header').default,{navigation:navigationFixture,locale:'tr'}));
+const footerHtml=renderToStaticMarkup(React.createElement(load('footer').default,{navigation:navigationFixture,locale:'tr'}));
+assert.ok(headerHtml.includes('href="/araclar"'),'Desktop and mobile mega menus must retain Tools link');
+assert.ok(footerHtml.includes('href="/araclar"'),'Resource footer must retain Tools link');
 const markup=renderToStaticMarkup(React.createElement(load('index').default));
 // The new integration updates only the selected modules. No browser text patches.
 const cmsFixture={version:1,locale:'tr',disabledModuleIds:[],consentContract:{key:'KVKK_NOTICE',contentKey:'kvkk-notice',href:'/kvkk.html'},modules:[
