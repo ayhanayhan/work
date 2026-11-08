@@ -1,4 +1,4 @@
-import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectable,type OnModuleInit} from '@nestjs/common';
+import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
@@ -75,18 +75,11 @@ function defaultModules(){
   } as any)[id],enabled:true,sortOrder:i,configured:false,fields:safeFields({},MODULE_FIELDS[id]),items:[],logos:[],ctaEnabled:true,categoryIds:[]}));
 }
 @Injectable()
-export class WebsiteService implements OnModuleInit{
+export class WebsiteService{
   constructor(private readonly prisma:PrismaService){}
-  async onModuleInit(){
-    try{await this.seedInitialFaq();}
-    catch(error){
-      // Keep the API available; log the actual persistence failure for Cloud Run diagnosis.
-      console.error('[ticarti-faq-seed] database migration failed',error);
-    }
-  }
-  /** Idempotent one-time migration, run on API startup without a panel button.
-   * A transaction commits homepage changes and the marker together.
-   * User-edited translations are never overwritten.
+  /** Explicit maintenance operation, never part of API bootstrap.
+   * This keeps Cloud Run startup, readiness and normal requests independent of content migration.
+   * The transaction writes the content and marker atomically without overwriting edited translations.
    */
   async seedInitialFaq(){
     const marker=await this.prisma.platformSetting.findUnique({where:{key:FAQ_SEED_MARKER}});
