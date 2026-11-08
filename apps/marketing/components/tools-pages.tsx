@@ -3,7 +3,7 @@ import SiteShell from '@/components/site-shell';
 export type ToolSummary={id:string;title:string;subtitle:string;description:string;image:string};
 export type ToolPage={id:string;title:string;image:string;
  fields:Record<string,string>;
- sections:{id:string;title:string;body:string;image:string}[];
+ sections:{id:string;kind:string;title:string;body:string;image:string}[];
  faqs:{id:string;question:string;answer:string}[]};
 const base=(process.env.API_ORIGIN||'').replace(/\/$/,'');
 const labels:Record<string,{title:string;description:string;back:string;more:string;notReady:string}>={
@@ -88,7 +88,11 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
      {tool.sections.map(section=><section key={section.id} className="tc-tool-section">
       {section.title?<h2>{section.title}</h2>:null}
       {section.image?<img loading="lazy" src={section.image} alt={section.title||tool.title}/>:null}
-      {section.body?<BlockText>{section.body}</BlockText>:null}
+      {section.body?(section.kind==='list'?
+       <ul className="tc-tool-list">{section.body.split('\n').map(x=>x.trim()).filter(Boolean).map((line,i)=><li key={i}>{line}</li>)}</ul>:
+       section.kind==='steps'?
+       <ol className="tc-tool-list">{section.body.split('\n').map(x=>x.trim()).filter(Boolean).map((line,i)=><li key={i}>{line}</li>)}</ol>:
+       <div className={section.kind==='notice'?'tc-tool-inline-note':''}><BlockText>{section.body}</BlockText></div>):null}
      </section>)}
      {f.exampleTitle||f.example?<section className="tc-tool-section">
       {f.exampleTitle?<h2>{f.exampleTitle}</h2>:null}
