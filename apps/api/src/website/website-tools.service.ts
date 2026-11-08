@@ -89,7 +89,13 @@ export class WebsiteToolsService {
    const incoming=body.tools.find((x:any)=>x.id===prev.id);
    return normalize(incoming,prev);
   });
-  const next={version:before.version+1,tools};
+  // Keep historical aggregate-page content in storage, even though it is no
+  // longer exposed in Master or public tool listings.
+  const previousRow=await this.prisma.platformSetting.findUnique({where:{key:KEY}});
+  const previousTools=(previousRow?.value as any)?.tools;
+  const archived=Array.isArray(previousTools)?
+   previousTools.filter((item:any)=>item?.id==='pazaryeri-komisyon-hesaplama'):[];
+  const next={version:before.version+1,tools:[...tools,...archived]};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
