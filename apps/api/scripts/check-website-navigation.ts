@@ -1,96 +1,99 @@
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import {WebsiteNavigationService} from '../src/website/website-navigation.service';
-let saved:any=null;
+let navigation:any=null;
+let tools:any={tools:[]};
 const service=new WebsiteNavigationService({platformSetting:{
- async findUnique(){return saved?{value:structuredClone(saved)}:null},
- async upsert({create,update}:any){saved=structuredClone(saved?update.value:create.value);return {value:saved}}
+ async findUnique({where}:any){
+  const value=where.key==='marketing_tools_pages_v1'?tools:navigation;
+  return value?{value:structuredClone(value)}:null;
+ },
+ async upsert({create,update}:any){
+  navigation=structuredClone(navigation?update.value:create.value);
+  return {value:navigation};
+ }
 }} as any);
+const all=(rows:any[]):any[]=>rows.flatMap(row=>[row,...all(row.children||[])]);
+const published=(rows:any[],url:string)=>all(rows).find(row=>row.url===url);
 async function main(){
- const original=await service.get();
- assert.equal(original.version,0);
- assert.equal(original.menus.header.length,3);
- assert.equal(original.menus.footer.length,4);
- const expectedLocales=['tr','en','de','ru','ar','bg','uk','id','vi'];
- const allNodes=(nodes:any[]):any[]=>nodes.flatMap(node=>[node,...allNodes(node.children||[])]);
- for(const node of [...allNodes(original.menus.header),...allNodes(original.menus.footer)]){
-  for(const language of expectedLocales)
-   assert.ok(node.label[language], 'Missing '+language+' label for '+node.id);
+ const initial=await service.get();
+ const locales=['tr','en','de','ru','ar','bg','uk','id','vi'];
+ assert.equal(initial.version,0);
+ assert.equal(initial.menus.header.length,3);
+ assert.equal(initial.menus.footer.length,4);
+ assert.ok(!all(initial.menus.header).some(row=>row.url==='/araclar'),
+  'Header must not link to retired Tools listing');
+ assert.ok(!all(initial.menus.footer).some(row=>row.url==='/araclar'),
+  'Footer must not link to retired Tools listing');
+ const footer=initial.menus.footer.find((row:any)=>row.id==='footer-4');
+ const paths=['qr-kod-olusturucu','kdv-hesaplama',
+  'trendyol-komisyon-hesaplama','amazon-komisyon-hesaplama',
+  'hepsiburada-komisyon-hesaplama','n11-komisyon-hesaplama',
+  'ciceksepeti-komisyon-hesaplama','pazarama-komisyon-hesaplama',
+  'maas-hesaplama','gumruk-vergisi-hesaplama','desi-hesaplama']
+  .map(slug=>'/araclar/'+slug);
+ assert.deepEqual(footer.children.filter((row:any)=>paths.includes(row.url)).map((row:any)=>row.url),paths);
+ assert.ok(footer.children.every((row:any)=>row.children.length===0),
+  'All calculators must be separate direct footer links');
+ for(const node of [...all(initial.menus.header),...all(initial.menus.footer)]){
+  for(const locale of locales)assert.ok(node.label[locale],node.id+' is missing '+locale);
  }
- for(const root of original.menus.header.filter((n:any)=>n.featured)){
-  for(const language of expectedLocales){
-   assert.ok(root.featured.eyebrow[language], 'Missing mega eyebrow '+language);
-   assert.ok(root.featured.description[language], 'Missing mega description '+language);
-   assert.ok(root.featured.buttonLabel[language], 'Missing mega CTA '+language);
-  }
- }
+ const draft=await service.publicNavigation('tr');
+ assert.ok(paths.every(url=>published(draft.menus.footer,url)?.enabled===false),
+  'Draft tool links must not be visible to visitors');
+ tools={tools:[{id:'kdv-hesaplama',status:'PUBLISHED',fields:{
+  title:{tr:'KDV Hesaplama',en:'VAT Calculator'}}}]};
+ const turkish=await service.publicNavigation('tr');
+ assert.equal(published(turkish.menus.footer,'/araclar/kdv-hesaplama')?.enabled,true);
+ assert.equal(published(turkish.menus.footer,'/araclar/qr-kod-olusturucu')?.enabled,false);
+ assert.equal(published((await service.publicNavigation('de')).menus.footer,
+  '/araclar/kdv-hesaplama')?.enabled,false,'Missing translation must hide tool');
 
- const resources=original.menus.header.find((x:any)=>x.id==='nav-resources');
- const tools=resources?.children.flatMap((group:any)=>group.children).find((item:any)=>item.url==='/araclar');
- assert.ok(tools,'Tools menu must exist');
- const marketUrls=['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']
-  .map(m=>'/araclar/'+m+'-komisyon-hesaplama');
- const toolUrls=['/araclar/qr-kod-olusturucu','/araclar/kdv-hesaplama',
-  ...marketUrls,'/araclar/maas-hesaplama',
-  '/araclar/gumruk-vergisi-hesaplama','/araclar/desi-hesaplama'];
- assert.deepEqual(tools.children.map((item:any)=>item.url),toolUrls);
- assert.ok(tools.children.every((item:any)=>item.enabled===false),'Unpublished calculators must be hidden');
-
- assert.ok(resources?.children.some((c:any)=>c.children.some((n:any)=>n.url==='/araclar')));
- const originalCount=(items:any[]):number=>items.reduce((sum,x)=>sum+1+originalCount(x.children),0);
- const before=originalCount(original.menus.header)+originalCount(original.menus.footer);
- const edited=structuredClone(original);
- const parent=edited.menus.header.find((x:any)=>x.id==='nav-resources').children[1];
- const child=parent.children[1];
- child.label.en='Custom label';
- const moved=parent.children.splice(1,1)[0];
- parent.children[0].children.push(moved);
- // WordPress-style nested submenu, no link loss.
- assert.equal(originalCount(edited.menus.header)+originalCount(edited.menus.footer),before);
- const updated=await service.save({version:edited.version,menus:edited.menus});
- assert.equal(updated.version,1);
- assert.equal((await service.get()).menus.header[2].children[1].children[0].children.length,12);
- assert.equal(updated.menus.header[2].children[1].children[0].children[11].label.en,'Custom label');
- assert.equal((await service.publicNavigation()).menus.header[2].children[1].children[0].children[11].url,child.url);
- await assert.rejects(service.save({version:0,menus:edited.menus}),'Stale version must be rejected');
- const unsafe=structuredClone(updated.menus);
+ const changed=structuredClone(initial.menus);
+ changed.footer[3].children.find((row:any)=>row.url==='/araclar/kdv-hesaplama').label.en='VAT Tool';
+ const next=await service.save({version:0,menus:changed});
+ assert.equal(next.version,1);
+ assert.equal(published((await service.get()).menus.footer,'/araclar/kdv-hesaplama')?.label.en,'VAT Tool');
+ await assert.rejects(service.save({version:0,menus:changed}));
+ const unsafe=structuredClone(next.menus);
  unsafe.footer[0].children[0].url='javascript:alert(1)';
- await assert.rejects(service.save({version:1,menus:unsafe}),'Unsafe URL must be rejected');
- const dup=structuredClone(updated.menus);
- dup.footer[0].children[1].id=dup.footer[0].children[0].id;
- await assert.rejects(service.save({version:1,menus:dup}),'Duplicate ID must be rejected');
- const deep=structuredClone(updated.menus);
- deep.header[0].children[0].children[0].children.push({
-  id:'too-deep',label:{tr:'Derin'},url:'/deep',enabled:true,children:[{id:'level-five',label:{tr:'Beşinci'},url:'/five',enabled:true,children:[]}]});
- await assert.rejects(service.save({version:1,menus:deep}),'Max nesting must be enforced');
- const custom=structuredClone(updated.menus);
- const toolsAfter=custom.header.find((x:any)=>x.id==='nav-resources').children[1].children[0];
- const deletedId=toolsAfter.children[0].id;
- toolsAfter.children=toolsAfter.children.filter((x:any)=>x.id!==deletedId);
- const customized=await service.save({version:1,menus:custom});
- assert.equal(customized.version,2);
- const reopened=await service.get();
- assert.equal(reopened.menus.header[2].children[1].children[0].children.some((x:any)=>x.id===deletedId),false,
-  'Manual deletion must not be reinserted by migration on next read');
- // A blank translation intentionally saved in Master must stay blank after a later read.
- const blank=structuredClone(customized.menus);
- blank.header[0].label.vi='';
- const savedBlank=await service.save({version:2,menus:blank});
- assert.equal(savedBlank.version,3);
- assert.equal((await service.get()).menus.header[0].label.vi,'');
- // Simulate a pre-migration saved group record: fill missing locales once.
- const legacyGroups=structuredClone(original.groups);
- for(const group of legacyGroups){
-  group.title={tr:group.title.tr};
-  for(const item of group.links)item.label={tr:item.label.tr};
- }
- saved={version:4,groups:legacyGroups};
- const migrated=await service.get();
- assert.equal(migrated.menus.header[0].label.bg,'Решения');
- assert.equal(migrated.menus.header[0].featured?.buttonLabel.vi,'So sánh các gói');
- const persisted=await service.save({version:4,menus:migrated.menus});
- assert.equal(persisted.version,5);
- assert.equal((await service.get()).menus.header[0].label.bg,'Решения');
- console.log('PASS: nine-language menu seed, one-time translation migration, intentional blank values, nested navigation and safe URLs');
+ await assert.rejects(service.save({version:1,menus:unsafe}));
+ const duplicate=structuredClone(next.menus);
+ duplicate.footer[0].children[1].id=duplicate.footer[0].children[0].id;
+ await assert.rejects(service.save({version:1,menus:duplicate}));
+ const deep=structuredClone(next.menus);
+ deep.header[0].children[0].children[0].children.push({id:'deep-4',
+  label:{tr:'Deep'},url:'/deep',enabled:true,children:[
+   {id:'deep-5',label:{tr:'Too deep'},url:'/deeper',enabled:true,children:[]}]});
+ await assert.rejects(service.save({version:1,menus:deep}));
+ const removed=structuredClone(next.menus);
+ removed.footer[3].children=removed.footer[3].children.filter(
+  (row:any)=>row.url!=='/araclar/n11-komisyon-hesaplama');
+ const saved=await service.save({version:1,menus:removed});
+ assert.equal(saved.version,2);
+ assert.ok(!published((await service.get()).menus.footer,'/araclar/n11-komisyon-hesaplama'),
+  'Deleted link must not be recreated after migration');
+ const blank=structuredClone(saved.menus);
+ blank.footer[3].label.vi='';
+ await service.save({version:2,menus:blank});
+ assert.equal((await service.get()).menus.footer[3].label.vi,'',
+  'Intentional blank translation must not be refilled');
+ // Existing saved WP-style menus are migrated without losing unrelated links.
+ navigation={version:4,groups:initial.groups,menus:{
+  header:structuredClone(initial.menus.header),
+  footer:structuredClone(initial.menus.footer)
+ }};
+ navigation.menus.header[0].children[0].children.push({
+  id:'custom-heading',label:{tr:'Özel'},url:'/custom',enabled:true,children:[]});
+ navigation.menus.footer[3].children.unshift({
+  id:'legacy-archive',label:{tr:'Ücretsiz araçlar'},url:'/araclar',enabled:true,children:[]});
+ delete navigation.toolsFooterMigration;
+ const converted=await service.get();
+ assert.ok(published(converted.menus.header,'/custom'));
+ assert.ok(!published(converted.menus.footer,'/araclar'));
+ assert.equal(converted.menus.footer[3].children.filter((row:any)=>paths.includes(row.url)).length,11);
+ await service.save({version:4,menus:converted.menus});
+ assert.ok(!published((await service.get()).menus.footer,'/araclar'));
+ console.log('PASS: eleven footer tools, no archive link, locale publication, migration, edits, deletes and hierarchy');
 }
-main().catch(e=>{console.error(e);process.exitCode=1});
+main().catch(error=>{console.error(error);process.exitCode=1;});
