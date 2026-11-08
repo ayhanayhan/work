@@ -36,8 +36,8 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
    <button aria-label="Sonraki kart" className="tc-site-hero__arrow tc-site-hero__arrow--next" data-dir="next" type="button">→</button>
    <div className="tc-site-hero__viewport" id="skViewport"><div className="tc-site-hero__track" id="skTrack">
     <HeroCards items={items} locale={locale}/>
-    <HeroCards clone items={items} locale={locale}/>
-    <HeroCards clone items={items} locale={locale}/>
+    {items.length>=4?<HeroCards clone items={items} locale={locale}/>:null}
+    {items.length>=4?<HeroCards clone items={items} locale={locale}/>:null}
    </div></div>
   </div>:null}
   {logos.length?<div className="tc-site-hero__green">
