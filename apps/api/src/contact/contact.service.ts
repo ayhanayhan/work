@@ -1,5 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { createHash } from 'crypto';
+import { createHash,randomUUID } from 'crypto';
+import {isValidPhoneNumber} from 'libphonenumber-js';
 import { PrismaService } from '../prisma/prisma.service';
 import { CacheService } from '../cache/cache.service';
 
@@ -41,6 +42,103 @@ export class ContactService {
     if(message.length<10||message.length>10000)throw new BadRequestException('Mesaj 10–10.000 karakter olmalıdır.');
     await this.prisma.contactInquiry.create({data:{fullName,email,phone:phone||null,subject,message,status:'NEW'}});
     return {ok:true};
+  }
+
+
+  private readonly callbackPrefix='marketing_callback_v2_';
+  private readonly emailTemplateKey='marketing_callback_email_template_v1';
+  private defaultCallbackEmailTemplate(){
+    return {enabled:false,recipient:'',subject:'Ticarti · Yeni telefon talebi ({{source}})',
+      body:'Yeni iletişim talebi\\nTelefon: {{phone}}\\nKaynak: {{source}}\\nSayfa: {{page}}\\nDil: {{locale}}\\nTarih: {{createdAt}}'};
+  }
+  async callbackEmailTemplate(){
+    const saved=await this.prisma.platformSetting.findUnique({where:{key:this.emailTemplateKey}});
+    return {...this.defaultCallbackEmailTemplate(),...(saved?.value&&typeof saved.value==='object'?saved.value as any:{})};
+  }
+  async updateCallbackEmailTemplate(body:any){
+    const recipient=String(body?.recipient||'').trim().toLowerCase();
+    const enabled=body?.enabled===true;
+    const subject=String(body?.subject||'').trim().slice(0,180);
+    const template=String(body?.body||'').trim().slice(0,4000);
+    if(recipient&&(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(recipient)||recipient.length>254))
+      throw new BadRequestException('Geçerli bir bildirim e-posta adresi girin.');
+    if(enabled&&(!recipient||!subject||!template))
+      throw new BadRequestException('Bildirimleri açmak için alıcı, konu ve şablon zorunludur.');
+    const value={enabled,recipient,subject,body:template};
+    await this.prisma.platformSetting.upsert({where:{key:this.emailTemplateKey},
+      create:{key:this.emailTemplateKey,value},update:{value}});
+    return value;
+  }
+  private async sendCallbackNotification(record:any){
+    const template=await this.callbackEmailTemplate();
+    if(!template.enabled)return {status:'DISABLED'};
+    const token=process.env.RESEND_API_KEY,from=process.env.CALLBACK_EMAIL_FROM;
+    if(!token||!from)return {status:'NOT_CONFIGURED'};
+    const values:Record<string,string>={
+      phone:record.phone,source:record.source==='HOME'?'Anasayfa':'Blog',page:record.page||'/',
+      locale:record.locale,createdAt:record.createdAt
+    };
+    const render=(templateText:string)=>templateText.replace(/{{(phone|source|page|locale|createdAt)}}/g,
+      (_:string,key:string)=>values[key]||'');
+    try{
+      const response=await fetch('https://api.resend.com/emails',{
+        method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({from,to:[template.recipient],subject:render(template.subject),
+          text:render(template.body)})
+      });
+      return {status:response.ok?'SENT':'FAILED'};
+    }catch{return {status:'FAILED'};}
+  }
+  async submitCallback(body:any,ip:string){
+    if(body?.website)return {ok:true};
+    await this.throttle(ip);
+    const source=String(body?.source||'').toUpperCase();
+    if(source!=='HOME'&&source!=='BLOG')throw new BadRequestException('Geçersiz form kaynağı.');
+    if(body?.consent!==true)throw new BadRequestException('KVKK aydınlatma onayı zorunludur.');
+    const dial=String(body?.dial||'').trim(),national=String(body?.phone||'').replace(/[\\s()-]/g,'').trim();
+    let phone=dial+national;
+    if(national.startsWith('+'))phone=national;
+    if(!/^\\+[1-9]\\d{7,14}$/.test(phone)||!isValidPhoneNumber(phone))
+      throw new BadRequestException('Geçerli bir telefon numarası girin.');
+    const locale=String(body?.locale||'tr').slice(0,12);
+    if(!/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(locale))throw new BadRequestException('Dil geçersiz.');
+    const page=source==='BLOG'?String(body?.slug||'').slice(0,150):'/';
+    if(source==='BLOG'&&!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page))
+      throw new BadRequestException('Blog sayfası geçersiz.');
+    const id=randomUUID(),createdAt=new Date().toISOString();
+    const record={id,phone,source,page,locale,consent:true,createdAt,updatedAt:createdAt,
+      status:'NEW',internalNote:'',notificationStatus:'PENDING'};
+    await this.prisma.platformSetting.create({data:{key:this.callbackPrefix+id,value:record}});
+    const notification=await this.sendCallbackNotification(record).catch(()=>({status:'FAILED'}));
+    await this.prisma.platformSetting.update({where:{key:this.callbackPrefix+id},
+      data:{value:{...record,notificationStatus:notification.status}}}).catch(()=>{});
+    return {ok:true,id};
+  }
+  async callbackInbox(){
+    const [newRecords,legacy]=await Promise.all([
+      this.prisma.platformSetting.findMany({where:{key:{startsWith:this.callbackPrefix}}}),
+      this.prisma.platformSetting.findMany({where:{key:{startsWith:'marketing_blog_callback_v1_'}}})
+    ]);
+    return [...newRecords.map(row=>row.value as any),
+      ...legacy.map(row=>{
+        const r=row.value as any;
+        return {...r,source:'BLOG',page:r.slug||'',locale:r.locale||'tr',
+          updatedAt:r.createdAt,internalNote:'',legacy:true,notificationStatus:'LEGACY'};
+      })].sort((a:any,b:any)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,1000);
+  }
+  async updateCallback(id:string,body:any){
+    if(!/^[0-9a-f-]{36}$/.test(id))throw new BadRequestException('Geçersiz talep.');
+    const key=this.callbackPrefix+id;
+    const old=await this.prisma.platformSetting.findUnique({where:{key}});
+    if(!old)throw new NotFoundException('Talep bulunamadı.');
+    const record=old.value as any;
+    const status=String(body?.status||record.status);
+    if(!['NEW','IN_PROGRESS','CONTACTED','CLOSED'].includes(status))
+      throw new BadRequestException('Geçersiz durum.');
+    const internalNote=String(body?.internalNote??record.internalNote??'').slice(0,3000);
+    const value={...record,status,internalNote,updatedAt:new Date().toISOString()};
+    await this.prisma.platformSetting.update({where:{key},data:{value}});
+    return value;
   }
 
   async inbox(){
