@@ -7,7 +7,7 @@ import ar from './data/ticarti-faq-ar.json';
 export const FAQ_SEED_MARKER='marketing_faq_five_locales_seed_20261108_v1';
 export const FAQ_SEED_LOCALES=['tr','en','de','ru','ar'] as const;
 type Entry={id:string;question:string;answer:string};
-const source:Record<string,Entry[]>={tr,en,de,ru,ar};
+const source:Record<string,Entry[]>={tr:tr.items,en,de,ru,ar};
 const labels:Record<string,{heading:string;description:string;button:string;buttonUrl:string}>={
  tr:{heading:'Sıkça sorulan sorular',description:'Paketler, mağaza kurulumu ve Ticarti hakkında başka soruların varsa bizimle iletişime geçebilirsin.',button:'Ekibimizle iletişime geç',buttonUrl:'/contacto.html'},
  en:{heading:'Frequently asked questions',description:'Have more questions about packages, store setup or Ticarti? Get in touch with our team.',button:'Contact our team',buttonUrl:'/en/contacto.html'},
