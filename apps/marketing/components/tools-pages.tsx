@@ -24,6 +24,20 @@ const labels:Record<string,Ui>={
  id:{title:'Alat Gratis',description:'Alat untuk e-commerce dan pengelolaan bisnis.',back:'Semua alat',more:'Alat lainnya',notReady:'Kalkulator segera hadir.',empty:'Belum ada alat yang diterbitkan.',faq:'Pertanyaan Umum'},
  vi:{title:'Công cụ miễn phí',description:'Công cụ dành cho thương mại điện tử và quản lý doanh nghiệp.',back:'Tất cả công cụ',more:'Công cụ khác',notReady:'Công cụ tính toán sẽ sớm ra mắt.',empty:'Chưa có công cụ nào được xuất bản.',faq:'Câu hỏi thường gặp'}
 };
+const toolSources:Record<string,{title:string;url:string}[]>={
+ 'kdv-hesaplama':[{title:'GİB · Güncel KDV oranları',
+  url:'https://cdn.gib.gov.tr/api/gibportal-file/file/getFileResources?objectKey=arsiv/yardim-kaynaklar/yararli-bilgiler/kdv-oranlari.pdf'}],
+ 'amazon-komisyon-hesaplama':[{title:'Amazon Türkiye · Resmî komisyon tablosu',
+  url:'https://satis.amazon.com.tr/ucretlendirme'}],
+ 'maas-hesaplama':[
+  {title:'GİB · 2026 gelir vergisi tarifesi',url:'https://gib.gov.tr/mevzuat/kanun/433/madde/6937'},
+  {title:'SGK · 2026 prime esas kazanç sınırları',url:'https://sgk.gov.tr/Content/Post/2e0c9e1a-2cfe-4456-af10-49d3de0c58ba/Prime-Esas-Kazanc-Miktarlari-2026-01-14-10-35-39'},
+  {title:'ÇSGB · 2026 asgari ücret',url:'https://csgb.gov.tr/poco-pages/asgari-ucret/'}],
+ 'gumruk-vergisi-hesaplama':[
+  {title:'Ticaret Bakanlığı · İthalatta ilave gümrük vergileri',url:'https://ticaret.gov.tr/ithalat/ithalat-mevzuati/ithalat-rejimi-karari-igv-karari-ve-ithalat-tebligleri/2-ithalatta-ilave-gumruk-vergisi-uygulanmasina-iliskin-karar-karar-sayisi-3351-karar-metni-ve-tablolar-konsolide-edilmis-olup-gunceldir'},
+  {title:'GİB · KDV Kanunu md. 21',url:'https://gib.gov.tr/mevzuat/kanun/436'}]
+};
+
 const copy=(locale:string)=>labels[locale]||labels.tr;
 export const toolPath=(locale:string,slug?:string)=>(locale==='tr'?'':'/'+locale)+'/araclar'+(slug?'/'+slug:'');
 export async function listTools(locale:string):Promise<ToolSummary[]>{
@@ -106,6 +120,12 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
        {tool.faqs.map(faq=><details key={faq.id}>
         <summary>{faq.question}</summary><Copy>{faq.answer}</Copy>
        </details>)}
+      </section>:null}
+      {toolSources[tool.id]?.length?<section className="tc-tools-content-section tc-tools-sources">
+       <h2>{locale==='tr'?'Kaynaklar ve hesaplama dayanakları':'Calculation sources'}</h2>
+       <ul>{toolSources[tool.id].map(source=><li key={source.url}>
+        <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a>
+       </li>)}</ul>
       </section>:null}
       {f.disclaimer?<aside className="tc-tools-disclaimer"><Copy>{f.disclaimer}</Copy></aside>:null}
       {f.ctaTitle||f.ctaText||f.ctaButton&&f.ctaUrl?<div className="tc-tools-bottom-cta">
