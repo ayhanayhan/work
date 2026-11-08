@@ -17,7 +17,12 @@ type Tool={id:string;sortOrder:number;status:'DRAFT'|'PUBLISHED';image:string;
 type Snapshot={version:number;tools:Tool[]};
 const names:Record<string,string>={
  'qr-kod-olusturucu':'QR Kod Oluşturucu','kdv-hesaplama':'KDV Hesaplama',
- 'pazaryeri-komisyon-hesaplama':'Pazaryeri Komisyon Hesaplama',
+ 'trendyol-komisyon-hesaplama':'Trendyol Komisyon Hesaplama',
+ 'amazon-komisyon-hesaplama':'Amazon Komisyon Hesaplama',
+ 'hepsiburada-komisyon-hesaplama':'Hepsiburada Komisyon Hesaplama',
+ 'n11-komisyon-hesaplama':'n11 Komisyon Hesaplama',
+ 'ciceksepeti-komisyon-hesaplama':'ÇiçekSepeti Komisyon Hesaplama',
+ 'pazarama-komisyon-hesaplama':'Pazarama Komisyon Hesaplama',
  'maas-hesaplama':'Net-Brüt Maaş Hesaplama',
  'gumruk-vergisi-hesaplama':'Gümrük Vergisi Hesaplama',
  'desi-hesaplama':'Desi Hesaplama'
