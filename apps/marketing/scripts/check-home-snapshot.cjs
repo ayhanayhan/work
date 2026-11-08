@@ -78,6 +78,30 @@ assert.ok(nestedHeader.includes('data-mega-slug="custom-primary"'),'Custom root 
 assert.ok(nestedHeader.includes('href="/araclar/kdv-hesaplama"'),'Nested mega link must render');
 assert.ok(nestedFooter.includes('tc-footer-tree-children')&&nestedFooter.includes('href="/araclar/kdv-hesaplama"'),
  'Nested footer link must render');
+const emptyMenuFixture={version:9,menus:{header:[],footer:[]}};
+const emptyHeader=renderToStaticMarkup(React.createElement(load('header').default,{
+ navigation:emptyMenuFixture,locale:'tr'
+}));
+const emptyFooter=renderToStaticMarkup(React.createElement(load('footer').default,{
+ navigation:emptyMenuFixture,locale:'tr'
+}));
+assert.ok(!emptyHeader.includes('data-mega-slug="nav-solutions"'),
+ 'Empty CMS menu must not be replaced by demo header links');
+assert.ok(!emptyFooter.includes('href="/araclar"'),
+ 'Empty CMS footer must not be replaced by demo footer links');
+const translatedHeader=renderToStaticMarkup(React.createElement(load('header').default,{
+ navigation:navigationFixture,locale:'vi'
+}));
+assert.ok(translatedHeader.includes('Giải pháp')&&!translatedHeader.includes('>Çözümler<'),
+ 'Vietnamese menu must not display Turkish backup labels');
+const unlocalizedMenu={version:10,menus:{header:[{
+ id:'not-translated',label:{tr:'Sadece Türkçe'},url:'/test',enabled:true,children:[]
+}],footer:[]}};
+const missingTranslation=renderToStaticMarkup(React.createElement(load('header').default,{
+ navigation:unlocalizedMenu,locale:'en'
+}));
+assert.ok(!missingTranslation.includes('Sadece Türkçe'),
+ 'Missing English label must hide link instead of restoring Turkish demo content');
 const markup=renderToStaticMarkup(React.createElement(load('index').default));
 // The new integration updates only the selected modules. No browser text patches.
 const cmsFixture={version:1,locale:'tr',disabledModuleIds:[],consentContract:{key:'KVKK_NOTICE',contentKey:'kvkk-notice',href:'/kvkk.html'},modules:[
