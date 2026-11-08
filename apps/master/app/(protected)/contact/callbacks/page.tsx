@@ -12,7 +12,7 @@ import {Switch} from '@/components/ui/switch';
 
 type Lead={id:string;phone:string;source:string;page:string;locale:string;status:string;
  createdAt:string;updatedAt?:string;internalNote?:string;legacy?:boolean;notificationStatus?:string};
-type Template={enabled:boolean;recipient:string;subject:string;body:string};
+type Template={enabled:boolean;recipient:string;subject:string;body:string;providerConfigured?:boolean};
 const statuses:Record<string,string>={NEW:'Yeni',IN_PROGRESS:'İşlemde',CONTACTED:'Arandı',CLOSED:'Kapalı'};
 const defaultTemplate:Template={enabled:false,recipient:'',subject:'Ticarti · Yeni telefon talebi ({{source}})',
  body:'Yeni iletişim talebi\nTelefon: {{phone}}\nKaynak: {{source}}\nSayfa: {{page}}\nDil: {{locale}}\nTarih: {{createdAt}}'};
@@ -96,12 +96,17 @@ export default function CallbackInbox(){
    <div className="overflow-x-auto">
     <table className="w-full min-w-[650px] border-collapse text-sm">
      <thead><tr className="border-b text-left text-muted-foreground"><th className="p-3">Telefon</th>
-      <th className="p-3">Kaynak</th><th className="p-3">Tarih</th><th className="p-3">Durum</th><th className="p-3"></th></tr></thead>
+      <th className="p-3">Kaynak</th><th className="p-3">Tarih</th><th className="p-3">Bildirim</th><th className="p-3">Durum</th><th className="p-3"></th></tr></thead>
      <tbody>{filtered.map(lead=><tr key={lead.id} className="border-b">
       <td className="p-3"><a className="font-medium underline" href={'tel:'+lead.phone}>{lead.phone}</a>
        <div className="max-w-64 truncate text-xs text-muted-foreground">{lead.page||'/'}</div></td>
       <td className="p-3">{lead.source==='HOME'?'Anasayfa':'Blog'} <span className="text-xs text-muted-foreground">({lead.locale||'tr'})</span></td>
       <td className="p-3">{date(lead.createdAt)}</td>
+      <td className="p-3 text-xs">{lead.notificationStatus==='SENT'?'Gönderildi':
+       lead.notificationStatus==='FAILED'?'Gönderilemedi':
+       lead.notificationStatus==='NOT_CONFIGURED'?'Kurulum gerekli':
+       lead.notificationStatus==='DISABLED'?'Kapalı':
+       lead.notificationStatus==='LEGACY'?'Eski kayıt':'Bekliyor'}</td>
       <td className="p-3">{statuses[lead.status]||lead.status}</td>
       <td className="p-3 text-right"><Button size="sm" variant="outline" onClick={()=>open(lead)}>İncele</Button></td>
      </tr>)}</tbody>
@@ -132,6 +137,10 @@ export default function CallbackInbox(){
      {template.enabled?'Aktif':'Pasif'}
     </div>
    </div>
+   {!template.providerConfigured?<p className="rounded-md border p-3 text-sm text-amber-700">
+    Gerçek e-posta gönderimi için API sunucusunda RESEND_API_KEY ve CALLBACK_EMAIL_FROM tanımlanmalı;
+    şablonu aktif etmek tek başına e-posta göndermez.
+   </p>:null}
    <label className="grid gap-2 text-sm">Bildirim alıcısı
     <Input type="email" placeholder="destek@ticarti.com" value={template.recipient}
       onChange={e=>setTemplate(x=>({...x,recipient:e.target.value}))}/></label>
