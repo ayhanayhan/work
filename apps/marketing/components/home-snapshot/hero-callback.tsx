@@ -14,7 +14,8 @@ export default function HeroCallback({module,locale='tr',consentHref='/kvkk.html
  const submit=async(e:FormEvent<HTMLFormElement>)=>{
    e.preventDefault();
    if(busy)return;
-   const national=phone.replace(/[\s()-]/g,'').replace(/^0(?=\d)/,'');
+   const rawNational=phone.replace(/[\s()-]/g,'');
+   const national=country.iso==='IT'?rawNational:rawNational.replace(/^0(?=\d)/,'');
    const phoneError=!phone.trim()?(fieldFor(module,'phoneEmpty',locale)||'Telefon numaranızı girin.'):
      validatePhone(phone,country.iso,country.dial);
    const consentError=consent?'':(fieldFor(module,'kvkkRequired',locale)||'KVKK aydınlatma onayı gereklidir.');
