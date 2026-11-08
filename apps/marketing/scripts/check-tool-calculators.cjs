@@ -27,6 +27,9 @@ almost(r.fee,150);almost(r.tax,30);almost(r.total,180);almost(r.remainder,370);
 r=c.commission({price:1000,rate:18,rateIncludesVat:true,
  commissionVat:20,shipping:0,productCost:0,other:0,units:1});
 almost(r.fee,150);almost(r.tax,30);almost(r.remainder,820);
+r=c.commission({price:1000,shippingCollected:100,rate:10,rateIncludesVat:false,
+ commissionVat:20,shipping:50,productCost:0,other:0,units:1});
+almost(r.sale,1100);almost(r.fee,110);almost(r.tax,22);almost(r.remainder,918);
 r=c.salary2026(33030,1);almost(r.net,28075.5);almost(r.incomeTax,0);almost(r.stamp,0);
 r=c.salary2026(50000,3);
 const reverse=c.salaryNetToGross(r.net,3);
