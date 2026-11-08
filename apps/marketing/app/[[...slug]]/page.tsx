@@ -228,7 +228,10 @@ export default async function MarketingPage({params,searchParams}:Props){
     </>;
   }
   return <>
-    {page.html.includes("tc-site-header")&&page.html.includes("tc-site-footer")?<SiteShell><div className={page.classes} dangerouslySetInnerHTML={{__html:stripLegacyShell(page.html)}}/></SiteShell>:<div className={page.classes} dangerouslySetInnerHTML={{__html:page.html}}/>}
+    {slug.some(part=>/^(?:login|register)(?:\\.html)?$/.test(part))
+      ?<div className={page.classes} dangerouslySetInnerHTML={{__html:page.html}}/>
+      :<SiteShell><div className={page.classes}
+         dangerouslySetInnerHTML={{__html:stripLegacyShell(page.html)}}/></SiteShell>}
     {page.isBlogList?<BlogInteractions/>:null}
     <LegacyScripts sources={page.scripts.filter(src=>!/(?:header-navigation|topbar-features)\.js(?:\?|$)/.test(src))} htmlClasses={page.classes}/>
     {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{
