@@ -301,7 +301,11 @@ export class WebsiteService{
           ...(old?.fields?.title||{}),[lang]:str(logo.fields?.title?.[lang],220)
         }}};
       }):previous.logos;
-      return {...previous,configured:incoming.configured===true||previous.configured===true,
+      const localizedChange=MODULE_FIELDS[previous.id].some(key=>
+        str(incoming.fields?.[key]?.[lang])!==str(previous.fields?.[key]?.[lang]))
+        ||sentItems.some((item:any)=>!existingItems.some((old:any)=>old.id===item.id))
+        ||(previous.id==='hero'&&JSON.stringify(incoming.logos||[])!==JSON.stringify(previous.logos||[]));
+      return {...previous,configured:incoming.configured===true||previous.configured===true||localizedChange,
         fields,items,logos,enabled:incoming.enabled!==false,
         ctaEnabled:previous.id==='hero'?incoming.ctaEnabled!==false:previous.ctaEnabled,
         categoryIds:previous.id==='blog'?safeCategories(incoming.categoryIds||[]):previous.categoryIds};
