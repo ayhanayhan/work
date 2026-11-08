@@ -1,3 +1,4 @@
+import ToolCalculator from '@/components/tool-calculator';
 import type {ReactNode} from 'react';
 import SiteShell from '@/components/site-shell';
 
@@ -83,7 +84,7 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
    mainEntity:tool.faqs.map(faq=>({'@type':'Question',name:faq.question,
     acceptedAnswer:{'@type':'Answer',text:faq.answer}}))}]:[])
  ];
- const hasCalculatorIntro=Boolean(f.calculatorTitle||f.calculatorDescription);
+
  return <StoryFrame>
   <div className="tc-blog-single-layout tc-tools-single-layout">
    <div className="tc-blog-single-primary">
@@ -95,11 +96,7 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
     <article className="tc-blog-article">
      {tool.image?<img className="tc-blog-article-cover" src={tool.image} alt={f.imageAlt||tool.title}/>:null}
      <div className="tc-blog-article-copy">
-      {hasCalculatorIntro?<section className="tc-tools-calculator-slot" id="tool-calculator">
-       {f.calculatorTitle?<h2>{f.calculatorTitle}</h2>:null}
-       {f.calculatorDescription?<Copy>{f.calculatorDescription}</Copy>:null}
-       <p className="tc-tools-calculator-status">{t.notReady}</p>
-      </section>:null}
+      <ToolCalculator id={tool.id} locale={locale}/>
       <RichSection body={f.description} id="tool-description"/>
       <RichSection title={f.howItWorksTitle} body={f.howItWorks} id="tool-how-it-works"/>
       {sections.map(section=><ContentBlock key={section.id} section={section}/>)}
