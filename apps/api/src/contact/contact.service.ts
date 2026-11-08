@@ -53,7 +53,8 @@ export class ContactService {
   }
   async callbackEmailTemplate(){
     const saved=await this.prisma.platformSetting.findUnique({where:{key:this.emailTemplateKey}});
-    return {...this.defaultCallbackEmailTemplate(),...(saved?.value&&typeof saved.value==='object'?saved.value as any:{})};
+    return {...this.defaultCallbackEmailTemplate(),...(saved?.value&&typeof saved.value==='object'?saved.value as any:{}),
+      providerConfigured:Boolean(process.env.RESEND_API_KEY&&process.env.CALLBACK_EMAIL_FROM)};
   }
   async updateCallbackEmailTemplate(body:any){
     const recipient=String(body?.recipient||'').trim().toLowerCase();
@@ -67,7 +68,7 @@ export class ContactService {
     const value={enabled,recipient,subject,body:template};
     await this.prisma.platformSetting.upsert({where:{key:this.emailTemplateKey},
       create:{key:this.emailTemplateKey,value},update:{value}});
-    return value;
+    return {...value,providerConfigured:Boolean(process.env.RESEND_API_KEY&&process.env.CALLBACK_EMAIL_FROM)};
   }
   private async sendCallbackNotification(record:any){
     const template=await this.callbackEmailTemplate();
@@ -82,7 +83,7 @@ export class ContactService {
       (_:string,key:string)=>values[key]||'');
     try{
       const response=await fetch('https://api.resend.com/emails',{
-        method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        method:'POST',signal:AbortSignal.timeout(8000),headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
         body:JSON.stringify({from,to:[template.recipient],subject:render(template.subject),
           text:render(template.body)})
       });
@@ -123,7 +124,7 @@ export class ContactService {
       ...legacy.map(row=>{
         const r=row.value as any;
         return {...r,source:'BLOG',page:r.slug||'',locale:r.locale||'tr',
-          updatedAt:r.createdAt,internalNote:'',legacy:true,notificationStatus:'LEGACY'};
+          updatedAt:r.updatedAt||r.createdAt,internalNote:r.internalNote||'',legacy:true,notificationStatus:'LEGACY'};
       })].sort((a:any,b:any)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,1000);
   }
   async updateCallback(id:string,body:any){
