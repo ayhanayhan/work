@@ -189,7 +189,8 @@ export class WebsiteNavigationService{
   const tools=Array.isArray((row?.value as any)?.tools)?(row?.value as any).tools as any[]:[];
   const published=new Set<string>(tools.filter(item=>
    (item?.status==='PUBLISHED'&&Boolean(item?.fields?.title?.[locale]))||
-   ((isUntouchedStarter(item)||isBarePublishedStarter(item))&&
+   ((row?.value as any)?.toolSeoMigration!==1&&
+    (isUntouchedStarter(item)||isBarePublishedStarter(item))&&
     Boolean(seedTranslations[item.fields.title.tr]?.[locale]||locale==='tr'))
   ).map(item=>'/araclar/'+item.id));
   // No stored content yet: all eleven starter pages are published by default.
