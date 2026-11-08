@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
 import initialBlog = require('./data/ticarti-blog-initial.json');
 import {FAQ_SEED_MARKER,mergeFaqSeed} from './faq-seed';
+import improvedFaq = require('./data/ticarti-faq-improved-5-locales.json');
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
@@ -327,6 +328,46 @@ export class WebsiteService{
   /** One-off, admin initiated cleanup of the old FAQ records only.
    * A marker ensures opening the editor later never clears newly authored questions.
    */
+  /** Admin-initiated, idempotent insertion of the revised FAQ set.
+   * Replaces FAQ questions only, leaving all other homepage modules untouched.
+   * Five locale-specific records per question allow independent editing/order.
+   */
+  async importImprovedFaq(){
+    const source=(improvedFaq as any)?.modules?.find((x:any)=>x.id==='faq');
+    const locales=['tr','en','de','ru','ar'];
+    if(!source||!Array.isArray(source.items)||source.items.length!==30)
+      throw new BadRequestException('Beş dilli SSS içeriği geçersiz.');
+    const rows:any[]=[];
+    for(const locale of locales){
+      for(let i=0;i<source.items.length;i++){
+        const entry=source.items[i];
+        const question=String(entry.fields?.question?.[locale]||'').trim();
+        const answer=String(entry.fields?.answer?.[locale]||'').trim();
+        if(!question||!answer)throw new BadRequestException('Eksik SSS çevirisi: '+locale+' #'+(i+1));
+        rows.push({id:'faq-locale-'+locale+'-ticarti-'+String(i+1).padStart(2,'0'),
+          enabled:true,fields:{question:{[locale]:question},answer:{[locale]:answer}},
+          assets:{image:'',logo:''},links:{href:''},storeId:''});
+      }
+    }
+    const snapshot=await this.home();
+    const current=snapshot.modules.find(x=>x.id==='faq');
+    if(!current)throw new BadRequestException('SSS modülü bulunamadı.');
+    const incoming=safeItems('faq',rows);
+    const fields=structuredClone(current.fields||{});
+    for(const key of MODULE_FIELDS.faq){
+      fields[key]=fields[key]||{};
+      for(const locale of locales){
+        const text=String(source.fields?.[key]?.[locale]||'').trim();
+        if(text&&!String(fields[key][locale]||'').trim())fields[key][locale]=text;
+      }
+    }
+    const equal=JSON.stringify(current.items)===JSON.stringify(incoming);
+    if(equal)return {version:snapshot.version,added:0,total:incoming.length,alreadyImported:true};
+    const modules=snapshot.modules.map(m=>m.id==='faq'?{...m,configured:true,enabled:true,fields,items:incoming}:m);
+    const version=snapshot.version+1;
+    await this.put(HOME_KEY,{version,modules});
+    return {version,added:incoming.length,total:incoming.length,alreadyImported:false};
+  }
   async clearExistingFaqOnce(){
     const marker='marketing_faq_clear_existing_20261108_v2';
     return this.prisma.$transaction(async tx=>{
