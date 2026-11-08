@@ -13,6 +13,7 @@ function compileFile(input,homeComponent=false){
   const candidates=[input,input+'.tsx',input+'.ts',input+'.js'];
   const file=candidates.find(x=>fs.existsSync(x)&&fs.statSync(x).isFile());
   if(!file)throw Error('Missing snapshot dependency '+input);
+  if(file.endsWith('.json'))return require(file);
   if(compiled.has(file))return compiled.get(file).exports;
   const source=fs.readFileSync(file,'utf8');
   if(homeComponent){
@@ -144,7 +145,7 @@ const shellSource=fs.readFileSync(path.resolve(__dirname,'../components/site-she
 const blogSource=fs.readFileSync(path.resolve(__dirname,'../components/blog-pages.tsx'),'utf8');
 assert.ok(!homepageSource.includes('<HeaderSnapshot')&&!homepageSource.includes('<FooterSnapshot'),
  'Homepage content modules must not duplicate site header or footer');
-assert.ok(shellSource.includes('<HeaderSnapshot/>')&&shellSource.includes('<FooterSnapshot/>'),
+assert.ok(shellSource.includes('<HeaderSnapshot navigation={nav}')&&shellSource.includes('<FooterSnapshot navigation={nav}'),
  'One central shell must own both header and footer');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
  'Blog and homepage must use the exact same header/footer shell');
