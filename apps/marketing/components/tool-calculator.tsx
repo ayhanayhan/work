@@ -97,7 +97,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
      amazonCategories.map(x=>[x.label,x.label])):null}
     {field('price',5,'0.01')}{amazon?<label className="tc-tool-field"><span>{locale==='tr'?'Alıcıdan tahsil edilen kargo (₺)':'Customer-paid shipping (TRY)'}</span><input type="number" min="0" step="any" required value={v.customerShipping} onChange={e=>set('customerShipping',e.target.value)}/></label>:null}{field('rate',6)}
     {!amazon?<p className="tc-tool-wide tc-tool-note">{t[35]}</p>:null}
-    {<label className="tc-tool-field"><span>{t[7]}</span><input type="number" min="1" step="1" required value={v.units} onChange={e=>set('units',e.target.value)}/></label>}{field('shipping',8)}{field('cost',9)}{field('other',10)}{field('feeVat',11)}
+    <label className="tc-tool-field"><span>{t[7]}</span><input type="number" min="1" step="1" required value={v.units} onChange={e=>set('units',e.target.value)}/></label>{field('shipping',8)}{field('cost',9)}{field('other',10)}{field('feeVat',11)}
     <label className="tc-tool-check"><input type="checkbox" checked={commissionIncluded} onChange={e=>{setCommissionIncluded(e.target.checked);setResult(null);}}/>{t[13]}</label>
    </>:null}
    <div className="tc-tool-actions"><button type="submit" className="tc-tool-submit">{t[0]}</button></div>
