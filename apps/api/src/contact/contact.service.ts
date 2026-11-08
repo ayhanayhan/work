@@ -130,15 +130,17 @@ export class ContactService {
     if(!/^[0-9a-f-]{36}$/.test(id))throw new BadRequestException('Geçersiz talep.');
     const key=this.callbackPrefix+id;
     const old=await this.prisma.platformSetting.findUnique({where:{key}});
-    if(!old)throw new NotFoundException('Talep bulunamadı.');
-    const record=old.value as any;
+    const legacyKey='marketing_blog_callback_v1_'+id;
+    const legacy=old?null:await this.prisma.platformSetting.findUnique({where:{key:legacyKey}});
+    if(!old&&!legacy)throw new NotFoundException('Talep bulunamadı.');
+    const record=(old||legacy)!.value as any;
     const status=String(body?.status||record.status);
     if(!['NEW','IN_PROGRESS','CONTACTED','CLOSED'].includes(status))
       throw new BadRequestException('Geçersiz durum.');
     const internalNote=String(body?.internalNote??record.internalNote??'').slice(0,3000);
     const value={...record,status,internalNote,updatedAt:new Date().toISOString()};
-    await this.prisma.platformSetting.update({where:{key},data:{value}});
-    return value;
+    await this.prisma.platformSetting.update({where:{key:old?key:legacyKey},data:{value}});
+    return {...value,source:value.source||'BLOG',page:value.page||value.slug||'',legacy:!old};
   }
 
   async inbox(){
