@@ -85,6 +85,14 @@ async function main(){
  }};
  navigation.menus.header[0].children[0].children.push({
   id:'custom-heading',label:{tr:'Özel'},url:'/custom',enabled:true,children:[]});
+ // Previous release had the calculator nested below /araclar in Header.
+ navigation.menus.header[2].children[1].children.push({
+  id:'legacy-archive-header',label:{tr:'Ücretsiz araçlar'},url:'/araclar',
+  enabled:true,children:[{id:'tool-kdv-hesaplama',label:{tr:'Özel KDV',en:'Custom VAT'},
+   url:'/araclar/kdv-hesaplama',enabled:false,children:[]}]
+ });
+ navigation.menus.footer[3].children=navigation.menus.footer[3].children.filter(
+  (row:any)=>row.url!=='/araclar/kdv-hesaplama');
  navigation.menus.footer[3].children.unshift({
   id:'legacy-archive',label:{tr:'Ücretsiz araçlar'},url:'/araclar',enabled:true,children:[]});
  delete navigation.toolsFooterMigration;
@@ -92,6 +100,8 @@ async function main(){
  assert.ok(published(converted.menus.header,'/custom'));
  assert.ok(!published(converted.menus.footer,'/araclar'));
  assert.equal(converted.menus.footer[3].children.filter((row:any)=>paths.includes(row.url)).length,11);
+ assert.equal(published(converted.menus.footer,'/araclar/kdv-hesaplama')?.label.en,'Custom VAT',
+  'Custom labels from previous Header tree must be preserved in Footer');
  await service.save({version:4,menus:converted.menus});
  assert.ok(!published((await service.get()).menus.footer,'/araclar'));
  console.log('PASS: eleven footer tools, no archive link, locale publication, migration, edits, deletes and hierarchy');
