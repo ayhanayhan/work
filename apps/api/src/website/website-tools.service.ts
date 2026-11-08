@@ -25,7 +25,7 @@ function cleanLocalized(value:any,max=12000):Dict{
 const initial=()=>TOOL_IDS.map((id,index)=>({
  id,sortOrder:index,status:'DRAFT',image:'',
  fields:Object.fromEntries(SCALAR_FIELDS.map(field=>[field,field==='title'?{tr:INITIAL_TITLES[index]}:{}])),
- sections:[] as Array<{id:string;title:Dict;body:Dict;image:string}>,
+ sections:[] as Array<{id:string;kind:string;title:Dict;body:Dict;image:string}>,
  faqs:[] as Array<{id:string;question:Dict;answer:Dict}>
 }));
 function normalize(raw:any,prev:any){
@@ -48,7 +48,8 @@ function normalize(raw:any,prev:any){
   ids.add(id);
   const image=clean(section.image,2000);
   if(image&&!image.startsWith('/assets/')&&!/^https:\/\//.test(image))throw new BadRequestException('Bölüm görseli geçersiz.');
-  return {id,title:cleanLocalized(section.title,220),body:cleanLocalized(section.body),image};
+  const kind=['text','list','steps','notice'].includes(section.kind)?section.kind:'text';
+  return {id,kind,title:cleanLocalized(section.title,220),body:cleanLocalized(section.body),image};
  });
  ids.clear();
  const faqRows=faqs.map((faq:any)=>{
@@ -103,7 +104,7 @@ export class WebsiteToolsService {
    throw new NotFoundException('Bu dilde yayımlanmış araç sayfası bulunamadı.');
   return {id:record.id,title:record.fields.title[locale],image:record.image,
    fields:Object.fromEntries(SCALAR_FIELDS.map(key=>[key,record.fields[key]?.[locale]||''])),
-   sections:record.sections.map(x=>({id:x.id,title:x.title?.[locale]||'',body:x.body?.[locale]||'',image:x.image}))
+   sections:record.sections.map(x=>({id:x.id,kind:x.kind||'text',title:x.title?.[locale]||'',body:x.body?.[locale]||'',image:x.image}))
      .filter(x=>x.title||x.body),
    faqs:record.faqs.map(x=>({id:x.id,question:x.question?.[locale]||'',answer:x.answer?.[locale]||''}))
      .filter(x=>x.question&&x.answer)};
