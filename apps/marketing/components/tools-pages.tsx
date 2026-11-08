@@ -60,10 +60,17 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
  const t=copy(locale),f=tool.fields;
  const origin=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
  const path=toolPath(locale,tool.id);
- const jsonld={
-  '@context':'https://schema.org','@type':'WebPage',name:tool.title,url:origin+path,
-  description:f.seoDescription||f.intro||'',inLanguage:locale
- };
+ const jsonld=[
+  {'@context':'https://schema.org','@type':'WebPage',name:tool.title,url:origin+path,
+   description:f.seoDescription||f.intro||'',inLanguage:locale},
+  {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
+   {'@type':'ListItem',position:1,name:t.back,item:origin+toolPath(locale)},
+   {'@type':'ListItem',position:2,name:tool.title,item:origin+path}
+  ]},
+  ...(tool.faqs.length?[{'@context':'https://schema.org','@type':'FAQPage',
+   mainEntity:tool.faqs.map(faq=>({'@type':'Question',name:faq.question,
+    acceptedAnswer:{'@type':'Answer',text:faq.answer}}))}]:[])
+ ];
  return <SiteShell><main className="tc-tools-page">
   <div className="container">
    <nav aria-label="Breadcrumb" className="tc-tools-breadcrumb"><a href={toolPath(locale)}>{t.back}</a><span> / {tool.title}</span></nav>
