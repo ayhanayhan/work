@@ -129,6 +129,9 @@ export default function HomeInteractions({children,className='tc-page-home'}:Pro
     const root=rootRef.current,viewport=root?.querySelector<HTMLElement>('#skViewport');
     const track=root?.querySelector<HTMLElement>('#skTrack');
     if(!viewport||!track)return;
+    // Loop centering is only valid with the three cloned sets (4+ real slides).
+    // For 1–3 CMS entries keep the authored items only.
+    if(track.dataset.cmsCardCount&&Number(track.dataset.cmsCardCount)<4)return;
     let period=0,programmatic=false,resizeTimer=0;
     const measure=()=>{
       if(window.matchMedia('(max-width: 1150px)').matches){period=0;viewport.scrollLeft=0;return;}
