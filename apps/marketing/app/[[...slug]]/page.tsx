@@ -1,5 +1,6 @@
 import {getWebsiteSeo,metadataFor,seoImage,seoPageForPath,type WebsiteSeo} from '@/lib/site-seo';
-import {redirect,permanentRedirect} from 'next/navigation';
+import {redirect,permanentRedirect,notFound} from 'next/navigation';
+import {ToolIndex,ToolArticle,listTools,toolDetail,toolPath} from '@/components/tools-pages';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import LegacyScripts from '@/components/legacy-scripts';
@@ -17,6 +18,12 @@ type Props={params:Promise<{slug?:string[]}>;searchParams:Promise<{slug?:string}
 export const dynamic='force-dynamic';
 const BASE=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
 const absolute=(path:string)=>BASE+path;
+const toolRequest=(segments:string[])=>{
+ const locale=['tr','en','de','ru','ar'].includes(segments[0])?segments[0]:'tr';
+ const rest=locale==='tr'&&segments[0]!=='tr'?segments:segments.slice(1);
+ return rest[0]==='araclar'&&rest.length<=2?{locale,slug:rest[1]||''}:null;
+};
+
 const resolveLang=async(slug:string[]):Promise<BlogLocale>=>slug.length&&(await getWebsiteLocales()).includes(slug[0])?slug[0]:'tr';
 const localeLabel:Record<string,string>={tr:'tr_TR',en:'en_US',de:'de_DE',ar:'ar_SA',ru:'ru_RU'};
 async function previewHost(){
@@ -109,6 +116,22 @@ function jsonLd(page:PageData,lang:BlogLocale,seo:WebsiteSeo|null=null):object[]
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  const route=toolRequest(slug);
+  if(route){
+   const path=toolPath(route.locale,route.slug||undefined);
+   const tool=route.slug?await toolDetail(route.slug,route.locale):null;
+   if(route.slug&&!tool)return {title:'Sayfa bulunamadı',robots:{index:false,follow:false}};
+   const title=tool?.fields.seoTitle||tool?.title||'Ücretsiz Araçlar | Ticarti';
+   const description=tool?.fields.seoDescription||tool?.fields.intro||
+     'E-ticaret için ücretsiz araçlar ve hesaplama sayfaları.';
+   const preview=await previewHost();
+   const canonical=absolute(path);
+   return {title,description,metadataBase:new URL(BASE),
+    alternates:{canonical},
+    robots:preview?{index:false,follow:false}:{index:true,follow:true},
+    openGraph:{title,description,url:canonical,type:'website',siteName:'Ticarti'},
+    twitter:{card:'summary',title,description}};
+  }
   const seo=await getWebsiteSeo();
   const seoPage=seoPageForPath(slug);
   const seoLocale=slug.length&&['tr','en','de','ru','ar'].includes(slug[0])?slug[0]:'tr';
@@ -177,6 +200,16 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 // runtime HTML replacements or website-home-cms.js.
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
+  const route=toolRequest(slug);
+  if(route){
+   if(route.slug){
+    const tool=await toolDetail(route.slug,route.locale);
+    if(!tool)notFound();
+    const other=await listTools(route.locale);
+    return <ToolArticle locale={route.locale} tool={tool} other={other}/>;
+   }
+   return <ToolIndex locale={route.locale} tools={await listTools(route.locale)}/>;
+  }
   const seo=await getWebsiteSeo();
   const requestPath='/'+slug.join('/');
   const match=seo?.redirects?.find(x=>x.from.replace(/\/$/,'')===requestPath.replace(/\/$/,''));
