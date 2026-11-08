@@ -1,6 +1,7 @@
 import type {MetadataRoute} from 'next';
 import {getBlogPosts,getWebsiteLocales,blogPath} from '@/lib/blog';
 import {getWebsiteSeo,metadataFor} from '@/lib/site-seo';
+import {listTools,toolPath} from '@/components/tools-pages';
 
 export const dynamic='force-dynamic';
 const origin=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
@@ -24,6 +25,13 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   }
  }
  for(const locale of locales){
+  const tools=await listTools(locale);
+  if(tools.length){
+   data.push({url:origin+toolPath(locale),changeFrequency:'weekly',priority:0.65});
+   for(const tool of tools){
+    data.push({url:origin+toolPath(locale,tool.id),changeFrequency:'monthly',priority:0.6});
+   }
+  }
   for(const post of await getBlogPosts(locale)){
    if(post.noIndex)continue;
    const others=post.availableLocales.filter(l=>locales.includes(l));
