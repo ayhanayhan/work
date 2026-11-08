@@ -1,8 +1,8 @@
-import tr from './data/ticarti-faq-tr.json';
-import en from './data/ticarti-faq-en.json';
-import de from './data/ticarti-faq-de.json';
-import ru from './data/ticarti-faq-ru.json';
-import ar from './data/ticarti-faq-ar.json';
+import tr = require('./data/ticarti-faq-tr.json');
+import en = require('./data/ticarti-faq-en.json');
+import de = require('./data/ticarti-faq-de.json');
+import ru = require('./data/ticarti-faq-ru.json');
+import ar = require('./data/ticarti-faq-ar.json');
 
 export const FAQ_SEED_MARKER='marketing_faq_five_locales_seed_20261108_v1';
 export const FAQ_SEED_LOCALES=['tr','en','de','ru','ar'] as const;
