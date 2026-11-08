@@ -45,7 +45,7 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
        {menuLabel(top.featured.buttonLabel,locale)&&top.featured.buttonUrl?
         <div className="tc-ui-cta"><a href={top.featured.buttonUrl}>{menuLabel(top.featured.buttonLabel,locale)}</a></div>:null}
       </div>:null}
-     {top.children.filter(isVisible).map(column=><Fragment key={column.id}>
+     {top.children.filter(item=>isVisible(item,locale)).map(column=><Fragment key={column.id}>
       <div className="tc-ui-divider"/>
       <div className="tc-ui-column column">
        <p className="tc-ui-overline">{menuLabel(column.label,locale)}</p>
@@ -53,7 +53,7 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
         {column.url&&column.url!=='#'?<a className="tc-ui-link-item" href={column.url}>
          <span className="tc-ui-link-head"><span className="tc-ui-link-title">{menuLabel(column.label,locale)}</span></span>
         </a>:null}
-        {column.children.filter(isVisible).map(item=><TreeLink item={item} key={item.id} locale={locale}/>)}
+        {column.children.filter(item=>isVisible(item,locale)).map(item=><TreeLink item={item} key={item.id} locale={locale}/>)}
        </div>
       </div>
      </Fragment>)}
@@ -76,10 +76,10 @@ function FooterNode({item,locale,depth=0}:{item:MenuNode;locale:string;depth?:nu
 }
 export function FooterTree({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
  const tree=menuTree(navigation);
- return <>{tree.footer.filter(isVisible).map(column=><div className="footer-menu-wrap" key={column.id}>
+ return <>{tree.footer.filter(item=>isVisible(item,locale)).map(column=><div className="footer-menu-wrap" key={column.id}>
   <div className="footer-menu-title"><h3>{menuLabel(column.label,locale)}</h3></div>
   <ul className="footer-menu-link">
-   {column.children.filter(isVisible).map(item=><FooterNode item={item} locale={locale} key={item.id}/>)}
+   {column.children.filter(item=>isVisible(item,locale)).map(item=><FooterNode item={item} locale={locale} key={item.id}/>)}
   </ul>
  </div>)}</>;
 }
