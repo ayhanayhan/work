@@ -2,7 +2,16 @@ import MenuGroupItems from '@/components/navigation-links';
 import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
-export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){return (
+export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
+ const top=groupFor(navigation,'header-primary');
+ const primary=(id:string,fallback:string,url:string)=>{
+  const item=top?.links?.find(x=>x.id===id);
+  return {enabled:item?.enabled!==false,label:menuLabel(item?.label,locale)||fallback,url:item?.url||url};
+ };
+ const solutions=primary('nav-solutions','Çözümler','#');
+ const features=primary('nav-features','Özellikler','/paketler.html#tc-compare');
+ const resources=primary('nav-resources','Kaynaklar','#');
+ return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
     {"\n"}
     <div className={"tc-site-header header-main"}>
@@ -92,29 +101,17 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
                   {"\n"}
                   <ul role={"menu"}>
                     {"\n"}
-                    <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
-                      {"\n"}
-                      <a aria-expanded={"false"} aria-haspopup={"true"} className={"has-mega"} data-mega-slug={"companies"} href={"#"} role={"menuitem"} data-tc-content-key={"a-002"}>
-                        {"Çözümler"}
-                      </a>
-                      {"\n"}
-                    </li>
-                    {"\n"}
-                    <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
-                      {"\n"}
-                      <a href={"/paketler.html#tc-compare"} role={"menuitem"} data-tc-content-key={"a-003"}>
-                        {"Özellikler"}
-                      </a>
-                      {"\n"}
-                    </li>
-                    {"\n"}
-                    <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
-                      {"\n"}
-                      <a aria-expanded={"false"} aria-haspopup={"true"} className={"has-mega"} data-mega-slug={"resources"} href={"#"} role={"menuitem"} data-tc-content-key={"a-004"}>
-                        {"Kaynaklar"}
-                      </a>
-                      {"\n"}
-                    </li>
+                    {solutions.enabled?<li className={"tc-nav-item tc-nav-primary"} role="none">
+  <a aria-expanded="false" aria-haspopup="true" className="has-mega" data-mega-slug="companies"
+   href={solutions.url} role="menuitem">{solutions.label}</a>
+ </li>:null}
+ {features.enabled?<li className={"tc-nav-item tc-nav-primary"} role="none">
+  <a href={features.url} role="menuitem">{features.label}</a>
+ </li>:null}
+ {resources.enabled?<li className={"tc-nav-item tc-nav-primary"} role="none">
+  <a aria-expanded="false" aria-haspopup="true" className="has-mega" data-mega-slug="resources"
+   href={resources.url} role="menuitem">{resources.label}</a>
+ </li>:null}
                     {"\n"}
                   </ul>
                   {"\n"}
