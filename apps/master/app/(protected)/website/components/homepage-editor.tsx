@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback,useEffect,useMemo,useState} from 'react';
-import {ArrowDown,ArrowUp,GripVertical,Image,Layers3,LoaderCircle,Plus,RefreshCw,Save,Trash2,Upload} from 'lucide-react';
+import {ArrowDown,ArrowUp,GripVertical,Image,Layers3,LoaderCircle,Plus,RefreshCw,Save,Trash2} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
 import {Toolbar,ToolbarActions,ToolbarDescription,ToolbarHeading} from '@/partials/common/toolbar';
@@ -166,24 +166,6 @@ export default function HomepageEditor(){
     }catch(e){setError('Modül kaydedilemedi: '+errorText(e))}
     finally{setSaving(false)}
   };
-  const importFile=async(file:File)=>{
-    setSaving(true);setError('');setMessage('');
-    try{
-      const raw=JSON.parse(await file.text());
-      if(!Array.isArray(raw?.modules)||raw.modules.length<1)throw new Error('Geçerli anasayfa içerik dosyası seçin.');
-      const known=new Set(Object.keys(MODULE_FIELDS));
-      const modules=raw.modules.filter((x:any)=>known.has(x?.id));
-      if(!modules.length)throw new Error('İçe aktarılacak bilinen modül bulunamadı.');
-      const faqOnly=modules.length===1&&modules[0].id==='faq';
-      if(raw?.type==='ticarti-faq-import-v1'&&!faqOnly)
-        throw new Error('SSS dosyasında yalnızca FAQ modülü bulunmalı.');
-      const dataNow=await request('/superadmin/website/home');
-      if(dataNow.version>0&&!faqOnly&&!window.confirm('Mevcut anasayfa içerikleri var. Arşivdeki verilerle değiştirmek istiyor musunuz?')){setSaving(false);return}
-      await request('/superadmin/website/home-import',{method:'PATCH',body:JSON.stringify({version:dataNow.version,modules})});
-      await load();setMessage(faqOnly?'SSS soru ve cevapları beş dilde içe aktarıldı. Diğer modüller korunuyor.':'Anasayfa içerikleri içe aktarıldı.');
-    }catch(e){setError(errorText(e))}
-    finally{setSaving(false)}
-  };
   const fields=working?MODULE_FIELDS[working.id]||[]:[];
   const entries=working?ENTRY_FIELDS[working.id]||[]:[];
   const hasImage=['hero','builder','showcase','references'].includes(working?.id||'');
@@ -203,10 +185,6 @@ export default function HomepageEditor(){
             onClick={()=>setLang(x.locale)}>{x.label||x.locale}</Button>)}
         </div>
       </div>
-      <Card><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground"></p></div>
-        <Button size="sm" variant="outline" asChild><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Site İçeriğini İçe Aktar<input type="file" hidden accept=".json,application/json" disabled={saving} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button>
-      </CardContent></Card>
       {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
       {error?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>:null}
       {message?<div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">{message}</div>:null}
@@ -270,11 +248,6 @@ export default function HomepageEditor(){
               </div>
             </details>)}{!visibleItems.length?<div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">Henüz kayıt yok. Yeni Kayıt butonuyla ekleyebilir veya mevcut site verisini içe aktarabilirsiniz.</div>:null}
           </div></details>:null}
-          {working.id==='faq'?<div className="rounded-lg border p-4 text-sm">
-            <b>SEO / FAQPage</b>
-            <p className="mt-1 text-muted-foreground">SSS içeriği ve SEO yapılandırması seçilen anasayfa diliyle eşleştirilir.</p>
-            
-          </div>:null}
           {working.id==='blog'?<div className="grid gap-3 rounded-lg border p-4">
             <h3 className="font-semibold">Anasayfada gösterilecek blog kategorileri</h3>
             <p className="text-xs text-muted-foreground">Hiçbiri seçili değilse tüm yayınlanmış kategorilerden içerik gelir. Seçim yaparsan yalnızca işaretli kategoriler gösterilir.</p>
