@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
 import {ArrowDown,ArrowUp,GripVertical,LoaderCircle,Plus,RefreshCw,Save,Trash2,Upload} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
@@ -74,8 +74,9 @@ export default function HomepageEditor(){
    // The requested cleanup is performed once, in an admin-only transaction.
    // Its database marker ensures future page visits never erase new FAQ entries.
    if(!initialized.current){
-    await request('/superadmin/website/faq/clear-existing-once',{method:'POST',body:'{}'});
     initialized.current=true;
+    try{await request('/superadmin/website/faq/clear-existing-once',{method:'POST',body:'{}'});}
+    catch(error){initialized.current=false;throw error;}
    }
    const home=await request('/superadmin/website/home') as Snapshot;
    setSaved(home);setDraft(deepCopy(home));
@@ -122,8 +123,17 @@ export default function HomepageEditor(){
   setSaving(true);setError('');setMessage('');
   try{
    // Only the language chosen above is written; other locales remain untouched.
+   const modules=draft.modules.map(m=>m.id!=='faq'?m:{
+    ...m,items:visibleEntries(m).map(entry=>({
+      ...entry,
+      id:entry.id.startsWith('faq-locale-'+activeLocale+'-')?entry.id:
+        'faq-locale-'+activeLocale+'-'+entry.id,
+      fields:{question:{[activeLocale]:entry.fields?.question?.[activeLocale]||''},
+        answer:{[activeLocale]:entry.fields?.answer?.[activeLocale]||''}}
+    }))
+   });
    const result=await request('/superadmin/website/home-locale/'+encodeURIComponent(activeLocale),{
-    method:'PATCH',body:JSON.stringify({version:saved.version,modules:draft.modules})
+    method:'PATCH',body:JSON.stringify({version:saved.version,modules})
    }) as Snapshot;
    setSaved(result);setDraft(deepCopy(result));
    setMessage(activeLocale.toUpperCase()+' anasayfa içeriği kaydedildi.');
