@@ -1,9 +1,9 @@
 import {Fragment} from 'react';
 import {menuLabel,menuTree,type Navigation,type MenuNode} from '@/lib/navigation';
 const external=(url:string)=>url.startsWith('https://');
-const isVisible=(item:MenuNode)=>item.enabled&&Boolean(menuLabel(item.label,'tr')||Object.values(item.label||{}).some(Boolean));
+const isVisible=(item:MenuNode,locale:string)=>item.enabled&&Boolean(menuLabel(item.label,locale));
 function TreeLink({item,locale,depth=0}:{item:MenuNode;locale:string;depth?:number}){
- if(!isVisible(item))return null;
+ if(!isVisible(item,locale))return null;
  const title=menuLabel(item.label,locale),href=item.url&&item.url!=='#'?item.url:item.children.length?'#':undefined;
  return <div className={depth?'tc-ui-tree-branch':'tc-ui-tree-root'}>
   {href?<a className="tc-ui-link-item" href={href} target={external(href)?'_blank':undefined}
@@ -17,8 +17,8 @@ function TreeLink({item,locale,depth=0}:{item:MenuNode;locale:string;depth?:numb
 }
 export function HeaderPrimaryTree({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
  const tree=menuTree(navigation);
- return <>{tree.header.filter(isVisible).map(node=>{
-  const dropdown=node.children?.some(isVisible);
+ return <>{tree.header.filter(item=>isVisible(item,locale)).map(node=>{
+  const dropdown=node.children?.some(item=>isVisible(item,locale));
   const href=node.url||'#';
   return <li className="tc-nav-item tc-nav-primary" role="none" key={node.id}>
     <a role="menuitem" href={href} className={dropdown?'has-mega':undefined}
@@ -31,7 +31,7 @@ export function HeaderPrimaryTree({navigation,locale='tr'}:{navigation:Navigatio
 }
 export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation:Navigation|null;locale?:string;mobile?:boolean}){
  const tree=menuTree(navigation);
- return <>{tree.header.filter(x=>x.enabled&&x.children?.some(isVisible)).map(top=>
+ return <>{tree.header.filter(x=>x.enabled&&x.children?.some(item=>isVisible(item,locale))).map(top=>
   <ul key={top.id} className={'tc-nav-children bm-add-'+(top.id==='nav-solutions'?'companies':top.id==='nav-resources'?'resources':'custom')}
    data-mega={top.id} data-mobile-panel={mobile?'true':undefined}>
    <div className="tc-mega-menu"><div className="container"><div className="tc-mega-menu-card">
