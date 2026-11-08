@@ -1,6 +1,8 @@
+import MenuGroupItems from '@/components/navigation-links';
+import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
 import FooterLanguagePicker from '@/components/footer-language-picker';
 /* Original Ticarti footer markup converted to native JSX. */
-export default function FooterSnapshot(){return (
+export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-footer"}>
     {"\n"}
     <footer aria-label={"Ticarti footer"} className={"tc-site-footer tc-home-footer"}>
@@ -14,54 +16,12 @@ export default function FooterSnapshot(){return (
               {"\n"}
               <div className={"footer-menu-title"}>
                 <h3 data-tc-content-key={"h3-244"}>
-                  {"Ticarti"}
+                  {menuLabel(groupFor(navigation,'footer-1')?.title,locale)||"Ticarti"}
                 </h3>
               </div>
               {"\n"}
               <ul className={"footer-menu-link"}>
-                {"\n"}
-                <li>
-                  <a href={"/"} data-tc-content-key={"a-245"}>
-                    {"Ticarti nedir?"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html"} data-tc-content-key={"a-246"}>
-                    {"Paketler ve fiyatlandırma"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-pricing-top"} data-tc-content-key={"a-247"}>
-                    {"Mağaza açma"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-248"}>
-                    {"Tema ve vitrin"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-249"}>
-                    {"Ürün ve stok"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-250"}>
-                    {"Sipariş ve iade"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-251"}>
-                    {"Pazarlama araçları"}
-                  </a>
-                </li>
-                {"\n"}
+                <MenuGroupItems data={navigation} id="footer-1" locale={locale} style="footer"/>
               </ul>
               {"\n"}
             </div>
@@ -70,54 +30,12 @@ export default function FooterSnapshot(){return (
               {"\n"}
               <div className={"footer-menu-title"}>
                 <h3 data-tc-content-key={"h3-252"}>
-                  {"Kurumsal"}
+                  {menuLabel(groupFor(navigation,'footer-2')?.title,locale)||"Kurumsal"}
                 </h3>
               </div>
               {"\n"}
               <ul className={"footer-menu-link"}>
-                {"\n"}
-                <li>
-                  <a href={"/contacto.html"} data-tc-content-key={"a-253"}>
-                    {"Hakkımızda"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/companies/enterprise.html"} data-tc-content-key={"a-254"}>
-                    {"Kurumsal çözümler"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/success-stories/index.html"} data-tc-content-key={"a-255"}>
-                    {"Başarı hikâyeleri"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/contacto.html"} data-tc-content-key={"a-256"}>
-                    {"İletişim"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"https://app.ticarti.com"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-257"}>
-                    {"Uygulama Marketi"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"https://dev.ticarti.com"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-258"}>
-                    {"Developer"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"https://help.ticarti.com"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-259"}>
-                    {"Yardım"}
-                  </a>
-                </li>
-                {"\n"}
+                <MenuGroupItems data={navigation} id="footer-2" locale={locale} style="footer"/>
               </ul>
               {"\n"}
             </div>
@@ -126,54 +44,12 @@ export default function FooterSnapshot(){return (
               {"\n"}
               <div className={"footer-menu-title"}>
                 <h3 data-tc-content-key={"h3-260"}>
-                  {"E-ticaret ve e-ihracat"}
+                  {menuLabel(groupFor(navigation,'footer-3')?.title,locale)||"E-ticaret ve e-ihracat"}
                 </h3>
               </div>
               {"\n"}
               <ul className={"footer-menu-link"}>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html"} data-tc-content-key={"a-261"}>
-                    {"E-ticaret paketleri"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-262"}>
-                    {"Pazaryeri bağlantıları"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-263"}>
-                    {"Kargo entegrasyonları"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-264"}>
-                    {"Çok dilli satış"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-265"}>
-                    {"Çoklu para birimi"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/blog/"} data-tc-content-key={"a-266"}>
-                    {"SEO ve blog"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/paketler.html#tc-compare"} data-tc-content-key={"a-267"}>
-                    {"Paket karşılaştırması"}
-                  </a>
-                </li>
-                {"\n"}
+                <MenuGroupItems data={navigation} id="footer-3" locale={locale} style="footer"/>
               </ul>
               {"\n"}
             </div>
@@ -182,47 +58,12 @@ export default function FooterSnapshot(){return (
               {"\n"}
               <div className={"footer-menu-title"}>
                 <h3 data-tc-content-key={"h3-268"}>
-                  {"Kaynaklar"}
+                  {menuLabel(groupFor(navigation,'footer-4')?.title,locale)||"Kaynaklar"}
                 </h3>
               </div>
               {"\n"}
               <ul className={"footer-menu-link"}>
-                {"\n"}
-                <li>
-                  <a href={"/blog/"}>
-                    {"Blog"}
-                  </a>
-                </li>
-                <li>
-                  <a href={"/araclar"}>
-                    {"Ücretsiz araçlar"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"#tc-faq"} data-tc-content-key={"a-269"}>
-                    {"Sık sorulan sorular"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/blog/e-ticaret-sitesi-kurma-rehberi.html"} data-tc-content-key={"a-270"}>
-                    {"E-ticaret sitesi kurmak"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"/blog/stok-yonetiminde-yapilan-hatalar.html"} data-tc-content-key={"a-271"}>
-                    {"Stok yönetimi"}
-                  </a>
-                </li>
-                {"\n"}
-                <li>
-                  <a href={"https://help.ticarti.com"} rel={"noopener noreferrer"} target={"_blank"} data-tc-content-key={"a-272"}>
-                    {"Destek ve yardım"}
-                  </a>
-                </li>
-                {"\n"}
+                <MenuGroupItems data={navigation} id="footer-4" locale={locale} style="footer"/>
               </ul>
               {"\n"}
             </div>
