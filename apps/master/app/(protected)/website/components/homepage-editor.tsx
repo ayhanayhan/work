@@ -165,10 +165,17 @@ export default function HomepageEditor(){
   const editorState=!working?'':saving?'Kaydediliyor':unchanged?'Kaydedildi':'Kaydedilmemiş değişiklikler';
   const stateText=data?.version===0?'Master içeriği henüz kaydedilmedi. Orijinal Next.js anasayfası kendi sabit içeriğiyle çalışır.':'İçerik sürümü: '+data?.version;
   return <>
-    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Anasayfa</h1><ToolbarDescription>Orijinal tasarım korunarak modül bazlı içerik, dil ve sıralama yönetimi.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button disabled={!working||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Modülü Kaydet</Button></ToolbarActions></Toolbar></Container>
+    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Ticarti.com · Anasayfa</h1><ToolbarDescription>Anasayfa içerik ve sıralama yönetimi.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button><Button disabled={!working||saving} onClick={()=>void save()}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Modülü Kaydet</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-5 pb-10">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-card px-5 py-4">
+        <span className="text-sm font-medium">Anasayfa dili</span>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Anasayfa içerik dili">
+          {languageList.map(x=><Button key={x.locale} type="button" size="sm" variant={lang===x.locale?'primary':'outline'}
+            onClick={()=>setLang(x.locale)}>{x.label||x.locale}</Button>)}
+        </div>
+      </div>
       <Card><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground">Anasayfa modülleri Next.js/React bileşenleridir. Yalnızca bağlanan modüller Master verisini okur; diğerleri mevcut tasarımlarıyla kalır.</p></div>
+        <div><div className="font-medium">Anasayfa içerik yönetimi</div><p className="mt-1 text-sm text-muted-foreground">{stateText}</p><p className="mt-1 text-xs text-muted-foreground"></p></div>
         <Button size="sm" variant="outline" asChild><label className="cursor-pointer"><Upload className="size-4"/>Mevcut Site İçeriğini İçe Aktar<input type="file" hidden accept=".json,application/json" disabled={saving} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file)void importFile(file)}}/></label></Button>
       </CardContent></Card>
       {localesError?<p role="alert" className="text-sm text-destructive">{localesError}</p>:null}
@@ -194,9 +201,9 @@ export default function HomepageEditor(){
               onClick={()=>void reorderModules(i,i+1)}><ArrowDown className="size-4"/></button>
           </div>)}
         </CardContent></Card>
-        {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">{working.enabled?'Aktif':'Pasif'} · {editorState}</p><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector} · Görünüm sınıfları değiştirilmez.</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
-          <div className="flex flex-wrap gap-2 border-b pb-4">{languageList.map(x=><Button size="sm" variant={lang===x.locale?'primary':'outline'} onClick={()=>setLang(x.locale)} key={x.locale}>{x.label||x.locale}</Button>)}</div>
-          {fields.length?<details open className="rounded-lg border p-4"><summary className="cursor-pointer select-none font-semibold">Metinler ve bağlantılar</summary><div className="mt-4 grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{(['description','answer'].includes(key)||(working.id==='hero'&&key==='heading'))?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}<span className="text-xs text-muted-foreground">Dil: {lang.toUpperCase()} · Boş bırakılırsa eski demo metin gösterilmez.</span></label>)}</div></details>:null}
+        {working?<Card><CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><div><CardHeading>{working.title}</CardHeading><p className="mt-1 text-xs text-muted-foreground">{working.enabled?'Aktif':'Pasif'} · {editorState}</p><p className="mt-1 text-xs text-muted-foreground">Şablon: {working.selector}</p></div><label className="flex items-center gap-2 text-sm"><Switch checked={working.enabled!==false} onCheckedChange={enabled=>patch({enabled})}/>Aktif</label></div></CardHeader><CardContent className="grid gap-5">
+
+          {fields.length?<details open className="rounded-lg border p-4"><summary className="cursor-pointer select-none font-semibold">Metinler ve bağlantılar</summary><div className="mt-4 grid gap-4">{fields.map(key=><label key={key} className="grid gap-2 text-sm"><span className="font-medium">{FIELD_LABELS[key]||key}</span>{(['description','answer'].includes(key)||(working.id==='hero'&&key==='heading'))?<Textarea rows={3} className="max-h-48 overflow-y-auto resize-y" value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>:<Input value={working.fields?.[key]?.[lang]||''} onChange={e=>patchField(key,e.target.value)}/>}</label>)}</div></details>:null}
           {working.id==='hero'?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">Telefon CTA formu</summary><div className="mt-4 grid gap-4">
             <label className="flex items-center justify-between gap-4 text-sm"><span>Telefon CTA formu açık</span><Switch checked={working.ctaEnabled!==false} onCheckedChange={v=>patch({ctaEnabled:v})}/></label>
             <div className="rounded-lg border p-3 text-xs text-muted-foreground">
@@ -216,7 +223,7 @@ export default function HomepageEditor(){
             </div>)}
           </div></details>:null}
           {entries.length?<details className="rounded-lg border p-4"><summary className="cursor-pointer font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':'Tekrarlanan kayıtlar'} ({working.items.length})</summary><div className="mt-4 grid gap-4">
-            <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':working.id==='hero'?'Slider Referans Kartları':working.id==='references'?'Referans Görselleri':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve yanıtları aktif her dilde düzenleyin. Yalnızca iki alanı da dolu olan sorular sitede ve FAQPage yapılandırılmış verisinde gösterilir.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. Mağaza eşleştirmesi sonraki aşamada açılacak.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
+            <div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">{working.id==='faq'?'Sık Sorulan Sorular':working.id==='hero'?'Slider Referans Kartları':working.id==='references'?'Referans Görselleri':'Tekrarlanan İçerikler'}</h3><p className="mt-1 text-sm text-muted-foreground">{working.id==='faq'?'Soruları ve cevapları üstte seçtiğiniz anasayfa dili için düzenleyin.':'Yeni kayıt ekleyebilir, kaldırabilir veya sürükleyerek sıralayabilirsiniz. Mağaza eşleştirmesi sonraki aşamada açılacak.'}</p></div><Button size="sm" variant="outline" onClick={()=>patch({items:[...working.items,newItem()]})}><Plus className="size-4"/>{working.id==='faq'?'Yeni Soru Ekle':'Yeni Kayıt'}</Button></div>
             {working.items.map((entry,i)=><details key={entry.id} draggable onDragStart={e=>{setDragged(entry.id);e.dataTransfer.effectAllowed='move'}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const from=working.items.findIndex(x=>x.id===dragged);if(from>=0)move(from,i);setDragged(null)}} onDragEnd={()=>setDragged(null)} className="rounded-lg border p-4">
               <summary className="cursor-pointer select-none py-1 text-sm font-semibold">{itemLabel(entry,i)}</summary>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -237,8 +244,8 @@ export default function HomepageEditor(){
           </div>:null}
           {working.id==='faq'?<div className="rounded-lg border p-4 text-sm">
             <b>SEO / FAQPage</b>
-            <p className="mt-1 text-muted-foreground">Bu sayfanın açık olduğu dilde soru ve cevap alanları dolu olan aktif kayıtlar, anasayfanın sunucu HTML çıktısına ve aynı içerikli FAQPage JSON-LD şemasına eklenir. Eksik çeviriler başka bir dilden doldurulmaz.</p>
-            <p className="mt-2 text-xs text-muted-foreground">Bu modülün yazılarını ve sırasını buradan yönetin. Eski HTML şablonundaki örnek sorular otomatik olarak sisteme aktarılmaz.</p>
+            <p className="mt-1 text-muted-foreground">SSS içeriği ve SEO yapılandırması seçilen anasayfa diliyle eşleştirilir.</p>
+            
           </div>:null}
           {working.id==='blog'?<div className="grid gap-3 rounded-lg border p-4">
             <h3 className="font-semibold">Anasayfada gösterilecek blog kategorileri</h3>
