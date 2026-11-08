@@ -49,7 +49,7 @@ export class ContactService {
   private readonly emailTemplateKey='marketing_callback_email_template_v1';
   private defaultCallbackEmailTemplate(){
     return {enabled:false,recipient:'',subject:'Ticarti · Yeni telefon talebi ({{source}})',
-      body:'Yeni iletişim talebi\\nTelefon: {{phone}}\\nKaynak: {{source}}\\nSayfa: {{page}}\\nDil: {{locale}}\\nTarih: {{createdAt}}'};
+      body:'Yeni iletişim talebi\nTelefon: {{phone}}\nKaynak: {{source}}\nSayfa: {{page}}\nDil: {{locale}}\nTarih: {{createdAt}}'};
   }
   async callbackEmailTemplate(){
     const saved=await this.prisma.platformSetting.findUnique({where:{key:this.emailTemplateKey}});
@@ -60,7 +60,7 @@ export class ContactService {
     const enabled=body?.enabled===true;
     const subject=String(body?.subject||'').trim().slice(0,180);
     const template=String(body?.body||'').trim().slice(0,4000);
-    if(recipient&&(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(recipient)||recipient.length>254))
+    if(recipient&&(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)||recipient.length>254))
       throw new BadRequestException('Geçerli bir bildirim e-posta adresi girin.');
     if(enabled&&(!recipient||!subject||!template))
       throw new BadRequestException('Bildirimleri açmak için alıcı, konu ve şablon zorunludur.');
@@ -95,10 +95,10 @@ export class ContactService {
     const source=String(body?.source||'').toUpperCase();
     if(source!=='HOME'&&source!=='BLOG')throw new BadRequestException('Geçersiz form kaynağı.');
     if(body?.consent!==true)throw new BadRequestException('KVKK aydınlatma onayı zorunludur.');
-    const dial=String(body?.dial||'').trim(),national=String(body?.phone||'').replace(/[\\s()-]/g,'').trim();
+    const dial=String(body?.dial||'').trim(),national=String(body?.phone||'').replace(/[\s()-]/g,'').trim();
     let phone=dial+national;
     if(national.startsWith('+'))phone=national;
-    if(!/^\\+[1-9]\\d{7,14}$/.test(phone)||!isValidPhoneNumber(phone))
+    if(!/^\+[1-9]\d{7,14}$/.test(phone)||!isValidPhoneNumber(phone))
       throw new BadRequestException('Geçerli bir telefon numarası girin.');
     const locale=String(body?.locale||'tr').slice(0,12);
     if(!/^[a-z]{2,3}(?:-[a-z]{2,4})?$/.test(locale))throw new BadRequestException('Dil geçersiz.');
