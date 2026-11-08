@@ -87,23 +87,37 @@ const TOOL_MENU_ITEMS=[
 ] as const;
 const TOOL_PATHS=new Set<string>(TOOL_MENU_ITEMS.map(([slug])=>'/araclar/'+slug));
 function seedFooterTools(tree:MenuTree):MenuTree{
- // Old /araclar menu is intentionally retired: no umbrella link in Header or Footer.
+ // Move previously seeded menu items instead of losing user-entered translations.
+ const carried=new Map<string,MenuNode>();
+ const collect=(items:MenuNode[]):void=>{
+  for(const node of items){
+   if(TOOL_PATHS.has(node.url)&&!carried.has(node.url))carried.set(node.url,node);
+   collect(node.children||[]);
+  }
+ };
+ collect(tree.header);
  const clean=(nodes:MenuNode[]):MenuNode[]=>nodes
   .filter(node=>node.url!=='/araclar'&&!TOOL_PATHS.has(node.url))
   .map(node=>({...node,children:clean(node.children||[])}));
  const header=clean(tree.header);
  const footer=tree.footer.map(column=>{
   const previous=column.children||[];
-  // Keep author-defined tool links and their labels/ordering, removing just
-  // the deprecated archive entry. Existing explicit links are not overwritten.
   const links=previous.filter(item=>item.url!=='/araclar');
   if(column.id!=='footer-4')return {...column,children:links};
   const present=new Set(links.map(item=>item.url));
   const additions=TOOL_MENU_ITEMS.filter(([slug])=>!present.has('/araclar/'+slug))
-   .map(([slug,title]):MenuNode=>({
-    id:'footer-tool-'+slug,label:translated(title),url:'/araclar/'+slug,
-    enabled:true,children:[]
-   }));
+   .map(([slug,title]):MenuNode=>{
+    const url='/araclar/'+slug,old=carried.get(url);
+    return old?{...old,
+     // Older generated tools were disabled while unpublished. Publication
+     // visibility is now checked independently in publicNavigation().
+     enabled:/^(?:marketplace-|tool-)/.test(old.id)?true:old.enabled,
+     children:[]
+    }:{
+     id:'footer-tool-'+slug,label:translated(title),url,
+     enabled:true,children:[]
+    };
+   });
   const index=links.findIndex(item=>item.url==='/blog/'||item.url==='/blog');
   const insertion=index<0?0:index+1;
   return {...column,children:[...links.slice(0,insertion),...additions,...links.slice(insertion)]};
