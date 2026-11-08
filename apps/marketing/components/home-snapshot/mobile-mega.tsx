@@ -1,5 +1,5 @@
 import MenuGroupItems from '@/components/navigation-links';
-import type {Navigation} from '@/lib/navigation';
+import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
 /* Desktop mega sections cloned as React JSX for the existing mobile submenu slot.
  * Same static content. No DOM moves, HTML strings, or data mutations.
  */
@@ -39,7 +39,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-011"}>
-                      {"İşletme ölçeği"}
+                      {menuLabel(groupFor(navigation,'header-companies-1')?.title,locale)||"İşletme ölçeği"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -53,7 +53,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-017"}>
-                      {"Ticaret operasyonları"}
+                      {menuLabel(groupFor(navigation,'header-companies-2')?.title,locale)||"Ticaret operasyonları"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -67,7 +67,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-023"}>
-                      {"Satış ve büyüme"}
+                      {menuLabel(groupFor(navigation,'header-companies-3')?.title,locale)||"Satış ve büyüme"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -81,7 +81,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-029"}>
-                      {"Entegrasyon ve analiz"}
+                      {menuLabel(groupFor(navigation,'header-companies-4')?.title,locale)||"Entegrasyon ve analiz"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -134,7 +134,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-038"}>
-                      {"Ürünü keşfet"}
+                      {menuLabel(groupFor(navigation,'header-resources-1')?.title,locale)||"Ürünü keşfet"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -148,7 +148,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-044"}>
-                      {"Rehberler"}
+                      {menuLabel(groupFor(navigation,'header-resources-2')?.title,locale)||"Rehberler"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
@@ -162,7 +162,7 @@ export default function MobileMegaMenu({navigation,locale='tr'}:{navigation:Navi
                   <div className={"tc-ui-column column"}>
                     {"\n"}
                     <p className={"tc-ui-overline"} data-tc-content-key={"p-050"}>
-                      {"Ticarti hakkında"}
+                      {menuLabel(groupFor(navigation,'header-resources-3')?.title,locale)||"Ticarti hakkında"}
                     </p>
                     {"\n"}
                     <div className={"tc-ui-links"}>
