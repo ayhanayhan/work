@@ -12,6 +12,23 @@ export class ContactController {
     return this.svc.create(body,ip);
   }
 
+  @Post('public/contact/callback')
+  callback(@Body() body:any,@Req() req:any){
+    const ip=String(req.headers['cf-connecting-ip']||req.headers['x-forwarded-for']||req.ip||'unknown').split(',')[0].trim();
+    return this.svc.submitCallback(body,ip);
+  }
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/contact/callbacks')
+  callbackInbox(){return this.svc.callbackInbox()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/contact/callbacks/:id')
+  updateCallback(@Param('id') id:string,@Body() body:any){return this.svc.updateCallback(id,body)}
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/contact/callback-email-template')
+  callbackEmailTemplate(){return this.svc.callbackEmailTemplate()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/contact/callback-email-template')
+  saveCallbackEmailTemplate(@Body() body:any){return this.svc.updateCallbackEmailTemplate(body)}
   @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/contact')
   inbox(){return this.svc.inbox()}
