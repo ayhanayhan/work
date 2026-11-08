@@ -24,6 +24,9 @@ r=c.desi(30,20,10,1,3000);almost(r.desi,2);almost(r.chargeable,2);
 r=c.commission({price:1000,rate:15,rateIncludesVat:false,
  commissionVat:20,shipping:30,productCost:400,other:20,units:1});
 almost(r.fee,150);almost(r.tax,30);almost(r.total,180);almost(r.remainder,370);
+assert.throws(()=>c.commission({price:1000,rate:15,rateIncludesVat:false,
+ commissionVat:20,shipping:30,productCost:400,other:20,units:1.5}),
+ 'Fractional product quantities must be rejected');
 r=c.commission({price:1000,rate:18,rateIncludesVat:true,
  commissionVat:20,shipping:0,productCost:0,other:0,units:1});
 almost(r.fee,150);almost(r.tax,30);almost(r.remainder,820);
