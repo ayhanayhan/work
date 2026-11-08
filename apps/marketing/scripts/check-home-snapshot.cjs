@@ -74,38 +74,43 @@ for(const expected of ['Dinamik Hero Başlığı','Referans açıklaması','Mark
 }
 assert.ok(cmsMarkup.includes('href="/blog/ornek-makale"'),'Blog card links to real post route');
 assert.ok(!cmsMarkup.includes('id="tc-phone-main-hero"'),'Hero CTA toggle must hide just the hero form');
-assert.ok(!cmsMarkup.includes('tc-bottom-cta__img'),'Old stock portrait CTA must not render');
-const source=fs.readFileSync(path.resolve(__dirname,'../templates/en/index.html'),'utf8');
-const body=source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1]||'';
-const originalBody=body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
-assert.ok(originalBody.length>100000,'Original page fixture was unexpectedly changed');
-// A completely empty CMS must not reintroduce template demo sections or posts.
-const sectionClasses=['tc-site-hero','tc-animated-heading','tc-builder-section',
-  'tc-dashboard-radar','tc-sales-channels','tc-showcase','tc-press',
-  'tc-bottom-cta','tc-blog','tc-faq'];
-for(const className of sectionClasses){
-  assert.ok(!markup.includes('class="'+className+'"')&&!markup.includes('class="'+className+' '),
-    'Empty CMS unexpectedly rendered section: '+className);
+// Unconnected sections must preserve the existing visual design and static content.
+for(const className of ['tc-site-hero','tc-animated-heading','tc-builder-section',
+ 'tc-dashboard-radar','tc-sales-channels','tc-showcase','tc-press','tc-bottom-cta','tc-faq']){
+ assert.ok(markup.includes('class="'+className)||markup.includes('class="'+className+' '),
+  'Original unconfigured homepage section was unexpectedly removed: '+className);
 }
-assert.ok(markup.includes('id="tc-global-header"')&&markup.includes('id="tc-global-footer"'));
+const configuredEmpty={
+ version:2,locale:'en',modules:[
+  {id:'hero',configured:true,enabled:true,fields:{heading:{tr:'Test Türkçe'}},items:[],logos:[]},
+  {id:'faq',configured:true,enabled:true,fields:{heading:{tr:'Sorular'}},items:[]},
+  {id:'builder',configured:true,enabled:true,fields:{},items:[]}
+ ]
+};
+const emptyLocale=renderToStaticMarkup(React.createElement(load('index').default,{
+ home:configuredEmpty,posts:[],locale:'en'
+}));
+for(const name of ['tc-site-hero','tc-faq','tc-builder-section']){
+ assert.ok(!emptyLocale.includes('class="'+name+'"')&&!emptyLocale.includes('class="'+name+' '),
+  'Configured module without English content must remain hidden: '+name);
+}
 const english=renderToStaticMarkup(React.createElement(load('index').default,{
   home:cmsFixture,posts:[],locale:'en'
 }));
-for(const text of ['Dinamik Hero Başlığı','Nasıl kurulur?','Hemen başlayabilirsin.',
-  'Tek merkezden yönetim','E-ticaret paketi nedir?']){
+for(const text of ['Dinamik Hero Başlığı','Nasıl kurulur?','Hemen başlayabilirsin.']){
   assert.ok(!english.includes(text),'Missing EN translation must not fall back to TR/demo: '+text);
 }
 assert.ok(!english.includes('class="tc-faq"'),'Empty English FAQ must be hidden');
-assert.ok(!english.includes('class="tc-builder-section"'),'Empty English feature cards must be hidden');
+assert.ok(english.includes('class="tc-builder-section"'),'Unconfigured original feature section must be preserved');
 assert.ok(!markup.includes('<script'),'Scripts are not embedded in server markup');
 const page=fs.readFileSync(path.resolve(__dirname,'../app/[[...slug]]/page.tsx'),'utf8');
 const homeStart=page.indexOf('if(slug.length===0');
 assert.ok(homeStart>=0&&page.includes('<HomeSnapshot home={home}'),'Native React homepage must be routed');
 assert.ok(!page.includes("'/assets/js/pages/website-home-cms.js'"),'Client CMS patching must not be loaded');
 assert.ok(!page.includes("'/assets/js/pages/orders-preview.js'"),'No mocked order feed');
-assert.ok(page.includes('<HomeInteractions>'),'Interactions must run through React');
+assert.ok(page.includes('<SiteShell>'),'Homepage must use shared header/footer and interactions shell');
 assert.ok(!page.includes('HOME_VISUAL_SCRIPTS'),'No legacy homepage script injection');
 const behavior=fs.readFileSync(path.join(dir,'interactions.tsx'),'utf8');
 assert.ok(!behavior.includes('innerHTML') || behavior.includes('No legacy <script> injection'),'No runtime HTML replacement');
 assert.ok(!behavior.includes('appendChild('),'No legacy DOM append operations');
-console.log('PASS: native React homepage renders Master content only and never falls back to demo on empty locales');
+console.log('PASS: original unconfigured sections restored, configured missing locales hidden, shared site shell used');
