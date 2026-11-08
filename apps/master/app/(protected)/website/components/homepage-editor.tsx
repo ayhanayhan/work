@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowDown,ArrowUp,GripVertical,Image,Layers3,LoaderCircle,Plus,RefreshCw,Save,Trash2,Upload} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
@@ -39,6 +39,8 @@ export default function HomepageEditor(){
   const [dragged,setDragged]=useState<string|null>(null);
   const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
   const [blogFeed,setBlogFeed]=useState<{published:number;draft:number;archived:number;scheduled:number;localized:number}|null>(null);
+  const faqInitialLoadRef=useRef(false);
+
 
   const load=useCallback(async()=>{
     if(restoring)return;
@@ -73,6 +75,31 @@ export default function HomepageEditor(){
     })();
     return ()=>{cancelled=true};
   },[active,lang,languageList,request,restoring]);
+  // A previously requested one-time import is initiated from the existing
+  // authenticated FAQ editor, never on API startup or public page requests.
+  // No button or file picker is required.
+  useEffect(()=>{
+    if(restoring||loading||active!=='faq'||!data||faqInitialLoadRef.current)return;
+    faqInitialLoadRef.current=true;
+    let alive=true;
+    void (async()=>{
+      try{
+        const result=await request('/superadmin/website/faq/seed-initial',{method:'POST',body:'{}'});
+        if(!alive)return;
+        const updated=await request('/superadmin/website/home') as Snapshot;
+        if(!alive)return;
+        setData(updated);
+        if(!result.alreadySeeded){
+          setMessage('SSS kayıtları eklendi: '+(result.inserted||0)+' yeni soru. Dil sekmelerinden düzenleyebilirsiniz.');
+        }
+      }catch(e){
+        if(!alive)return;
+        faqInitialLoadRef.current=false;
+        setError('SSS kayıtları getirilemedi: '+errorText(e));
+      }
+    })();
+    return ()=>{alive=false};
+  },[active,restoring,loading,data?.version,request]);
   useEffect(()=>{
     const selected=data?.modules?.find(x=>x.id===active);
     setWorking(selected?JSON.parse(JSON.stringify(selected)):null);
