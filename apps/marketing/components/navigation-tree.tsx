@@ -36,14 +36,15 @@ export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation
    data-mega={top.id} data-mobile-panel={mobile?'true':undefined}>
    <div className="tc-mega-menu"><div className="container"><div className="tc-mega-menu-card">
     <div className="tc-ui-layout tc-ui-layout--four_columns">
-     <div className="tc-ui-featured column tc-ui-featured--cta-top">
-      <p className="tc-ui-overline">{top.id==='nav-solutions'?'Ticarti ile ticaret':top.id==='nav-resources'?'Ticarti kaynakları':menuLabel(top.label,locale)}</p>
-      <p className="tc-ui-col-title">{top.id==='nav-solutions'?
-       'İşletmenin büyüklüğüne ve satış modeline göre tek altyapıda yönetim':
-       top.id==='nav-resources'?'E-ticaret operasyonlarını öğren, özellikleri keşfet ve doğru paketi seç':'Ticarti · Ticaretin yeni hali'}</p>
-      <div className="tc-ui-cta"><a href={top.id==='nav-resources'?'/paketler.html#tc-compare':'/paketler.html'}>
-       {top.id==='nav-resources'?'Tüm özellikleri keşfet':'Paketleri karşılaştır'}</a></div>
-     </div>
+     {top.featured&&(
+      menuLabel(top.featured.eyebrow,locale)||menuLabel(top.featured.description,locale)||
+      menuLabel(top.featured.buttonLabel,locale))?
+      <div className="tc-ui-featured column tc-ui-featured--cta-top">
+       {menuLabel(top.featured.eyebrow,locale)?<p className="tc-ui-overline">{menuLabel(top.featured.eyebrow,locale)}</p>:null}
+       {menuLabel(top.featured.description,locale)?<p className="tc-ui-col-title">{menuLabel(top.featured.description,locale)}</p>:null}
+       {menuLabel(top.featured.buttonLabel,locale)&&top.featured.buttonUrl?
+        <div className="tc-ui-cta"><a href={top.featured.buttonUrl}>{menuLabel(top.featured.buttonLabel,locale)}</a></div>:null}
+      </div>:null}
      {top.children.filter(isVisible).map(column=><Fragment key={column.id}>
       <div className="tc-ui-divider"/>
       <div className="tc-ui-column column">
