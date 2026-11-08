@@ -12,7 +12,7 @@ export default function HeroSection({home,locale='tr'}:{home?:HomeContent|null;l
   // Only explicitly configured Master modules use database content.
   if(module?.configured)return <CmsSection home={home} locale={locale}/>;
   const heading=fieldFor(module,'heading',locale);
-  const items=module?.items;
+  const items=module?.configured?module.items:undefined;
   const logos=module?.logos?.filter(x=>x.enabled!==false&&x.assets?.image)||[];
   return (
     <section aria-label={"La casa del mejor talento tech de Europa"} className={"tc-site-hero is-armed"} data-kpi-replay={"false"} data-kpi-stagger={"0"}>
