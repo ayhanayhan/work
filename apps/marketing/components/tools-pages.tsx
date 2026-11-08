@@ -48,36 +48,6 @@ function Copy({children}:{children:string}){return <p>{children}</p>}
 function StoryFrame({children}:{children:ReactNode}){
  return <SiteShell><main className="tc-marketing-blog tc-tools-page">{children}</main></SiteShell>;
 }
-function ToolCard({tool,locale}:{tool:ToolSummary;locale:string}){
- return <article className="card-items list-item box card-visible tc-blog__card tc-tools-card" key={tool.id}>
-  <div className="card-wrap">
-   <a className="tc-blog__card-link" href={toolPath(locale,tool.id)} aria-label={tool.title}>
-    {tool.image?<div className="bg-imge"><div className="img">
-      <img loading="lazy" src={tool.image} alt={tool.title}/>
-    </div></div>:null}
-    <div className="card-body">
-     <div className="content"><h4>{tool.title}</h4></div>
-     {tool.subtitle||tool.description?<div className="card-expand">
-      <div className="card-expand-desc">{tool.subtitle||tool.description}</div>
-     </div>:null}
-    </div>
-   </a>
-  </div>
- </article>;
-}
-export function ToolIndex({locale,tools}:{locale:string;tools:ToolSummary[]}){
- const t=copy(locale);
- return <StoryFrame>
-  <section className="tc-blog-archive-hero">
-   <div className="tc-stories-hero-section"><h1>{t.title}</h1><p className="tc-stories-hero-desc">{t.description}</p></div>
-  </section>
-  {tools.length?<section className="tc-blog-list tc-tools-list">
-   <div className="card"><div className="card-inner">
-    {tools.map(tool=><ToolCard key={tool.id} locale={locale} tool={tool}/>)}
-   </div></div>
-  </section>:<section className="tc-tools-empty"><p>{t.empty}</p></section>}
- </StoryFrame>;
-}
 function RichSection({title,body,id}:{title?:string;body?:string;id?:string}){
  if(!title&&!body)return null;
  return <section className="tc-tools-content-section" id={id}>
@@ -106,7 +76,7 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
   {'@context':'https://schema.org','@type':'WebPage',name:tool.title,url:origin+path,
    description:f.seoDescription||f.intro||'',inLanguage:locale},
   {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
-   {'@type':'ListItem',position:1,name:t.back,item:origin+toolPath(locale)},
+   {'@type':'ListItem',position:1,name:'Ticarti',item:origin+(locale==='tr'?'/':'/'+locale+'/')},
    {'@type':'ListItem',position:2,name:tool.title,item:origin+path}
   ]},
   ...(tool.faqs.length?[{'@context':'https://schema.org','@type':'FAQPage',
@@ -121,7 +91,6 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
      <h1 id="tool-title">{tool.title}</h1>
      {f.subtitle?<div className="content"><p>{f.subtitle}</p></div>:null}
      {f.intro?<div className="content"><p>{f.intro}</p></div>:null}
-     <a className="tc-blog-back" href={toolPath(locale)}>{t.back}</a>
     </div></header>
     <article className="tc-blog-article">
      {tool.image?<img className="tc-blog-article-cover" src={tool.image} alt={f.imageAlt||tool.title}/>:null}
