@@ -85,30 +85,30 @@ const TOOL_MENU_ITEMS=[
  ['gumruk-vergisi-hesaplama','Gümrük Vergisi Hesaplama'],
  ['desi-hesaplama','Desi Hesaplama']
 ] as const;
-function seedToolMenu(tree:MenuTree,keepRemovedMarketplaces:boolean):MenuTree{
- const upgrade=(nodes:MenuNode[]):MenuNode[]=>nodes.map(node=>{
-  if(node.url==='/araclar'){
-   const previous=node.children||[];
-   const existing=new Set(previous.map(child=>child.url));
-   const create=([slug,title]:readonly [string,string]):MenuNode=>({
-    id:slug.endsWith('-komisyon-hesaplama')?
-     'marketplace-'+slug.slice(0,-'-komisyon-hesaplama'.length):'tool-'+slug,
-    label:translated(title),url:'/araclar/'+slug,enabled:false,children:[]
-   });
-   const additions=TOOL_MENU_ITEMS.filter(([slug])=>{
-    if(existing.has('/araclar/'+slug))return false;
-    if(keepRemovedMarketplaces&&slug.endsWith('-komisyon-hesaplama'))return false;
-    return true;
-   });
-   const start=additions.filter(([slug])=>slug==='qr-kod-olusturucu'||slug==='kdv-hesaplama');
-   const markets=additions.filter(([slug])=>slug.endsWith('-komisyon-hesaplama'));
-   const end=additions.filter(([slug])=>slug!=='qr-kod-olusturucu'&&slug!=='kdv-hesaplama'&&
-    !slug.endsWith('-komisyon-hesaplama'));
-   return {...node,children:[...start.map(create),...markets.map(create),...previous,...end.map(create)]};
-  }
-  return {...node,children:upgrade(node.children||[])};
+const TOOL_PATHS=new Set<string>(TOOL_MENU_ITEMS.map(([slug])=>'/araclar/'+slug));
+function seedFooterTools(tree:MenuTree):MenuTree{
+ // Old /araclar menu is intentionally retired: no umbrella link in Header or Footer.
+ const clean=(nodes:MenuNode[]):MenuNode[]=>nodes
+  .filter(node=>node.url!=='/araclar'&&!TOOL_PATHS.has(node.url))
+  .map(node=>({...node,children:clean(node.children||[])}));
+ const header=clean(tree.header);
+ const footer=tree.footer.map(column=>{
+  const previous=column.children||[];
+  // Keep author-defined tool links and their labels/ordering, removing just
+  // the deprecated archive entry. Existing explicit links are not overwritten.
+  const links=previous.filter(item=>item.url!=='/araclar');
+  if(column.id!=='footer-4')return {...column,children:links};
+  const present=new Set(links.map(item=>item.url));
+  const additions=TOOL_MENU_ITEMS.filter(([slug])=>!present.has('/araclar/'+slug))
+   .map(([slug,title]):MenuNode=>({
+    id:'footer-tool-'+slug,label:translated(title),url:'/araclar/'+slug,
+    enabled:true,children:[]
+   }));
+  const index=links.findIndex(item=>item.url==='/blog/'||item.url==='/blog');
+  const insertion=index<0?0:index+1;
+  return {...column,children:[...links.slice(0,insertion),...additions,...links.slice(insertion)]};
  });
- return {...tree,header:upgrade(tree.header)};
+ return {header,footer};
 }
 function validateTree(menus:any):MenuTree{
  if(!menus||!Array.isArray(menus.header)||!Array.isArray(menus.footer))
@@ -151,8 +151,7 @@ export class WebsiteNavigationService{
   const existing=saved?.menus&&Array.isArray(saved.menus.header)&&Array.isArray(saved.menus.footer)
    ?saved.menus as MenuTree:fromGroups(base.groups);
   // One-time migration: respect user deletions after the first upgraded save.
-  const seeded=saved?.toolsMenuMigration===1?existing:
-   seedToolMenu(existing,saved?.marketplaceLinksMigration===1);
+  const seeded=saved?.toolsFooterMigration===1?existing:seedFooterTools(existing);
   const menus=saved?.navigationTranslationsMigration===1?seeded:completeExistingTranslations(seeded);
   return {version:Number(base.version)||0,menus,groups:base.groups};
  }
@@ -162,7 +161,7 @@ export class WebsiteNavigationService{
    throw new ConflictException('Menü başka oturumda güncellendi. Yenileyin.');
   // Accept the former grouped format for compatibility with existing clients.
   const menus=validateTree(input?.menus||fromGroups(input?.groups||previous.groups));
-  const next={version:previous.version+1,menus,groups:previous.groups,marketplaceLinksMigration:1,toolsMenuMigration:1,navigationTranslationsMigration:1};
+  const next={version:previous.version+1,menus,groups:previous.groups,marketplaceLinksMigration:1,toolsMenuMigration:1,toolsFooterMigration:1,navigationTranslationsMigration:1};
   await this.prisma.platformSetting.upsert({where:{key:KEY},
    create:{key:KEY,value:next},update:{value:next}});
   return next;
