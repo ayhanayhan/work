@@ -204,7 +204,7 @@ export default async function MarketingPage({params,searchParams}:Props){
       }))
     }:null;
     return <>
-      <HomeInteractions><HomeSnapshot home={home} posts={posts} locale={locale}/></HomeInteractions>
+      <SiteShell><HomeSnapshot home={home} posts={posts} locale={locale}/></SiteShell>
       {faqJsonLd?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqJsonLd).replace(/</g,'\\u003c')}}/>:null}
     </>;
   }
