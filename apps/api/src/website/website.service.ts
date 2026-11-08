@@ -43,7 +43,7 @@ function safeFields(raw:any,allowed:string[]){
 function safeItems(moduleId:string,input:any){
   if(!ITEM_FIELDS[moduleId])return [];
   if(!Array.isArray(input))throw new BadRequestException('Modül kayıtları liste olmalıdır.');
-  if(input.length>(moduleId==='faq'?80:40))throw new BadRequestException('Çok fazla tekrar eden kayıt var.');
+  if(input.length>(moduleId==='faq'?500:40))throw new BadRequestException('Çok fazla tekrar eden kayıt var.');
   const seen=new Set<string>();
   return input.map((item:any,index:number)=>{
     const id=str(item?.id,90);
