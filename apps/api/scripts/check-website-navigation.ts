@@ -11,6 +11,20 @@ async function main(){
  assert.equal(original.version,0);
  assert.equal(original.menus.header.length,3);
  assert.equal(original.menus.footer.length,4);
+ const expectedLocales=['tr','en','de','ru','ar','bg','uk','id','vi'];
+ const allNodes=(nodes:any[]):any[]=>nodes.flatMap(node=>[node,...allNodes(node.children||[])]);
+ for(const node of [...allNodes(original.menus.header),...allNodes(original.menus.footer)]){
+  for(const language of expectedLocales)
+   assert.ok(node.label[language], 'Missing '+language+' label for '+node.id);
+ }
+ for(const root of original.menus.header.filter((n:any)=>n.featured)){
+  for(const language of expectedLocales){
+   assert.ok(root.featured.eyebrow[language], 'Missing mega eyebrow '+language);
+   assert.ok(root.featured.description[language], 'Missing mega description '+language);
+   assert.ok(root.featured.buttonLabel[language], 'Missing mega CTA '+language);
+  }
+ }
+
  const resources=original.menus.header.find((x:any)=>x.id==='nav-resources');
  const tools=resources?.children.flatMap((group:any)=>group.children).find((item:any)=>item.url==='/araclar');
  assert.ok(tools,'Tools menu must exist');
@@ -55,6 +69,20 @@ async function main(){
  const reopened=await service.get();
  assert.equal(reopened.menus.header[2].children[1].children[0].children.some((x:any)=>x.id===deletedId),false,
   'Manual deletion must not be reinserted by migration on next read');
- console.log('PASS: independent marketplace links, legacy preservation, user deletions, locales, safe URLs and nested menu validation');
+ // A blank translation intentionally saved in Master must stay blank after a later read.
+ const blank=structuredClone(customized.menus);
+ blank.header[0].label.vi='';
+ const savedBlank=await service.save({version:2,menus:blank});
+ assert.equal(savedBlank.version,3);
+ assert.equal((await service.get()).menus.header[0].label.vi,'');
+ // Simulate a pre-migration saved group record: fill missing locales once.
+ saved={version:4,groups:original.groups};
+ const migrated=await service.get();
+ assert.equal(migrated.menus.header[0].label.bg,'Решения');
+ assert.equal(migrated.menus.header[0].featured?.buttonLabel.vi,'So sánh các gói');
+ const persisted=await service.save({version:4,menus:migrated.menus});
+ assert.equal(persisted.version,5);
+ assert.equal((await service.get()).menus.header[0].label.bg,'Решения');
+ console.log('PASS: nine-language menu seed, one-time translation migration, intentional blank values, nested navigation and safe URLs');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
