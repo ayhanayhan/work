@@ -1,8 +1,9 @@
-import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectable} from '@nestjs/common';
+import {BadRequestException,ConflictException,HttpException,HttpStatus,Injectable,type OnModuleInit} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {randomUUID} from 'node:crypto';
 import {activePlatformLocales} from '../common/platform-locales';
 import initialBlog from './data/ticarti-blog-initial.json';
+import {FAQ_SEED_MARKER,mergeFaqSeed} from './faq-seed';
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
@@ -74,8 +75,56 @@ function defaultModules(){
   } as any)[id],enabled:true,sortOrder:i,configured:false,fields:safeFields({},MODULE_FIELDS[id]),items:[],logos:[],ctaEnabled:true,categoryIds:[]}));
 }
 @Injectable()
-export class WebsiteService{
+export class WebsiteService implements OnModuleInit{
   constructor(private readonly prisma:PrismaService){}
+  async onModuleInit(){
+    try{await this.seedInitialFaq();}
+    catch(error){
+      // Keep the API available; log the actual persistence failure for Cloud Run diagnosis.
+      console.error('[ticarti-faq-seed] database migration failed',error);
+    }
+  }
+  /** Idempotent one-time migration, run on API startup without a panel button.
+   * A transaction commits homepage changes and the marker together.
+   * User-edited translations are never overwritten.
+   */
+  async seedInitialFaq(){
+    const marker=await this.prisma.platformSetting.findUnique({where:{key:FAQ_SEED_MARKER}});
+    if(marker)return {alreadySeeded:true,inserted:0};
+    try{
+      return await this.prisma.$transaction(async tx=>{
+        const done=await tx.platformSetting.findUnique({where:{key:FAQ_SEED_MARKER}});
+        if(done)return {alreadySeeded:true,inserted:0};
+        const row=await tx.platformSetting.findUnique({where:{key:HOME_KEY}});
+        const saved=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value as any:null;
+        const modules=defaultModules().map(m=>{
+          const previous=Array.isArray(saved?.modules)?saved.modules.find((x:any)=>x?.id===m.id):null;
+          return previous?{...m,...previous}:m;
+        });
+        const index=modules.findIndex(x=>x.id==='faq');
+        const merged=mergeFaqSeed(modules[index]);
+        modules[index]=merged.module;
+        const version=(Number(saved?.version)||0)+1;
+        await tx.platformSetting.upsert({
+          where:{key:HOME_KEY},
+          create:{key:HOME_KEY,value:{version,modules}},
+          update:{value:{version,modules}}
+        });
+        await tx.platformSetting.create({
+          data:{key:FAQ_SEED_MARKER,value:{version,added:merged.inserted,filled:merged.filled,locales:['tr','en','de','ru','ar'],completedAt:new Date().toISOString()}}
+        });
+        console.info('[ticarti-faq-seed] committed', {version,added:merged.inserted,filled:merged.filled});
+        return {alreadySeeded:false,inserted:merged.inserted};
+      },{isolationLevel:'Serializable'});
+    }catch(error){
+      // Another Cloud Run instance may win the same unique marker transaction.
+      if(['P2002','P2034'].includes(String((error as any)?.code||''))){
+        const winner=await this.prisma.platformSetting.findUnique({where:{key:FAQ_SEED_MARKER}});
+        if(winner)return {alreadySeeded:true,inserted:0};
+      }
+      throw error;
+    }
+  }
   private async get(key:string){
     const row=await this.prisma.platformSetting.findUnique({where:{key}});
     return row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value as any:null;
