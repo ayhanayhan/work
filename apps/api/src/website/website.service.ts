@@ -442,7 +442,18 @@ export class WebsiteService{
     }
     if(!createdPosts&&!createdCategories&&!filledTranslations)
       return {ok:true,createdPosts:0,createdCategories:0,filledTranslations:0,alreadyImported:true};
-    await this.updateBlog({version:current.version,posts,categories,authors:current.authors});
+    try{
+      await this.updateBlog({version:current.version,posts,categories,authors:current.authors});
+    }catch(error){
+      console.error('[ticarti-blog-seed] save failed', {
+        code:(error as any)?.code||'UNKNOWN',
+        message:error instanceof Error?error.message:String(error),
+        existingPosts:current.posts.length,
+        attemptedPosts:posts.length,
+        attemptedCategories:categories.length
+      });
+      throw error;
+    }
     return {ok:true,createdPosts,createdCategories,filledTranslations,alreadyImported:false};
   }
 
