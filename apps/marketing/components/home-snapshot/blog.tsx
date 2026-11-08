@@ -1,4 +1,5 @@
-import {moduleById,fieldFor,hasLocalizedContent,type HomeContent} from '@/lib/home-content';
+import CmsSection from './blog-cms';
+import {moduleById,fieldFor,type HomeContent} from '@/lib/home-content';
 import {blogPath,type BlogPost} from '@/lib/blog';
 import BlogCards from './blog-cards';
 import {SimpleHtml} from './simple-html';
@@ -7,7 +8,8 @@ import {SimpleHtml} from './simple-html';
  */
 export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeContent|null;locale?:string;posts?:BlogPost[]}){
  const module=moduleById(home,'blog');
- if(!hasLocalizedContent(module,locale)||!posts.length)return null;
+  if(module?.configured)return <CmsSection home={home} locale={locale} posts={posts}/>;
+ if(home?.disabledModuleIds?.includes('blog'))return null;
   return (
     <section aria-labelledby={"tc-blog-title"} className={"tc-article-carousel tc-blog"} id={"tc-blog"}>
       {"\n"}
@@ -18,11 +20,11 @@ export default function BlogSection({home,locale='tr',posts=[]}:{home?:HomeConte
           <div className={"tc-blog__heading"}>
             {"\n"}
             <h2 id={"tc-blog-title"} data-tc-content-key={"h2-158"}>
-              {fieldFor(module,'heading',locale)?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:null}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'heading',locale)}/>:"Blog"}
             </h2>
             {"\n"}
             <p data-tc-content-key={"p-159"}>
-              {fieldFor(module,'description',locale)?<SimpleHtml html={fieldFor(module,'description',locale)}/>:null}
+              {module?.configured?<SimpleHtml html={fieldFor(module,'description',locale)}/>:"E-ticaret, mağaza yönetimi ve satış kanalları hakkında yazılar."}
             </p>
             {"\n"}
           </div>
