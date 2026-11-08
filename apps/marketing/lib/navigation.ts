@@ -1,7 +1,8 @@
 export type Localized=Record<string,string>;
 export type NavigationLink={id:string;label:Localized;url:string;enabled:boolean};
 export type NavigationGroup={id:string;area:string;title:Localized;links:NavigationLink[]};
-export type MenuNode={id:string;label:Localized;url:string;enabled:boolean;children:MenuNode[]};
+export type MenuFeatured={eyebrow:Localized;description:Localized;buttonLabel:Localized;buttonUrl:string};
+export type MenuNode={id:string;label:Localized;url:string;enabled:boolean;children:MenuNode[];featured?:MenuFeatured};
 export type MenuTree={header:MenuNode[];footer:MenuNode[]};
 export type Navigation={version:number;menus?:MenuTree;groups?:NavigationGroup[]};
 const API=(process.env.API_ORIGIN||'').replace(/\/$/,'');
