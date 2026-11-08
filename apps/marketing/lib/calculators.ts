@@ -31,7 +31,7 @@ export function commission(input:{
 }){
  const {price,rate,rateIncludesVat,commissionVat,shipping,productCost,other,units}=input;
  if(![price,rate,commissionVat,shipping,productCost,other,units,input.shippingCollected??0].every(x=>Number.isFinite(x))||
-  price<=0||units<1||units>100000||rate<0||rate>100||commissionVat<0||commissionVat>100||
+  price<=0||!Number.isInteger(units)||units<1||units>100000||rate<0||rate>100||commissionVat<0||commissionVat>100||
   Math.min(shipping,productCost,other,input.shippingCollected??0)<0)throw Error('invalid');
  // Amazon referral fees include customer-paid shipping in the charged selling total.
  const sale=(price+(input.shippingCollected??0))*units;
