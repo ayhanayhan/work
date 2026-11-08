@@ -30,7 +30,10 @@ async function main(){
  assert.ok(tools,'Tools menu must exist');
  const marketUrls=['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']
   .map(m=>'/araclar/'+m+'-komisyon-hesaplama');
- assert.deepEqual(tools.children.map((item:any)=>item.url),marketUrls);
+ const toolUrls=['/araclar/qr-kod-olusturucu','/araclar/kdv-hesaplama',
+  ...marketUrls,'/araclar/maas-hesaplama',
+  '/araclar/gumruk-vergisi-hesaplama','/araclar/desi-hesaplama'];
+ assert.deepEqual(tools.children.map((item:any)=>item.url),toolUrls);
  assert.ok(tools.children.every((item:any)=>item.enabled===false),'Unpublished calculators must be hidden');
 
  assert.ok(resources?.children.some((c:any)=>c.children.some((n:any)=>n.url==='/araclar')));
@@ -46,9 +49,9 @@ async function main(){
  assert.equal(originalCount(edited.menus.header)+originalCount(edited.menus.footer),before);
  const updated=await service.save({version:edited.version,menus:edited.menus});
  assert.equal(updated.version,1);
- assert.equal((await service.get()).menus.header[2].children[1].children[0].children.length,7);
- assert.equal(updated.menus.header[2].children[1].children[0].children[6].label.en,'Custom label');
- assert.equal((await service.publicNavigation()).menus.header[2].children[1].children[0].children[6].url,child.url);
+ assert.equal((await service.get()).menus.header[2].children[1].children[0].children.length,12);
+ assert.equal(updated.menus.header[2].children[1].children[0].children[11].label.en,'Custom label');
+ assert.equal((await service.publicNavigation()).menus.header[2].children[1].children[0].children[11].url,child.url);
  await assert.rejects(service.save({version:0,menus:edited.menus}),'Stale version must be rejected');
  const unsafe=structuredClone(updated.menus);
  unsafe.footer[0].children[0].url='javascript:alert(1)';
