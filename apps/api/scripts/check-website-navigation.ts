@@ -46,6 +46,15 @@ async function main(){
  deep.header[0].children[0].children[0].children.push({
   id:'too-deep',label:{tr:'Derin'},url:'/deep',enabled:true,children:[{id:'level-five',label:{tr:'Beşinci'},url:'/five',enabled:true,children:[]}]});
  await assert.rejects(service.save({version:1,menus:deep}),'Max nesting must be enforced');
- console.log('PASS: WordPress-style nested navigation, legacy migration, no link loss, locales, safe URLs, duplicate protection and version checks');
+ const custom=structuredClone(updated.menus);
+ const toolsAfter=custom.header.find((x:any)=>x.id==='nav-resources').children[1].children[0];
+ const deletedId=toolsAfter.children[0].id;
+ toolsAfter.children=toolsAfter.children.filter((x:any)=>x.id!==deletedId);
+ const customized=await service.save({version:1,menus:custom});
+ assert.equal(customized.version,2);
+ const reopened=await service.get();
+ assert.equal(reopened.menus.header[2].children[1].children[0].children.some((x:any)=>x.id===deletedId),false,
+  'Manual deletion must not be reinserted by migration on next read');
+ console.log('PASS: independent marketplace links, legacy preservation, user deletions, locales, safe URLs and nested menu validation');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
