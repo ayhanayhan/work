@@ -738,5 +738,55 @@
     "uk": "Ticarti",
     "id": "Ticarti",
     "vi": "Ticarti"
+  },
+  "QR Kod Oluşturucu": {
+    "en": "QR Code Generator",
+    "de": "QR-Code-Generator",
+    "ru": "Генератор QR-кодов",
+    "ar": "منشئ رمز QR",
+    "bg": "Генератор на QR кодове",
+    "uk": "Генератор QR-кодів",
+    "id": "Pembuat Kode QR",
+    "vi": "Trình tạo mã QR"
+  },
+  "KDV Hesaplama": {
+    "en": "VAT Calculator",
+    "de": "Mehrwertsteuerrechner",
+    "ru": "Калькулятор НДС",
+    "ar": "حاسبة ضريبة القيمة المضافة",
+    "bg": "Калкулатор за ДДС",
+    "uk": "Калькулятор ПДВ",
+    "id": "Kalkulator PPN",
+    "vi": "Tính thuế VAT"
+  },
+  "Net-Brüt Maaş Hesaplama": {
+    "en": "Net to Gross Salary Calculator",
+    "de": "Netto-Brutto-Gehaltsrechner",
+    "ru": "Калькулятор зарплаты нетто-брутто",
+    "ar": "حاسبة الراتب الصافي والإجمالي",
+    "bg": "Калкулатор нетна-брутна заплата",
+    "uk": "Калькулятор зарплати нетто-брутто",
+    "id": "Kalkulator Gaji Bersih-Kotor",
+    "vi": "Tính lương thực nhận và lương gộp"
+  },
+  "Gümrük Vergisi Hesaplama": {
+    "en": "Customs Duty Calculator",
+    "de": "Zollrechner",
+    "ru": "Калькулятор таможенных пошлин",
+    "ar": "حاسبة الرسوم الجمركية",
+    "bg": "Калкулатор за мита",
+    "uk": "Калькулятор мита",
+    "id": "Kalkulator Bea Masuk",
+    "vi": "Tính thuế nhập khẩu"
+  },
+  "Desi Hesaplama": {
+    "en": "Volumetric Weight Calculator",
+    "de": "Volumengewichtsrechner",
+    "ru": "Калькулятор объёмного веса",
+    "ar": "حاسبة الوزن الحجمي",
+    "bg": "Калкулатор за обемно тегло",
+    "uk": "Калькулятор об'ємної ваги",
+    "id": "Kalkulator Berat Volumetrik",
+    "vi": "Tính trọng lượng thể tích"
   }
 }
