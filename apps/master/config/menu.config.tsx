@@ -44,6 +44,7 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Anasayfa', path: '/website/home' },
       { title: 'Sayfa İçerikleri', path: '/website/pages' },
       { title: 'Araçlar', path: '/website/tools' },
+      { title: 'Menü Yönetimi', path: '/website/menus' },
       { title: 'Sayfalar', i18nKey: 'navigation.pages', path: '/content/pages' },
       { title: 'Yorumlar', i18nKey: 'navigation.reviews', path: '/content/reviews' },
       { title: 'Sorular', i18nKey: 'navigation.questions', path: '/content/questions' },
