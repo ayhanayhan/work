@@ -241,6 +241,30 @@ async function test(){
     'Saving English cannot overwrite Turkish homepage module copy');
   assert.equal((await svc.clearExistingFaqOnce()).alreadyCleared,true,'Editor reload cannot clear new FAQ entries');
   assert.equal((await svc.home()).modules.find(x=>x.id==='faq')!.items.length,2);
+  const beforeImproved=await svc.home();
+  const heroBefore=JSON.stringify(beforeImproved.modules.find(x=>x.id==='hero'));
+  const blogBefore=JSON.stringify(beforeImproved.modules.find(x=>x.id==='blog'));
+  const imported=await svc.importImprovedFaq();
+  assert.equal(imported.total,150,'Revised FAQ must create 30 questions per locale');
+  assert.equal(imported.added,150,'First revised import populates all locales');
+  const improvedHome=await svc.home();
+  const improvedFaq=improvedHome.modules.find(x=>x.id==='faq')!;
+  assert.equal(improvedFaq.items.length,150,'Five independent FAQ languages produce 150 records');
+  for(const locale of ['tr','en','de','ru','ar']){
+    const records=improvedFaq.items.filter(item=>item.id.startsWith('faq-locale-'+locale+'-'));
+    assert.equal(records.length,30,'Each FAQ locale must have 30 independent records: '+locale);
+    for(const item of records){
+      assert.ok((item.fields as any).question?.[locale]&&(item.fields as any).answer?.[locale],
+        'Both question and answer must be populated: '+locale);
+    }
+  }
+  assert.equal(JSON.stringify(improvedHome.modules.find(x=>x.id==='hero')),heroBefore,
+    'FAQ import cannot change Hero module');
+  assert.equal(JSON.stringify(improvedHome.modules.find(x=>x.id==='blog')),blogBefore,
+    'FAQ import cannot change Blog module');
+  const importedTwice=await svc.importImprovedFaq();
+  assert.equal(importedTwice.alreadyImported,true,'Reimport must not create duplicate data');
+  assert.equal((await svc.home()).modules.find(x=>x.id==='faq')!.items.length,150);
   console.log('PASS: five-language FAQ migration, one-time cleanup, independent locale save, unchanged other modules');
 
 }
