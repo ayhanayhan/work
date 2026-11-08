@@ -42,14 +42,14 @@ async function main(){
  assert.equal(page.faqs.length,1);
  assert.equal(page.fields.seoTitle,'KDV Hesaplama | Ticarti');
  assert.equal((await svc.publicDetail('qr-kod-olusturucu','tr')).title,'QR Kod Oluşturucu');
- saved={version:2,tools:initial.tools.map(x=>({...x,status:'DRAFT',fields:{...x.fields,title:{tr:x.fields.title.tr},calculatorTitle:{}}}))};
- assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,11,'Untouched drafts migrate to published');
- saved.tools[0].fields.description={tr:'Özel içerik henüz hazır değil'};
- assert.equal((await svc.snapshot()).tools[0].status,'DRAFT','Customized drafts must remain private');
  await assert.rejects(svc.save(updated),'Stale version must be rejected');
  const invalid=structuredClone(published);
  invalid.tools.find((x:any)=>x.id==='kdv-hesaplama').image='javascript:alert(1)';
  await assert.rejects(svc.save(invalid),'Unsafe asset URL must be rejected');
+ saved={version:2,tools:initial.tools.map(x=>({...x,status:'DRAFT',fields:{...x.fields,title:{tr:x.fields.title.tr},calculatorTitle:{}}}))};
+ assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,11,'Untouched drafts migrate to published');
+ saved.tools[0].fields.description={tr:'Özel içerik henüz hazır değil'};
+ assert.equal((await svc.snapshot()).tools[0].status,'DRAFT','Customized drafts must remain private');
  console.log('PASS: eleven published multilingual starter tool pages, protected custom drafts, SEO, data validation and version checks');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
