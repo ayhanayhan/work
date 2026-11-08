@@ -297,9 +297,11 @@ export class WebsiteService{
         return update?{
           ...old,enabled:update.enabled!==false,
           fields:mergeValues(old.fields,update.fields,ITEM_FIELDS[previous.id]||[]),
-          assets:{image:url(update.assets?.image??old.assets?.image),
-            logo:url(update.assets?.logo??old.assets?.logo)},
-          links:{href:link(update.links?.href??old.links?.href)},
+          assets:{
+            image:update.assets?.image===old.assets?.image?old.assets?.image||'':url(update.assets?.image??old.assets?.image),
+            logo:update.assets?.logo===old.assets?.logo?old.assets?.logo||'':url(update.assets?.logo??old.assets?.logo)
+          },
+          links:{href:update.links?.href===old.links?.href?old.links?.href||'':link(update.links?.href??old.links?.href)},
           storeId:str(update.storeId??old.storeId,90)
         }:old;
       });
