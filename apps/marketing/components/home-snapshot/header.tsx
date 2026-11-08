@@ -1,17 +1,8 @@
 import {HeaderPrimaryTree,HeaderMegaTree} from '@/components/navigation-tree';
-import MenuGroupItems from '@/components/navigation-links';
-import {groupFor,menuLabel,type Navigation} from '@/lib/navigation';
+import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
 export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
- const top=groupFor(navigation,'header-primary');
- const primary=(id:string,fallback:string,url:string)=>{
-  const item=top?.links?.find(x=>x.id===id);
-  return {enabled:item?.enabled!==false,label:menuLabel(item?.label,locale)||fallback,url:item?.url||url};
- };
- const solutions=primary('nav-solutions','Çözümler','#');
- const features=primary('nav-features','Özellikler','/paketler.html#tc-compare');
- const resources=primary('nav-resources','Kaynaklar','#');
  return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
     {"\n"}
