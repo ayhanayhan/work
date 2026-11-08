@@ -16,10 +16,12 @@ async function main(){
  for(const id of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']){
   const entry=initial.tools.find((x:any)=>x.id===id+'-komisyon-hesaplama');
   assert.ok(entry,'Missing marketplace tool '+id);
-  assert.equal(entry?.status,'DRAFT');
+  assert.equal(entry?.status,'PUBLISHED');
+  for(const locale of ['tr','en','de','ru','ar','bg','uk','id','vi'])assert.ok(entry?.fields.title[locale]);
  }
- assert.equal((await svc.publicList('tr')).length,0,'Draft tools cannot be indexed or visited');
- await assert.rejects(svc.publicDetail('kdv-hesaplama','tr'));
+ assert.equal((await svc.publicList('tr')).length,11);
+ assert.equal((await svc.publicList('vi')).length,11);
+ assert.equal((await svc.publicDetail('kdv-hesaplama','tr')).title,'KDV Hesaplama');
  const updated=structuredClone(initial);
  const target=updated.tools.find((x:any)=>x.id==='kdv-hesaplama');
  target.status='PUBLISHED';
@@ -31,19 +33,23 @@ async function main(){
  target.faqs=[{id:'faq-one',question:{tr:'KDV nedir?'},answer:{tr:'Katma değer vergisi.'}}];
  const published=await svc.save(updated);
  assert.equal(published.version,1);
- assert.equal((await svc.publicList('tr')).length,1);
- assert.equal((await svc.publicList('en')).length,1);
- assert.equal((await svc.publicList('de')).length,0,'Missing translation must not silently fall back');
+ assert.equal((await svc.publicList('tr')).length,11);
+ assert.equal((await svc.publicList('en')).length,11);
+ assert.equal((await svc.publicList('de')).length,11);
  const page=await svc.publicDetail('kdv-hesaplama','tr');
  assert.equal(page.title,'KDV Hesaplama');
  assert.equal(page.sections.length,1);
  assert.equal(page.faqs.length,1);
  assert.equal(page.fields.seoTitle,'KDV Hesaplama | Ticarti');
- await assert.rejects(svc.publicDetail('qr-kod-olusturucu','tr'));
+ assert.equal((await svc.publicDetail('qr-kod-olusturucu','tr')).title,'QR Kod Oluşturucu');
+ saved={version:2,tools:initial.tools.map(x=>({...x,status:'DRAFT',fields:{...x.fields,title:{tr:x.fields.title.tr},calculatorTitle:{}}}))};
+ assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,11,'Untouched drafts migrate to published');
+ saved.tools[0].fields.description={tr:'Özel içerik henüz hazır değil'};
+ assert.equal((await svc.snapshot()).tools[0].status,'DRAFT','Customized drafts must remain private');
  await assert.rejects(svc.save(updated),'Stale version must be rejected');
  const invalid=structuredClone(published);
  invalid.tools.find((x:any)=>x.id==='kdv-hesaplama').image='javascript:alert(1)';
  await assert.rejects(svc.save(invalid),'Unsafe asset URL must be rejected');
- console.log('PASS: tools CMS eleven independent records, drafts hidden, locale isolation, sections/FAQs/SEO, version conflicts and URL validation');
+ console.log('PASS: eleven published multilingual starter tool pages, protected custom drafts, SEO, data validation and version checks');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
