@@ -744,6 +744,22 @@ export default function HeaderSnapshot(){return (
                     {"\n"}
                     <div className={"tc-ui-links"}>
                       {"\n"}
+                      <a className={"tc-ui-link-item"} href={"/araclar"}>
+                        {"\n"}
+                        <span>
+                          {"\n"}
+                          <span className={"tc-ui-link-head"}>
+                            {"\n"}
+                            <span className={"tc-ui-link-title"}>
+                              {"Ücretsiz araçlar ve hesaplayıcılar"}
+                            </span>
+                            {"\n"}
+                          </span>
+                          {"\n"}
+                        </span>
+                        {"\n"}
+                      </a>
+                      {"\n"}
                       <a className={"tc-ui-link-item"} href={"/paketler.html#tc-faq"}>
                         {"\n"}
                         <span>
