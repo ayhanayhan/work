@@ -49,7 +49,7 @@ export function BlogPhoneCta({slug,locale}:{slug:string;locale:string}){
   if(!consent)return;
   setBusy(true);
   try{
-   const res=await fetch('/api/v1/public/website/blog-callback',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({dial,phone:digits,consent,slug})});
+   const res=await fetch('/api/v1/public/contact/callback',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({dial,phone:digits,consent,slug,locale,source:'BLOG'})});
    if(!res.ok)throw Error();
    setPhone('');setConsent(false);setStatus(t.received);
   }catch{setStatus(t.error)}finally{setBusy(false)}
