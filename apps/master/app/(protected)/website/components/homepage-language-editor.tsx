@@ -1,7 +1,7 @@
 'use client';
 
-import {useCallback,useEffect,useRef,useState} from 'react';
-import {ArrowDown,ArrowUp,GripVertical,LoaderCircle,Plus,RefreshCw,Save,Trash2,Upload} from 'lucide-react';
+import {useCallback,useEffect,useState} from 'react';
+import {ArrowDown,ArrowUp,GripVertical,LoaderCircle,Plus,RefreshCw,Save,Trash2} from 'lucide-react';
 import {useMasterSession} from '@/app/components/MasterSession';
 import {Container} from '@/components/common/container';
 import {Button} from '@/components/ui/button';
@@ -61,7 +61,6 @@ export default function HomepageEditor(){
  const [dragged,setDragged]=useState<string|null>(null);
  const [blogCategories,setBlogCategories]=useState<Array<{id:string;isActive:boolean;translations:Record<string,{title?:string}>}>>([]);
  const [faqDrag,setFaqDrag]=useState<string|null>(null);
- const initialized=useRef(false);
  const activeLocale=lang||locales.find(x=>x.isDefault)?.locale||locales[0]?.locale||'tr';
  useEffect(()=>{
   if(locales.length)setLang(previous=>locales.some(x=>x.locale===previous)?previous:
@@ -71,13 +70,6 @@ export default function HomepageEditor(){
   if(restoring)return;
   setLoading(true);setError('');
   try{
-   // The requested cleanup is performed once, in an admin-only transaction.
-   // Its database marker ensures future page visits never erase new FAQ entries.
-   if(!initialized.current){
-    initialized.current=true;
-    try{await request('/superadmin/website/faq/clear-existing-once',{method:'POST',body:'{}'});}
-    catch(error){initialized.current=false;throw error;}
-   }
    const home=await request('/superadmin/website/home') as Snapshot;
    setSaved(home);setDraft(deepCopy(home));
    try{
@@ -142,20 +134,16 @@ export default function HomepageEditor(){
   }catch(e:any){setError(e?.message||'Kaydedilemedi.')}
   finally{setSaving(false)}
  };
- const importFile=async(file:File)=>{
-  if(!saved||saving)return;
+ const addAllFaq=async()=>{
+  if(saving||!saved)return;
+  if(changed){setError('Önce bu dildeki değişiklikleri kaydet.');return;}
   setSaving(true);setError('');setMessage('');
   try{
-   const raw=JSON.parse(await file.text());
-   const modules=raw?.modules;
-   if(!Array.isArray(modules)||modules.length!==1||modules[0]?.id!=='faq')
-    throw Error('Bu ekranda yalnızca SSS içe aktarma JSON dosyası desteklenir.');
-   const result=await request('/superadmin/website/home-import',{
-    method:'PATCH',body:JSON.stringify({version:saved.version,modules})
-   }) as Snapshot;
-   setSaved(result);setDraft(deepCopy(result));
-   setMessage('SSS kayıtları içe aktarıldı. Her dili yukarıdan seçerek düzenleyebilirsiniz.');
-  }catch(e:any){setError(e?.message||'İçe aktarma başarısız.')}
+   const result=await request('/superadmin/website/faq/import-improved',{method:'POST',body:'{}'});
+   const home=await request('/superadmin/website/home') as Snapshot;
+   setSaved(home);setDraft(deepCopy(home));
+   setMessage(result.alreadyImported?'Sorular zaten ekli.':'5 dilde 30’ar soru ve cevap kaydedildi.');
+  }catch(e:any){setError(e?.message||'Sorular eklenemedi.')}
   finally{setSaving(false)}
  };
  return <Container className="grid gap-5 pb-12">
@@ -297,11 +285,9 @@ export default function HomepageEditor(){
        </div>
       </details>:null}
       {m.id==='faq'?<div className="flex flex-wrap items-center justify-between gap-2">
-       <label className="cursor-pointer text-xs underline">SSS JSON içe aktar
-        <input type="file" accept=".json,application/json" hidden
-         onChange={e=>{const f=e.target.files?.[0];e.target.value='';if(f)void importFile(f)}}/>
-       </label>
-       <span className="text-xs text-muted-foreground">Soruları dil bazında ekleyip sıralayabilirsin.</span>
+       <Button size="sm" variant="outline" disabled={saving} onClick={()=>void addAllFaq()}>
+        <Plus className="size-4"/>5 Dilde Soruları Ekle
+       </Button>
       </div>:null}
       {m.id==='blog'?<div className="grid gap-2 rounded-md border p-3">
        <b className="text-sm">Anasayfa blog kategorileri</b>
