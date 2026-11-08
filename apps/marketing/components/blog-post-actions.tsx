@@ -44,7 +44,7 @@ export function BlogPhoneCta({slug,locale}:{slug:string;locale:string}){
  const [dial,setDial]=useState('+90'),[phone,setPhone]=useState(''),[consent,setConsent]=useState(false),[status,setStatus]=useState(''),[busy,setBusy]=useState(false);
  const send=async(e:FormEvent)=>{
   e.preventDefault();setStatus('');
-  const digits=phone.replace(/[\s()\-]/g,'');
+  const digits=phone.replace(/[\s()\-]/g,'').replace(/^0(?=\d)/,'');
   if(!/^\d{7,15}$/.test(digits)){setStatus(t.phoneError);return;}
   if(!consent)return;
   setBusy(true);
