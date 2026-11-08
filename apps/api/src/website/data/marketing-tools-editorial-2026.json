@@ -1,0 +1,2029 @@
+{
+  "version": 1,
+  "data": [
+    {
+      "id": "qr-kod-olusturucu",
+      "fields": {
+        "subtitle": {
+          "tr": "Bağlantı veya metin için ücretsiz, taranabilir QR kod üretin ve SVG indirin.",
+          "en": "Generate a private QR code from text or URL and download the vector SVG.",
+          "de": "QR-Code-Generator | Ticarti",
+          "ru": "Генератор QR-кодов | Ticarti",
+          "ar": "منشئ رمز QR | Ticarti",
+          "bg": "Генератор на QR кодове | Ticarti",
+          "uk": "Генератор QR-кодів | Ticarti",
+          "id": "Pembuat Kode QR | Ticarti",
+          "vi": "Trình tạo mã QR | Ticarti"
+        },
+        "intro": {
+          "tr": "Bağlantı veya metin için ücretsiz, taranabilir QR kod üretin ve SVG indirin.",
+          "en": "Generate a private QR code from text or URL and download the vector SVG.",
+          "de": "QR-Code-Generator | Ticarti",
+          "ru": "Генератор QR-кодов | Ticarti",
+          "ar": "منشئ رمز QR | Ticarti",
+          "bg": "Генератор на QR кодове | Ticarti",
+          "uk": "Генератор QR-кодів | Ticarti",
+          "id": "Pembuat Kode QR | Ticarti",
+          "vi": "Trình tạo mã QR | Ticarti"
+        },
+        "description": {
+          "tr": "QR kodu, telefon kamerasıyla okunabilen iki boyutlu barkoddur. Bu araç, metninizi haricî QR servisine göndermeden tarayıcınızda işler. Oluşturulan SVG dosyası baskı için çözünürlükten bağımsızdır.",
+          "en": "QR codes encode a URL or text in a two-dimensional matrix. Generation happens locally in your browser and does not transmit your content to an external QR provider.",
+          "de": "QR-Code-Generator. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Генератор QR-кодов. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "منشئ رمز QR. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Генератор на QR кодове. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Генератор QR-кодів. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Pembuat Kode QR. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Trình tạo mã QR. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Metin ya da URL'yi girin, QR oluşturun ve SVG dosyasını indirin. Yayınlamadan önce farklı telefonlarla test edin.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "QR Kod Oluşturucu",
+          "en": "QR Code Generator",
+          "de": "QR-Code-Generator",
+          "ru": "Генератор QR-кодов",
+          "ar": "منشئ رمز QR",
+          "bg": "Генератор на QR кодове",
+          "uk": "Генератор QR-кодів",
+          "id": "Pembuat Kode QR",
+          "vi": "Trình tạo mã QR"
+        },
+        "calculatorTitle": {
+          "tr": "QR Kod Oluşturucu",
+          "en": "QR Code Generator",
+          "de": "QR-Code-Generator",
+          "ru": "Генератор QR-кодов",
+          "ar": "منشئ رمز QR",
+          "bg": "Генератор на QR кодове",
+          "uk": "Генератор QR-кодів",
+          "id": "Pembuat Kode QR",
+          "vi": "Trình tạo mã QR"
+        },
+        "seoTitle": {
+          "tr": "QR Kod Oluşturucu 2026 | Ticarti",
+          "en": "QR Code Generator 2026 | Ticarti",
+          "de": "QR-Code-Generator 2026 | Ticarti",
+          "ru": "Генератор QR-кодов 2026 | Ticarti",
+          "ar": "منشئ رمز QR 2026 | Ticarti",
+          "bg": "Генератор на QR кодове 2026 | Ticarti",
+          "uk": "Генератор QR-кодів 2026 | Ticarti",
+          "id": "Pembuat Kode QR 2026 | Ticarti",
+          "vi": "Trình tạo mã QR 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Bağlantı veya metin için ücretsiz, taranabilir QR kod üretin ve SVG indirin.",
+          "en": "Generate a private QR code from text or URL and download the vector SVG.",
+          "de": "QR-Code-Generator. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Генератор QR-кодов. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "منشئ رمز QR. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Генератор на QR кодове. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Генератор QR-кодів. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Pembuat Kode QR. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Trình tạo mã QR. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "QR kod süresi dolar mı?",
+            "en": "How is QR Kod Oluşturucu calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "QR simgesi süreli değildir, ancak kodladığı internet adresinin çalışmaya devam etmesi gerekir.",
+            "en": "QR codes encode a URL or text in a two-dimensional matrix. Generation happens locally in your browser and does not transmit your content to an external QR provider.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "kdv-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "KDV dahil ve hariç tutarı, vergi matrahını ve KDV tutarını hesaplayın.",
+          "en": "Calculate Turkish VAT included and excluded amounts.",
+          "de": "Mehrwertsteuerrechner | Ticarti",
+          "ru": "Калькулятор НДС | Ticarti",
+          "ar": "حاسبة ضريبة القيمة المضافة | Ticarti",
+          "bg": "Калкулатор за ДДС | Ticarti",
+          "uk": "Калькулятор ПДВ | Ticarti",
+          "id": "Kalkulator PPN | Ticarti",
+          "vi": "Tính thuế VAT | Ticarti"
+        },
+        "intro": {
+          "tr": "KDV dahil ve hariç tutarı, vergi matrahını ve KDV tutarını hesaplayın.",
+          "en": "Calculate Turkish VAT included and excluded amounts.",
+          "de": "Mehrwertsteuerrechner | Ticarti",
+          "ru": "Калькулятор НДС | Ticarti",
+          "ar": "حاسبة ضريبة القيمة المضافة | Ticarti",
+          "bg": "Калкулатор за ДДС | Ticarti",
+          "uk": "Калькулятор ПДВ | Ticarti",
+          "id": "Kalkulator PPN | Ticarti",
+          "vi": "Tính thuế VAT | Ticarti"
+        },
+        "description": {
+          "tr": "Türkiye'de genel KDV oranı %20'dir; uygun ürün ve hizmetlerde %10 ve %1 indirimli oranlar uygulanır. Ürünün doğru KDV oranı ayrıca doğrulanmalıdır. KDV dahil bedelden vergiyi ayrıştırmak için tutar 1 + KDV oranına bölünür.",
+          "en": "The general Turkish VAT rate is 20%, with 10% and 1% reduced rates for specified goods and services. Choose your applicable rate; the calculation shows net, tax and gross values.",
+          "de": "Mehrwertsteuerrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор НДС. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة ضريبة القيمة المضافة. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за ДДС. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор ПДВ. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator PPN. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính thuế VAT. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Tutarı ve oranı seçin. KDV dahil seçeneğini işaretleyerek matrah, vergi ve toplamı hesaplayın.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "1.000 TL KDV hariç satış ve %20 oran için KDV 200 TL, toplam 1.200 TL olur."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "KDV Hesaplama",
+          "en": "VAT Calculator",
+          "de": "Mehrwertsteuerrechner",
+          "ru": "Калькулятор НДС",
+          "ar": "حاسبة ضريبة القيمة المضافة",
+          "bg": "Калкулатор за ДДС",
+          "uk": "Калькулятор ПДВ",
+          "id": "Kalkulator PPN",
+          "vi": "Tính thuế VAT"
+        },
+        "calculatorTitle": {
+          "tr": "KDV Hesaplama",
+          "en": "VAT Calculator",
+          "de": "Mehrwertsteuerrechner",
+          "ru": "Калькулятор НДС",
+          "ar": "حاسبة ضريبة القيمة المضافة",
+          "bg": "Калкулатор за ДДС",
+          "uk": "Калькулятор ПДВ",
+          "id": "Kalkulator PPN",
+          "vi": "Tính thuế VAT"
+        },
+        "seoTitle": {
+          "tr": "KDV Hesaplama 2026 | Ticarti",
+          "en": "VAT Calculator 2026 | Ticarti",
+          "de": "Mehrwertsteuerrechner 2026 | Ticarti",
+          "ru": "Калькулятор НДС 2026 | Ticarti",
+          "ar": "حاسبة ضريبة القيمة المضافة 2026 | Ticarti",
+          "bg": "Калкулатор за ДДС 2026 | Ticarti",
+          "uk": "Калькулятор ПДВ 2026 | Ticarti",
+          "id": "Kalkulator PPN 2026 | Ticarti",
+          "vi": "Tính thuế VAT 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "KDV dahil ve hariç tutarı, vergi matrahını ve KDV tutarını hesaplayın.",
+          "en": "Calculate Turkish VAT included and excluded amounts.",
+          "de": "Mehrwertsteuerrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор НДС. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة ضريبة القيمة المضافة. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за ДДС. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор ПДВ. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator PPN. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính thuế VAT. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "KDV dahil tutardan vergi nasıl bulunur?",
+            "en": "How is KDV Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "KDV hariç matrah = KDV dahil bedel / (1 + KDV oranı / 100).",
+            "en": "The general Turkish VAT rate is 20%, with 10% and 1% reduced rates for specified goods and services. Choose your applicable rate; the calculation shows net, tax and gross values.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "trendyol-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "Trendyol ürün komisyonunu ve satıştan geriye kalan tutarı hesaplayın.",
+          "en": "Calculate Trendyol commission and estimated remaining revenue.",
+          "de": "Trendyol-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Trendyol | Ticarti",
+          "ar": "حاسبة عمولة Trendyol | Ticarti",
+          "bg": "Калкулатор за комисиона на Trendyol | Ticarti",
+          "uk": "Калькулятор комісії Trendyol | Ticarti",
+          "id": "Kalkulator komisi Trendyol | Ticarti",
+          "vi": "Tính hoa hồng Trendyol | Ticarti"
+        },
+        "intro": {
+          "tr": "Trendyol ürün komisyonunu ve satıştan geriye kalan tutarı hesaplayın.",
+          "en": "Calculate Trendyol commission and estimated remaining revenue.",
+          "de": "Trendyol-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Trendyol | Ticarti",
+          "ar": "حاسبة عمولة Trendyol | Ticarti",
+          "bg": "Калкулатор за комисиона на Trendyol | Ticarti",
+          "uk": "Калькулятор комісії Trendyol | Ticarti",
+          "id": "Kalkulator komisi Trendyol | Ticarti",
+          "vi": "Tính hoa hồng Trendyol | Ticarti"
+        },
+        "description": {
+          "tr": "Trendyol komisyon oranı satıcı, ürün kategorisi ve kampanyaya göre değişebilir. Satıcı panelindeki gerçek sözleşme oranınızı girerek komisyonu, varsa komisyon KDV'sini, kargo ve ürün maliyetini ayrı görün. Satış KDV'si ve stopaj ayrıca değerlendirilmelidir.",
+          "en": "Trendyol referral fees vary by category, campaign and seller agreement. Use your actual contracted rate to estimate the fee, fee VAT, shipping and product costs.",
+          "de": "Trendyol-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Trendyol. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Trendyol. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Trendyol. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Trendyol. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Trendyol. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Trendyol. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Satış fiyatını, sipariş adedini, sözleşme komisyonunu ve giderleri girin. KDV dahil oran kullanıyorsanız ilgili seçeneği işaretleyin.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Trendyol Komisyon Hesaplama",
+          "en": "Trendyol Commission Calculator",
+          "de": "Trendyol-Provisionsrechner",
+          "ru": "Калькулятор комиссии Trendyol",
+          "ar": "حاسبة عمولة Trendyol",
+          "bg": "Калкулатор за комисиона на Trendyol",
+          "uk": "Калькулятор комісії Trendyol",
+          "id": "Kalkulator komisi Trendyol",
+          "vi": "Tính hoa hồng Trendyol"
+        },
+        "calculatorTitle": {
+          "tr": "Trendyol Komisyon Hesaplama",
+          "en": "Trendyol Commission Calculator",
+          "de": "Trendyol-Provisionsrechner",
+          "ru": "Калькулятор комиссии Trendyol",
+          "ar": "حاسبة عمولة Trendyol",
+          "bg": "Калкулатор за комисиона на Trendyol",
+          "uk": "Калькулятор комісії Trendyol",
+          "id": "Kalkulator komisi Trendyol",
+          "vi": "Tính hoa hồng Trendyol"
+        },
+        "seoTitle": {
+          "tr": "Trendyol Komisyon Hesaplama 2026 | Ticarti",
+          "en": "Trendyol Commission Calculator 2026 | Ticarti",
+          "de": "Trendyol-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии Trendyol 2026 | Ticarti",
+          "ar": "حاسبة عمولة Trendyol 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на Trendyol 2026 | Ticarti",
+          "uk": "Калькулятор комісії Trendyol 2026 | Ticarti",
+          "id": "Kalkulator komisi Trendyol 2026 | Ticarti",
+          "vi": "Tính hoa hồng Trendyol 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Trendyol ürün komisyonunu ve satıştan geriye kalan tutarı hesaplayın.",
+          "en": "Calculate Trendyol commission and estimated remaining revenue.",
+          "de": "Trendyol-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Trendyol. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Trendyol. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Trendyol. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Trendyol. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Trendyol. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Trendyol. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Trendyol komisyonu sabit mi?",
+            "en": "How is Trendyol Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Hayır. Kategori ve satıcı koşullarına göre değişebilir. Geçerli oran satıcı panelinizde bulunur.",
+            "en": "Trendyol referral fees vary by category, campaign and seller agreement. Use your actual contracted rate to estimate the fee, fee VAT, shipping and product costs.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "amazon-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "Amazon Türkiye kategori komisyonunu ve diğer satış giderlerini hesaplayın.",
+          "en": "Calculate Amazon Türkiye referral fees by product category.",
+          "de": "Amazon-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Amazon | Ticarti",
+          "ar": "حاسبة عمولة Amazon | Ticarti",
+          "bg": "Калкулатор за комисиона на Amazon | Ticarti",
+          "uk": "Калькулятор комісії Amazon | Ticarti",
+          "id": "Kalkulator komisi Amazon | Ticarti",
+          "vi": "Tính hoa hồng Amazon | Ticarti"
+        },
+        "intro": {
+          "tr": "Amazon Türkiye kategori komisyonunu ve diğer satış giderlerini hesaplayın.",
+          "en": "Calculate Amazon Türkiye referral fees by product category.",
+          "de": "Amazon-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Amazon | Ticarti",
+          "ar": "حاسبة عمولة Amazon | Ticarti",
+          "bg": "Калкулатор за комисиона на Amazon | Ticarti",
+          "uk": "Калькулятор комісії Amazon | Ticarti",
+          "id": "Kalkulator komisi Amazon | Ticarti",
+          "vi": "Tính hoa hồng Amazon | Ticarti"
+        },
+        "description": {
+          "tr": "Amazon Türkiye resmî ücret tablosunda komisyonlar kategoriye göre değişir. Giyim gibi belirli ürünlerde standart oran tanımlıdır; bazı kategorilerde ürün fiyatına bağlı kademeler ve kampanyalı oranlar bulunur. Kategori seçip oranı gerektiğinde elle düzeltin.",
+          "en": "Amazon publishes an official fee schedule. Rates depend on category, price tiers and promotions. Choose a listed category or enter your applicable contractual rate.",
+          "de": "Amazon-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Amazon. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Amazon. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Amazon. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Amazon. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Amazon. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Amazon. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Amazon kategorisini veya kendi geçerli oranınızı seçin; satış tutarı, kargo ve diğer giderleri yazın.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Amazon Komisyon Hesaplama",
+          "en": "Amazon Commission Calculator",
+          "de": "Amazon-Provisionsrechner",
+          "ru": "Калькулятор комиссии Amazon",
+          "ar": "حاسبة عمولة Amazon",
+          "bg": "Калкулатор за комисиона на Amazon",
+          "uk": "Калькулятор комісії Amazon",
+          "id": "Kalkulator komisi Amazon",
+          "vi": "Tính hoa hồng Amazon"
+        },
+        "calculatorTitle": {
+          "tr": "Amazon Komisyon Hesaplama",
+          "en": "Amazon Commission Calculator",
+          "de": "Amazon-Provisionsrechner",
+          "ru": "Калькулятор комиссии Amazon",
+          "ar": "حاسبة عمولة Amazon",
+          "bg": "Калкулатор за комисиона на Amazon",
+          "uk": "Калькулятор комісії Amazon",
+          "id": "Kalkulator komisi Amazon",
+          "vi": "Tính hoa hồng Amazon"
+        },
+        "seoTitle": {
+          "tr": "Amazon Komisyon Hesaplama 2026 | Ticarti",
+          "en": "Amazon Commission Calculator 2026 | Ticarti",
+          "de": "Amazon-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии Amazon 2026 | Ticarti",
+          "ar": "حاسبة عمولة Amazon 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на Amazon 2026 | Ticarti",
+          "uk": "Калькулятор комісії Amazon 2026 | Ticarti",
+          "id": "Kalkulator komisi Amazon 2026 | Ticarti",
+          "vi": "Tính hoa hồng Amazon 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Amazon Türkiye kategori komisyonunu ve diğer satış giderlerini hesaplayın.",
+          "en": "Calculate Amazon Türkiye referral fees by product category.",
+          "de": "Amazon-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Amazon. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Amazon. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Amazon. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Amazon. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Amazon. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Amazon. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Amazon komisyonu hangi tutar üzerinden hesaplanır?",
+            "en": "How is Amazon Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Amazon resmî açıklamalarında alıcıdan tahsil edilen toplam satış bedelinin, uygun kargo dâhil, esas olabileceği belirtilir.",
+            "en": "Amazon publishes an official fee schedule. Rates depend on category, price tiers and promotions. Choose a listed category or enter your applicable contractual rate.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "hepsiburada-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "Hepsiburada komisyon kesintisini ve sipariş giderlerini hesaplayın.",
+          "en": "Calculate Hepsiburada commissions and seller costs.",
+          "de": "Hepsiburada-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Hepsiburada | Ticarti",
+          "ar": "حاسبة عمولة Hepsiburada | Ticarti",
+          "bg": "Калкулатор за комисиона на Hepsiburada | Ticarti",
+          "uk": "Калькулятор комісії Hepsiburada | Ticarti",
+          "id": "Kalkulator komisi Hepsiburada | Ticarti",
+          "vi": "Tính hoa hồng Hepsiburada | Ticarti"
+        },
+        "intro": {
+          "tr": "Hepsiburada komisyon kesintisini ve sipariş giderlerini hesaplayın.",
+          "en": "Calculate Hepsiburada commissions and seller costs.",
+          "de": "Hepsiburada-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Hepsiburada | Ticarti",
+          "ar": "حاسبة عمولة Hepsiburada | Ticarti",
+          "bg": "Калкулатор за комисиона на Hepsiburada | Ticarti",
+          "uk": "Калькулятор комісії Hepsiburada | Ticarti",
+          "id": "Kalkulator komisi Hepsiburada | Ticarti",
+          "vi": "Tính hoa hồng Hepsiburada | Ticarti"
+        },
+        "description": {
+          "tr": "Hepsiburada satış komisyonları ürün alt kategorisine, sözleşmeye ve kampanyaya göre değişir. Gerçek oranı Hepsiburada İş Ortağım panelinden alarak maliyetinizi hesaplayın. Bu tutar resmî hakediş belgesinin yerine geçmez.",
+          "en": "Hepsiburada selling fees depend on the product category and your agreement. Enter your verified commission rate, VAT on the fee and unit costs.",
+          "de": "Hepsiburada-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Hepsiburada. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Hepsiburada. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Hepsiburada. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Hepsiburada. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Hepsiburada. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Hepsiburada. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Satış fiyatı, komisyon, komisyon KDV'si ve maliyetleri girerek kalan tutarı görün.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Hepsiburada Komisyon Hesaplama",
+          "en": "Hepsiburada Commission Calculator",
+          "de": "Hepsiburada-Provisionsrechner",
+          "ru": "Калькулятор комиссии Hepsiburada",
+          "ar": "حاسبة عمولة Hepsiburada",
+          "bg": "Калкулатор за комисиона на Hepsiburada",
+          "uk": "Калькулятор комісії Hepsiburada",
+          "id": "Kalkulator komisi Hepsiburada",
+          "vi": "Tính hoa hồng Hepsiburada"
+        },
+        "calculatorTitle": {
+          "tr": "Hepsiburada Komisyon Hesaplama",
+          "en": "Hepsiburada Commission Calculator",
+          "de": "Hepsiburada-Provisionsrechner",
+          "ru": "Калькулятор комиссии Hepsiburada",
+          "ar": "حاسبة عمولة Hepsiburada",
+          "bg": "Калкулатор за комисиона на Hepsiburada",
+          "uk": "Калькулятор комісії Hepsiburada",
+          "id": "Kalkulator komisi Hepsiburada",
+          "vi": "Tính hoa hồng Hepsiburada"
+        },
+        "seoTitle": {
+          "tr": "Hepsiburada Komisyon Hesaplama 2026 | Ticarti",
+          "en": "Hepsiburada Commission Calculator 2026 | Ticarti",
+          "de": "Hepsiburada-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии Hepsiburada 2026 | Ticarti",
+          "ar": "حاسبة عمولة Hepsiburada 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на Hepsiburada 2026 | Ticarti",
+          "uk": "Калькулятор комісії Hepsiburada 2026 | Ticarti",
+          "id": "Kalkulator komisi Hepsiburada 2026 | Ticarti",
+          "vi": "Tính hoa hồng Hepsiburada 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Hepsiburada komisyon kesintisini ve sipariş giderlerini hesaplayın.",
+          "en": "Calculate Hepsiburada commissions and seller costs.",
+          "de": "Hepsiburada-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Hepsiburada. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Hepsiburada. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Hepsiburada. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Hepsiburada. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Hepsiburada. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Hepsiburada. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Hepsiburada komisyonu her kategoride aynı mı?",
+            "en": "How is Hepsiburada Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Hayır; kategoriye ve sözleşmeye göre değişebilir. En güncel oranı satıcı panelinizden kontrol edin.",
+            "en": "Hepsiburada selling fees depend on the product category and your agreement. Enter your verified commission rate, VAT on the fee and unit costs.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "n11-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "n11 satıcı komisyonunu, KDV'sini ve tahmini kalan tutarı hesaplayın.",
+          "en": "Calculate n11 seller commission and cost deductions.",
+          "de": "n11-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии n11 | Ticarti",
+          "ar": "حاسبة عمولة n11 | Ticarti",
+          "bg": "Калкулатор за комисиона на n11 | Ticarti",
+          "uk": "Калькулятор комісії n11 | Ticarti",
+          "id": "Kalkulator komisi n11 | Ticarti",
+          "vi": "Tính hoa hồng n11 | Ticarti"
+        },
+        "intro": {
+          "tr": "n11 satıcı komisyonunu, KDV'sini ve tahmini kalan tutarı hesaplayın.",
+          "en": "Calculate n11 seller commission and cost deductions.",
+          "de": "n11-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии n11 | Ticarti",
+          "ar": "حاسبة عمولة n11 | Ticarti",
+          "bg": "Калкулатор за комисиона на n11 | Ticarti",
+          "uk": "Калькулятор комісії n11 | Ticarti",
+          "id": "Kalkulator komisi n11 | Ticarti",
+          "vi": "Tính hoa hồng n11 | Ticarti"
+        },
+        "description": {
+          "tr": "n11 komisyon oranları satıcı koşulları ve ürün kategorisine göre değişebilir. Güncel anlaşma oranınızı kullanarak komisyon, komisyon KDV'si, ürün maliyeti ve gönderim giderlerini ayrı ayrı hesaplayabilirsiniz.",
+          "en": "n11 referral rates vary by category and contract. Use your current seller rate to see commission, tax on the fee and estimated remainder.",
+          "de": "n11-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии n11. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة n11. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на n11. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії n11. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi n11. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng n11. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Satış tutarını, komisyon oranını, adedi ve masrafları girin. Komisyon oranı KDV dahilse seçeneği işaretleyin.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "n11 Komisyon Hesaplama",
+          "en": "n11 Commission Calculator",
+          "de": "n11-Provisionsrechner",
+          "ru": "Калькулятор комиссии n11",
+          "ar": "حاسبة عمولة n11",
+          "bg": "Калкулатор за комисиона на n11",
+          "uk": "Калькулятор комісії n11",
+          "id": "Kalkulator komisi n11",
+          "vi": "Tính hoa hồng n11"
+        },
+        "calculatorTitle": {
+          "tr": "n11 Komisyon Hesaplama",
+          "en": "n11 Commission Calculator",
+          "de": "n11-Provisionsrechner",
+          "ru": "Калькулятор комиссии n11",
+          "ar": "حاسبة عمولة n11",
+          "bg": "Калкулатор за комисиона на n11",
+          "uk": "Калькулятор комісії n11",
+          "id": "Kalkulator komisi n11",
+          "vi": "Tính hoa hồng n11"
+        },
+        "seoTitle": {
+          "tr": "n11 Komisyon Hesaplama 2026 | Ticarti",
+          "en": "n11 Commission Calculator 2026 | Ticarti",
+          "de": "n11-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии n11 2026 | Ticarti",
+          "ar": "حاسبة عمولة n11 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на n11 2026 | Ticarti",
+          "uk": "Калькулятор комісії n11 2026 | Ticarti",
+          "id": "Kalkulator komisi n11 2026 | Ticarti",
+          "vi": "Tính hoa hồng n11 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "n11 satıcı komisyonunu, KDV'sini ve tahmini kalan tutarı hesaplayın.",
+          "en": "Calculate n11 seller commission and cost deductions.",
+          "de": "n11-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии n11. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة n11. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на n11. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії n11. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi n11. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng n11. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "n11 komisyonuna KDV eklenir mi?",
+            "en": "How is n11 Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Komisyonun KDV dahil veya hariç tanımlanması sözleşmeye bağlıdır. Oran türünü kontrol ederek seçin.",
+            "en": "n11 referral rates vary by category and contract. Use your current seller rate to see commission, tax on the fee and estimated remainder.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "ciceksepeti-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "ÇiçekSepeti kategori komisyonu ve sipariş maliyetini hesaplayın.",
+          "en": "Calculate ÇiçekSepeti commissions and shipping deductions.",
+          "de": "ÇiçekSepeti-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии ÇiçekSepeti | Ticarti",
+          "ar": "حاسبة عمولة ÇiçekSepeti | Ticarti",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti | Ticarti",
+          "uk": "Калькулятор комісії ÇiçekSepeti | Ticarti",
+          "id": "Kalkulator komisi ÇiçekSepeti | Ticarti",
+          "vi": "Tính hoa hồng ÇiçekSepeti | Ticarti"
+        },
+        "intro": {
+          "tr": "ÇiçekSepeti kategori komisyonu ve sipariş maliyetini hesaplayın.",
+          "en": "Calculate ÇiçekSepeti commissions and shipping deductions.",
+          "de": "ÇiçekSepeti-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии ÇiçekSepeti | Ticarti",
+          "ar": "حاسبة عمولة ÇiçekSepeti | Ticarti",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti | Ticarti",
+          "uk": "Калькулятор комісії ÇiçekSepeti | Ticarti",
+          "id": "Kalkulator komisi ÇiçekSepeti | Ticarti",
+          "vi": "Tính hoa hồng ÇiçekSepeti | Ticarti"
+        },
+        "description": {
+          "tr": "ÇiçekSepeti çiçek, hediye, aksesuar ve diğer ürün kategorilerinde farklı komisyonlar uygulayabilir. Sözleşmenizdeki oranı girerek komisyon ve komisyon KDV'sini ürün/kargo maliyetiyle birlikte hesaplayın.",
+          "en": "ÇiçekSepeti seller fees vary by flowers, gifts and other categories. Enter your contractual rate and fulfillment costs to estimate the remaining amount.",
+          "de": "ÇiçekSepeti-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии ÇiçekSepeti. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة ÇiçekSepeti. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії ÇiçekSepeti. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi ÇiçekSepeti. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng ÇiçekSepeti. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Ürün fiyatı ve satıcı panelindeki komisyon yüzdesini girin, paketleme ve diğer giderleri ekleyin.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "ÇiçekSepeti Komisyon Hesaplama",
+          "en": "ÇiçekSepeti Commission Calculator",
+          "de": "ÇiçekSepeti-Provisionsrechner",
+          "ru": "Калькулятор комиссии ÇiçekSepeti",
+          "ar": "حاسبة عمولة ÇiçekSepeti",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti",
+          "uk": "Калькулятор комісії ÇiçekSepeti",
+          "id": "Kalkulator komisi ÇiçekSepeti",
+          "vi": "Tính hoa hồng ÇiçekSepeti"
+        },
+        "calculatorTitle": {
+          "tr": "ÇiçekSepeti Komisyon Hesaplama",
+          "en": "ÇiçekSepeti Commission Calculator",
+          "de": "ÇiçekSepeti-Provisionsrechner",
+          "ru": "Калькулятор комиссии ÇiçekSepeti",
+          "ar": "حاسبة عمولة ÇiçekSepeti",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti",
+          "uk": "Калькулятор комісії ÇiçekSepeti",
+          "id": "Kalkulator komisi ÇiçekSepeti",
+          "vi": "Tính hoa hồng ÇiçekSepeti"
+        },
+        "seoTitle": {
+          "tr": "ÇiçekSepeti Komisyon Hesaplama 2026 | Ticarti",
+          "en": "ÇiçekSepeti Commission Calculator 2026 | Ticarti",
+          "de": "ÇiçekSepeti-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии ÇiçekSepeti 2026 | Ticarti",
+          "ar": "حاسبة عمولة ÇiçekSepeti 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti 2026 | Ticarti",
+          "uk": "Калькулятор комісії ÇiçekSepeti 2026 | Ticarti",
+          "id": "Kalkulator komisi ÇiçekSepeti 2026 | Ticarti",
+          "vi": "Tính hoa hồng ÇiçekSepeti 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "ÇiçekSepeti kategori komisyonu ve sipariş maliyetini hesaplayın.",
+          "en": "Calculate ÇiçekSepeti commissions and shipping deductions.",
+          "de": "ÇiçekSepeti-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии ÇiçekSepeti. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة ÇiçekSepeti. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на ÇiçekSepeti. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії ÇiçekSepeti. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi ÇiçekSepeti. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng ÇiçekSepeti. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "ÇiçekSepeti komisyonu neye göre değişir?",
+            "en": "How is ÇiçekSepeti Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Kategori ve ticari koşullara göre değişebilir. Sözleşmede yazılı geçerli oran kullanılmalıdır.",
+            "en": "ÇiçekSepeti seller fees vary by flowers, gifts and other categories. Enter your contractual rate and fulfillment costs to estimate the remaining amount.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "pazarama-komisyon-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "Pazarama satış komisyonu ve maliyet hesaplama aracı.",
+          "en": "Calculate Pazarama selling commission and remaining revenue.",
+          "de": "Pazarama-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Pazarama | Ticarti",
+          "ar": "حاسبة عمولة Pazarama | Ticarti",
+          "bg": "Калкулатор за комисиона на Pazarama | Ticarti",
+          "uk": "Калькулятор комісії Pazarama | Ticarti",
+          "id": "Kalkulator komisi Pazarama | Ticarti",
+          "vi": "Tính hoa hồng Pazarama | Ticarti"
+        },
+        "intro": {
+          "tr": "Pazarama satış komisyonu ve maliyet hesaplama aracı.",
+          "en": "Calculate Pazarama selling commission and remaining revenue.",
+          "de": "Pazarama-Provisionsrechner | Ticarti",
+          "ru": "Калькулятор комиссии Pazarama | Ticarti",
+          "ar": "حاسبة عمولة Pazarama | Ticarti",
+          "bg": "Калкулатор за комисиона на Pazarama | Ticarti",
+          "uk": "Калькулятор комісії Pazarama | Ticarti",
+          "id": "Kalkulator komisi Pazarama | Ticarti",
+          "vi": "Tính hoa hồng Pazarama | Ticarti"
+        },
+        "description": {
+          "tr": "Pazarama'da komisyon oranları kategori, satıcı anlaşması ve güncel kampanyalara bağlı olabilir. Kendi oranınızı girip tahmini komisyon, varsa komisyon KDV'si ve diğer satış maliyetlerini görün.",
+          "en": "Pazarama commission rates may depend on categories and seller terms. Enter your actual contracted rate to calculate fees and estimated remaining revenue.",
+          "de": "Pazarama-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Pazarama. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Pazarama. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Pazarama. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Pazarama. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Pazarama. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Pazarama. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Pazarama panelindeki sözleşme oranını ve satış fiyatını girin, maliyetleri ekleyerek hesaplayın.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Pazarama Komisyon Hesaplama",
+          "en": "Pazarama Commission Calculator",
+          "de": "Pazarama-Provisionsrechner",
+          "ru": "Калькулятор комиссии Pazarama",
+          "ar": "حاسبة عمولة Pazarama",
+          "bg": "Калкулатор за комисиона на Pazarama",
+          "uk": "Калькулятор комісії Pazarama",
+          "id": "Kalkulator komisi Pazarama",
+          "vi": "Tính hoa hồng Pazarama"
+        },
+        "calculatorTitle": {
+          "tr": "Pazarama Komisyon Hesaplama",
+          "en": "Pazarama Commission Calculator",
+          "de": "Pazarama-Provisionsrechner",
+          "ru": "Калькулятор комиссии Pazarama",
+          "ar": "حاسبة عمولة Pazarama",
+          "bg": "Калкулатор за комисиона на Pazarama",
+          "uk": "Калькулятор комісії Pazarama",
+          "id": "Kalkulator komisi Pazarama",
+          "vi": "Tính hoa hồng Pazarama"
+        },
+        "seoTitle": {
+          "tr": "Pazarama Komisyon Hesaplama 2026 | Ticarti",
+          "en": "Pazarama Commission Calculator 2026 | Ticarti",
+          "de": "Pazarama-Provisionsrechner 2026 | Ticarti",
+          "ru": "Калькулятор комиссии Pazarama 2026 | Ticarti",
+          "ar": "حاسبة عمولة Pazarama 2026 | Ticarti",
+          "bg": "Калкулатор за комисиона на Pazarama 2026 | Ticarti",
+          "uk": "Калькулятор комісії Pazarama 2026 | Ticarti",
+          "id": "Kalkulator komisi Pazarama 2026 | Ticarti",
+          "vi": "Tính hoa hồng Pazarama 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Pazarama satış komisyonu ve maliyet hesaplama aracı.",
+          "en": "Calculate Pazarama selling commission and remaining revenue.",
+          "de": "Pazarama-Provisionsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор комиссии Pazarama. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة عمولة Pazarama. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за комисиона на Pazarama. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор комісії Pazarama. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator komisi Pazarama. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính hoa hồng Pazarama. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Pazarama komisyon oranı nereden öğrenilir?",
+            "en": "How is Pazarama Komisyon Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Pazarama satıcı panelindeki ticari koşullar ve kategori komisyon tablosundan doğrulanmalıdır.",
+            "en": "Pazarama commission rates may depend on categories and seller terms. Enter your actual contracted rate to calculate fees and estimated remaining revenue.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "maas-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "2026 net brüt maaş hesaplama: SGK, gelir vergisi ve damga vergisi.",
+          "en": "Calculate estimated 2026 gross-to-net and net-to-gross salary in Turkey.",
+          "de": "Netto-Brutto-Gehaltsrechner | Ticarti",
+          "ru": "Калькулятор зарплаты нетто-брутто | Ticarti",
+          "ar": "حاسبة الراتب الصافي والإجمالي | Ticarti",
+          "bg": "Калкулатор нетна-брутна заплата | Ticarti",
+          "uk": "Калькулятор зарплати нетто-брутто | Ticarti",
+          "id": "Kalkulator Gaji Bersih-Kotor | Ticarti",
+          "vi": "Tính lương thực nhận và lương gộp | Ticarti"
+        },
+        "intro": {
+          "tr": "2026 net brüt maaş hesaplama: SGK, gelir vergisi ve damga vergisi.",
+          "en": "Calculate estimated 2026 gross-to-net and net-to-gross salary in Turkey.",
+          "de": "Netto-Brutto-Gehaltsrechner | Ticarti",
+          "ru": "Калькулятор зарплаты нетто-брутто | Ticarti",
+          "ar": "حاسبة الراتب الصافي والإجمالي | Ticarti",
+          "bg": "Калкулатор нетна-брутна заплата | Ticarti",
+          "uk": "Калькулятор зарплати нетто-брутто | Ticarti",
+          "id": "Kalkulator Gaji Bersih-Kotor | Ticarti",
+          "vi": "Tính lương thực nhận và lương gộp | Ticarti"
+        },
+        "description": {
+          "tr": "2026 Türkiye ücret bordrosunda standart 4/a çalışanı için SGK işçi primi %14, işsizlik primi %1 olarak hesaplanır. Asgari ücret istisnası, 2026 gelir vergisi dilimleri ve SGK üst sınırı dikkate alınır. Araç yılbaşından itibaren aynı brüt ücretle çalışma varsayımı kullanır; ek ödemeler ve teşvikler hariçtir.",
+          "en": "The estimate uses the 2026 progressive wage income tax schedule, the 14% employee social security premium, 1% unemployment insurance, the SGK ceiling and minimum wage exemptions.",
+          "de": "Netto-Brutto-Gehaltsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор зарплаты нетто-брутто. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الراتب الصافي والإجمالي. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор нетна-брутна заплата. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор зарплати нетто-брутто. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Gaji Bersih-Kotor. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính lương thực nhận và lương gộp. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Brütten nete veya netten brüte seçin, tutarı ve bordro ayını belirtin. Net, brüt ve yasal kesintileri görün.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Net-Brüt Maaş Hesaplama",
+          "en": "Net to Gross Salary Calculator",
+          "de": "Netto-Brutto-Gehaltsrechner",
+          "ru": "Калькулятор зарплаты нетто-брутто",
+          "ar": "حاسبة الراتب الصافي والإجمالي",
+          "bg": "Калкулатор нетна-брутна заплата",
+          "uk": "Калькулятор зарплати нетто-брутто",
+          "id": "Kalkulator Gaji Bersih-Kotor",
+          "vi": "Tính lương thực nhận và lương gộp"
+        },
+        "calculatorTitle": {
+          "tr": "Net-Brüt Maaş Hesaplama",
+          "en": "Net to Gross Salary Calculator",
+          "de": "Netto-Brutto-Gehaltsrechner",
+          "ru": "Калькулятор зарплаты нетто-брутто",
+          "ar": "حاسبة الراتب الصافي والإجمالي",
+          "bg": "Калкулатор нетна-брутна заплата",
+          "uk": "Калькулятор зарплати нетто-брутто",
+          "id": "Kalkulator Gaji Bersih-Kotor",
+          "vi": "Tính lương thực nhận và lương gộp"
+        },
+        "seoTitle": {
+          "tr": "Net-Brüt Maaş Hesaplama 2026 | Ticarti",
+          "en": "Net to Gross Salary Calculator 2026 | Ticarti",
+          "de": "Netto-Brutto-Gehaltsrechner 2026 | Ticarti",
+          "ru": "Калькулятор зарплаты нетто-брутто 2026 | Ticarti",
+          "ar": "حاسبة الراتب الصافي والإجمالي 2026 | Ticarti",
+          "bg": "Калкулатор нетна-брутна заплата 2026 | Ticarti",
+          "uk": "Калькулятор зарплати нетто-брутто 2026 | Ticarti",
+          "id": "Kalkulator Gaji Bersih-Kotor 2026 | Ticarti",
+          "vi": "Tính lương thực nhận và lương gộp 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "2026 net brüt maaş hesaplama: SGK, gelir vergisi ve damga vergisi.",
+          "en": "Calculate estimated 2026 gross-to-net and net-to-gross salary in Turkey.",
+          "de": "Netto-Brutto-Gehaltsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор зарплаты нетто-брутто. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الراتب الصافي والإجمالي. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор нетна-брутна заплата. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор зарплати нетто-брутто. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Gaji Bersih-Kotor. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính lương thực nhận và lương gộp. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Net maaş neden farklı aylarda değişir?",
+            "en": "How is Net-Brüt Maaş Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Kümülatif gelir vergisi matrahı ilerledikçe uygulanacak vergi dilimi değişebilir.",
+            "en": "The estimate uses the 2026 progressive wage income tax schedule, the 14% employee social security premium, 1% unemployment insurance, the SGK ceiling and minimum wage exemptions.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "gumruk-vergisi-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "İthalat vergisi, ilave gümrük vergisi, ÖTV ve KDV tahmin edin.",
+          "en": "Estimate Turkish import duty, extra tariffs, excise and VAT.",
+          "de": "Zollrechner | Ticarti",
+          "ru": "Калькулятор таможенных пошлин | Ticarti",
+          "ar": "حاسبة الرسوم الجمركية | Ticarti",
+          "bg": "Калкулатор за мита | Ticarti",
+          "uk": "Калькулятор мита | Ticarti",
+          "id": "Kalkulator Bea Masuk | Ticarti",
+          "vi": "Tính thuế nhập khẩu | Ticarti"
+        },
+        "intro": {
+          "tr": "İthalat vergisi, ilave gümrük vergisi, ÖTV ve KDV tahmin edin.",
+          "en": "Estimate Turkish import duty, extra tariffs, excise and VAT.",
+          "de": "Zollrechner | Ticarti",
+          "ru": "Калькулятор таможенных пошлин | Ticarti",
+          "ar": "حاسبة الرسوم الجمركية | Ticarti",
+          "bg": "Калкулатор за мита | Ticarti",
+          "uk": "Калькулятор мита | Ticarti",
+          "id": "Kalkulator Bea Masuk | Ticarti",
+          "vi": "Tính thuế nhập khẩu | Ticarti"
+        },
+        "description": {
+          "tr": "İthalat maliyetinde GTİP, menşe ülke, CIF kıymeti, döviz kuru ve ek mali yükümlülükler belirleyicidir. Hesaplayıcı otomatik GTİP vergi oranı atamaz; resmî tarife üzerinden doğruladığınız oranları girerek yaklaşık maliyet elde edebilirsiniz.",
+          "en": "Import liabilities depend on the HS code, origin, CIF customs value, preferential agreements and other taxes. Enter your verified rates; this is not a customs declaration.",
+          "de": "Zollrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор таможенных пошлин. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الرسوم الجمركية. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за мита. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор мита. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Bea Masuk. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính thuế nhập khẩu. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Eşya bedeli, navlun, sigorta, döviz kuru, gümrük ve ek vergi oranlarını girin. CIF ile tahmini toplam maliyeti görün.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "Değerleri değiştirerek farklı maliyet senaryolarını karşılaştırabilirsiniz."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Gümrük Vergisi Hesaplama",
+          "en": "Customs Duty Calculator",
+          "de": "Zollrechner",
+          "ru": "Калькулятор таможенных пошлин",
+          "ar": "حاسبة الرسوم الجمركية",
+          "bg": "Калкулатор за мита",
+          "uk": "Калькулятор мита",
+          "id": "Kalkulator Bea Masuk",
+          "vi": "Tính thuế nhập khẩu"
+        },
+        "calculatorTitle": {
+          "tr": "Gümrük Vergisi Hesaplama",
+          "en": "Customs Duty Calculator",
+          "de": "Zollrechner",
+          "ru": "Калькулятор таможенных пошлин",
+          "ar": "حاسبة الرسوم الجمركية",
+          "bg": "Калкулатор за мита",
+          "uk": "Калькулятор мита",
+          "id": "Kalkulator Bea Masuk",
+          "vi": "Tính thuế nhập khẩu"
+        },
+        "seoTitle": {
+          "tr": "Gümrük Vergisi Hesaplama 2026 | Ticarti",
+          "en": "Customs Duty Calculator 2026 | Ticarti",
+          "de": "Zollrechner 2026 | Ticarti",
+          "ru": "Калькулятор таможенных пошлин 2026 | Ticarti",
+          "ar": "حاسبة الرسوم الجمركية 2026 | Ticarti",
+          "bg": "Калкулатор за мита 2026 | Ticarti",
+          "uk": "Калькулятор мита 2026 | Ticarti",
+          "id": "Kalkulator Bea Masuk 2026 | Ticarti",
+          "vi": "Tính thuế nhập khẩu 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "İthalat vergisi, ilave gümrük vergisi, ÖTV ve KDV tahmin edin.",
+          "en": "Estimate Turkish import duty, extra tariffs, excise and VAT.",
+          "de": "Zollrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор таможенных пошлин. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الرسوم الجمركية. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за мита. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор мита. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Bea Masuk. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính thuế nhập khẩu. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Gümrük vergisi oranını nasıl bulurum?",
+            "en": "How is Gümrük Vergisi Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Eşyanın GTİP kodu, menşe ve ithalat rejimi şartlarıyla resmî tarife üzerinden belirlenir.",
+            "en": "Import liabilities depend on the HS code, origin, CIF customs value, preferential agreements and other taxes. Enter your verified rates; this is not a customs declaration.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    },
+    {
+      "id": "desi-hesaplama",
+      "fields": {
+        "subtitle": {
+          "tr": "Kargo hacimsel ağırlığı: en × boy × yükseklik / desi böleni.",
+          "en": "Calculate parcel volumetric weight and chargeable shipping weight.",
+          "de": "Volumengewichtsrechner | Ticarti",
+          "ru": "Калькулятор объёмного веса | Ticarti",
+          "ar": "حاسبة الوزن الحجمي | Ticarti",
+          "bg": "Калкулатор за обемно тегло | Ticarti",
+          "uk": "Калькулятор об'ємної ваги | Ticarti",
+          "id": "Kalkulator Berat Volumetrik | Ticarti",
+          "vi": "Tính trọng lượng thể tích | Ticarti"
+        },
+        "intro": {
+          "tr": "Kargo hacimsel ağırlığı: en × boy × yükseklik / desi böleni.",
+          "en": "Calculate parcel volumetric weight and chargeable shipping weight.",
+          "de": "Volumengewichtsrechner | Ticarti",
+          "ru": "Калькулятор объёмного веса | Ticarti",
+          "ar": "حاسبة الوزن الحجمي | Ticarti",
+          "bg": "Калкулатор за обемно тегло | Ticarti",
+          "uk": "Калькулятор об'ємної ваги | Ticarti",
+          "id": "Kalkulator Berat Volumetrik | Ticarti",
+          "vi": "Tính trọng lượng thể tích | Ticarti"
+        },
+        "description": {
+          "tr": "Paket desisi, santimetre cinsinden uzunluk × genişlik × yükseklik değerinin firmanın belirlediği bölenle bölünmesidir. Türkiye içi kargoda 3000 böleni yaygındır; uluslararası taşımada farklı bölenler kullanılabilir. Ücretlendirmede gerçek ağırlık veya desiden yüksek olan esas alınabilir.",
+          "en": "Enter parcel length, width and height in centimeters, and choose the carrier's volume divisor. Compare volumetric weight with actual kilograms.",
+          "de": "Volumengewichtsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор объёмного веса. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الوزن الحجمي. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за обемно тегло. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор об'ємної ваги. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Berat Volumetrik. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính trọng lượng thể tích. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        },
+        "howItWorks": {
+          "tr": "Paketin dış ölçülerini santimetre olarak girin, gerçek kilogramı ve kargo sözleşmenizdeki böleni seçin.",
+          "en": "Enter the required values and calculate using current official rates or the rate in your contract.",
+          "de": "Geben Sie die Werte ein, wählen Sie den Satz und starten Sie die Berechnung.",
+          "ru": "Введите значения, выберите ставку и выполните расчёт.",
+          "ar": "أدخل البيانات وحدد النسبة ثم احسب النتيجة.",
+          "bg": "Въведете стойностите, изберете ставка и изчислете.",
+          "uk": "Введіть значення, оберіть ставку та запустіть розрахунок.",
+          "id": "Masukkan nilai, pilih tarif, lalu hitung hasilnya.",
+          "vi": "Nhập dữ liệu, chọn tỷ lệ rồi tính kết quả."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufig gestellte Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl kullanılır?",
+          "en": "How to use",
+          "de": "Wie funktioniert diese Berechnung?",
+          "ru": "Как работает этот расчёт?",
+          "ar": "كيف تعمل الحاسبة؟",
+          "bg": "Как работи изчислението?",
+          "uk": "Як працює розрахунок?",
+          "id": "Bagaimana perhitungannya?",
+          "vi": "Cách tính hoạt động thế nào?"
+        },
+        "exampleTitle": {
+          "tr": "Örnek hesaplama"
+        },
+        "example": {
+          "tr": "30 × 20 × 10 cm paket, 3000 böleniyle 2 desi eder."
+        },
+        "disclaimer": {
+          "tr": "Bilgilendirme amaçlı tahmindir. Mevzuat ve satıcı sözleşmenizi kontrol edin.",
+          "en": "Informational estimate only. Confirm official rules and seller terms.",
+          "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+          "ru": "Нет, проверьте официальные условия и договор.",
+          "ar": "لا، تحقق من القواعد وشروط العقد.",
+          "bg": "Не, проверете официалните правила и договора.",
+          "uk": "Ні, перевірте офіційні правила та договір.",
+          "id": "Tidak, periksa aturan resmi dan kontrak.",
+          "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+        },
+        "title": {
+          "tr": "Desi Hesaplama",
+          "en": "Volumetric Weight Calculator",
+          "de": "Volumengewichtsrechner",
+          "ru": "Калькулятор объёмного веса",
+          "ar": "حاسبة الوزن الحجمي",
+          "bg": "Калкулатор за обемно тегло",
+          "uk": "Калькулятор об'ємної ваги",
+          "id": "Kalkulator Berat Volumetrik",
+          "vi": "Tính trọng lượng thể tích"
+        },
+        "calculatorTitle": {
+          "tr": "Desi Hesaplama",
+          "en": "Volumetric Weight Calculator",
+          "de": "Volumengewichtsrechner",
+          "ru": "Калькулятор объёмного веса",
+          "ar": "حاسبة الوزن الحجمي",
+          "bg": "Калкулатор за обемно тегло",
+          "uk": "Калькулятор об'ємної ваги",
+          "id": "Kalkulator Berat Volumetrik",
+          "vi": "Tính trọng lượng thể tích"
+        },
+        "seoTitle": {
+          "tr": "Desi Hesaplama 2026 | Ticarti",
+          "en": "Volumetric Weight Calculator 2026 | Ticarti",
+          "de": "Volumengewichtsrechner 2026 | Ticarti",
+          "ru": "Калькулятор объёмного веса 2026 | Ticarti",
+          "ar": "حاسبة الوزن الحجمي 2026 | Ticarti",
+          "bg": "Калкулатор за обемно тегло 2026 | Ticarti",
+          "uk": "Калькулятор об'ємної ваги 2026 | Ticarti",
+          "id": "Kalkulator Berat Volumetrik 2026 | Ticarti",
+          "vi": "Tính trọng lượng thể tích 2026 | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "Kargo hacimsel ağırlığı: en × boy × yükseklik / desi böleni.",
+          "en": "Calculate parcel volumetric weight and chargeable shipping weight.",
+          "de": "Volumengewichtsrechner. Berechnen Sie mit Ticarti die wichtigsten Werte. Prüfen Sie aktuelle Regeln und vereinbarte Sätze.",
+          "ru": "Калькулятор объёмного веса. Рассчитайте основные показатели с Ticarti. Проверяйте актуальные правила и ставки.",
+          "ar": "حاسبة الوزن الحجمي. احسب القيم الأساسية باستخدام Ticarti. تحقق من القواعد والنسب السارية.",
+          "bg": "Калкулатор за обемно тегло. Изчислете основните стойности с Ticarti. Проверете актуалните ставки и правила.",
+          "uk": "Калькулятор об'ємної ваги. Розрахуйте основні показники з Ticarti. Перевіряйте чинні ставки й правила.",
+          "id": "Kalkulator Berat Volumetrik. Hitung nilai utama dengan Ticarti. Periksa aturan dan tarif yang berlaku.",
+          "vi": "Tính trọng lượng thể tích. Tính các giá trị chính cùng Ticarti. Kiểm tra tỷ lệ và quy định hiện hành."
+        }
+      },
+      "faqs": [
+        {
+          "id": "seo-what",
+          "question": {
+            "tr": "Desi ile kilogram arasındaki fark nedir?",
+            "en": "How is Desi Hesaplama calculated?",
+            "de": "Wie funktioniert diese Berechnung?",
+            "ru": "Как работает этот расчёт?",
+            "ar": "كيف تعمل الحاسبة؟",
+            "bg": "Как работи изчислението?",
+            "uk": "Як працює розрахунок?",
+            "id": "Bagaimana perhitungannya?",
+            "vi": "Cách tính hoạt động thế nào?"
+          },
+          "answer": {
+            "tr": "Desi hacimsel ağırlığı, kilogram gerçek ağırlığı ifade eder. Kargo şirketi tarifesine göre yüksek olan dikkate alınabilir.",
+            "en": "Enter parcel length, width and height in centimeters, and choose the carrier's volume divisor. Compare volumetric weight with actual kilograms.",
+            "de": "Die eingegebenen Werte werden anhand der angegebenen Formel verarbeitet.",
+            "ru": "Результат вычисляется по введённым данным и указанной формуле.",
+            "ar": "تعتمد النتائج على القيم المدخلة والصيغة المحددة.",
+            "bg": "Резултатите използват зададената формула и стойности.",
+            "uk": "Застосовується формула до введених значень.",
+            "id": "Angka dihitung menggunakan nilai dan rumus yang dipilih.",
+            "vi": "Dữ liệu được xử lý theo công thức đã chọn."
+          }
+        },
+        {
+          "id": "seo-accuracy",
+          "question": {
+            "tr": "Sonuç kesin midir?",
+            "en": "Is this an official final amount?",
+            "de": "Ist das Ergebnis verbindlich?",
+            "ru": "Результат окончательный?",
+            "ar": "هل النتيجة رسمية؟",
+            "bg": "Окончателен ли е резултатът?",
+            "uk": "Чи є результат остаточним?",
+            "id": "Apakah hasilnya final?",
+            "vi": "Kết quả có chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Hesaplanan değer tahminidir. Güncel resmî mevzuat ve sözleşme şartları esas alınmalıdır.",
+            "en": "No. It is an estimate. Check official rules, current tariffs and contractual terms.",
+            "de": "Nein, prüfen Sie amtliche Regeln und Vertragsbedingungen.",
+            "ru": "Нет, проверьте официальные условия и договор.",
+            "ar": "لا، تحقق من القواعد وشروط العقد.",
+            "bg": "Не, проверете официалните правила и договора.",
+            "uk": "Ні, перевірте офіційні правила та договір.",
+            "id": "Tidak, periksa aturan resmi dan kontrak.",
+            "vi": "Không, hãy kiểm tra quy định và hợp đồng."
+          }
+        }
+      ]
+    }
+  ]
+}
