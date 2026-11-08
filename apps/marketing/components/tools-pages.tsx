@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import SiteShell from '@/components/site-shell';
 
 /**
@@ -44,7 +45,7 @@ export async function toolDetail(slug:string,locale:string):Promise<ToolPage|nul
  }catch{return null}
 }
 function Copy({children}:{children:string}){return <p>{children}</p>}
-function StoryFrame({children}:{children:React.ReactNode}){
+function StoryFrame({children}:{children:ReactNode}){
  return <SiteShell><main className="tc-marketing-blog tc-tools-page">{children}</main></SiteShell>;
 }
 function ToolCard({tool,locale}:{tool:ToolSummary;locale:string}){
