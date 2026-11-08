@@ -212,6 +212,36 @@ async function test(){
   assert.equal(rerun.alreadySeeded,true,'Subsequent API starts must not repeat the seed');
   assert.equal((await svc.home() as any).modules.find((x:any)=>x.id==='faq')!.items.length,31,
     'Second run cannot create duplicate entries');
-  console.log('PASS: active locales, blog authors, persisted native homepage ordering, FAQ and SEO + idempotent five-language FAQ migration');
+  const cleaned=await svc.clearExistingFaqOnce();
+  assert.equal(cleaned.alreadyCleared,false,'First admin cleanup removes old FAQ records');
+  const afterClear=await svc.home();
+  assert.equal(afterClear.modules.find(x=>x.id==='faq')!.items.length,0,'All old FAQ entries were cleared');
+  const clearAgain=await svc.clearExistingFaqOnce();
+  assert.equal(clearAgain.alreadyCleared,true,'Cleanup marker protects future FAQ entries');
+  const faqInput=(lang:string,question:string,answer:string)=>({
+    id:'faq-locale-'+lang+'-test',enabled:true,
+    fields:{question:{[lang]:question},answer:{[lang]:answer}},
+    assets:{image:'',logo:''},links:{href:''},storeId:''
+  });
+  const turkishModules=structuredClone(afterClear.modules).map((m:any)=>m.id==='faq'?{
+    ...m,enabled:true,items:[faqInput('tr','Türkçe soru','Türkçe cevap')]
+  }:m);
+  const savedTr=await svc.updateHomeLocale('tr',{version:afterClear.version,modules:turkishModules});
+  assert.equal(savedTr.modules.find(x=>x.id==='faq')?.items.length,1);
+  const englishModules=structuredClone(savedTr.modules).map((m:any)=>m.id==='faq'?{
+    ...m,enabled:true,items:[faqInput('en','English question','English answer')]
+  }:m);
+  const savedEn=await svc.updateHomeLocale('en',{version:savedTr.version,modules:englishModules});
+  const resultFaq=savedEn.modules.find(x=>x.id==='faq')!;
+  assert.equal(resultFaq.items.length,2,'FAQ questions are independent across locales');
+  assert.equal(resultFaq.items.find((x:any)=>x.id==='faq-locale-tr-test')?.fields.question.tr,'Türkçe soru');
+  assert.equal(resultFaq.items.find((x:any)=>x.id==='faq-locale-en-test')?.fields.question.en,'English question');
+  assert.equal(savedEn.modules.find(x=>x.id==='hero')?.fields.heading?.tr,
+    afterClear.modules.find(x=>x.id==='hero')?.fields.heading?.tr,
+    'Saving English cannot overwrite Turkish homepage module copy');
+  assert.equal((await svc.clearExistingFaqOnce()).alreadyCleared,true,'Editor reload cannot clear new FAQ entries');
+  assert.equal((await svc.home()).modules.find(x=>x.id==='faq')!.items.length,2);
+  console.log('PASS: five-language FAQ migration, one-time cleanup, independent locale save, unchanged other modules');
+
 }
 test().catch(e=>{console.error(e);process.exitCode=1});
