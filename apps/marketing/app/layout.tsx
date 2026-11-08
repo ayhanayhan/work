@@ -28,7 +28,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const lang=route.match(/^\/(tr|en|de|ru|ar)(?:\/|$)/)?.[1]||'tr';
   return <html lang={lang} dir={lang==='ar'?'rtl':'ltr'} className={cls}><head>
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
-    <link rel="stylesheet" href="/assets/css/shared-footer.css?v=1"/>
+    <link rel="stylesheet" href="/assets/css/shared-footer.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=6"/>
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=3"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
