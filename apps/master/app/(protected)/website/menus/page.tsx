@@ -13,6 +13,7 @@ type Group={id:string;area:string;title:Localized;links:Link[]};
 type Menu={version:number;groups:Group[]};
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value));
 const names:Record<string,string>={
+ 'header-primary':'Header · Üst Menü',
  'header-companies-1':'Çözümler · İşletme ölçeği',
  'header-companies-2':'Çözümler · Ticaret operasyonları',
  'header-companies-3':'Çözümler · Satış ve büyüme',
