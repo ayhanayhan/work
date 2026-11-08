@@ -41,8 +41,12 @@ if [ "$API" -eq 1 ]; then
   OLD="$(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$API_REGION" --format=json |
     node -e "let s='';process.stdin.on('data',x=>s+=x).on('end',()=>{const t=JSON.parse(s).status?.traffic||[];process.stdout.write(t.find(x=>x.percent===100)?.revisionName||'')})")"
   if [ -z "$OLD" ]; then echo "No 100% traffic-serving API revision found. Refusing deployment." >&2; exit 1; fi
-  echo "=== Building API image ==="
-  gcloud builds submit apps/api --tag="$IMAGE" --project="$PROJECT" --region="$API_REGION"
+  echo "=== Building API image with persistent Docker layer cache ==="
+  CACHE_IMAGE="${API_REGION}-docker.pkg.dev/${PROJECT}/cloud-run-source-deploy/${SERVICE}:buildcache"
+  gcloud builds submit apps/api \
+    --config=apps/api/cloudbuild.cached.yaml \
+    --substitutions="_IMAGE=${IMAGE},_CACHE_IMAGE=${CACHE_IMAGE}" \
+    --project="$PROJECT" --region="$API_REGION"
   SUFFIX="cms$(date +%m%d%H%M%S)"
   NEW="${SERVICE}-${SUFFIX}"
   gcloud run deploy "$SERVICE" --image="$IMAGE" --revision-suffix="$SUFFIX" --no-traffic --project="$PROJECT" --region="$API_REGION" --quiet
@@ -72,8 +76,8 @@ if [ -n "$BACKEND_ONLY" ]; then
   firebase deploy --only "$BACKEND_ONLY" --project="$PROJECT"
 fi
 
-if [ "$API" -eq 1 ]; then
-  echo "=== Retain only the latest 10 API revisions; no day-based cutoff ==="
+if [ "$API" -eq 1 ] && [ "${PRUNE_API_REVISIONS:-0}" = "1" ]; then
+  echo "=== Optional API revision cleanup (PRUNE_API_REVISIONS=1) ==="
   if ! bash scripts/prune-cloud-run-revisions.sh --apply; then
     echo "Warning: API live deployment succeeded, but old-revision cleanup failed. It can be retried separately." >&2
   fi
