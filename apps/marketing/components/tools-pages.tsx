@@ -90,6 +90,10 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
  const jsonld=[
   {'@context':'https://schema.org','@type':'WebPage',name:tool.title,url:origin+path,
    description:f.seoDescription||f.intro||'',inLanguage:locale},
+  {'@context':'https://schema.org','@type':'WebApplication',
+   name:tool.title,url:origin+path,applicationCategory:'BusinessApplication',
+   operatingSystem:'Any',inLanguage:locale,isAccessibleForFree:true,
+   offers:{'@type':'Offer',price:'0',priceCurrency:'TRY'}},
   {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
    {'@type':'ListItem',position:1,name:'Ticarti',item:origin+(locale==='tr'?'/':'/'+locale+'/')},
    {'@type':'ListItem',position:2,name:tool.title,item:origin+path}
@@ -105,7 +109,7 @@ export function ToolArticle({locale,tool,other}:{locale:string;tool:ToolPage;oth
     <header className="tc-post-hero"><div className="section-heading">
      <h1 id="tool-title">{tool.title}</h1>
      {f.subtitle?<div className="content"><p>{f.subtitle}</p></div>:null}
-     {f.intro?<div className="content"><p>{f.intro}</p></div>:null}
+     {f.intro&&f.intro!==f.subtitle?<div className="content"><p>{f.intro}</p></div>:null}
     </div></header>
     <article className="tc-blog-article">
      {tool.image?<img className="tc-blog-article-cover" src={tool.image} alt={f.imageAlt||tool.title}/>:null}
