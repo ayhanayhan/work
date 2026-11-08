@@ -267,6 +267,22 @@ export class WebsiteService{
     const snapshot=await this.home();
     if(body.version!==undefined&&Number(body.version)!==snapshot.version)throw new ConflictException('İçerik güncellenmiş. İçe aktarmadan önce sayfayı yenileyin.');
     const inputs=body.modules;
+    // An FAQ-only import is intentionally scoped to that module: do not reset
+    // any other homepage content, module order, assets, translations or settings.
+    if(inputs.length===1&&inputs[0]?.id==='faq'){
+      const faq=inputs[0];
+      if(!Array.isArray(faq.items)||faq.items.length>80)throw new BadRequestException('SSS içe aktarma kayıtları geçersiz.');
+      const existing=snapshot.modules.find(m=>m.id==='faq');
+      if(!existing)throw new BadRequestException('SSS modülü bulunamadı.');
+      const imported=safeItems('faq',faq.items);
+      const fields=safeFields(faq.fields||{},MODULE_FIELDS.faq);
+      const modules=snapshot.modules.map(m=>m.id==='faq'?{
+        ...m,configured:true,enabled:true,fields,items:imported
+      }:m);
+      const version=snapshot.version+1;
+      await this.put(HOME_KEY,{version,modules});
+      return {version,modules};
+    }
     if(inputs.length!==MODULE_IDS.length || new Set(inputs.map((x:any)=>x?.id)).size!==MODULE_IDS.length)throw new BadRequestException('İçe aktarma dosyası 10 farklı anasayfa modülünü içermeli.');
     const modules=snapshot.modules.map(m=>{
       const input=inputs.find((x:any)=>x.id===m.id);
