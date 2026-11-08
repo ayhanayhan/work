@@ -1,0 +1,608 @@
+{
+  "version": 0,
+  "groups": [
+    {
+      "id": "header-companies-1",
+      "area": "header",
+      "title": {
+        "tr": "İşletme ölçeği"
+      },
+      "links": [
+        {
+          "id": "link-1-0",
+          "label": {
+            "tr": "Yeni başlayan işletmeler"
+          },
+          "url": "/paketler.html#tc-pricing-top",
+          "enabled": true
+        },
+        {
+          "id": "link-1-1",
+          "label": {
+            "tr": "Büyüyen mağazalar"
+          },
+          "url": "/paketler.html#tc-pricing-top",
+          "enabled": true
+        },
+        {
+          "id": "link-1-2",
+          "label": {
+            "tr": "Yüksek hacimli operasyonlar"
+          },
+          "url": "/paketler.html#tc-pricing-top",
+          "enabled": true
+        },
+        {
+          "id": "link-1-3",
+          "label": {
+            "tr": "Çok markalı yapılar"
+          },
+          "url": "/companies/enterprise.html",
+          "enabled": true
+        },
+        {
+          "id": "link-1-4",
+          "label": {
+            "tr": "Kurumsal e-ticaret"
+          },
+          "url": "/companies/enterprise.html",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-companies-2",
+      "area": "header",
+      "title": {
+        "tr": "Ticaret operasyonları"
+      },
+      "links": [
+        {
+          "id": "link-2-0",
+          "label": {
+            "tr": "Ürün ve varyant yönetimi"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-2-1",
+          "label": {
+            "tr": "Sipariş ve iade"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-2-2",
+          "label": {
+            "tr": "Depo, stok ve transfer"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-2-3",
+          "label": {
+            "tr": "Ödeme ve checkout"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-2-4",
+          "label": {
+            "tr": "Müşteri yönetimi"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-companies-3",
+      "area": "header",
+      "title": {
+        "tr": "Satış ve büyüme"
+      },
+      "links": [
+        {
+          "id": "link-3-0",
+          "label": {
+            "tr": "Kampanya ve promosyonlar"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-3-1",
+          "label": {
+            "tr": "Çok dilli satış"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-3-2",
+          "label": {
+            "tr": "E-ihracat ve döviz"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-3-3",
+          "label": {
+            "tr": "SEO ve içerik"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-3-4",
+          "label": {
+            "tr": "E-posta ve sepet otomasyonu"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-companies-4",
+      "area": "header",
+      "title": {
+        "tr": "Entegrasyon ve analiz"
+      },
+      "links": [
+        {
+          "id": "link-4-0",
+          "label": {
+            "tr": "Kargo ve lojistik"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-4-1",
+          "label": {
+            "tr": "Pazaryeri operasyonları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-4-2",
+          "label": {
+            "tr": "ERP / WMS entegrasyonları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-4-3",
+          "label": {
+            "tr": "Analitik ve raporlama"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-4-4",
+          "label": {
+            "tr": "Kurulum ve taşıma desteği"
+          },
+          "url": "/contacto.html",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-resources-1",
+      "area": "header",
+      "title": {
+        "tr": "Ürünü keşfet"
+      },
+      "links": [
+        {
+          "id": "link-1-0",
+          "label": {
+            "tr": "Paketler ve fiyatlandırma"
+          },
+          "url": "/paketler.html",
+          "enabled": true
+        },
+        {
+          "id": "link-1-1",
+          "label": {
+            "tr": "Özellik karşılaştırması"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-1-2",
+          "label": {
+            "tr": "Ürün ve varyantlar"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-1-3",
+          "label": {
+            "tr": "Pazarlama araçları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "link-1-4",
+          "label": {
+            "tr": "Çoklu depo yönetimi"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-resources-2",
+      "area": "header",
+      "title": {
+        "tr": "Rehberler"
+      },
+      "links": [
+        {
+          "id": "link-2-0",
+          "label": {
+            "tr": "Ücretsiz araçlar ve hesaplayıcılar"
+          },
+          "url": "/araclar",
+          "enabled": true
+        },
+        {
+          "id": "link-2-1",
+          "label": {
+            "tr": "E-ticaret nasıl kurulur?"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "link-2-2",
+          "label": {
+            "tr": "Doğru paket nasıl seçilir?"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "link-2-3",
+          "label": {
+            "tr": "Alan adı ve SSL"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "link-2-4",
+          "label": {
+            "tr": "Kargo entegrasyonları"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "link-2-5",
+          "label": {
+            "tr": "E-ihracata başlangıç"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "header-resources-3",
+      "area": "header",
+      "title": {
+        "tr": "Ticarti hakkında"
+      },
+      "links": [
+        {
+          "id": "link-3-0",
+          "label": {
+            "tr": "Başarı hikâyeleri"
+          },
+          "url": "/success-stories",
+          "enabled": true
+        },
+        {
+          "id": "link-3-1",
+          "label": {
+            "tr": "Müşteri deneyimleri"
+          },
+          "url": "/success-stories/crowdy.html",
+          "enabled": true
+        },
+        {
+          "id": "link-3-2",
+          "label": {
+            "tr": "Kurumsal çözümler"
+          },
+          "url": "/companies/enterprise.html",
+          "enabled": true
+        },
+        {
+          "id": "link-3-3",
+          "label": {
+            "tr": "Sık sorulan sorular"
+          },
+          "url": "/paketler.html#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "link-3-4",
+          "label": {
+            "tr": "İletişim"
+          },
+          "url": "/contacto.html",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "footer-1",
+      "area": "footer",
+      "title": {
+        "tr": "Ticarti"
+      },
+      "links": [
+        {
+          "id": "footer-link-0-0",
+          "label": {
+            "tr": "Ticarti nedir?"
+          },
+          "url": "/",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-1",
+          "label": {
+            "tr": "Paketler ve fiyatlandırma"
+          },
+          "url": "/paketler.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-2",
+          "label": {
+            "tr": "Mağaza açma"
+          },
+          "url": "/paketler.html#tc-pricing-top",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-3",
+          "label": {
+            "tr": "Tema ve vitrin"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-4",
+          "label": {
+            "tr": "Ürün ve stok"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-5",
+          "label": {
+            "tr": "Sipariş ve iade"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-0-6",
+          "label": {
+            "tr": "Pazarlama araçları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "footer-2",
+      "area": "footer",
+      "title": {
+        "tr": "Kurumsal"
+      },
+      "links": [
+        {
+          "id": "footer-link-1-0",
+          "label": {
+            "tr": "Hakkımızda"
+          },
+          "url": "/contacto.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-1",
+          "label": {
+            "tr": "Kurumsal çözümler"
+          },
+          "url": "/companies/enterprise.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-2",
+          "label": {
+            "tr": "Başarı hikâyeleri"
+          },
+          "url": "/success-stories/index.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-3",
+          "label": {
+            "tr": "İletişim"
+          },
+          "url": "/contacto.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-4",
+          "label": {
+            "tr": "Uygulama Marketi"
+          },
+          "url": "https://app.ticarti.com",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-5",
+          "label": {
+            "tr": "Developer"
+          },
+          "url": "https://dev.ticarti.com",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-1-6",
+          "label": {
+            "tr": "Yardım"
+          },
+          "url": "https://help.ticarti.com",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "footer-3",
+      "area": "footer",
+      "title": {
+        "tr": "E-ticaret ve e-ihracat"
+      },
+      "links": [
+        {
+          "id": "footer-link-2-0",
+          "label": {
+            "tr": "E-ticaret paketleri"
+          },
+          "url": "/paketler.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-1",
+          "label": {
+            "tr": "Pazaryeri bağlantıları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-2",
+          "label": {
+            "tr": "Kargo entegrasyonları"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-3",
+          "label": {
+            "tr": "Çok dilli satış"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-4",
+          "label": {
+            "tr": "Çoklu para birimi"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-5",
+          "label": {
+            "tr": "SEO ve blog"
+          },
+          "url": "/blog/",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-2-6",
+          "label": {
+            "tr": "Paket karşılaştırması"
+          },
+          "url": "/paketler.html#tc-compare",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "footer-4",
+      "area": "footer",
+      "title": {
+        "tr": "Kaynaklar"
+      },
+      "links": [
+        {
+          "id": "footer-link-3-0",
+          "label": {
+            "tr": "Blog"
+          },
+          "url": "/blog/",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-3-1",
+          "label": {
+            "tr": "Ücretsiz araçlar"
+          },
+          "url": "/araclar",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-3-2",
+          "label": {
+            "tr": "Sık sorulan sorular"
+          },
+          "url": "#tc-faq",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-3-3",
+          "label": {
+            "tr": "E-ticaret sitesi kurmak"
+          },
+          "url": "/blog/e-ticaret-sitesi-kurma-rehberi.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-3-4",
+          "label": {
+            "tr": "Stok yönetimi"
+          },
+          "url": "/blog/stok-yonetiminde-yapilan-hatalar.html",
+          "enabled": true
+        },
+        {
+          "id": "footer-link-3-5",
+          "label": {
+            "tr": "Destek ve yardım"
+          },
+          "url": "https://help.ticarti.com",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}
