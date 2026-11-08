@@ -31,7 +31,7 @@ export function HeaderPrimaryTree({navigation,locale='tr'}:{navigation:Navigatio
 }
 export function HeaderMegaTree({navigation,locale='tr',mobile=false}:{navigation:Navigation|null;locale?:string;mobile?:boolean}){
  const tree=menuTree(navigation);
- return <>{tree.header.filter(x=>x.enabled&&x.children?.some(item=>isVisible(item,locale))).map(top=>
+ return <>{tree.header.filter(x=>isVisible(x,locale)&&x.children?.some(item=>isVisible(item,locale))).map(top=>
   <ul key={top.id} className={'tc-nav-children bm-add-'+(top.id==='nav-solutions'?'companies':top.id==='nav-resources'?'resources':'custom')}
    data-mega={top.id} data-mobile-panel={mobile?'true':undefined}>
    <div className="tc-mega-menu"><div className="container"><div className="tc-mega-menu-card">
