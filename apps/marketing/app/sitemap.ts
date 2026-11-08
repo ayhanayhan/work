@@ -27,7 +27,6 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
  for(const locale of locales){
   const tools=await listTools(locale);
   if(tools.length){
-   data.push({url:origin+toolPath(locale),changeFrequency:'weekly',priority:0.65});
    for(const tool of tools){
     data.push({url:origin+toolPath(locale,tool.id),changeFrequency:'monthly',priority:0.6});
    }
