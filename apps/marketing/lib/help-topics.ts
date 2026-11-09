@@ -24,4 +24,17 @@ export const HELP_TOPICS:HelpTopic[]=[
  {id:'hesap',title:'Hesap, Güvenlik ve Faturalandırma',summary:'Giriş, mağaza erişimi, kullanıcı yetkileri ve paketler.',questions:[
   {question:'Mağaza hesabıma nasıl giriş yaparım?',answer:'Ticarti’nin mağaza giriş sayfasını kullanın. Birden fazla mağazanız varsa girişten sonra yönetmek istediğiniz mağazayı seçin.'},
   {question:'Destek talebini nasıl oluşturabilirim?',answer:'Mağaza hesabınızla oturum açın ve yönetim panelindeki Destek bölümüne gidin. Talebinizi doğru mağazada oluşturduğunuzu kontrol edin.'}]}
+ ,{id:'pazarlama',title:'Pazarlama ve Kampanyalar',summary:'İndirimler, kampanyalar ve mağazanızı büyütme araçları.',questions:[
+  {question:'İndirim kampanyalarını nasıl yönetebilirim?',answer:'Kampanyaları mağazanızın pazarlama bölümünden tanımlayın. İndirim koşulları, kullanım sınırları, öncelik ve birlikte uygulanma kurallarını yayınlamadan önce kontrol edin.'},
+  {question:'E-posta şablonlarını nasıl özelleştiririm?',answer:'Mağaza bildirimleri için mevcut e-posta şablonlarını ilgili yönetim bölümünden düzenleyin. Değişiklikten sonra farklı dil ve ekran boyutlarında önizleme yapın.'}]}
+ ,{id:'musteriler',title:'Müşteriler ve Hesaplar',summary:'Müşteri bilgileri, hesap işlemleri ve müşteri deneyimi.',questions:[
+  {question:'Müşteri bilgilerini nereden inceleyebilirim?',answer:'Yönetim panelindeki Müşteriler bölümünden kayıtlı müşterilerin bilgilerini ve ilgili işlemleri inceleyebilirsiniz. Kişisel verileri yalnızca yetkiniz kapsamında işleyin.'},
+  {question:'Müşteriler siparişlerinden iade başlatabilir mi?',answer:'Mağazanın müşteri alanında iade süreci etkinse müşteriler ilgili sipariş üzerinden iade talebi oluşturabilir. Talep, mağaza yönetimindeki iade akışıyla değerlendirilir.'}]}
+ ,{id:'ayarlar',title:'Mağaza Ayarları ve Yerelleştirme',summary:'Dil, para birimi, vergi, alan adı ve mağaza bilgileri.',questions:[
+  {question:'Mağazanın dil ve para birimini nereden düzenlerim?',answer:'Mağaza ayarlarındaki yerelleştirme alanından desteklenen dilleri, para birimlerini ve ölçü birimlerini gözden geçirebilirsiniz. Yayın öncesi çevirileri kontrol edin.'},
+  {question:'Alan adı bağlantısında sorun yaşarsam ne yapmalıyım?',answer:'Alan adı DNS kayıtlarınızı ve sağlayıcınızın yönlendirmelerini kontrol edin. DNS değişiklikleri zaman alabilir. Sorun sürerse mağazanızdan destek talebi oluşturun.'}]}
+ ,{id:'faturalandirma',title:'Paketler ve Faturalandırma',summary:'Abonelik, kullanım bilgileri ve ödeme belgeleri.',questions:[
+  {question:'Abonelik bilgilerini nerede bulurum?',answer:'Mağazanızın hesap ve faturalandırma bölümünden paket, dönem ve geçmiş işlemleri gözden geçirebilirsiniz.'},
+  {question:'Paketle ilgili yardıma nasıl ulaşırım?',answer:'Paket veya fatura ile ilgili sorularınız için mağaza hesabınızla giriş yaparak Destek bölümünden talep oluşturabilirsiniz.'}]}
+
 ];
