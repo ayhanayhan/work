@@ -31,7 +31,7 @@ export class ContactService {
     enabled:false,recipient:'',acknowledgeSender:false,
     subject:'Ticarti · Yeni iletişim mesajı: {{subject}}',
     acknowledgmentSubject:'Ticarti · Mesajınızı aldık',
-    acknowledgmentBody:'Merhaba {{fullName}},\\n\\n{{subject}} konulu mesajınız bize ulaştı. Ekibimiz talebinizi inceleyecektir.\\n\\nTicarti'
+    acknowledgmentBody:'Merhaba {{fullName}},\n\n{{subject}} konulu mesajınız bize ulaştı. Ekibimiz talebinizi inceleyecektir.\n\nTicarti'
   };
   async contactEmailSettings(){
     const saved=await this.prisma.platformSetting.findUnique({where:{key:this.contactEmailKey}});
@@ -74,7 +74,7 @@ export class ContactService {
     const jobs:Promise<void>[]=[];
     if(config.enabled&&config.recipient){
       jobs.push(send(config.recipient,config.subject,
-        'Yeni web sitesi iletişim mesajı\\n\\nAd soyad: {{fullName}}\\nE-posta: {{email}}\\nTelefon: {{phone}}\\nKonu: {{subject}}\\n\\n{{message}}'));
+        'Yeni web sitesi iletişim mesajı\n\nAd soyad: {{fullName}}\nE-posta: {{email}}\nTelefon: {{phone}}\nKonu: {{subject}}\n\n{{message}}'));
     }
     if(config.acknowledgeSender&&record.email){
       jobs.push(send(record.email,config.acknowledgmentSubject,config.acknowledgmentBody));
