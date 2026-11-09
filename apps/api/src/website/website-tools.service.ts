@@ -8,12 +8,14 @@ export const TOOL_IDS=['qr-kod-olusturucu','kdv-hesaplama',
   'trendyol-komisyon-hesaplama','amazon-komisyon-hesaplama',
   'hepsiburada-komisyon-hesaplama','n11-komisyon-hesaplama',
   'ciceksepeti-komisyon-hesaplama','pazarama-komisyon-hesaplama',
-  'maas-hesaplama','gumruk-vergisi-hesaplama','desi-hesaplama'] as const;
+  'maas-hesaplama','gumruk-vergisi-hesaplama','desi-hesaplama',
+  'ean13-barkod-olusturucu'] as const;
 const INITIAL_TITLES=['QR Kod Oluşturucu','KDV Hesaplama',
   'Trendyol Komisyon Hesaplama','Amazon Komisyon Hesaplama',
   'Hepsiburada Komisyon Hesaplama','n11 Komisyon Hesaplama',
   'ÇiçekSepeti Komisyon Hesaplama','Pazarama Komisyon Hesaplama',
-  'Net-Brüt Maaş Hesaplama','Gümrük Vergisi Hesaplama','Desi Hesaplama'];
+  'Net-Brüt Maaş Hesaplama','Gümrük Vergisi Hesaplama','Desi Hesaplama',
+  'EAN-13 Barkod Oluşturucu'];
 const SCALAR_FIELDS=['title','subtitle','intro','calculatorTitle','calculatorDescription',
   'description','howItWorksTitle','howItWorks','exampleTitle','example',
   'faqTitle','ctaTitle','ctaText','ctaButton','ctaUrl','disclaimer',
