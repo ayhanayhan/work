@@ -1,5 +1,6 @@
 'use client';
 import {useState,type FormEvent} from 'react';
+import CodeGenerator from '@/components/code-generator';
 import {qrcodegen} from '@/lib/vendor/qrcodegen';
 import {amazonCategories,commission,customs,desi,format,money,salary2026,salaryNetToGross,vat} from '@/lib/calculators';
 type Result={items:Array<[string,string]>;note?:string};
@@ -30,6 +31,7 @@ export default function ToolCalculator({id,locale='tr'}:{id:string;locale?:strin
   product:'1000',freight:'0',insurance:'0',exchange:'1',duty:'0',extraDuty:'0',excise:'0',fees:'0',text:'https://ticarti.com'});
  const [included,setIncluded]=useState(false),[commissionIncluded,setCommissionIncluded]=useState(false),[salaryMode,setSalaryMode]=useState('gross');
  const [category,setCategory]=useState('Diğer'),[result,setResult]=useState<Result|null>(null),[error,setError]=useState(''),[svg,setSvg]=useState('');
+ if(id==='qr-kod-olusturucu'||id==='ean13-barkod-olusturucu')return <section className="tc-tools-calculator-slot" id="tool-calculator"><div className="tc-tool-calc-heading"><div><h2>{id==='qr-kod-olusturucu'?(locale==='tr'?'QR Kod Oluşturucu':'QR Code Generator'):(locale==='tr'?'EAN-13 Barkod Oluşturucu':'EAN-13 Barcode Generator')}</h2></div></div><CodeGenerator mode={id==='qr-kod-olusturucu'?'qr':'ean13'} locale={locale}/></section>;
  const set=(key:string,val:string)=>{setV(old=>({...old,[key]:val}));setResult(null);setError('');};
  const n=(key:string)=>toNumber(v[key]),m=(a:number)=>money(a,locale),f=(a:number)=>format(a,locale);
  const field=(key:string,index:number,min='0')=><label className="tc-tool-field" key={key}>
