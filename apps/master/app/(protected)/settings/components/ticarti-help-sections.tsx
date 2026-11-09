@@ -45,7 +45,7 @@ export function SettingsSupport() {
         title="Yardıma mı ihtiyacınız var?"
         description="Kurulum, ödeme, kargo, entegrasyon ve mağaza ayarlarıyla ilgili yardım merkezi içeriklerine ulaşın."
         image={<><img src={toAbsoluteUrl('/media/illustrations/2.svg')} className="dark:hidden max-h-[150px]" alt="Yardım"/><img src={toAbsoluteUrl('/media/illustrations/2-dark.svg')} className="light:hidden max-h-[150px]" alt="Yardım"/></>}
-        more={{ title:'Yardım Merkezine Git', url:'/support' }}
+        more={{ title:'Yardım Merkezine Git', url:'https://help.ticarti.com/' }}
       />
       <Engage
         title="Destek Ekibi"
