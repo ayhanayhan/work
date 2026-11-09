@@ -122,7 +122,15 @@ export function middleware(req:NextRequest){
     }
     if(marketingPage(path))return proxyMarketing(req);
     if(assetOrApi(path))return NextResponse.next();
-    return internal(req,'/ticarti-platform','platform');
+    // Public corporate URLs belong to Marketing. Unknown paths should reach
+    // Marketing's branded 404 rather than the bare Platform 404.
+    // Preserve internal and account surfaces on the existing Platform backend.
+    if(path.startsWith('/ticarti-')||path==='/admin'||path.startsWith('/admin/')||
+       path==='/account'||path.startsWith('/account/')||
+       path==='/checkout'||path.startsWith('/checkout/')) {
+      return internal(req,'/ticarti-platform','platform');
+    }
+    return proxyMarketing(req);
   }
 
   if(path==='/admin'||path==='/admin/') return redirectToAdminRoot(req);
