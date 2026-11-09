@@ -277,8 +277,10 @@ const developerPage=fs.readFileSync(path.resolve(__dirname,'../app/developer/pag
 const developerCss=fs.readFileSync(path.resolve(__dirname,'../public/assets/css/marketing-developer.css'),'utf8');
 assert.ok(developerPage.includes('<SiteShell>')&&developerPage.includes('https://dev.ticarti.com/v1/health'),
  'Developer landing must use the corporate shell and grounded API examples');
-assert.ok(developerCss.includes('.tc-dev__grid')&&developerCss.includes('.tc-dev__closing'),
- 'Developer visual design must include responsive documentation and support sections');
+assert.ok(developerCss.includes('.tc-dev__grid')&&developerCss.includes('.tc-dev__closing')&&
+ developerCss.includes('.tc-dev__hero-console')&&
+ developerPage.includes('tc-dev__hero-copy')&&developerPage.includes('tc-dev__hero-console'),
+ 'Developer must use its own split hero and API console instead of the Help Center layout');
 assert.ok(routeMiddleware.includes("candidates.includes('dev.ticarti.com')")&&
  routeMiddleware.includes("forwarded.set('x-ticarti-dev-host','1')"),
  'Marketing middleware must preserve Developer hostname');
