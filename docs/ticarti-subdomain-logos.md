@@ -7,19 +7,18 @@ Bu özellik site tasarımını değiştirmez. Logo tanımlanmamışsa önceki Ti
 | --- | --- | --- |
 | ticarti.com | commerce-marketing | `NEXT_PUBLIC_TICARTI_MAIN_LOGO` |
 | help.ticarti.com | commerce-marketing | `NEXT_PUBLIC_TICARTI_HELP_LOGO` |
-| app.ticarti.com | commerce-storefront | `NEXT_PUBLIC_TICARTI_APP_LOGO` |
+| app.ticarti.com | commerce-storefront | Henüz yapılandırılmadı (Storefront logo değişikliği geri alındı) |
 | dev.ticarti.com | commerce-storefront | `NEXT_PUBLIC_TICARTI_DEV_LOGO` |
 
 Örnek değerler:
 ```dotenv
 NEXT_PUBLIC_TICARTI_HELP_LOGO=/assets/images/logo-help.svg
-NEXT_PUBLIC_TICARTI_APP_LOGO=https://ticarti.com/assets/images/logo-app.svg
 ```
 
 Marketing için logoyu `apps/marketing/public/assets/images/` içine
-koyup `/assets/images/logo-help.svg` yolunu kullanabilirsiniz. App için
-`apps/storefront/public/brand/` içine koyup `/brand/logo-app.svg`
-yolunu kullanabilirsiniz. Dış bağlantı da `https://` olmalıdır.
+koyup `/assets/images/logo-help.svg` yolunu kullanabilirsiniz. App logosu için önceden eklenen Storefront ortam değişkeni desteği geri alındı.
+Bunu ileride Master'dan yönetilecek merkezi marka ayarlarına bağlayacağız.
+Dış bağlantı da `https://` olmalıdır.
 
 Firebase App Hosting'de ilgili backend'in ortam değişkenine adresi ekleyin
 ve o backend'i yeniden deploy edin. PUBLIC değişkenler Next.js derlemesinde
@@ -30,7 +29,7 @@ API yönlendirmesi için kullanılıyor. DEV logo yapılandırması hazırdır a
 dev alan adına ayrıca bir UI oluşturulmadan görünecek bir logo yoktur.
 
 Help için header, mobil menü ve footer aynı ayarı kullanır.
-App için üst ve alt logo aynı ayarı kullanır.
+App Marketplace geçici logo değişikliği geri alındığı için şu anda özgün yazı logosunu kullanır.
 
 Bu ayarlar mevcut Master medya kütüphanesine bağlı bir yükleme arayüzü değildir;
 yeni logo dosyalarını sonradan sağlayabilirsiniz.
