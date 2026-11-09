@@ -1,12 +1,12 @@
 import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import SiteShell from '@/components/site-shell';
-import {HELP_TOPICS,helpArticleBySlug,helpArticleSlug} from '@/lib/help-topics';
+import {getHelpTopics,findHelpArticle,articleUrl} from '@/lib/help-cms';
 
 type Props={params:Promise<{slug:string}>};
 export const dynamic='force-dynamic';
 export async function generateMetadata({params}:Props):Promise<Metadata>{
- const {slug}=await params,entry=helpArticleBySlug(slug);
+ const {slug}=await params,entry=findHelpArticle(await getHelpTopics(),slug);
  if(!entry)return {robots:{index:false}};
  return {title:entry.article.question+' | Ticarti Yardım Merkezi',
   description:entry.article.answer.slice(0,160),
@@ -14,9 +14,10 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   robots:{index:false,follow:true}};
 }
 export default async function HelpArticlePage({params}:Props){
- const {slug}=await params,entry=helpArticleBySlug(slug);
+ const {slug}=await params,entry=findHelpArticle(await getHelpTopics(),slug);
  if(!entry)notFound();
  const {topic,article}=entry;
+ const topics=await getHelpTopics();
  return <SiteShell><main className="tc-help tc-help--article">
   <div className="tc-help__container">
    <nav className="tc-help__breadcrumb" aria-label="İçerik yolu">
@@ -26,16 +27,16 @@ export default async function HelpArticlePage({params}:Props){
    <div className="tc-help__article-layout">
     <aside className="tc-help__article-menu" aria-label="Yardım kategorileri">
      <h2>Yardım konuları</h2>
-     <nav>{HELP_TOPICS.map(item=><a key={item.id} href={'https://help.ticarti.com/kategori/'+item.id} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
+     <nav>{topics.map(item=><a key={item.id} href={'https://help.ticarti.com/kategori/'+item.id} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
     </aside>
     <article className="tc-help__article-body">
      <p className="tc-help__eyebrow">{topic.title}</p>
      <h1>{article.question}</h1>
-     <p>{article.answer}</p>
+     <p style={{whiteSpace:'pre-wrap'}}>{article.answer}</p>
      <section className="tc-help__related" aria-label="İlgili makaleler">
       <h2>Bu konuda diğer makaleler</h2>
       {topic.questions.filter(q=>q.question!==article.question).map(q=>
-       <a href={'https://help.ticarti.com/makale/'+helpArticleSlug(q.question)} key={q.question}>{q.question} <span aria-hidden="true">↗</span></a>)}
+       <a href={articleUrl(q)} key={q.question}>{q.question} <span aria-hidden="true">↗</span></a>)}
      </section>
      <section className="tc-help__article-footnote">
       <h2>Yardıma mı ihtiyacınız var?</h2>
