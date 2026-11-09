@@ -38,7 +38,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
     <link rel="stylesheet" href="/assets/css/style.css?v=v2-pricing-payment-footer-1104"/>
     <link rel="stylesheet" href="/assets/css/shared-footer.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/marketing-blog.css?v=6"/>
-    <link rel="stylesheet" href="/assets/css/marketing-tools.css?v=1"/>
+    <link rel="stylesheet" href="/assets/css/marketing-tools.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/navigation-tree.css?v=1"/>
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=3"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
