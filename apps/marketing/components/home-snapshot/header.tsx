@@ -3,6 +3,8 @@ import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
 import MerchantLoginLabel from '@/components/merchant-login-label';
+const helpLabels:Record<string,string>={tr:'Yardım Merkezi',en:'Help Center',de:'Hilfe-Center',ru:'Центр помощи',ar:'مركز المساعدة',bg:'Помощен център',uk:'Центр допомоги',id:'Pusat Bantuan',vi:'Trung tâm trợ giúp'};
+
 export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
  return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
@@ -119,7 +121,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
                       <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
                         {"\n"}
                         <a href={"/yardim"} role={"menuitem"} data-tc-content-key={"a-005"}>
-                          {"Yardım Merkezi"}
+                          {helpLabels[locale]||helpLabels.tr}
                         </a>
                         {"\n"}
                       </li>
