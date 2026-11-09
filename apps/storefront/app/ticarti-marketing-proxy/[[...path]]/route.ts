@@ -16,6 +16,7 @@ type Context = { params: Promise<{ path?: string[] }> };
 
 async function proxy(req: NextRequest, context: Context): Promise<NextResponse> {
   const { path = [] } = await context.params;
+  const developerSurface=req.headers.get('x-ticarti-surface')==='developer';
   const url = new URL(MARKETING_ORIGIN);
   // The browser keeps /iletisim; the Marketing app owns /contact.
   // Resolve it in the server proxy so it works regardless of middleware
@@ -38,7 +39,7 @@ async function proxy(req: NextRequest, context: Context): Promise<NextResponse> 
     if (value) headers.set(name, value);
   }
   headers.set('x-ticarti-site-proxy', '1');
-  headers.set('x-forwarded-host', 'ticarti.com');
+  headers.set('x-forwarded-host',developerSurface?'dev.ticarti.com':'ticarti.com');
 
   try {
     const hasBody = !['GET', 'HEAD'].includes(req.method);
@@ -72,7 +73,7 @@ async function proxy(req: NextRequest, context: Context): Promise<NextResponse> 
     if (location) {
       const redirect = new URL(location, MARKETING_ORIGIN);
       if (redirect.origin === MARKETING_ORIGIN) {
-        responseHeaders.set('location', PUBLIC_ORIGIN + redirect.pathname + redirect.search + redirect.hash);
+        responseHeaders.set('location', (developerSurface?'https://dev.ticarti.com':PUBLIC_ORIGIN) + redirect.pathname + redirect.search + redirect.hash);
       }
     }
 
