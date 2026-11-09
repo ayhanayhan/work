@@ -5,7 +5,8 @@ import MobileMegaMenu from './mobile-mega';
 import MerchantLoginLabel from '@/components/merchant-login-label';
 const helpLabels:Record<string,string>={tr:'Yardım Merkezi',en:'Help Center',de:'Hilfe-Center',ru:'Центр помощи',ar:'مركز المساعدة',bg:'Помощен център',uk:'Центр допомоги',id:'Pusat Bantuan',vi:'Trung tâm trợ giúp'};
 
-export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
+export default function HeaderSnapshot({navigation,locale='tr',helpHost=false}:{navigation:Navigation|null;locale?:string;helpHost?:boolean}){
+ const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;
  return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
     {"\n"}
@@ -28,7 +29,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
             {"\n"}
           </div>
           {"\n"}
-          <a className={"tc-announcement-bar__cta"} href={"/paketler.html"} data-tc-content-key={"a-001"}>
+          <a className={"tc-announcement-bar__cta"} href={main("/paketler.html")} data-tc-content-key={"a-001"}>
             {"Paketleri incele"}
           </a>
           {"\n"}
@@ -52,7 +53,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
           {"\n"}
           <div className={"logo"}>
             {"\n"}
-            <a href={"/"}>
+            <a href={main("/")}>
               {"\n"}
               <img alt={"Ticarti"} loading={"lazy"} src={"/assets/images/ticarti-logo.svg"} data-tc-content-src={"image-001"} />
               {"\n"}
@@ -72,7 +73,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
           {"\n"}
           <div className={"tc-navigation-panel"}>
             <div className="tc-ui-drawer-header">
-              <a className="tc-ui-drawer-brand" href="/" aria-label="Ticarti ana sayfa">
+              <a className="tc-ui-drawer-brand" href={main("/")} aria-label="Ticarti ana sayfa">
                 <img src="/assets/images/ticarti-logo.svg" alt="Ticarti"/>
               </a>
               <button type="button" className="tc-ui-drawer-close" aria-label="Menüyü kapat">
@@ -120,7 +121,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
                       {"\n"}
                       <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
                         {"\n"}
-                        <a href={"/yardim"} role={"menuitem"} data-tc-content-key={"a-005"}>
+                        <a href={"https://help.ticarti.com/"} role={"menuitem"} data-tc-content-key={"a-005"}>
                           {helpLabels[locale]||helpLabels.tr}
                         </a>
                         {"\n"}
@@ -136,7 +137,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <div className={"button btn2 login-btn"}>
                 {"\n"}
-                <a href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} data-tc-content-key={"a-006"}>
+                <a href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} data-tc-content-key={"a-006"}>
                   {"İletişim"}
                 </a>
                 {"\n"}
