@@ -249,9 +249,21 @@ assert.ok(helpCategory.includes('<SiteShell>')&&helpArticle.includes('<SiteShell
  'Help category and article pages must reuse the existing site shell');
 assert.ok(routeMiddleware.includes("helpDetail[1]==='kategori'?'category':'article'"),
  'Turkish category and article URLs must use native internal route rewrites');
-assert.ok(helpCenter.includes("'/yardim/makale/'+helpArticleSlug"),
- 'Help search and category listings must open real articles');
+assert.ok(helpCenter.includes("'https://help.ticarti.com/makale/'+helpArticleSlug"),
+ 'Help search and category listings must open canonical help-domain articles');
 assert.ok(topicModule.includes('helpArticleBySlug')&&helpArticle.includes('helpArticleBySlug'),
  'Help article routes must validate known published topic slugs');
+const helpShell=fs.readFileSync(path.resolve(__dirname,'../components/site-shell.tsx'),'utf8');
+assert.ok(routeMiddleware.includes("candidates.includes('help.ticarti.com')"),
+ 'Help custom domain must be detected before marketing corporate rewrites');
+assert.ok(routeMiddleware.includes("url.pathname='/help'")&&
+ routeMiddleware.includes("'category':'article'"),
+ 'Help root and article routes must be internally rewritten to English-named pages');
+assert.ok(helpShell.includes('helpHost={helpHost}'),
+ 'Help site must use existing shared header/footer with correct corporate links');
+assert.ok(sitemap.includes("https://help.ticarti.com/"),
+ 'Canonical help root should be indexed only on the help subdomain');
+assert.ok(helpPage.includes('https://help.ticarti.com/'),
+ 'Native Help Center page must set help-domain canonical metadata');
 console.log('PASS: native Ticarti Help Center, shared shell, existing merchant auth and support handoff');
 console.log('PASS: original unconfigured sections restored, configured missing locales hidden, shared site shell used');
