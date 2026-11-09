@@ -242,5 +242,16 @@ assert.ok(helpData.includes("id:'siparisler'")&&helpData.includes("id:'odemeler'
 assert.ok(marketingHeader.includes('<MerchantLoginLabel locale={locale}/>') &&
  marketingHeader.includes('https://login.ticarti.com/'),
  'Shared site header must use merchant login and authenticated state');
+const topicModule=fs.readFileSync(path.resolve(__dirname,'../lib/help-topics.ts'),'utf8');
+const helpCategory=fs.readFileSync(path.resolve(__dirname,'../app/help/category/[slug]/page.tsx'),'utf8');
+const helpArticle=fs.readFileSync(path.resolve(__dirname,'../app/help/article/[slug]/page.tsx'),'utf8');
+assert.ok(helpCategory.includes('<SiteShell>')&&helpArticle.includes('<SiteShell>'),
+ 'Help category and article pages must reuse the existing site shell');
+assert.ok(routeMiddleware.includes("helpDetail[1]==='kategori'?'category':'article'"),
+ 'Turkish category and article URLs must use native internal route rewrites');
+assert.ok(helpCenter.includes("'/yardim/makale/'+helpArticleSlug"),
+ 'Help search and category listings must open real articles');
+assert.ok(topicModule.includes('helpArticleBySlug')&&helpArticle.includes('helpArticleBySlug'),
+ 'Help article routes must validate known published topic slugs');
 console.log('PASS: native Ticarti Help Center, shared shell, existing merchant auth and support handoff');
 console.log('PASS: original unconfigured sections restored, configured missing locales hidden, shared site shell used');
