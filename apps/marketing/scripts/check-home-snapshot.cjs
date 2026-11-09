@@ -247,7 +247,7 @@ const helpPage=fs.readFileSync(path.resolve(__dirname,'../app/help/page.tsx'),'u
 const helpCenter=fs.readFileSync(path.resolve(__dirname,'../components/help-center.tsx'),'utf8');
 const helpData=fs.readFileSync(path.resolve(__dirname,'../lib/help-topics.ts'),'utf8');
 const marketingHeader=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/header.tsx'),'utf8');
-assert.ok(helpPage.includes('<SiteShell>')&&helpPage.includes('<HelpCenter locale="tr"/>'),
+assert.ok(helpPage.includes('<SiteShell>')&&helpPage.includes('<HelpCenter locale="tr" topics={topics}/>'),
  'Help Center must share the identical Marketing site header/footer');
 assert.ok(routeMiddleware.includes("pathname==='/yardim'")&&routeMiddleware.includes("url.pathname='/help'"),
  'Public /yardim must render native Next.js /help without a redirect');
@@ -265,10 +265,11 @@ assert.ok(helpCategory.includes('<SiteShell>')&&helpArticle.includes('<SiteShell
  'Help category and article pages must reuse the existing site shell');
 assert.ok(routeMiddleware.includes("helpDetail[1]==='kategori'?'category':'article'"),
  'Turkish category and article URLs must use native internal route rewrites');
-assert.ok(helpCenter.includes("'https://help.ticarti.com/makale/'+helpArticleSlug"),
- 'Help search and category listings must open canonical help-domain articles');
-assert.ok(topicModule.includes('helpArticleBySlug')&&helpArticle.includes('helpArticleBySlug'),
- 'Help article routes must validate known published topic slugs');
+assert.ok(helpCenter.includes('articleUrl(item)')&&helpCategory.includes('articleUrl(item)'),
+ 'Help search and category listings must open canonical CMS article links');
+const helpCms=fs.readFileSync(path.resolve(__dirname,'../lib/help-cms.ts'),'utf8');
+assert.ok(helpCms.includes('getHelpTopics()')&&helpArticle.includes('findHelpArticle(await getHelpTopics(),slug)')&&helpCategory.includes('await getHelpTopics()'),
+ 'Help routes must read published Master CMS content and validate article slugs');
 const brandConfig=fs.readFileSync(path.resolve(__dirname,'../lib/subdomain-branding.ts'),'utf8');
 assert.ok(brandConfig.includes('NEXT_PUBLIC_TICARTI_HELP_LOGO')&&
  brandConfig.includes('NEXT_PUBLIC_TICARTI_DEV_LOGO')&&brandConfig.includes('DEFAULT_LOGO'),
