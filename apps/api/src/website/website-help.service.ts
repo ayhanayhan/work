@@ -6,7 +6,7 @@ const KEY='marketing_help_center_v1';
 const slugValid=(value:string)=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)&&value.length<=100;
 const plain=(value:unknown,limit:number)=>String(value??'').trim().slice(0,limit);
 type Article={id:string;slug:string;question:string;answer:string;enabled:boolean;sortOrder:number};
-type Category={id:string;title:string;summary:string;enabled:boolean;sortOrder:number;questions:Article[]};
+type Category={id:string;slug:string;title:string;summary:string;enabled:boolean;sortOrder:number;questions:Article[]};
 
 @Injectable()
 export class WebsiteHelpService {
@@ -25,12 +25,15 @@ export class WebsiteHelpService {
  async save(body:any){
   if(!body||!Array.isArray(body.topics)||body.topics.length>100)
    throw new BadRequestException('Yardım kategorileri geçersiz veya çok fazla.');
-  const topicIds=new Set<string>(),articleIds=new Set<string>(),slugs=new Set<string>();
+  const topicIds=new Set<string>(),topicSlugs=new Set<string>(),articleIds=new Set<string>(),slugs=new Set<string>();
   let count=0;
   const topics:Category[]=body.topics.map((c:any,index:number)=>{
    const id=plain(c.id,100);
    if(!slugValid(id)||topicIds.has(id))throw new BadRequestException('Kategori bağlantı adı geçersiz veya tekrar ediyor.');
    topicIds.add(id);
+   const topicSlug=plain(c.slug||id,100);
+   if(!slugValid(topicSlug)||topicSlugs.has(topicSlug))throw new BadRequestException('Kategori slug adresi geçersiz veya tekrar ediyor.');
+   topicSlugs.add(topicSlug);
    const title=plain(c.title,220),summary=plain(c.summary,1500);
    if(!title)throw new BadRequestException('Kategori başlığı boş olamaz.');
    if(!Array.isArray(c.questions)||c.questions.length>250)throw new BadRequestException('Bir kategoride çok fazla makale var.');
@@ -44,7 +47,7 @@ export class WebsiteHelpService {
     articleIds.add(aid);slugs.add(slug);
     return {id:aid,slug,question,answer,enabled:a.enabled!==false,sortOrder:j};
    });
-   return {id,title,summary,enabled:c.enabled!==false,sortOrder:index,questions};
+   return {id,slug:topicSlug,title,summary,enabled:c.enabled!==false,sortOrder:index,questions};
   });
   const previous=await this.read();
   if(!Number.isInteger(body.version)||body.version!==previous.version)
