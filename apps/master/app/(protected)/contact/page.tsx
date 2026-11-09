@@ -74,7 +74,20 @@ export default function ContactInboxPage(){
         method:'PATCH',body:JSON.stringify({status,replyDraft:reply,internalNote:note})
       });
       setRows(x=>x.map(row=>row.id===updated.id?updated:row));
-      setNotice('Kayıt güncellendi. Yanıt taslağı e-posta olarak otomatik gönderilmez.');
+      setNotice('Kayıt güncellendi. Yanıt taslağı kaydedildi; göndermek için E-posta Gönder seçeneğini kullanın.');
+    }catch(e){setError(errorText(e))}
+    finally{setBusy(false)}
+  };
+  const sendReply=async()=>{
+    if(!selected||!reply.trim())return;
+    setBusy(true);setError('');setNotice('');
+    try{
+      const updated=await request('/superadmin/contact/'+encodeURIComponent(selected.id)+'/reply',{
+        method:'POST',body:JSON.stringify({message:reply})
+      });
+      setRows(x=>x.map(row=>row.id===updated.id?updated:row));
+      setStatus('ANSWERED');
+      setNotice('Yanıt e-posta ile gönderildi ve kayıt yanıtlandı olarak işaretlendi.');
     }catch(e){setError(errorText(e))}
     finally{setBusy(false)}
   };
@@ -126,12 +139,12 @@ export default function ContactInboxPage(){
             <label className="grid gap-2 text-sm font-medium">Durum<Select value={status} onValueChange={setStatus}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{Object.entries(STATUS).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
             <label className="grid gap-2 text-sm font-medium">Yanıt taslağı<Textarea rows={5} maxLength={10000} value={reply} onChange={e=>setReply(e.target.value)} placeholder="Yanıtınızı hazırlayın..."/></label>
             <label className="grid gap-2 text-sm font-medium">İç not<Textarea rows={3} maxLength={4000} value={note} onChange={e=>setNote(e.target.value)}/></label>
-            <p className="text-xs text-muted-foreground">Yanıt taslağı kaydedilir; otomatik e-posta gönderilmez. E-posta uygulamanızda yanıtlamak için aşağıdaki bağlantıyı kullanın.</p>
+            <p className="text-xs text-muted-foreground">Kaydet taslağı saklar; E-posta Gönder, yanıtı doğrudan gönderene yollar ve durumu Yanıtlandı yapar. E-posta sağlayıcısı tanımlı olmalıdır.</p>
           </div>:null}
           {notice?<p className="text-sm text-success">{notice}</p>:null}
           {error?<p className="text-sm text-destructive">{error}</p>:null}
         </DialogBody>
-        <DialogFooter><Button variant="outline" onClick={()=>setId(null)}>Kapat</Button><Button variant="outline" asChild><a href={mailto}><Mail className="size-4"/>E-postada Aç</a></Button><Button disabled={busy} onClick={()=>void save()}>{busy?<LoaderCircle className="size-4 animate-spin"/>:null}Kaydet</Button></DialogFooter>
+        <DialogFooter><Button variant="outline" onClick={()=>setId(null)}>Kapat</Button><Button variant="outline" asChild><a href={mailto}><Mail className="size-4"/>E-postada Aç</a></Button><Button disabled={busy} onClick={()=>void save()}>{busy?<LoaderCircle className="size-4 animate-spin"/>:null}Kaydet</Button><Button disabled={busy||!selected?.email||!reply.trim()} onClick={()=>void sendReply()}><Mail className="size-4"/>E-posta Gönder</Button></DialogFooter>
       </DialogContent>
     </Dialog>
   </>;
