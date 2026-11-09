@@ -172,8 +172,8 @@ export class MerchantAuthController {
     }
   }
 
-  @Post('linkedin/complete') @HttpCode(200)
-  async completeLinkedin(@Body() dto:MerchantHandoffDto,@Req() req:any,@Res({passthrough:true}) res:any) {
+  @Post('social/complete') @HttpCode(200)
+  async completeSocial(@Body() dto:MerchantHandoffDto,@Req() req:any,@Res({passthrough:true}) res:any) {
     this.assertClient(req,true);this.noStore(res);
     return this.auth.consumeSocialHandoff(dto.code);
   }
