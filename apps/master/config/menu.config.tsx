@@ -43,6 +43,7 @@ export const MENU_SIDEBAR: MenuConfig = [
     title: 'İçerik', i18nKey: 'navigation.content', icon: FileText, children: [
       { title: 'Anasayfa', path: '/website/home' },
       { title: 'Sayfa İçerikleri', path: '/website/pages' },
+      { title: 'Yardım Merkezi', path: '/website/help' },
       { title: 'Araçlar', path: '/website/tools' },
       { title: 'Menü Yönetimi', path: '/website/menus' },
       { title: 'Sayfalar', i18nKey: 'navigation.pages', path: '/content/pages' },
