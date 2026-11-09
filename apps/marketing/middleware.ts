@@ -3,6 +3,7 @@ import {NextResponse,type NextRequest} from 'next/server';
 export function middleware(request:NextRequest){
   const forwarded=new Headers(request.headers);
   forwarded.delete('x-ticarti-help-host');
+  forwarded.delete('x-ticarti-dev-host');
   const pathname=request.nextUrl.pathname;
   forwarded.set('x-marketing-page',pathname);
   // help.ticarti.com is served directly by the Marketing backend.
@@ -13,6 +14,15 @@ export function middleware(request:NextRequest){
     request.headers.get('x-forwarded-server')]
     .filter(Boolean).flatMap(value=>String(value).split(','))
     .map(value=>value.trim().toLowerCase().replace(/:\d+$/,'').replace(/\.$/,''));
+  // Developer is served by Marketing but the Storefront proxy must preserve
+  // the original dev hostname; never redirect API paths here.
+  if(candidates.includes('dev.ticarti.com')){
+    forwarded.set('x-ticarti-dev-host','1');
+    const url=request.nextUrl.clone();
+    if(pathname==='/'||pathname==='/developer/')url.pathname='/developer';
+    if(url.pathname!==pathname)return NextResponse.rewrite(url,{request:{headers:forwarded}});
+    return NextResponse.next({request:{headers:forwarded}});
+  }
   if(candidates.includes('help.ticarti.com')){
     forwarded.set('x-ticarti-help-host','1');
     const url=request.nextUrl.clone();
