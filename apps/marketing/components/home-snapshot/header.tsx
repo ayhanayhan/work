@@ -141,7 +141,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <div className={"button btn1 account-btn"}>
                 {"\n"}
-                <a href={"/login.html"} data-tc-content-key={"a-007"}>
+                <a href={"https://login.ticarti.com/"} data-tc-content-key={"a-007"}>
                   {"Giriş yap"}
                 </a>
                 {"\n"}
