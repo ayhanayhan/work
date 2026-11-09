@@ -39,7 +39,8 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
   const optimize=async(file:File):Promise<File>=>{
     // Normalize EXIF orientation and large browser-decoded files before upload;
     // the API still verifies and converts the result to its canonical WebP.
-    if(!('createImageBitmap' in window))return file;
+    // SVG is validated/rasterized by the API; never decode or rewrite it in the browser.
+    if(file.type==='image/svg+xml'||!('createImageBitmap' in window))return file;
     const bitmap=await createImageBitmap(file);
     try{
       const ratio=Math.min(1,2400/Math.max(bitmap.width,bitmap.height));
@@ -61,12 +62,12 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
     setBusy(true);setError('');
     try{
       for(const file of Array.from(files)){
-        if(!['image/jpeg','image/png','image/webp','image/avif','image/heic','image/heif'].includes(file.type))
-          throw new Error('JPEG, PNG, WEBP veya AVIF görsel seçin.');
+        if(!['image/jpeg','image/png','image/webp','image/avif','image/heic','image/heif','image/svg+xml'].includes(file.type))
+          throw new Error('JPEG, PNG, WEBP, AVIF veya SVG görsel seçin.');
         let processed:File;
         try{processed=await optimize(file)}
         catch(e:any){throw new Error('Görsel tarayıcıda işlenemedi: '+(e?.message||'Desteklenmeyen veya bozuk görsel.'))}
-        if(processed.size>8*1024*1024)throw new Error('Sıkıştırılmış görsel bile 8 MB sınırını aşıyor.');
+        if(processed.size>(file.type==='image/svg+xml'?2:8)*1024*1024)throw new Error(file.type==='image/svg+xml'?'SVG dosyası en fazla 2 MB olabilir.':'Görsel 8 MB sınırını aşıyor.');
         const form=new FormData();form.append('file',processed);
         const item=await request('/superadmin/media/upload',{method:'POST',body:form}) as Asset;
         if(!item?.publicUrl)throw new Error('Yükleme tamamlandı ancak medya URL alınamadı.');
@@ -96,7 +97,7 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
         onDrop={e=>{e.preventDefault();e.stopPropagation();setDrag(false);void upload(e.dataTransfer.files)}}>
         <div className="flex items-center justify-between border-b px-5 py-4"><div>
           <div className="font-semibold">Medya Kütüphanesi</div>
-          <div className="text-xs text-muted-foreground">Mevcut görsellerden seçin veya yeni görseller yükleyin. Görseller sunucuda WebP formatına dönüştürülür.</div>
+          <div className="text-xs text-muted-foreground">Mevcut görsellerden seçin veya yeni görseller yükleyin. JPEG/PNG/WebP/AVIF ve güvenli SVG yükleyebilirsiniz. Görseller sunucuda WebP formatına dönüştürülür.</div>
         </div><Button type="button" size="icon" variant="ghost" disabled={busy} onClick={()=>setOpen(false)}><X className="size-4"/></Button></div>
         <div className="grid min-h-0 grow grid-cols-[190px_minmax(0,1fr)]">
           <aside className="overflow-auto border-r p-3"><div className="mb-3 text-sm font-semibold">Kütüphane</div>
@@ -107,7 +108,7 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
             <div className="flex flex-wrap gap-3 border-b p-3">
               <div className="relative min-w-40 grow"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/>
                 <Input className="pl-9" placeholder="Medya ara..." value={q} onChange={e=>setQ(e.target.value)}/></div>
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif" multiple className="hidden"
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,image/svg+xml,.svg" multiple className="hidden"
                 onChange={e=>{if(e.target.files?.length)void upload(e.target.files)}}/>
               <Button type="button" variant="outline" disabled={busy} onClick={()=>fileRef.current?.click()}><Upload className="size-4"/>Yükle</Button>
             </div>
@@ -127,7 +128,7 @@ export function WebsiteBlogMediaDropzone({label='Kapak görseli',value,onChange}
                     onClick={()=>{onChange(item.publicUrl);setOpen(false)}}>
                     <div className="aspect-square bg-muted"><img className="size-full object-cover" src={item.publicUrl} alt={item.fileName||''}/></div>
                     <div className="truncate p-2 text-xs">{item.fileName||'Görsel'}</div>
-                    <div className="px-2 pb-2 text-xs text-muted-foreground">WebP · {(Number(item.size||0)/1024).toFixed(0)} KB</div>
+                    <div className="px-2 pb-2 text-xs text-muted-foreground">{item.mimeType==='image/webp'?'WebP':item.mimeType} · {(Number(item.size||0)/1024).toFixed(0)} KB</div>
                   </button>)}
                 </div>:<p className="py-12 text-center text-sm text-muted-foreground">Bu kütüphanede görsel bulunamadı.</p>}
             </div>
