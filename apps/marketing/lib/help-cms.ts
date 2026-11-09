@@ -2,7 +2,7 @@ import {HELP_TOPICS,type HelpTopic,helpArticleSlug} from './help-topics';
 
 const API=String(process.env.API_ORIGIN||'').replace(/\/$/,'');
 export type HelpArticle=HelpTopic['questions'][number]&{id?:string;slug?:string;enabled?:boolean};
-export type HelpCategory=Omit<HelpTopic,'questions'>&{enabled?:boolean;questions:HelpArticle[]};
+export type HelpCategory=Omit<HelpTopic,'questions'>&{slug?:string;enabled?:boolean;questions:HelpArticle[]};
 export async function getHelpTopics():Promise<HelpCategory[]> {
  if(!API)return HELP_TOPICS;
  try{
@@ -11,7 +11,7 @@ export async function getHelpTopics():Promise<HelpCategory[]> {
   const data=await response.json();
   if(!Array.isArray(data?.topics))return HELP_TOPICS;
   return data.topics.map((c:any)=>({
-   id:String(c.id||''),title:String(c.title||''),summary:String(c.summary||''),
+   id:String(c.id||''),slug:String(c.slug||c.id||''),title:String(c.title||''),summary:String(c.summary||''),
    questions:Array.isArray(c.questions)?c.questions.map((a:any)=>({
     id:String(a.id||''),slug:String(a.slug||helpArticleSlug(String(a.question||''))),
     question:String(a.question||''),answer:String(a.answer||'')
