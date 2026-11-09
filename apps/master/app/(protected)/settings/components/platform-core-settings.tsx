@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import { useMasterSession } from '@/app/components/MasterSession';
+import {WebsiteBlogMediaDropzone} from '@/app/(protected)/website/components/website-blog-media-dropzone';
 import { Container } from '@/components/common/container';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardHeading } from '@/components/ui/card';
@@ -80,6 +81,7 @@ type PlatformCompany = {
 
 type PlatformSettings = {
   company: PlatformCompany;
+  branding?: {main?:string;help?:string;app?:string;dev?:string};
   locales: PlatformLocale[];
   currencies: PlatformCurrency[];
   countries: PlatformCountry[];
@@ -410,6 +412,21 @@ export function PlatformGeneralPage() {
         <Field label="Saat dilimi"><Select value={company.timezone||'Europe/Istanbul'} onValueChange={v=>patchCompany({timezone:v})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent className="max-h-80">{ALL_TIMEZONES.map(value=><SelectItem key={value} value={value}>{timezoneLabel(value)}</SelectItem>)}</SelectContent></Select></Field>
         <Field label="Varsayılan dil"><Select value={defaultLocale} onValueChange={locale=>s.setData({...data,locales:data.locales.map(x=>({...x,isDefault:x.locale===locale}))})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{data.locales.filter(x=>x.isActive).map(x=><SelectItem key={x.locale} value={x.locale}>{x.label}</SelectItem>)}</SelectContent></Select></Field>
         <Field label="Varsayılan para birimi"><Select value={defaultCurrency} onValueChange={code=>s.setData({...data,currencies:data.currencies.map(x=>({...x,isDefault:x.code===code}))})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{data.currencies.filter(x=>x.isActive).map(x=><SelectItem key={x.code} value={x.code}>{x.name} · {x.code}</SelectItem>)}</SelectContent></Select></Field>
+      </div>
+    </Box>
+    <Box title="Alt Alan Adı Logoları" description="Ticarti'nin kurumsal alan adlarına özel logolar. Müşterilerin mağaza logolarından bağımsızdır.">
+      <div className="grid gap-5 md:grid-cols-2">
+        {([
+          ['main','ticarti.com'],
+          ['help','help.ticarti.com'],
+          ['app','app.ticarti.com'],
+          ['dev','dev.ticarti.com']
+        ] as const).map(([key,domain])=><div key={key} className="min-w-0 rounded-lg border p-4">
+          <div className="mb-3 text-sm font-semibold">{domain}</div>
+          <WebsiteBlogMediaDropzone label="Logo seç" value={data.branding?.[key]||''}
+            onChange={logo=>s.setData({...data,branding:{...(data.branding||{}),[key]:logo}})}/>
+          <p className="mt-2 text-xs text-muted-foreground">{key==='dev'?'API alan adı: ayrı bir web arayüzü olmadığı için logo henüz gösterilmez.':key==='app'?'App ayrı uygulama olarak taşınana kadar bu seçim yalnızca merkezi kayıtta tutulur.':'Seçim kaydedildikten sonra kurumsal sitede kullanılır.'}</p>
+        </div>)}
       </div>
     </Box>
     <Box title="Marka & Görseller" description="Logo ve favicon alanları firma bilgilerinden ayrı tutulur.">
