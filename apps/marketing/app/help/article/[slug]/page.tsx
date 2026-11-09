@@ -22,12 +22,12 @@ export default async function HelpArticlePage({params}:Props){
   <div className="tc-help__container">
    <nav className="tc-help__breadcrumb" aria-label="İçerik yolu">
     <a href="https://help.ticarti.com/">Yardım Merkezi</a><span aria-hidden="true">/</span>
-    <a href={'https://help.ticarti.com/kategori/'+topic.id}>{topic.title}</a>
+    <a href={'https://help.ticarti.com/kategori/'+(topic.slug||topic.id)}>{topic.title}</a>
    </nav>
    <div className="tc-help__article-layout">
     <aside className="tc-help__article-menu" aria-label="Yardım kategorileri">
      <h2>Yardım konuları</h2>
-     <nav>{topics.map(item=><a key={item.id} href={'https://help.ticarti.com/kategori/'+item.id} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
+     <nav>{topics.map(item=><a key={item.id} href={'https://help.ticarti.com/kategori/'+(item.slug||item.id)} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
     </aside>
     <article className="tc-help__article-body">
      <p className="tc-help__eyebrow">{topic.title}</p>
