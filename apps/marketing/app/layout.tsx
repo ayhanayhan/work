@@ -28,7 +28,8 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   // homepage fallback used when a legacy static HTML template is absent.
   const contentParts=parts[0]&&['tr','en','de','ru','ar','bg','uk','id','vi'].includes(parts[0])?parts.slice(1):parts;
   const toolsPage=contentParts[0]==='araclar';
-  const cls=toolsPage?
+  const helpHost=(await headers()).get('x-ticarti-help-host')==='1';
+  const cls=helpHost?'tc-page-home tc-page-help':toolsPage?
    (contentParts.length>1?
     'tc-page-crowdy tc-vendor-aos tc-vendor-theme tc-page-stories tc-marketing-blog':
     'tc-page-stories tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight tc-marketing-blog'):
