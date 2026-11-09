@@ -33,12 +33,23 @@ async function test(){
  const email=await svc.updateCallbackEmailTemplate({enabled:false,recipient:'sales@example.com',subject:'{{phone}}',body:'New: {{source}}'});
  assert.equal(email.enabled,false);
  assert.equal((await svc.callbackEmailTemplate()).recipient,'sales@example.com');
+ // Website contact notification settings are opt-in, validated and stored in Master.
+ await assert.rejects(svc.updateContactEmailSettings({enabled:true,recipient:'not-an-email'}));
+ await assert.rejects(svc.updateContactEmailSettings({enabled:true,recipient:''}));
+ const contactMail=await svc.updateContactEmailSettings({
+  enabled:true,recipient:'info@example.com',acknowledgeSender:true,
+  subject:'New: {{subject}}',acknowledgmentSubject:'We received your message',
+  acknowledgmentBody:'Hello {{fullName}}'
+ });
+ assert.equal(contactMail.enabled,true);
+ assert.equal(contactMail.acknowledgeSender,true);
+ assert.equal((await svc.contactEmailSettings()).recipient,'info@example.com');
  // Older blog inquiries remain visible in the same inbox and can be updated.
  const id='e2d7abc4-700f-411d-a388-0e015fd23a01';
  db.set('marketing_blog_callback_v1_'+id,{id,phone:'+905551234567',slug:'old-article',createdAt:'2026-10-01T10:00:00.000Z',status:'NEW'});
  leads=await svc.callbackInbox();assert.equal(leads.length,3);
  assert.equal(leads.find(x=>x.id===id)?.source,'BLOG');
  assert.equal((await svc.updateCallback(id,{status:'CLOSED'})).status,'CLOSED');
- console.log('PASS: unified HOME/BLOG callbacks, validation, inbox/status, legacy compatibility, opt-in email template');
+ console.log('PASS: unified HOME/BLOG callbacks, validation, inbox/status, legacy compatibility, opt-in callback and contact email templates');
 }
 test().catch(error=>{console.error(error);process.exitCode=1});
