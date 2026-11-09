@@ -42,6 +42,10 @@ export class ContactController {
   inbox(){return this.svc.inbox()}
 
   @UseGuards(SuperAdminAuthGuard)
+  @Post('superadmin/contact/:id/reply')
+  reply(@Param('id') id:string,@Body() body:any){return this.svc.replyToContact(id,body)}
+
+  @UseGuards(SuperAdminAuthGuard)
   @Patch('superadmin/contact/:id')
   update(@Param('id') id:string,@Body() body:any){return this.svc.update(id,body)}
 
