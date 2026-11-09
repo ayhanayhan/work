@@ -22,7 +22,7 @@ export const seoPageForPath=(segments:string[])=>{
  if(!key||key==='index')return 'home';
  if(key==='blog')return 'blog';
  if(key.startsWith('blog/'))return 'blog-post';
- const mapping:Record<string,string>={paketler:'pricing',contacto:'contact','companies/enterprise':'enterprise','gizlilik-politikasi':'privacy','uyelik-sozlesmesi':'terms',kvkk:'kvkk'};
+ const mapping:Record<string,string>={paketler:'pricing',iletisim:'contact',contacto:'contact','companies/enterprise':'enterprise','gizlilik-politikasi':'privacy','uyelik-sozlesmesi':'terms',kvkk:'kvkk'};
  return mapping[key]||'';
 };
 export const metadataFor=(seo:WebsiteSeo|null,page:string,locale:string):PageSeo=>{
