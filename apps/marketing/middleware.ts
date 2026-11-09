@@ -4,6 +4,21 @@ export function middleware(request:NextRequest){
   const forwarded=new Headers(request.headers);
   const pathname=request.nextUrl.pathname;
   forwarded.set('x-marketing-page',pathname);
+  // help.ticarti.com is served directly by the Marketing backend.
+  // Its public root is the native /help page; category/article URLs stay clean.
+  // Never issue a browser redirect or change the address bar.
+  const candidate=(request.headers.get('x-forwarded-host')||request.headers.get('host')||'').split(',')[0].trim().toLowerCase().replace(/:\\d+$/,'');
+  if(candidate==='help.ticarti.com'){
+    forwarded.set('x-ticarti-help-host','1');
+    const url=request.nextUrl.clone();
+    if(pathname==='/'||pathname==='/help'||pathname==='/yardim')url.pathname='/help';
+    else{
+      const match=pathname.match(/^\/(kategori|makale)\/([a-z0-9-]+)\/?$/);
+      if(match)url.pathname='/help/'+(match[1]==='kategori'?'category':'article')+'/'+match[2];
+    }
+    if(url.pathname!==pathname||pathname==='/')return NextResponse.rewrite(url,{request:{headers:forwarded}});
+    return NextResponse.next({request:{headers:forwarded}});
+  }
   // Keep the public Turkish URL while routing to English-named Next.js files.
   // This is an internal rewrite, never a client-visible 301/302 redirect.
   // Keep readable Turkish help URLs while using English directory names.
