@@ -22,16 +22,14 @@ export default async function NotFound(){
  return <SiteShell>
   <main className="tc-not-found">
    <div className="tc-not-found__inner">
-    <div className="tc-not-found__content">
-     <p className="tc-not-found__eyebrow">{t.eyebrow}</p>
-     <h1>{t.title}</h1>
-     <p className="tc-not-found__description">{t.description}</p>
-     <div className="tc-not-found__actions">
-      <a className="tc-not-found__primary" href={prefix+'/'}>{t.home}<span aria-hidden="true">↗</span></a>
-      <a className="tc-not-found__secondary" href={prefix+'/iletisim'}>{t.contact}</a>
-     </div>
+    <div className="tc-not-found__art" aria-hidden="true"><span className="tc-not-found__number">404</span><span className="tc-not-found__art-dot"/></div>
+    <p className="tc-not-found__eyebrow">{t.eyebrow}</p>
+    <h1>{t.title}</h1>
+    <p className="tc-not-found__description">{t.description}</p>
+    <div className="tc-not-found__actions">
+     <a className="tc-not-found__primary" href={prefix+'/'}>{t.home}<span aria-hidden="true">↗</span></a>
+     <a className="tc-not-found__secondary" href={prefix+'/iletisim'}>{t.contact}<span aria-hidden="true">→</span></a>
     </div>
-    <div className="tc-not-found__visual" aria-hidden="true"><span className="tc-not-found__number">404</span><span className="tc-not-found__visual-line"/><span className="tc-not-found__visual-caption">{t.helper}</span></div>
    </div>
   </main>
  </SiteShell>;
