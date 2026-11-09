@@ -5,13 +5,15 @@ import type sharp from 'sharp';
 const sharpRuntime: typeof sharp = require('sharp');
 import {randomUUID} from 'crypto';
 import {PrismaService} from '../prisma/prisma.service';
+import {validateSvgForRasterization} from '../media/svg-upload';
 
 type PlatformMediaItem={id:string;fileName:string;mimeType:string;publicUrl:string;storageKey:string;size:number;createdAt:string};
 /** Shared production conversion used by the upload route and build smoke test. */
-export async function convertPlatformMediaBuffer(buffer:Buffer):Promise<Buffer>{
-  const img=sharpRuntime(buffer,{failOn:'error',limitInputPixels:25000000});
+export async function convertPlatformMediaBuffer(buffer:Buffer,mimeType?:string):Promise<Buffer>{
+  const input=mimeType==='image/svg+xml'?validateSvgForRasterization(buffer):buffer;
+  const img=sharpRuntime(input,{failOn:'error',limitInputPixels:25000000,density:144});
   const meta=await img.metadata();
-  if(!['jpeg','png','webp','avif'].includes(meta.format||''))throw new BadRequestException('Bu görsel formatı desteklenmiyor. PNG/JPG/WebP/AVIF yükleyin.');
+  if(!['jpeg','png','webp','avif','svg'].includes(meta.format||'')||((meta.format==='svg')!==(mimeType==='image/svg+xml')))throw new BadRequestException('Bu görsel formatı desteklenmiyor. PNG/JPG/WebP/AVIF/SVG yükleyin.');
   return img.rotate().resize({width:2400,height:2400,fit:'inside',withoutEnlargement:true}).webp({quality:84}).toBuffer();
 }
 
@@ -37,15 +39,15 @@ export class PlatformMediaService {
   async upload(file:any,host?:string){
     if(!file?.buffer||!Buffer.isBuffer(file.buffer))throw new BadRequestException('Görsel dosyası gerekli.');
     if(file.size>8*1024*1024)throw new BadRequestException('En fazla 8 MB görsel yüklenebilir.');
-    const allowed=new Set(['image/jpeg','image/png','image/webp','image/avif']);
-    if(!allowed.has(file.mimetype))throw new BadRequestException('JPEG, PNG, WEBP veya AVIF yükleyin.');
+    const allowed=new Set(['image/jpeg','image/png','image/webp','image/avif','image/svg+xml']);
+    if(!allowed.has(file.mimetype))throw new BadRequestException('JPEG, PNG, WEBP, AVIF veya SVG yükleyin.');
     let result:Buffer;
     try{
-      result=await convertPlatformMediaBuffer(file.buffer);
+      result=await convertPlatformMediaBuffer(file.buffer,file.mimetype);
     }catch(error:any){
       this.logger.error('Platform WebP conversion failed: '+String(error?.message||error)+'; type='+String(file.mimetype)+'; bytes='+String(file.size));
       if(error instanceof BadRequestException)throw error;
-      throw new BadRequestException('Görsel dönüştürülemedi. Dosyanın gerçekten PNG/JPG/WebP/AVIF olduğundan emin olun.');
+      throw new BadRequestException('Görsel dönüştürülemedi. Dosyanın gerçekten PNG/JPG/WebP/AVIF/SVG olduğundan emin olun.');
     }
     const id=randomUUID();const key='platform/media/'+id+'.webp';
     await this.bucket().file(key).save(result,{resumable:false,contentType:'image/webp',metadata:{cacheControl:'public,max-age=31536000,immutable'}});
