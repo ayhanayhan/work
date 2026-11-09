@@ -32,14 +32,7 @@ assert.ok(sessionStatus.includes('Access-Control-Allow-Credentials') &&
   'Public site may receive only validated merchant auth state without tokens');
 assert.ok(sessionStatus.includes("'https://help.ticarti.com'"),
  'Help subdomain must be allowed to read merchant session state without exposing tokens');
-assert.ok(middleware.includes("if(host===`dev.${PLATFORM_DOMAIN}`)")&&
- middleware.includes("path.startsWith('/assets/')")&&
- middleware.includes("path.startsWith('/_next/')")&&
- middleware.includes("url.pathname='/ticarti-marketing-proxy'+(path==='/'?'/developer':path)")&&
- middleware.includes("return internal(req,'/__proxy-api');"),
- 'Developer homepage/assets must use Marketing while all API routes keep the existing API proxy');
-assert.ok(proxy.includes("developerSurface?'dev.ticarti.com':'ticarti.com'")&&
- proxy.includes("developerSurface?'https://dev.ticarti.com':PUBLIC_ORIGIN"),
- 'Developer reverse proxy must preserve hostname and redirects for the shared Marketing shell');
+assert.ok(middleware.includes("if(host===`dev.${PLATFORM_DOMAIN}`) return internal(req,'/__proxy-api');"),
+ 'Developer API routing must not be replaced by the unfinished Marketing landing');
 console.log('PASS: Help Center routing, authenticated merchant support handoff and read-only session status');
 console.log('PASS: public contact rewrites and unknown-page routing use Marketing');
