@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "data": [
     {
       "id": "qr-kod-olusturucu",
@@ -2747,6 +2747,267 @@
             "uk": "Так. Перевіряйте актуальні тарифи, правила та договори.",
             "id": "Ya. Periksa biaya, aturan, dan perjanjian terbaru.",
             "vi": "Có. Hãy kiểm tra phí, quy định và hợp đồng mới nhất."
+          }
+        }
+      ]
+    },
+    {
+      "id": "ean13-barkod-olusturucu",
+      "fields": {
+        "title": {
+          "tr": "EAN-13 Barkod Oluşturucu",
+          "en": "EAN-13 Barcode Generator",
+          "de": "EAN-13 Barcode-Generator",
+          "ru": "Генератор штрихкодов EAN-13",
+          "ar": "مولد باركود EAN-13",
+          "bg": "EAN-13 генератор на баркод",
+          "uk": "Генератор штрихкодів EAN-13",
+          "id": "Generator Barcode EAN-13",
+          "vi": "Trình tạo mã vạch EAN-13"
+        },
+        "subtitle": {
+          "tr": "Ürün barkodu oluşturma ve SVG indirme",
+          "en": "Create product barcodes and download SVG",
+          "de": "Produktbarcodes als SVG erstellen",
+          "ru": "Штрихкод товара в формате SVG",
+          "ar": "إنشاء باركود المنتج بصيغة SVG",
+          "bg": "Създаване на продуктов баркод SVG",
+          "uk": "Створення штрихкоду товару SVG",
+          "id": "Buat barcode produk dalam SVG",
+          "vi": "Tạo mã vạch sản phẩm dạng SVG"
+        },
+        "intro": {
+          "tr": "12 haneli ürün numarasından kontrol basamağı hesaplayın veya 13 haneli EAN-13 numarasını doğrulayarak barkod görseli oluşturun.",
+          "en": "Calculate a check digit from a 12-digit number or validate a 13-digit GTIN and render an EAN-13 symbol.",
+          "de": "Berechnen oder prüfen Sie die Prüfziffer einer 12- oder 13-stelligen Produktnummer und erstellen Sie ein EAN-13-Symbol.",
+          "ru": "Создайте EAN-13 по 12 цифрам с контрольной цифрой или проверьте готовый 13-значный код.",
+          "ar": "أنشئ باركود EAN-13 من 12 رقماً مع حساب رقم التحقق أو تحقق من رقم مكوّن من 13 خانة.",
+          "bg": "Изчислете контролна цифра от 12 цифри или проверете 13-цифрен GTIN и създайте EAN-13.",
+          "uk": "Розрахуйте контрольну цифру для 12 цифр або перевірте 13-значний GTIN і створіть EAN-13.",
+          "id": "Hitung digit pemeriksa dari 12 angka atau validasi GTIN 13 angka untuk membuat barcode EAN-13.",
+          "vi": "Tính số kiểm tra từ 12 chữ số hoặc xác minh GTIN 13 chữ số rồi tạo mã EAN-13."
+        },
+        "description": {
+          "tr": "EAN-13, perakendede ürünleri tanımlayan 13 haneli GTIN-13 numarasını çizgiler halinde kodlayan barkod türüdür. İlk 12 hane GS1 tarafından tahsis edilen şirket öneki ve ürün referansından oluşur; son hane matematiksel kontrol basamağıdır. Bu ücretsiz araç, sahip olduğunuz numarayı taranabilir EAN-13 sembolüne dönüştürür ve SVG olarak indirmenizi sağlar. Rastgele rakamlarla üretilen bir görsel, GS1 üyeliği veya benzersiz numara tahsisi yerine geçmez.",
+          "en": "EAN-13 is the barcode representation of a 13-digit GTIN used to identify retail products. The first twelve digits form the GS1 company prefix and item reference; the final digit is a mathematical check digit. This tool renders your number as a scannable SVG; it does not allocate a registered GS1 identifier.",
+          "de": "EAN-13 kodiert eine 13-stellige GTIN für Handelsartikel. Dieses kostenlose Tool erstellt eine SVG-Grafik aus Ihrer Nummer, vergibt aber keine offizielle GS1-Kennung.",
+          "ru": "EAN-13 — штрихкод для 13-значного GTIN товара. Генератор создаёт SVG по введённому номеру, но не выдаёт зарегистрированные номера GS1.",
+          "ar": "EAN-13 هو رمز شريطي لرقم GTIN مكوّن من 13 خانة للمنتجات. تنشئ الأداة صورة SVG ولا تمنح رقم GS1 رسمياً.",
+          "bg": "EAN-13 кодира 13-цифрен номер GTIN за търговски продукти. Инструментът създава SVG, но не предоставя регистриран GS1 номер.",
+          "uk": "EAN-13 кодує 13-значний GTIN для роздрібної торгівлі. Інструмент створює SVG, але не видає офіційних номерів GS1.",
+          "id": "EAN-13 adalah simbol barcode untuk GTIN 13 digit pada produk ritel. Alat ini membuat SVG, tetapi tidak mengalokasikan nomor GS1 resmi.",
+          "vi": "EAN-13 là mã vạch dành cho GTIN 13 chữ số của sản phẩm bán lẻ. Công cụ tạo SVG nhưng không cấp mã GS1 chính thức."
+        },
+        "howItWorksTitle": {
+          "tr": "Nasıl EAN-13 barkod oluşturulur?",
+          "en": "How to generate an EAN-13 barcode",
+          "de": "So erstellen Sie einen EAN-13-Barcode",
+          "ru": "Как создать EAN-13",
+          "ar": "كيفية إنشاء باركود EAN-13",
+          "bg": "Как се създава EAN-13",
+          "uk": "Як створити EAN-13",
+          "id": "Cara membuat barcode EAN-13",
+          "vi": "Cách tạo EAN-13"
+        },
+        "howItWorks": {
+          "tr": "GS1 tarafından size tahsis edilen 12 haneli GTIN tabanını yazın. Kontrol basamağı otomatik hesaplanır. Tam 13 haneli bir numara girerseniz kontrol basamağı doğrulanır. Barkod otomatik görüntülenir; SVG indirerek etiket veya ambalaj tasarımında kullanabilirsiniz. Baskı boyutu, boşluklar ve taranabilirlik şartlarını kontrol edin.",
+          "en": "Enter the first 12 digits of your assigned GTIN to calculate the check digit, or enter an existing valid 13-digit number. The preview updates automatically. Download the SVG and check print size and quiet zones before label production.",
+          "de": "Geben Sie 12 Ziffern zur Berechnung der Prüfziffer oder 13 Ziffern zur Prüfung ein. Die Vorschau erscheint automatisch. Laden Sie die SVG herunter und prüfen Sie Druckgröße und Ruhezonen.",
+          "ru": "Введите 12 цифр для расчёта контрольной или 13 для проверки. Предпросмотр обновится автоматически. Скачайте SVG и проверьте параметры печати.",
+          "ar": "أدخل 12 رقماً لحساب رقم التحقق أو 13 رقماً للتحقق من صحتها. تظهر المعاينة تلقائياً ويمكن تنزيل SVG للطباعة.",
+          "bg": "Въведете 12 цифри за изчисление или 13 за проверка. Прегледът е автоматичен; изтеглете SVG и проверете изискванията за печат.",
+          "uk": "Введіть 12 цифр для розрахунку або 13 для перевірки. Попередній перегляд оновлюється автоматично.",
+          "id": "Masukkan 12 digit untuk menghitung digit pemeriksa atau 13 untuk validasi. Pratinjau muncul otomatis dan SVG dapat diunduh.",
+          "vi": "Nhập 12 chữ số để tính số kiểm tra hoặc 13 chữ số để xác minh. Bản xem trước tự động và có thể tải SVG."
+        },
+        "exampleTitle": {
+          "tr": "Örnek EAN-13 barkod hesaplaması",
+          "en": "EAN-13 barcode example",
+          "de": "Beispiel einer EAN-13-Prüfziffer",
+          "ru": "Пример проверки EAN-13",
+          "ar": "مثال EAN-13",
+          "bg": "Пример за EAN-13",
+          "uk": "Приклад EAN-13",
+          "id": "Contoh EAN-13",
+          "vi": "Ví dụ EAN-13"
+        },
+        "example": {
+          "tr": "Örneğin 400638133393 numarasına kontrol basamağı 1 eklenerek 4006381333931 elde edilir. Bu numara yalnızca kontrol basamağı algoritmasını gösterir; ürününüz için resmî numara olarak kullanmayın.",
+          "en": "For example, 400638133393 receives check digit 1 to form 4006381333931. This is an algorithm example, not an allocation for your product.",
+          "de": "Aus 400638133393 wird durch die Prüfziffer 1 die Nummer 4006381333931. Das Beispiel ersetzt keine GS1-Zuteilung.",
+          "ru": "Для 400638133393 контрольная цифра равна 1; полный номер 4006381333931. Это пример, а не присвоенный код.",
+          "ar": "الرقم 400638133393 يصبح 4006381333931 بعد إضافة رقم التحقق 1. المثال ليس تخصيصاً رسمياً.",
+          "bg": "Контролната цифра на 400638133393 е 1, така че пълният номер е 4006381333931. Това е само пример.",
+          "uk": "400638133393 з контрольною цифрою 1 утворює 4006381333931. Це лише приклад.",
+          "id": "400638133393 memiliki digit pemeriksa 1 sehingga menjadi 4006381333931. Ini hanya contoh.",
+          "vi": "400638133393 có số kiểm tra 1, tạo thành 4006381333931. Đây chỉ là ví dụ."
+        },
+        "seoTitle": {
+          "tr": "EAN-13 Barkod Oluşturucu | Ücretsiz Ürün Barkodu | Ticarti",
+          "en": "EAN-13 Barcode Generator | Free SVG | Ticarti",
+          "de": "EAN-13 Barcode Generator kostenlos | Ticarti",
+          "ru": "Генератор EAN-13 бесплатно | Ticarti",
+          "ar": "مولد باركود EAN-13 مجاناً | Ticarti",
+          "bg": "Генератор EAN-13 баркод | Ticarti",
+          "uk": "Генератор EAN-13 онлайн | Ticarti",
+          "id": "Generator Barcode EAN-13 Gratis | Ticarti",
+          "vi": "Tạo mã vạch EAN-13 miễn phí | Ticarti"
+        },
+        "seoDescription": {
+          "tr": "12 veya 13 haneli numaranızdan kontrol basamağını doğrulayın; ücretsiz EAN-13 ürün barkodunu SVG olarak oluşturun. GS1 numara tahsisi değildir.",
+          "en": "Generate an EAN-13 barcode SVG, calculate or validate its check digit. Does not assign an official GS1 product number.",
+          "de": "EAN-13 als SVG erstellen, Prüfziffer berechnen und prüfen. Keine offizielle GS1-Nummernvergabe.",
+          "ru": "Генерация EAN-13 SVG, вычисление и проверка контрольной цифры. Без выдачи номеров GS1.",
+          "ar": "إنشاء باركود EAN-13 بصيغة SVG والتحقق من رقم الفحص دون تخصيص رقم GS1.",
+          "bg": "Създавайте EAN-13 SVG и проверявайте контролната цифра без издаване на GS1 номер.",
+          "uk": "Створюйте SVG EAN-13 та перевіряйте контрольну цифру без реєстрації GS1.",
+          "id": "Buat barcode SVG EAN-13 dan periksa digit kontrol; tanpa penerbitan nomor GS1.",
+          "vi": "Tạo SVG EAN-13, tính và xác minh số kiểm tra, không cấp GTIN chính thức."
+        },
+        "calculatorTitle": {
+          "tr": "EAN-13 Barkod Oluşturucu",
+          "en": "EAN-13 Barcode Generator",
+          "de": "EAN-13 Barcode-Generator",
+          "ru": "Генератор штрихкодов EAN-13",
+          "ar": "مولد باركود EAN-13",
+          "bg": "EAN-13 генератор на баркод",
+          "uk": "Генератор штрихкодів EAN-13",
+          "id": "Generator Barcode EAN-13",
+          "vi": "Trình tạo mã vạch EAN-13"
+        },
+        "calculatorDescription": {
+          "tr": "12 haneli ürün numarasından kontrol basamağı hesaplayın veya 13 haneli EAN-13 numarasını doğrulayarak barkod görseli oluşturun.",
+          "en": "Calculate a check digit from a 12-digit number or validate a 13-digit GTIN and render an EAN-13 symbol.",
+          "de": "Berechnen oder prüfen Sie die Prüfziffer einer 12- oder 13-stelligen Produktnummer und erstellen Sie ein EAN-13-Symbol.",
+          "ru": "Создайте EAN-13 по 12 цифрам с контрольной цифрой или проверьте готовый 13-значный код.",
+          "ar": "أنشئ باركود EAN-13 من 12 رقماً مع حساب رقم التحقق أو تحقق من رقم مكوّن من 13 خانة.",
+          "bg": "Изчислете контролна цифра от 12 цифри или проверете 13-цифрен GTIN и създайте EAN-13.",
+          "uk": "Розрахуйте контрольну цифру для 12 цифр або перевірте 13-значний GTIN і створіть EAN-13.",
+          "id": "Hitung digit pemeriksa dari 12 angka atau validasi GTIN 13 angka untuk membuat barcode EAN-13.",
+          "vi": "Tính số kiểm tra từ 12 chữ số hoặc xác minh GTIN 13 chữ số rồi tạo mã EAN-13."
+        },
+        "faqTitle": {
+          "tr": "Sıkça Sorulan Sorular",
+          "en": "Frequently Asked Questions",
+          "de": "Häufige Fragen",
+          "ru": "Частые вопросы",
+          "ar": "الأسئلة الشائعة",
+          "bg": "Често задавани въпроси",
+          "uk": "Поширені запитання",
+          "id": "Pertanyaan Umum",
+          "vi": "Câu hỏi thường gặp"
+        },
+        "disclaimer": {
+          "tr": "GS1 numarası tahsisi yapılmaz. Örnek numaralar ürününüzde kullanılmamalıdır.",
+          "en": "Does not allocate a GS1 identifier. Do not use example GTINs for your products.",
+          "de": "Keine GS1-Zuteilung. Beispielnummern nicht für Produkte verwenden.",
+          "ru": "Это не выдача GS1. Не используйте примерные номера для товаров.",
+          "ar": "لا تمنح الأداة أرقام GS1. لا تستخدم أرقام الأمثلة لمنتجاتك.",
+          "bg": "Без издаване на GS1. Не използвайте примерни номера за продукти.",
+          "uk": "Не видає GS1. Не використовуйте приклади для товарів.",
+          "id": "Tidak menerbitkan GS1. Jangan pakai contoh nomor untuk produk.",
+          "vi": "Không cấp GS1. Không dùng mã ví dụ cho sản phẩm."
+        }
+      },
+      "faqs": [
+        {
+          "id": "ean13-faq-1",
+          "question": {
+            "tr": "EAN-13 barkod nedir?",
+            "en": "What is EAN-13?",
+            "de": "Was ist EAN-13?",
+            "ru": "Что такое EAN-13?",
+            "ar": "ما هو EAN-13؟",
+            "bg": "Какво е EAN-13?",
+            "uk": "Що таке EAN-13?",
+            "id": "Apa itu EAN-13?",
+            "vi": "EAN-13 là gì?"
+          },
+          "answer": {
+            "tr": "EAN-13, perakende ürünlerinde kullanılan GTIN-13 numarasının çizgili barkod gösterimidir.",
+            "en": "EAN-13 is the retail barcode symbology that encodes a 13-digit GTIN.",
+            "de": "Eine Barcode-Symbologie für 13-stellige GTINs im Handel.",
+            "ru": "Штрихкод для розничного GTIN из 13 цифр.",
+            "ar": "باركود يرمز إلى GTIN من 13 رقماً.",
+            "bg": "Баркод за 13-цифрени GTIN номера.",
+            "uk": "Штрихкод для 13-значного GTIN товару.",
+            "id": "Barcode untuk GTIN 13 digit pada produk ritel.",
+            "vi": "Mã vạch dành cho GTIN 13 chữ số."
+          }
+        },
+        {
+          "id": "ean13-faq-2",
+          "question": {
+            "tr": "12 rakam mı 13 rakam mı girmeliyim?",
+            "en": "Do I enter 12 or 13 digits?",
+            "de": "12 oder 13 Ziffern?",
+            "ru": "Вводить 12 или 13 цифр?",
+            "ar": "هل أدخل 12 أم 13 رقماً؟",
+            "bg": "12 или 13 цифри?",
+            "uk": "12 чи 13 цифр?",
+            "id": "Masukkan 12 atau 13 digit?",
+            "vi": "Nhập 12 hay 13 chữ số?"
+          },
+          "answer": {
+            "tr": "İlk 12 haneyi girerseniz araç 13. kontrol hanesini hesaplar; mevcut 13 haneyi girerseniz doğruluğunu denetler.",
+            "en": "Enter 12 to calculate the check digit or 13 to verify an existing number.",
+            "de": "Bei 12 Ziffern wird die Prüfziffer berechnet; 13 Ziffern werden überprüft.",
+            "ru": "12 цифр для расчёта, 13 для проверки.",
+            "ar": "12 لحساب رقم التحقق أو 13 للتحقق.",
+            "bg": "12 за изчисление, 13 за проверка.",
+            "uk": "12 для розрахунку, 13 для перевірки.",
+            "id": "12 untuk hitung digit pemeriksa, 13 untuk validasi.",
+            "vi": "12 để tính số kiểm tra, 13 để xác minh."
+          }
+        },
+        {
+          "id": "ean13-faq-3",
+          "question": {
+            "tr": "Bu araç ürünüm için resmî barkod numarası verir mi?",
+            "en": "Does this generator register my product?",
+            "de": "Wird eine offizielle Nummer vergeben?",
+            "ru": "Это регистрация кода товара?",
+            "ar": "هل تمنح الأداة رقماً رسمياً؟",
+            "bg": "Получавам ли официален номер?",
+            "uk": "Чи видає сервіс офіційний код?",
+            "id": "Apakah nomor produk saya terdaftar?",
+            "vi": "Công cụ có cấp mã chính thức không?"
+          },
+          "answer": {
+            "tr": "Hayır. Resmî ve benzersiz GTIN tahsisi GS1 kuruluşları üzerinden yapılır. Bu araç yalnızca verilen numarayı barkoda dönüştürür.",
+            "en": "No. Registered GS1 numbers must be allocated by GS1; this tool only generates the barcode graphic.",
+            "de": "Nein, nur GS1 vergibt die entsprechenden Kennungen.",
+            "ru": "Нет, идентификаторы GS1 выдаются уполномоченной организацией.",
+            "ar": "لا، تخصيص أرقام GS1 يتم عبر المؤسسة المعتمدة.",
+            "bg": "Не, GS1 присвоява официалните номера.",
+            "uk": "Ні, офіційний GTIN видає GS1.",
+            "id": "Tidak, nomor resmi diterbitkan oleh GS1.",
+            "vi": "Không, GS1 mới cấp GTIN hợp lệ."
+          }
+        },
+        {
+          "id": "ean13-faq-4",
+          "question": {
+            "tr": "Barkodu etiket olarak kullanabilir miyim?",
+            "en": "Can I print the SVG on labels?",
+            "de": "Kann ich den Barcode drucken?",
+            "ru": "Можно печатать на этикетке?",
+            "ar": "هل يمكنني طباعته؟",
+            "bg": "Може ли да го отпечатам?",
+            "uk": "Чи можна друкувати?",
+            "id": "Bisakah SVG dicetak?",
+            "vi": "Tôi có thể in SVG không?"
+          },
+          "answer": {
+            "tr": "SVG çıktısını etiket veya ambalaj tasarımına yerleştirebilirsiniz. Ticari kullanımda size tahsis edilen GTIN'i ve GS1 baskı/boşluk kurallarını kullanın.",
+            "en": "Yes, provided the number is assigned to you and your printed symbol meets GS1 size, contrast and quiet-zone requirements.",
+            "de": "Ja, mit zugeteilter GTIN und unter Einhaltung der GS1-Druckanforderungen.",
+            "ru": "Да, с официальным GTIN и соблюдением правил печати GS1.",
+            "ar": "نعم، مع رقم GTIN مخصص لك وبمراعاة شروط الطباعة.",
+            "bg": "Да, с валиден присвоен GTIN и според стандартите за печат.",
+            "uk": "Так, за умови присвоєного GTIN і дотримання вимог GS1.",
+            "id": "Ya, dengan GTIN resmi dan aturan cetak GS1.",
+            "vi": "Có, với GTIN được cấp và tuân thủ quy chuẩn in GS1."
           }
         }
       ]
