@@ -96,7 +96,20 @@ export function middleware(req:NextRequest){
     });
   }
   if(host===`superadmin.${PLATFORM_DOMAIN}`) return internal(req,'/ticarti-superadmin-proxy','superadmin');
-  if(host===`dev.${PLATFORM_DOMAIN}`) return internal(req,'/__proxy-api');
+  if(host===`dev.${PLATFORM_DOMAIN}`){
+    // Developer landing/UI is owned by Marketing, while every API route
+    // remains on the original authenticated API proxy (no tenant impact).
+    const developerPage=path==='/'||path==='/developer'||path==='/developer/'||
+      path.startsWith('/assets/')||path.startsWith('/_next/')||path==='/favicon.ico';
+    if(developerPage){
+      const headers=new Headers(req.headers);
+      headers.set('x-ticarti-surface','developer');
+      const url=req.nextUrl.clone();
+      url.pathname='/ticarti-marketing-proxy'+(path==='/'?'/developer':path);
+      return NextResponse.rewrite(url,{request:{headers}});
+    }
+    return internal(req,'/__proxy-api');
+  }
 
   if(host===`login.${PLATFORM_DOMAIN}`){
     if(assetOrApi(path))return NextResponse.next();
