@@ -13,6 +13,7 @@ const MARKETING_PAGES=new Set([
 ]);
 function marketingPage(pathname:string){
   if(MARKETING_PAGES.has(pathname))return true;
+  if(/^\/yardim(?:\/|$)/.test(pathname))return true;
   // Calculator articles live in Marketing, including their localized routes.
   // Match only /araclar and /<locale>/araclar to avoid intercepting tenant pages.
   if(/^\/(?:tr|en|de|ru|ar|bg|uk|id|vi)\/araclar(?:\/|$)/.test(pathname)||
