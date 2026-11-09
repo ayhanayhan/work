@@ -5,7 +5,7 @@ const PLATFORM_DOMAIN='ticarti.com';
 /** Public corporate routes served by Marketing without cross-backend middleware rewrites. */
 const MARKETING_PAGES=new Set([
   '/','/index.html','/robots.txt','/sitemap.xml',
-  '/paketler.html','/iletisim','/contacto.html','/login.html','/register.html',
+  '/paketler.html','/iletisim','/yardim','/yardim/','/contacto.html','/login.html','/register.html',
   '/kvkk.html','/gizlilik-politikasi.html','/uyelik-sozlesmesi.html',
   '/companies/enterprise.html','/success-stories','/success-stories/',
   '/success-stories/index.html','/success-stories/crowdy.html',
