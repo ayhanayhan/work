@@ -26,6 +26,62 @@ export class ContactService {
     if (this.localLimits.size>10000) for(const [k,v] of this.localLimits)if(v.reset<=now)this.localLimits.delete(k);
   }
 
+  private readonly contactEmailKey='marketing_contact_email_v1';
+  private readonly defaultContactEmail={
+    enabled:false,recipient:'',acknowledgeSender:false,
+    subject:'Ticarti · Yeni iletişim mesajı: {{subject}}',
+    acknowledgmentSubject:'Ticarti · Mesajınızı aldık',
+    acknowledgmentBody:'Merhaba {{fullName}},\\n\\n{{subject}} konulu mesajınız bize ulaştı. Ekibimiz talebinizi inceleyecektir.\\n\\nTicarti'
+  };
+  async contactEmailSettings(){
+    const saved=await this.prisma.platformSetting.findUnique({where:{key:this.contactEmailKey}});
+    const configured=Boolean(process.env.RESEND_API_KEY&&(process.env.CONTACT_EMAIL_FROM||process.env.CALLBACK_EMAIL_FROM));
+    return {...this.defaultContactEmail,...(saved?.value&&typeof saved.value==='object'?saved.value as any:{}),providerConfigured:configured};
+  }
+  async updateContactEmailSettings(body:any){
+    const email=String(body?.recipient||'').trim().toLowerCase();
+    if(email&&(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||email.length>254))throw new BadRequestException('Geçerli bir bildirim adresi girin.');
+    const settings={
+      enabled:body?.enabled===true,recipient:email,acknowledgeSender:body?.acknowledgeSender===true,
+      subject:String(body?.subject||this.defaultContactEmail.subject).trim().slice(0,180),
+      acknowledgmentSubject:String(body?.acknowledgmentSubject||this.defaultContactEmail.acknowledgmentSubject).trim().slice(0,180),
+      acknowledgmentBody:String(body?.acknowledgmentBody||this.defaultContactEmail.acknowledgmentBody).trim().slice(0,4000)
+    };
+    if(settings.enabled&&!settings.recipient)throw new BadRequestException('Bildirimleri açmak için alıcı e-posta adresi girin.');
+    await this.prisma.platformSetting.upsert({where:{key:this.contactEmailKey},
+      create:{key:this.contactEmailKey,value:settings},update:{value:settings}});
+    return {...settings,providerConfigured:Boolean(process.env.RESEND_API_KEY&&(process.env.CONTACT_EMAIL_FROM||process.env.CALLBACK_EMAIL_FROM))};
+  }
+  private async notifyContact(record:{fullName:string;email:string;subject:string;message:string;phone:string}){
+    const config=await this.contactEmailSettings();
+    const token=process.env.RESEND_API_KEY;
+    const from=process.env.CONTACT_EMAIL_FROM||process.env.CALLBACK_EMAIL_FROM;
+    if(!token||!from)return;
+    const safe=(s:string)=>s.replace(/[<>]/g,'').slice(0,500);
+    const vars:Record<string,string>={
+      fullName:safe(record.fullName),email:safe(record.email),subject:safe(record.subject),
+      phone:safe(record.phone),message:record.message
+    };
+    const render=(input:string)=>input.replace(/{{(fullName|email|subject|phone|message)}}/g,(_,key:string)=>vars[key]||'');
+    const send=async(to:string,subject:string,body:string)=>{
+      const response=await fetch('https://api.resend.com/emails',{
+        method:'POST',signal:AbortSignal.timeout(8000),
+        headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({from,to:[to],subject:render(subject),text:render(body)})
+      });
+      if(!response.ok)throw Error('Contact notification delivery failed: '+response.status);
+    };
+    const jobs:Promise<void>[]=[];
+    if(config.enabled&&config.recipient){
+      jobs.push(send(config.recipient,config.subject,
+        'Yeni web sitesi iletişim mesajı\\n\\nAd soyad: {{fullName}}\\nE-posta: {{email}}\\nTelefon: {{phone}}\\nKonu: {{subject}}\\n\\n{{message}}'));
+    }
+    if(config.acknowledgeSender&&record.email){
+      jobs.push(send(record.email,config.acknowledgmentSubject,config.acknowledgmentBody));
+    }
+    await Promise.allSettled(jobs);
+  }
+
   async create(body:any, ip:string){
     const fullName=String(body?.fullName||body?.name||'').trim();
     const email=String(body?.email||'').trim().toLowerCase();
@@ -41,6 +97,7 @@ export class ContactService {
     if(subject.length<3||subject.length>180)throw new BadRequestException('Konu 3–180 karakter olmalıdır.');
     if(message.length<10||message.length>10000)throw new BadRequestException('Mesaj 10–10.000 karakter olmalıdır.');
     await this.prisma.contactInquiry.create({data:{fullName,email,phone:phone||null,subject,message,status:'NEW'}});
+    await this.notifyContact({fullName,email,phone,subject,message}).catch(()=>{});
     return {ok:true};
   }
 
