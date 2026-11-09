@@ -2,8 +2,8 @@
 
 import {useState,type FormEvent} from 'react';
 
-type FormState={fullName:string;email:string;phone:string;subject:string;message:string;website:string;consent:boolean};
-const initial:FormState={fullName:'',email:'',phone:'',subject:'',message:'',website:'',consent:false};
+type FormState={firstName:string;lastName:string;email:string;phone:string;subject:string;message:string;website:string;consent:boolean};
+const initial:FormState={firstName:'',lastName:'',email:'',phone:'',subject:'',message:'',website:'',consent:false};
 
 type Copy={title:string,intro:string,name:string,email:string,phone:string,subject:string,message:string,nameHint:string,subjectHint:string,messageHint:string,consent:string,send:string,sending:string,success:string,error:string};
 const translations:Record<string,Copy>={
@@ -16,6 +16,20 @@ const translations:Record<string,Copy>={
  uk:{title:'Напишіть нам',intro:'Команда відповість на повідомлення.',name:'Повне ім’я',email:'Ел. пошта',phone:'Телефон',subject:'Тема',message:'Повідомлення',nameHint:'Ваше ім’я',subjectHint:'Як можемо допомогти?',messageHint:'Ваше повідомлення...',consent:'Я прочитав повідомлення про конфіденційність та обробку даних.',send:'Надіслати',sending:'Надсилання...',success:'Ваше повідомлення отримано.',error:'Не вдалося надіслати повідомлення.'},
  id:{title:'Kirim pesan',intro:'Tim kami akan segera menghubungi Anda.',name:'Nama lengkap',email:'Email',phone:'Telepon',subject:'Subjek',message:'Pesan',nameHint:'Nama lengkap Anda',subjectHint:'Apa yang bisa kami bantu?',messageHint:'Tulis pesan Anda...',consent:'Saya telah membaca pemberitahuan privasi dan memahami penggunaan data saya.',send:'Kirim pesan',sending:'Mengirim...',success:'Pesan Anda telah diterima.',error:'Pesan tidak dapat dikirim.'},
  vi:{title:'Gửi tin nhắn',intro:'Đội ngũ sẽ liên hệ lại với bạn.',name:'Họ và tên',email:'Email',phone:'Điện thoại',subject:'Chủ đề',message:'Tin nhắn',nameHint:'Họ và tên của bạn',subjectHint:'Chúng tôi có thể giúp gì?',messageHint:'Viết tin nhắn...',consent:'Tôi đã đọc thông báo quyền riêng tư và hiểu cách dữ liệu được xử lý.',send:'Gửi tin nhắn',sending:'Đang gửi...',success:'Chúng tôi đã nhận được tin nhắn.',error:'Không thể gửi tin nhắn.'}
+};
+
+const surnames:Record<string,string>={tr:'Soyad',en:'Last name',de:'Nachname',ru:'Фамилия',ar:'اسم العائلة',bg:'Фамилия',uk:'Прізвище',id:'Nama belakang',vi:'Họ'};
+const firstNames:Record<string,string>={tr:'Ad',en:'First name',de:'Vorname',ru:'Имя',ar:'الاسم الأول',bg:'Име',uk:'Ім’я',id:'Nama depan',vi:'Tên'};
+const topics:Record<string,string[]>={
+ tr:['Genel bilgi','Satış ve paketler','Teknik destek','İş ortaklığı','Diğer'],
+ en:['General inquiry','Plans and sales','Technical support','Partnership','Other'],
+ de:['Allgemeine Anfrage','Pakete und Vertrieb','Technischer Support','Partnerschaft','Sonstiges'],
+ ru:['Общий вопрос','Тарифы и продажи','Техническая поддержка','Сотрудничество','Другое'],
+ ar:['استفسار عام','الخطط والمبيعات','الدعم الفني','الشراكة','أخرى'],
+ bg:['Общ въпрос','Планове и продажби','Техническа поддръжка','Партньорство','Друго'],
+ uk:['Загальне питання','Тарифи та продажі','Технічна підтримка','Партнерство','Інше'],
+ id:['Pertanyaan umum','Paket dan penjualan','Dukungan teknis','Kemitraan','Lainnya'],
+ vi:['Thông tin chung','Gói dịch vụ và bán hàng','Hỗ trợ kỹ thuật','Hợp tác','Khác']
 };
 
 export default function ContactForm({locale='tr'}:{locale?:string}){
@@ -31,7 +45,7 @@ export default function ContactForm({locale='tr'}:{locale?:string}){
   try{
    const response=await fetch('/api/v1/public/contact',{
     method:'POST',headers:{'content-type':'application/json'},
-    body:JSON.stringify(values)
+    body:JSON.stringify({...values,fullName:(values.firstName+' '+values.lastName).trim()})
    });
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(Array.isArray(data.message)?data.message.join(', '):data.message||t.error);
@@ -42,13 +56,17 @@ export default function ContactForm({locale='tr'}:{locale?:string}){
   }finally{setBusy(false)}
  }
  return <form className="tc-contact-form" onSubmit={submit}>
-  <h2 className="tc-contact-form__title">{t.title}</h2>
-  <p className="tc-contact-form__intro">{t.intro}</p>
-  <div className="tc-contact-form__fields">
-   <label className="tc-contact-form__field"><span>{t.name} <b aria-hidden="true">*</b></span><input name="fullName" type="text" autoComplete="name" minLength={2} maxLength={150} required value={values.fullName} onChange={e=>set('fullName',e.target.value)} placeholder={t.nameHint}/></label>
+    <div className="tc-contact-form__fields">
+   <label className="tc-contact-form__field"><span>{firstNames[locale]||firstNames.en} <b aria-hidden="true">*</b></span><input name="firstName" type="text" autoComplete="given-name" minLength={1} maxLength={70} required value={values.firstName} onChange={e=>set('firstName',e.target.value)}/></label>
+   <label className="tc-contact-form__field"><span>{surnames[locale]||surnames.en} <b aria-hidden="true">*</b></span><input name="lastName" type="text" autoComplete="family-name" minLength={1} maxLength={70} required value={values.lastName} onChange={e=>set('lastName',e.target.value)}/></label>
    <label className="tc-contact-form__field"><span>{t.email} <b aria-hidden="true">*</b></span><input name="email" type="email" autoComplete="email" maxLength={254} required value={values.email} onChange={e=>set('email',e.target.value)} placeholder="ornek@firma.com"/></label>
    <label className="tc-contact-form__field"><span>{t.phone}</span><input name="phone" type="tel" autoComplete="tel" maxLength={22} value={values.phone} onChange={e=>set('phone',e.target.value)} placeholder="+90 5xx xxx xx xx"/></label>
-   <label className="tc-contact-form__field"><span>{t.subject} <b aria-hidden="true">*</b></span><input name="subject" type="text" minLength={3} maxLength={180} required value={values.subject} onChange={e=>set('subject',e.target.value)} placeholder={t.subjectHint}/></label>
+   <label className="tc-contact-form__field tc-contact-form__field--full"><span>{t.subject} <b aria-hidden="true">*</b></span>
+    <select name="subject" required value={values.subject} onChange={e=>set('subject',e.target.value)}>
+     <option value="" disabled>{t.subjectHint}</option>
+     {(topics[locale]||topics.en).map(topic=><option value={topic} key={topic}>{topic}</option>)}
+    </select>
+   </label>
    <label className="tc-contact-form__field tc-contact-form__field--full"><span>{t.message} <b aria-hidden="true">*</b></span><textarea name="message" minLength={10} maxLength={10000} rows={5} required value={values.message} onChange={e=>set('message',e.target.value)} placeholder={t.messageHint}/></label>
   </div>
   <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true" hidden value={values.website} onChange={e=>set('website',e.target.value)}/>
