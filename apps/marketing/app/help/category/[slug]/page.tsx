@@ -13,7 +13,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   robots:{index:false,follow:true}};
 }
 export default async function HelpCategoryPage({params}:Props){
- const {slug}=await params,topic=HELP_TOPICS.find(t=>(t.slug||t.id)===slug);
+ const {slug}=await params,topic=(await getHelpTopics()).find(t=>(t.slug||t.id)===slug);
  if(!topic)notFound();
  return <SiteShell><main className="tc-help tc-help--article">
   <div className="tc-help__container">
