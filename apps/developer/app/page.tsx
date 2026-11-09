@@ -1,78 +1,34 @@
-import type {Metadata} from 'next';
+import type {ReactNode} from 'react';
 import SiteShell from '@/components/site-shell';
 
-export const metadata:Metadata={
- title:'Developer | Ticarti Geliştirici Merkezi',
- description:'Ticarti geliştirici rehberleri, API uç noktaları, mağaza uygulamaları ve webhook entegrasyonları.',
- alternates:{canonical:'https://dev.ticarti.com/'}
-};
-
-
-const sections=[
- {id:'baslangic',no:'01',title:'Başlangıç',desc:'Ticarti platformunun geliştirici yapısını, API bağlantısını ve entegrasyon akışını tanıyın.',items:['API temel adresi','İstek ve yanıt yapısı','Hata durumları'],href:'#api'},
- {id:'kimlik',no:'02',title:'Kimlik doğrulama',desc:'Mağaza oturumları ve erişim izinlerinin nasıl korunduğunu öğrenin.',items:['Mağaza oturumu','Yetki kontrolü','Güvenli API erişimi'],href:'#guvenlik'},
- {id:'uygulamalar',no:'03',title:'Uygulamalar',desc:'Bir mağazaya ait yüklenmiş uygulamaları ve entegrasyon ayarlarını yönetin.',items:['Yüklü uygulamalar','Uygulama ayarları','Mağaza yetkileri'],href:'#endpoints'},
- {id:'webhook',no:'04',title:'Webhook’lar',desc:'Mağaza olayları için webhook aboneliklerini yapılandırın.',items:['Webhook kaydı','Olay abonelikleri','Güvenli teslimat'],href:'#endpoints'}
+type Card={number:string;title:string;description:string;points:string[];href:string};
+const guides:Card[]=[
+  {number:'01',title:'Başlangıç',description:'Platformu tanıyın, ilk API isteğinizi hazırlayın ve entegrasyonun temelini atın.',points:['Platform yapısı','API bağlantısı','Yanıt ve hata yönetimi'],href:'#api'},
+  {number:'02',title:'Kimlik doğrulama',description:'Mağaza erişimini doğru izinlerle ve güvenli oturumlarla yönetin.',points:['Kimlik doğrulama','Erişim izinleri','Güvenli anahtar yönetimi'],href:'#guvenlik'},
+  {number:'03',title:'Uygulama geliştirme',description:'Mağazaların ihtiyaç duyduğu iş akışları için uygulamalar tasarlayın.',points:['Uygulama yaşam döngüsü','Mağaza izinleri','Entegrasyon deneyimi'],href:'#uygulamalar'},
+  {number:'04',title:'Webhook’lar',description:'Mağazadaki olaylara yanıt veren otomasyonlar ve sistemler kurun.',points:['Olay abonelikleri','İmza doğrulama','Teslimat yönetimi'],href:'#webhook'}
 ];
 const endpoints=[
- {method:'GET',route:'/v1/health',detail:'API sağlık kontrolü',access:'Genel erişim'},
- {method:'GET',route:'/v1/admin/apps/installed',detail:'Mağazanın yüklü uygulamaları',access:'Mağaza oturumu ve yetki gerekir'},
- {method:'GET',route:'/v1/admin/webhooks',detail:'Mağazanın webhook kayıtları',access:'Mağaza oturumu ve yetki gerekir'},
- {method:'POST',route:'/v1/admin/webhooks',detail:'Webhook aboneliği oluşturma',access:'Mağaza oturumu ve yetki gerekir'}
+  {method:'GET',path:'/v1/health',label:'API sağlık kontrolü',auth:'Genel'},
+  {method:'GET',path:'/v1/admin/apps/installed',label:'Yüklü uygulamalar',auth:'Yetkili mağaza oturumu'},
+  {method:'GET',path:'/v1/admin/webhooks',label:'Webhook kayıtları',auth:'Yetkili mağaza oturumu'},
+  {method:'POST',path:'/v1/admin/webhooks',label:'Webhook aboneliği',auth:'Yetkili mağaza oturumu'}
 ];
+function Arrow(){return <span className="arrow" aria-hidden="true">↗</span>}
+function Card({children}: {children:ReactNode}){return <article className="dev-guide-card">{children}</article>}
 export default function DeveloperHomePage(){
- return <SiteShell><main className="tc-dev" id="icerik">
-  <div className="tc-dev__container">
-   <section className="tc-dev__hero" aria-labelledby="dev-title">
-    <div className="tc-dev__hero-copy">
-     <p className="tc-dev__eyebrow">Ticarti Developer</p>
-     <h1 id="dev-title">Ticarti geliştirici dokümantasyonu</h1>
-     <p className="tc-dev__lead">API bağlantıları, uygulama geliştirme ve webhook entegrasyonları için teknik rehberler.</p>
-     <div className="tc-dev__hero-actions">
-      <a className="tc-dev__primary" href="#rehberler">Dokümantasyonu keşfet <span aria-hidden="true">↗</span></a>
-      <a className="tc-dev__secondary" href="#endpoints">API uç noktaları <span aria-hidden="true">↗</span></a>
-     </div>
-    </div>
-   </section>
-   <nav className="tc-dev__quick-nav" aria-label="Geliştirici kısayolları">
-    <a href="#rehberler">Rehberler</a><a href="#api">API</a><a href="#endpoints">Uç noktalar</a><a href="#guvenlik">Güvenlik</a><a href="https://help.ticarti.com/">Yardım Merkezi <span aria-hidden="true">↗</span></a>
-   </nav>
-   <section className="tc-dev__section" id="rehberler" aria-labelledby="dev-guides">
-    <div className="tc-dev__section-head"><div><p className="tc-dev__eyebrow">DOKÜMANTASYON</p><h2 id="dev-guides">Geliştirici rehberleri</h2></div><p>Entegrasyon geliştirirken ihtiyaç duyacağınız temel konular.</p></div>
-    <div className="tc-dev__grid">{sections.map(s=><article className="tc-dev__card" key={s.id}>
-     <h3>{s.title}</h3><p>{s.desc}</p>
-     <a href={s.href}>İncele <span aria-hidden="true">↗</span></a>
-    </article>)}</div>
-   </section>
-   <section className="tc-dev__section tc-dev__api" id="api" aria-labelledby="dev-api">
-    <div><p className="tc-dev__eyebrow">API</p><h2 id="dev-api">Tek bir API, birçok entegrasyon.</h2>
-     <p>Ticarti API'si HTTPS üzerinden JSON yanıtları sunar. Genel uç noktalar ile mağaza oturumu ve yetki gerektiren uç noktalar birbirinden ayrıdır.</p>
-     <a className="tc-dev__inline-link" href="#endpoints">Uç noktaları görüntüle <span aria-hidden="true">↗</span></a>
-    </div>
-    <div className="tc-dev__code"><div className="tc-dev__code-head"><span>Bağlantı örneği</span><span>HTTP</span></div>
-     <pre><code>{'GET https://dev.ticarti.com/v1/health\nAccept: application/json'}</code></pre>
-     <div className="tc-dev__code-note">Sağlık kontrolü, kimlik doğrulaması gerektirmeyen örnek bir istektir.</div>
-    </div>
-   </section>
-   <section className="tc-dev__section" id="endpoints" aria-labelledby="dev-endpoints">
-    <div className="tc-dev__section-head"><div><p className="tc-dev__eyebrow">API REFERANSI</p><h2 id="dev-endpoints">Temel uç noktalar</h2></div><p>Mevcut Ticarti API kodunda tanımlı örnek yollar.</p></div>
-    <div className="tc-dev__endpoint-list">{endpoints.map(e=><div className="tc-dev__endpoint" key={e.route+e.method}>
-     <span className={'tc-dev__method '+(e.method==='POST'?'tc-dev__method--post':'')}>{e.method}</span>
-     <div><code>{e.route}</code><p>{e.detail}</p></div>
-     <span className="tc-dev__access">{e.access}</span>
-    </div>)}</div>
-    <p className="tc-dev__fineprint">Bu liste bir API anahtarı veya herkese açık yönetim erişimi sağlamaz. Yönetim uç noktaları yetkili mağaza oturumu gerektirir.</p>
-   </section>
-   <section className="tc-dev__section tc-dev__security" id="guvenlik" aria-labelledby="dev-security">
-    <div><p className="tc-dev__eyebrow">GÜVENLİK</p><h2 id="dev-security">Entegrasyonlarda güvenlik</h2>
-     <p>Mağaza verileri tenant sınırları ve izin kontrolleriyle korunur. İstekleri uygun kimlik doğrulama yöntemiyle, yalnızca yetkili mağaza bağlamında gerçekleştirin.</p></div>
-    <div className="tc-dev__security-points"><div><strong>Yetkilendirme</strong><span>Mağazaya özel erişim izinlerini kullanın.</span></div>
-     <div><strong>Veri ayrımı</strong><span>Mağaza verilerini birbirinden bağımsız tutun.</span></div>
-     <div><strong>Gizlilik</strong><span>Kimlik bilgilerini istemci kodunda yayınlamayın.</span></div></div>
-   </section>
-   <section className="tc-dev__closing"><div><h2>Yardıma mı ihtiyacınız var?</h2><p>Entegrasyon veya uygulama geliştirmeyle ilgili bir sorunuz varsa mevcut Ticarti destek kanallarından bize ulaşın.</p></div>
-    <div className="tc-dev__closing-actions"><a className="tc-dev__primary" href="https://help.ticarti.com/">Yardım Merkezi <span aria-hidden="true">↗</span></a><a href="https://login.ticarti.com/?intent=support">Destek talebi oluştur</a></div>
-   </section>
-  </div>
+ return <SiteShell><main className="dev-content" id="icerik">
+<section className="dev-hero"><div className="dev-wrap dev-hero__grid">
+ <div className="dev-hero__copy"><div className="dev-eyebrow"><span className="dev-eyebrow__mark"/> GELİŞTİRİCİ MERKEZİ</div><h1>Ticarti ile <span>geliştirmeye</span> başlayın.</h1><p>Mağazalara değer katan uygulamalar, güvenli entegrasyonlar ve güçlü otomasyonlar oluşturmak için ihtiyacınız olan teknik kaynaklar burada.</p><div className="dev-hero__actions"><a className="dev-btn dev-btn--primary" href="#rehberler">Dokümantasyonu keşfet <Arrow/></a><a className="dev-btn dev-btn--outline" href="#api">API'yi incele <Arrow/></a></div><div className="dev-hero__foot"><span className="dev-pulse"/> REST API <span className="dev-sep">·</span> JSON <span className="dev-sep">·</span> HTTPS</div></div>
+ <div className="dev-code-window" aria-label="API örnek isteği"><div className="dev-code-window__top"><div className="dev-window-dots"><i/><i/><i/></div><span>İlk API isteğiniz</span><span className="dev-code-window__tag">HTTP</span></div><div className="dev-code-window__body"><div className="dev-code-line"><span className="dev-line-no">01</span><span className="dev-code-comment">// Sağlık kontrolü</span></div><div className="dev-code-line"><span className="dev-line-no">02</span><span className="dev-code-green">GET</span> <span>/v1/health</span></div><div className="dev-code-line"><span className="dev-line-no">03</span><span>Accept: <span className="dev-code-yellow">application/json</span></span></div><div className="dev-code-line dev-code-line--space"><span className="dev-line-no">04</span><span className="dev-code-comment">// Örnek yanıt</span></div><div className="dev-code-line"><span className="dev-line-no">05</span><span>{'{'}</span></div><div className="dev-code-line"><span className="dev-line-no">06</span><span>  <span className="dev-code-blue">"status"</span>: <span className="dev-code-yellow">"ok"</span></span></div><div className="dev-code-line"><span className="dev-line-no">07</span><span>{'}'}</span></div></div><div className="dev-code-window__bottom"><span><span className="dev-status-dot"/> Örnek istek</span><a href="#api">API hakkında bilgi <Arrow/></a></div></div>
+</div></section>
+<div className="dev-wrap"><nav className="dev-jump-nav" aria-label="Sayfa içi gezinme"><a href="#rehberler">Rehberler</a><a href="#api">API</a><a href="#uygulamalar">Uygulamalar</a><a href="#webhook">Webhook’lar</a><a href="#guvenlik">Güvenlik</a></nav></div>
+<section className="dev-section" id="rehberler"><div className="dev-wrap"><div className="dev-section__heading"><div><div className="dev-eyebrow">KAYNAKLAR</div><h2>Geliştirmek için ihtiyacınız olan her şey.</h2></div><p>İlk bağlantıdan mağaza uygulamalarına kadar temel konuları adım adım keşfedin.</p></div><div className="dev-cards">{guides.map(g=><Card key={g.number}><span className="dev-guide-card__number">{g.number}</span><h3>{g.title}</h3><p>{g.description}</p><ul>{g.points.map(p=><li key={p}>{p}</li>)}</ul><a href={g.href}>İncele <Arrow/></a></Card>)}</div></div></section>
+<section className="dev-section dev-section--soft" id="api"><div className="dev-wrap dev-split"><div className="dev-split__copy"><div className="dev-eyebrow">API REFERANSI</div><h2>Bir API. Birçok olasılık.</h2><p>Ticarti'nin API uç noktalarını keşfedin. Genel erişime açık yollar ile mağaza oturumu ve yetki gerektiren işlemleri ayrı değerlendirin.</p><div className="dev-feature-lines"><span>HTTPS üzerinden iletişim</span><span>JSON tabanlı veri alışverişi</span><span>Mağaza yetkilerine bağlı erişim</span></div></div><div className="dev-endpoint-box"><div className="dev-endpoint-box__head"><strong>Temel uç noktalar</strong><span>REST</span></div>{endpoints.map(e=><div className="dev-endpoint" key={e.method+e.path}><span className={'dev-method '+(e.method==='POST'?'dev-method--post':'')}>{e.method}</span><div><code>{e.path}</code><small>{e.label}</small></div></div>)}<p className="dev-endpoint-note">Yönetim uç noktaları için yetkili oturum gereklidir. Bu bölüm herkese açık API anahtarı sağlamaz.</p></div></div></section>
+<section className="dev-section" id="uygulamalar"><div className="dev-wrap dev-split dev-split--reverse"><div className="dev-steps"><div className="dev-step"><span>01</span><div><strong>İhtiyacı belirleyin</strong><p>Mağazanın çözmek istediği iş akışını ve gerekli veri erişimlerini tanımlayın.</p></div></div><div className="dev-step"><span>02</span><div><strong>Entegrasyonu tasarlayın</strong><p>API erişimini, izinleri ve güvenli hata yönetimini yapılandırın.</p></div></div><div className="dev-step"><span>03</span><div><strong>Test edin ve geliştirin</strong><p>Yetkili mağaza ortamında davranışı doğrulayın, sonra kapsamı genişletin.</p></div></div></div><div className="dev-split__copy"><div className="dev-eyebrow">UYGULAMA GELİŞTİRME</div><h2>Fikirlerinizi mağazalara taşıyın.</h2><p>Mağaza yönetimiyle uyumlu uygulamalar ve entegrasyonlar tasarlayın. Yetki sınırlarını koruyarak sürdürülebilir bir geliştirme süreci oluşturun.</p><a className="dev-text-link" href="#guvenlik">Güvenlik ilkelerini incele <Arrow/></a></div></div></section>
+<section className="dev-section dev-section--border" id="webhook"><div className="dev-wrap dev-split"><div className="dev-split__copy"><div className="dev-eyebrow">WEBHOOK’LAR</div><h2>Olaylar gerçekleştiğinde sisteminiz harekete geçsin.</h2><p>Webhook abonelikleriyle entegrasyonlarınızı olay odaklı kurgulayın. Gelen bildirimleri doğrulayın, tekrarlı teslimatları güvenle işleyin ve kayıt altına alın.</p></div><div className="dev-webhook-panel"><div className="dev-webhook-panel__row"><span className="dev-webhook-icon">01</span><div><strong>Olay aboneliği</strong><small>İlgili mağaza olaylarını takip edin</small></div></div><div className="dev-webhook-panel__line"/><div className="dev-webhook-panel__row"><span className="dev-webhook-icon">02</span><div><strong>Güvenli teslimat</strong><small>Bildirimleri yetkili kaynak olarak doğrulayın</small></div></div><div className="dev-webhook-panel__line"/><div className="dev-webhook-panel__row"><span className="dev-webhook-icon">03</span><div><strong>İşleme ve kayıt</strong><small>Hataları ve tekrar denemeleri yönetin</small></div></div></div></div></section>
+<section className="dev-section" id="guvenlik"><div className="dev-wrap"><div className="dev-section__heading"><div><div className="dev-eyebrow">GÜVENLİK</div><h2>Güvenli geliştirme temelden başlar.</h2></div><p>Mağaza verilerini koruyan ve sürdürülebilir entegrasyonlar için temel ilkeler.</p></div><div className="dev-security-grid"><div><span className="dev-security-icon">✓</span><h3>Yetki kontrolü</h3><p>Her işlemi doğru mağaza bağlamında ve gerekli izinlerle gerçekleştirin.</p></div><div><span className="dev-security-icon">✓</span><h3>Veri ayrımı</h3><p>Farklı mağazalara ait verileri birbirinden bağımsız tutun.</p></div><div><span className="dev-security-icon">✓</span><h3>Gizli bilgiler</h3><p>Erişim bilgilerini istemci kodunda paylaşmayın ve güvenli biçimde saklayın.</p></div></div></div></section>
+<section className="dev-closing"><div className="dev-wrap dev-closing__inner"><div><div className="dev-eyebrow">BİRLİKTE GELİŞTİRELİM</div><h2>Bir sorunuz mu var?</h2><p>Uygulama geliştirme veya entegrasyon süreçleriyle ilgili destek kaynaklarına ulaşın.</p></div><div className="dev-closing__actions"><a className="dev-btn dev-btn--primary" href="https://help.ticarti.com/">Yardım Merkezi <Arrow/></a><a className="dev-text-link" href="https://ticarti.com/iletisim">İletişime geç <Arrow/></a></div></div></section>
+
  </main></SiteShell>;
 }
