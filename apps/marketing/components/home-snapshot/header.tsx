@@ -117,7 +117,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
                       {"\n"}
                       <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
                         {"\n"}
-                        <a href={"/contacto.html"} role={"menuitem"} data-tc-content-key={"a-005"}>
+                        <a href={"/iletisim"} role={"menuitem"} data-tc-content-key={"a-005"}>
                           {"Hakkımızda"}
                         </a>
                         {"\n"}
@@ -133,7 +133,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <div className={"button btn2 login-btn"}>
                 {"\n"}
-                <a href={"/contacto.html"} data-tc-content-key={"a-006"}>
+                <a href={"/iletisim"} data-tc-content-key={"a-006"}>
                   {"İletişim"}
                 </a>
                 {"\n"}
