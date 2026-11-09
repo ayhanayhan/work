@@ -25,6 +25,8 @@ const labels:Record<string,Ui>={
  vi:{title:'Công cụ miễn phí',description:'Công cụ dành cho thương mại điện tử và quản lý doanh nghiệp.',back:'Tất cả công cụ',more:'Công cụ khác',notReady:'Công cụ tính toán sẽ sớm ra mắt.',empty:'Chưa có công cụ nào được xuất bản.',faq:'Câu hỏi thường gặp'}
 };
 const toolSources:Record<string,{title:string;url:string}[]>={
+ 'ean13-barkod-olusturucu':[{title:'GS1 · General Specifications (EAN-13 ve GTIN)',url:'https://ref.gs1.org/standards/genspecs/'},
+  {title:'GS1 · Kontrol basamağı hesaplama',url:'https://www.gs1ie.org/tools-services/tools/check-digit-calculator/'}],
  'kdv-hesaplama':[{title:'GİB · Güncel KDV oranları',
   url:'https://cdn.gib.gov.tr/api/gibportal-file/file/getFileResources?objectKey=arsiv/yardim-kaynaklar/yararli-bilgiler/kdv-oranlari.pdf'}],
  'amazon-komisyon-hesaplama':[{title:'Amazon Türkiye · Resmî komisyon tablosu',
