@@ -67,7 +67,7 @@ export class ContactService {
       const response=await fetch('https://api.resend.com/emails',{
         method:'POST',signal:AbortSignal.timeout(8000),
         headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
-        body:JSON.stringify({from,to:[to],subject:render(subject),text:render(body)})
+        body:JSON.stringify({from,to:[to],subject:render(subject).replace(/[\r\n]+/g,' ').slice(0,180),text:render(body)})
       });
       if(!response.ok)throw Error('Contact notification delivery failed: '+response.status);
     };
@@ -240,7 +240,7 @@ export class ContactService {
       response=await fetch('https://api.resend.com/emails',{
         method:'POST',signal:AbortSignal.timeout(8000),
         headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
-        body:JSON.stringify({from,to:[inquiry.email],subject:('Re: '+inquiry.subject).slice(0,180),text:reply})
+        body:JSON.stringify({from,to:[inquiry.email],subject:('Re: '+inquiry.subject).replace(/[\r\n]+/g,' ').slice(0,180),text:reply})
       });
     }catch{throw new HttpException('E-posta gönderilemedi, tekrar deneyin.',HttpStatus.BAD_GATEWAY);}
     if(!response.ok)throw new HttpException('E-posta sağlayıcısı mesajı kabul etmedi.',HttpStatus.BAD_GATEWAY);
