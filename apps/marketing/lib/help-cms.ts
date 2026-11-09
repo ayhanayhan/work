@@ -19,7 +19,7 @@ export async function getHelpTopics():Promise<HelpCategory[]> {
   })).filter((c:HelpCategory)=>c.id&&c.title);
  }catch{return HELP_TOPICS;}
 }
-export function articleUrl(article:HelpArticle){return 'https://help.ticarti.com/makale/'+(article.slug||helpArticleSlug(article.question));}
+export {articleUrl} from './help-links';
 export function findHelpArticle(topics:HelpCategory[],slug:string){
  for(const topic of topics){
   const index=topic.questions.findIndex(a=>(a.slug||helpArticleSlug(a.question))===slug);
