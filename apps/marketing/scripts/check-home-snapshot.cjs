@@ -262,6 +262,8 @@ assert.ok(brandConfig.includes('NEXT_PUBLIC_TICARTI_HELP_LOGO')&&
 assert.ok(shellSource.includes('await getPlatformLogoForHost(')&&
  brandConfig.includes("'/v1/public/website/branding'"),
  'Site shell must load Master-managed brand logo from public API by hostname');
+assert.ok(shellSource.includes("requestHeaders.get('x-ticarti-site-proxy')==='1'"),
+ 'Corporate proxy must map back to ticarti.com before selecting Master logo');
 const brandingHeader=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/header.tsx'),'utf8');
 const brandingFooter=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/footer.tsx'),'utf8');
 assert.ok(brandingHeader.includes('src={logoSrc}')&&brandingFooter.includes('src={logoSrc}'),
