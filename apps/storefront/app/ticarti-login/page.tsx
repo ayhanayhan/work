@@ -32,7 +32,7 @@ export default function Login(){
    if(!code)return;
    setChecking(true);
    void(async()=>{try{
-     const response=await fetch(API+'/merchant-auth/linkedin/complete',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({code})});
+     const response=await fetch(API+'/merchant-auth/social/complete',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({code})});
      const data=await response.json().catch(()=>({}));
      if(!response.ok)throw Error('Sosyal giriş doğrulanamadı.');
      accept(data);
