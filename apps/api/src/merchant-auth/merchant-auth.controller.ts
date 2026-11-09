@@ -9,6 +9,7 @@ import {
   MerchantRefreshDto,
   MerchantRegisterDto,
   MerchantResetPasswordDto,
+  MerchantSocialRegisterDto,
 } from './dto';
 
 @Controller('merchant-auth')
@@ -97,7 +98,7 @@ export class MerchantAuthController {
     catch{return {active:false}}
   }
   @Post('social/register') @HttpCode(200)
-  async registerSocial(@Req() req:any,@Res({passthrough:true}) res:any,@Body() dto:any){
+  async registerSocial(@Req() req:any,@Res({passthrough:true}) res:any,@Body() dto:MerchantSocialRegisterDto){
     this.assertClient(req,true);this.noStore(res);
     const token=this.readCookie(req,'__Host-ticarti_social_signup');
     if(!token)throw new UnauthorizedException('Social registration expired');

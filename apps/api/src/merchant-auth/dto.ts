@@ -40,3 +40,12 @@ export class MerchantHandoffDto {
 export class MerchantRefreshDto {
   @IsOptional() @IsString() @MaxLength(256) refreshToken?: string;
 }
+
+export class MerchantSocialRegisterDto {
+  @IsString() @MinLength(2) @MaxLength(160) companyName!: string;
+  @IsString() @Matches(/^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])$/) subdomain!: string;
+  @IsOptional() @IsString() @MaxLength(40) phone?: string;
+  @IsOptional() @IsString() @MaxLength(80) sector?: string;
+  @IsOptional() @IsBoolean() pricesIncludeTax?: boolean;
+  @IsOptional() @IsString() @Matches(/^(start|grow|scale)$/) planCode?: string;
+}
