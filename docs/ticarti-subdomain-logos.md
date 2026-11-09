@@ -1,35 +1,40 @@
-# Ticarti — alt alan adına göre logo
+# Ticarti alt alan adı logoları — merkezi yönetim
 
-Bu özellik site tasarımını değiştirmez. Logo tanımlanmamışsa önceki Ticarti logosu
-(Marketing) veya yazı logosu (App) korunur. Yeni logo çizilmez veya varsayılmaz.
+Logo seçimleri **Master → Ayarlar → Genel Ayarlar → Alt Alan Adı Logoları**
+bölümünde saklanır. Bu alanlar müşteri mağazalarının logo/tema
+ayarlarından bağımsızdır.
 
-| Adres | Firebase backend | Ayar |
+| Alan adı | Master alanı | Görüntüleme |
 | --- | --- | --- |
-| ticarti.com | commerce-marketing | `NEXT_PUBLIC_TICARTI_MAIN_LOGO` |
-| help.ticarti.com | commerce-marketing | `NEXT_PUBLIC_TICARTI_HELP_LOGO` |
-| app.ticarti.com | commerce-storefront | Henüz yapılandırılmadı (Storefront logo değişikliği geri alındı) |
-| dev.ticarti.com | commerce-storefront | `NEXT_PUBLIC_TICARTI_DEV_LOGO` |
+| ticarti.com | Ana site | commerce-marketing, ortak header/footer |
+| help.ticarti.com | Yardım Merkezi | commerce-marketing, ortak header/footer |
+| app.ticarti.com | Uygulama Mağazası | Veri kaydedilir, mevcut Storefront App arayüzü henüz bu ayarı kullanmaz |
+| dev.ticarti.com | Geliştirici/API | Veri kaydedilir, mevcut alan adında görsel arayüz yok |
 
-Örnek değerler:
-```dotenv
-NEXT_PUBLIC_TICARTI_HELP_LOGO=/assets/images/logo-help.svg
-```
+## Teknik akış
 
-Marketing için logoyu `apps/marketing/public/assets/images/` içine
-koyup `/assets/images/logo-help.svg` yolunu kullanabilirsiniz. App logosu için önceden eklenen Storefront ortam değişkeni desteği geri alındı.
-Bunu ileride Master'dan yönetilecek merkezi marka ayarlarına bağlayacağız.
-Dış bağlantı da `https://` olmalıdır.
+- Master, mevcut `superadmin/platform-settings` endpoint'ine `branding`
+  alanını ekler ve kurumsal `superadmin/media` kütüphanesinden görüntü seçer.
+- API bu ayarı `GET /v1/public/website/branding` üzerinden yalnızca
+  halka açık güvenli logo URL'leriyle sunar. Kullanıcı bilgileri ve diğer
+  platform ayarları dışarı verilmez.
+- Marketing sunucusu `API_ORIGIN` üzerinden merkezi logoyu okur.
+  Yalnızca Marketing'e ait ana site ve Help logosunu doğrudan gösterir.
+- Bir görsel atanmazsa mevcut Ticarti logosu görünür. API erişilemezse
+  varsayılan logo korunur.
+- App Marketplace sayfası henüz Storefront içindedir. Bu sayfaya
+  yeni logo kodu eklenmedi; bağımsız App uygulamasına taşınırken merkezi
+  branding endpoint'i kullanılmalıdır.
+- Dev adresi API yönlendirmesidir, gösterilecek bir header yoktur.
 
-Firebase App Hosting'de ilgili backend'in ortam değişkenine adresi ekleyin
-ve o backend'i yeniden deploy edin. PUBLIC değişkenler Next.js derlemesinde
-çözülür. Kod veya ortam değişkeni eklenmedikçe logo değişmez.
+## Yayınlama
 
-`dev.ticarti.com` şu anda kullanıcıya açık bir web uygulaması/header yerine
-API yönlendirmesi için kullanılıyor. DEV logo yapılandırması hazırdır ama
-dev alan adına ayrıca bir UI oluşturulmadan görünecek bir logo yoktur.
+Kod değişiklikleri için **API**, **Master** ve **Marketing** deploy edilir;
+Storefront deploy edilmez.
 
-Help için header, mobil menü ve footer aynı ayarı kullanır.
-App Marketplace geçici logo değişikliği geri alındığı için şu anda özgün yazı logosunu kullanır.
+Yeni logo seçmek için daha sonra kod/deploy gerekmez. Master'da medya
+seçip kaydettikten sonra Marketing yeni URL'yi sunucuda okuyabilir.
 
-Bu ayarlar mevcut Master medya kütüphanesine bağlı bir yükleme arayüzü değildir;
-yeni logo dosyalarını sonradan sağlayabilirsiniz.
+Önceki `NEXT_PUBLIC_TICARTI_*_LOGO` ortam değişkenleri, Marketing için
+yalnızca eski/varsayılan fallback olarak korunmuştur. Yeni logo seçimi
+için bu değişkenleri ayarlamak gerekmez.
