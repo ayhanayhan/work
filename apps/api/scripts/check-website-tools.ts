@@ -12,7 +12,7 @@ async function main(){
  const initial=await svc.snapshot();
  assert.equal(initial.version,0);
  assert.deepEqual(initial.tools.map(x=>x.id),[...TOOL_IDS]);
- assert.equal(initial.tools.length,11);
+ assert.equal(initial.tools.length,12);
  for(const id of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']){
   const entry=initial.tools.find((x:any)=>x.id===id+'-komisyon-hesaplama');
   assert.ok(entry,'Missing marketplace tool '+id);
@@ -23,8 +23,8 @@ async function main(){
   }
   assert.ok(entry?.faqs.length>=2, 'Missing FAQs '+entry?.id);
  }
- assert.equal((await svc.publicList('tr')).length,11);
- assert.equal((await svc.publicList('vi')).length,11);
+ assert.equal((await svc.publicList('tr')).length,12);
+ assert.equal((await svc.publicList('vi')).length,12);
  assert.equal((await svc.publicDetail('kdv-hesaplama','tr')).title,'KDV Hesaplama');
  const updated=structuredClone(initial);
  const target=updated.tools.find((x:any)=>x.id==='kdv-hesaplama');
@@ -37,9 +37,9 @@ async function main(){
  target.faqs=[{id:'faq-one',question:{tr:'KDV nedir?'},answer:{tr:'Katma değer vergisi.'}}];
  const published=await svc.save(updated);
  assert.equal(published.version,1);
- assert.equal((await svc.publicList('tr')).length,11);
- assert.equal((await svc.publicList('en')).length,11);
- assert.equal((await svc.publicList('de')).length,11);
+ assert.equal((await svc.publicList('tr')).length,12);
+ assert.equal((await svc.publicList('en')).length,12);
+ assert.equal((await svc.publicList('de')).length,12);
  const page=await svc.publicDetail('kdv-hesaplama','tr');
  assert.equal(page.title,'KDV Hesaplama');
  assert.equal(page.sections.length,1);
@@ -55,9 +55,9 @@ async function main(){
    ...Object.fromEntries(Object.keys(x.fields).map(key=>[key,
     key==='title'?{tr:x.fields.title.tr}:{}]))
   }}))};
- assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,11,'Untouched drafts migrate to published');
+ assert.equal((await svc.snapshot()).tools.filter(x=>x.status==='PUBLISHED').length,12,'Untouched drafts migrate to published');
  saved.tools[0].fields.description={tr:'Özel içerik henüz hazır değil'};
  assert.equal((await svc.snapshot()).tools[0].status,'DRAFT','Customized drafts must remain private');
- console.log('PASS: eleven published localized SEO calculator articles with FAQs, preserved drafts and validation');
+ console.log('PASS: twelve published localized SEO calculator articles with FAQs, preserved drafts and validation');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});
