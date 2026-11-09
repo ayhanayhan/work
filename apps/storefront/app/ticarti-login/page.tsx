@@ -1,29 +1,48 @@
 'use client';
 import {FormEvent,useEffect,useState} from 'react';
 import Link from 'next/link';
+import AuthShell,{AUTH_ASSET_ORIGIN} from './auth-shell';
 const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
 const GOOGLE_CLIENT_ID=process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID||'';
 declare global{interface Window{google?:any}}
-
 type Membership={tenantId:string;tenantName:string;tenantStatus?:string;site:{name:string;publicSlug:string;domain?:string|null}};
-function requestedAdminTarget(raw:string,m:Membership){
-  const fallback={origin:`https://${m.site.publicSlug}.ticarti.com`,path:'/admin'};
-  if(!raw)return fallback;
-  try{
-    const u=new URL(raw);
-    const allowed=new Set([`${m.site.publicSlug}.ticarti.com`,String(m.site.domain||'').toLowerCase()].filter(Boolean));
-    if(u.protocol==='https:'&&allowed.has(u.hostname.toLowerCase())&&(u.pathname==='/admin'||u.pathname.startsWith('/admin/')))return{origin:u.origin,path:u.pathname+u.search};
-  }catch{}
-  return fallback;
+function target(raw:string,m:Membership){
+ const fallback={origin:'https://'+m.site.publicSlug+'.ticarti.com',path:'/admin'};
+ if(!raw)return fallback;
+ try{const url=new URL(raw);const allowed=[m.site.publicSlug+'.ticarti.com',String(m.site.domain||'').toLowerCase()];if(url.protocol==='https:'&&allowed.includes(url.hostname.toLowerCase())&&(url.pathname==='/admin'||url.pathname.startsWith('/admin/')))return{origin:url.origin,path:url.pathname+url.search}}catch{}
+ return fallback;
 }
-function nextFor(path:string){if(path==='/admin')return '/dashboard';return path.startsWith('/admin/')?path.slice('/admin'.length):'/dashboard'}
-
+function next(path:string){return path==='/admin'?'/dashboard':path.startsWith('/admin/')?path.slice(6):'/dashboard'}
 export default function Login(){
-  const[busy,setBusy]=useState(false);const[checking,setChecking]=useState(true);const[error,setError]=useState('');const[result,setResult]=useState<any>(null);const[returnTo,setReturnTo]=useState('');const[intent,setIntent]=useState('');
-  useEffect(()=>{const query=new URLSearchParams(window.location.search);const rt=query.get('returnTo')||'';const requestedIntent=query.get('intent')==='support'?'support':'';setReturnTo(rt);setIntent(requestedIntent);void(async()=>{try{const r=await fetch(API+'/merchant-auth/resume',{method:'POST',credentials:'include',headers:{'x-auth-client':'merchant-landing'}});if(!r.ok)return;const j=await r.json().catch(()=>({}));if(j?.handoffCode&&Array.isArray(j?.memberships)&&j.memberships.length){if(j.memberships.length===1){const m=j.memberships[0];const target=requestedAdminTarget(rt,m);const url=new URL('/admin/login',target.origin);url.searchParams.set('handoff',j.handoffCode);url.searchParams.set('tenant',m.tenantId);url.searchParams.set('next',requestedIntent==='support'&&!rt?'/support':nextFor(target.path));window.location.replace(url.toString());return}setResult(j)}}catch{}finally{setChecking(false)}})()},[]);
-  function choose(m:Membership,res:any=result){const target=requestedAdminTarget(returnTo,m);const url=new URL('/admin/login',target.origin);url.searchParams.set('handoff',res.handoffCode);url.searchParams.set('tenant',m.tenantId);url.searchParams.set('next',intent==='support'&&!returnTo?'/support':nextFor(target.path));window.location.href=url.toString()}
-  function accept(res:any){if(!res?.handoffCode||!Array.isArray(res.memberships)||!res.memberships.length)throw new Error('Bu hesaba bağlı aktif bir mağaza bulunamadı.');if(res.memberships.length===1)choose(res.memberships[0],res);else setResult(res)}
-  async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.currentTarget);try{const r=await fetch(API+'/merchant-auth/login',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({email:String(f.get('email')||'').trim(),password:String(f.get('password')||'')})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.message||'Giriş başarısız.');accept(j)}catch(e:any){setError(e.message||'Giriş başarısız.')}finally{setBusy(false)}}
-  useEffect(()=>{if(!GOOGLE_CLIENT_ID||result)return;const init=()=>{if(!window.google?.accounts?.id)return;window.google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:async(response:any)=>{setBusy(true);setError('');try{const r=await fetch(API+'/merchant-auth/google',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({credential:response.credential})});const j=await r.json().catch(()=>({}));if(j?.requiresRegistration)throw new Error('Bu Google hesabına bağlı mağaza bulunamadı.');if(!r.ok)throw new Error(j?.message||'Google ile giriş başarısız.');accept(j)}catch(e:any){setError(e.message)}finally{setBusy(false)}}});const el=document.getElementById('ticarti-google');if(el){el.innerHTML='';window.google.accounts.id.renderButton(el,{theme:'outline',size:'large',width:360,text:'signin_with',shape:'rectangular'})}};const id='google-identity-services';const old=document.getElementById(id) as HTMLScriptElement|null;if(old){init();return}const sc=document.createElement('script');sc.id=id;sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.defer=true;sc.onload=init;document.head.appendChild(sc)},[result,returnTo]);
-  return checking?<main className="ticarti-auth-simple"><div className="ticarti-login-resume-dots" role="status" aria-label="Oturum kontrol ediliyor"><span/><span/><span/></div></main>:<main className="ticarti-login-screen tc-auth-portal"><section className="ticarti-login-brand"><a className="tc-auth-logo" href="https://ticarti.com/" aria-label="Ticarti ana sayfa"><img src="https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app/assets/images/ticarti-logo.svg" alt="Ticarti"/></a><div><h1>Mağazanı yönetmeye devam et.</h1><p>Ürünlerini, siparişlerini ve mağaza operasyonlarını Ticarti ile tek yerden yönet.</p></div><small>Ticarti · Ticaretin yeni hali</small></section><section className="ticarti-login-panel"><div className="ticarti-login-card">{result?<><div className="ticarti-login-title"><h2>Hangi mağazayı yöneteceksiniz?</h2><p>Hesabınıza bağlı mağazalardan birini seçin.</p></div><div className="ticarti-store-list">{result.memberships.map((m:Membership)=><button key={m.tenantId} onClick={()=>choose(m)}><i>{m.site.name.slice(0,1).toUpperCase()}</i><span><b>{m.site.name}</b><small>{m.site.domain||`${m.site.publicSlug}.ticarti.com`}</small></span><em>→</em></button>)}</div></>:<><div className="ticarti-login-title"><h2>Giriş yap</h2><p>Yönetim paneline devam etmek için hesabınıza giriş yapın.</p></div>{error&&<div className="ticarti-auth-error">{error}</div>}<form onSubmit={submit}><label>E-posta<input name="email" type="email" autoComplete="email" required placeholder="ornek@firma.com"/></label><label>Şifre<input name="password" type="password" autoComplete="current-password" required placeholder="••••••••"/></label><div className="ticarti-login-meta"><label><input type="checkbox" defaultChecked/> Beni hatırla</label><Link href="/forgot-password">Şifremi unuttum</Link></div><button className="ticarti-btn primary full large" disabled={busy}>{busy?'Giriş yapılıyor…':'Giriş Yap'}</button></form>{GOOGLE_CLIENT_ID&&<><div className="ticarti-or"><span>veya</span></div><div id="ticarti-google" className="ticarti-google"/></>}<p className="ticarti-login-bottom">Henüz hesabın yok mu? <a href="/register">Ücretsiz siteni oluştur</a></p></>}</div></section></main>
+ const [view,setView]=useState<'welcome'|'email'>('welcome'),[busy,setBusy]=useState(false),[checking,setChecking]=useState(true),[error,setError]=useState('');
+ const [result,setResult]=useState<any>(null),[returnTo,setReturnTo]=useState(''),[intent,setIntent]=useState('');
+ function choose(m:Membership,res:any=result,rt=returnTo,ri=intent){const dest=target(rt,m),url=new URL('/admin/login',dest.origin);url.searchParams.set('handoff',res.handoffCode);url.searchParams.set('tenant',m.tenantId);url.searchParams.set('next',ri==='support'&&!rt?'/support':next(dest.path));window.location.assign(url.toString())}
+ function accept(data:any,rt=returnTo,ri=intent){if(!data?.handoffCode||!Array.isArray(data?.memberships)||!data.memberships.length)throw Error('Bu hesaba bağlı aktif mağaza bulunamadı.');if(data.memberships.length===1)choose(data.memberships[0],data,rt,ri);else setResult(data)}
+ useEffect(()=>{const query=new URLSearchParams(window.location.search),rt=query.get('returnTo')||'',ri=query.get('intent')==='support'?'support':'';setReturnTo(rt);setIntent(ri);void(async()=>{try{const res=await fetch(API+'/merchant-auth/resume',{method:'POST',credentials:'include',headers:{'x-auth-client':'merchant-landing'}});if(!res.ok)return;const data=await res.json().catch(()=>({}));if(data?.handoffCode&&data?.memberships?.length)accept(data,rt,ri)}catch{}finally{setChecking(false)}})()},[]);
+ async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.currentTarget);try{const res=await fetch(API+'/merchant-auth/login',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({email:String(f.get('email')||'').trim(),password:String(f.get('password')||'')})});const data=await res.json().catch(()=>({}));if(!res.ok)throw Error(Array.isArray(data?.message)?data.message.join(', '):data?.message||'Giriş başarısız.');accept(data)}catch(e:any){setError(e.message||'Giriş başarısız.')}finally{setBusy(false)}}
+ useEffect(()=>{if(!GOOGLE_CLIENT_ID||result||view!=='welcome'||checking)return;let active=true;const init=()=>{if(!active||!window.google?.accounts?.id)return;window.google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:async(response:any)=>{setBusy(true);setError('');try{const res=await fetch(API+'/merchant-auth/google',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({credential:response.credential})});const data=await res.json().catch(()=>({}));if(data?.requiresRegistration)throw Error('Bu Google hesabına bağlı mağaza bulunamadı.');if(!res.ok)throw Error(data?.message||'Google ile giriş başarısız.');accept(data)}catch(e:any){setError(e.message||'Google ile giriş başarısız.')}finally{setBusy(false)}}});const box=document.getElementById('ticarti-google');if(box){box.innerHTML='';window.google.accounts.id.renderButton(box,{theme:'outline',size:'large',width:320,text:'signin_with',shape:'rectangular'})}};const existing=document.getElementById('google-identity-services');if(existing){init();return()=>{active=false}}const script=document.createElement('script');script.id='google-identity-services';script.src='https://accounts.google.com/gsi/client';script.async=true;script.defer=true;script.onload=init;document.head.appendChild(script);return()=>{active=false}},[view,result,checking]);
+ return <AuthShell>
+ {checking?<section className="tc-view"><p className="tc-sub" role="status">Oturum kontrol ediliyor…</p></section>:
+ result?<section className="tc-view"><h1>Mağazanı seç.</h1><p className="tc-sub">Devam etmek istediğin mağazayı seç.</p><div className="tc-store-list">{result.memberships.map((m:Membership)=><button type="button" key={m.tenantId} onClick={()=>choose(m)}><strong>{m.site.name}</strong><span>{m.site.domain||m.site.publicSlug+'.ticarti.com'}</span></button>)}</div></section>:
+ view==='welcome'?<section className="tc-view" id="tc-welcome">
+   <h1>Ticarti'ye tekrar hoş geldin.</h1><p className="tc-sub">Mağazanı yönetmek için hesabına giriş yap.</p>
+   {error&&<p className="tc-error" role="alert">{error}</p>}
+   <div className="tc-actions">
+    <button className="tc-btn tc-provider-btn" type="button" disabled><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/>LinkedIn ile giriş (yakında)</button>
+    {GOOGLE_CLIENT_ID?<div id="ticarti-google" className="tc-google-login"/>:<button className="tc-btn tc-provider-btn" type="button" disabled><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/>Google ile giriş (yakında)</button>}
+    <div className="tc-or"><span>veya</span></div>
+    <button className="tc-btn primary" type="button" onClick={()=>{setView('email');setError('')}}>E-posta ile giriş yap</button>
+    <p className="tc-switch">Hesabın yok mu? <Link className="tc-link" href="/register">Kayıt ol</Link></p>
+   </div>
+  </section>:<section className="tc-view" id="tc-email">
+   <h1>E-posta ile giriş yap.</h1><p className="tc-sub">Hesap bilgilerini girerek devam et.</p>
+   <form className="tc-form" onSubmit={submit}>
+    <label>E-posta adresi<input name="email" type="email" autoComplete="email" required placeholder="ornek@eposta.com"/></label>
+    <label>Şifre<input name="password" type="password" autoComplete="current-password" required placeholder="Şifren"/></label>
+    {error&&<div className="tc-error" role="alert">{error}</div>}
+    <button className="tc-btn primary" type="submit" disabled={busy}>{busy?'Giriş yapılıyor…':'Giriş yap'}</button>
+   </form>
+   <p className="tc-switch"><Link className="tc-link" href="/forgot-password">Şifremi unuttum</Link> · <button type="button" className="tc-link" onClick={()=>{setView('welcome');setError('')}}>Geri dön</button></p>
+  </section>}
+ </AuthShell>;
 }
