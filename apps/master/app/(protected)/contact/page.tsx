@@ -14,6 +14,7 @@ import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/compo
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
 import {LoaderCircle,Mail,RefreshCw,Search} from 'lucide-react';
 
+type ContactEmailSettings={enabled:boolean;recipient:string;acknowledgeSender:boolean;subject:string;acknowledgmentSubject:string;acknowledgmentBody:string;providerConfigured:boolean};
 type Inquiry={id:string;fullName:string;email:string;phone?:string|null;subject:string;message:string;status:string;replyDraft?:string|null;internalNote?:string|null;createdAt:string;updatedAt:string};
 const STATUS:Record<string,string>={NEW:'Yeni',IN_PROGRESS:'İşlemde',ANSWERED:'Yanıtlandı',CLOSED:'Kapalı'};
 const fmt=(v:string)=>new Date(v).toLocaleString('tr-TR');
@@ -32,6 +33,24 @@ export default function ContactInboxPage(){
   const [note,setNote]=useState('');
   const [busy,setBusy]=useState(false);
   const [notice,setNotice]=useState('');
+  const [mailSettings,setMailSettings]=useState<ContactEmailSettings|null>(null);
+  const [mailBusy,setMailBusy]=useState(false);
+  const [mailNotice,setMailNotice]=useState('');
+  const loadMail=useCallback(async()=>{
+    if(restoring)return;
+    try{const data=await request('/superadmin/contact/email-settings');setMailSettings(data)}
+    catch(e){setMailNotice(errorText(e))}
+  },[request,restoring]);
+  useEffect(()=>{void loadMail()},[loadMail]);
+  const saveMail=async()=>{
+    if(!mailSettings)return;
+    setMailBusy(true);setMailNotice('');
+    try{const updated=await request('/superadmin/contact/email-settings',{
+      method:'PATCH',body:JSON.stringify(mailSettings)
+    });setMailSettings(updated);setMailNotice('E-posta ayarları kaydedildi.')}
+    catch(e){setMailNotice(errorText(e))}
+    finally{setMailBusy(false)}
+  };
   const load=useCallback(async()=>{
     if(restoring)return;
     setLoading(true);setError('');
@@ -64,6 +83,25 @@ export default function ContactInboxPage(){
     <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">İletişim Mesajları</h1><ToolbarDescription>Ticarti web sitesinden gelen iletişim formlarını görüntüleyin ve takip edin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" disabled={loading} onClick={()=>void load()}><RefreshCw className="size-4"/>Yenile</Button></ToolbarActions></Toolbar></Container>
     <Container className="grid gap-5 pb-10">
       <div className="grid gap-4 sm:grid-cols-3">{[[rows.length,'Toplam mesaj'],[rows.filter(x=>x.status==='NEW').length,'Yeni mesaj'],[rows.filter(x=>x.status==='IN_PROGRESS').length,'İşlemde']].map(([number,label])=><Card key={label}><CardContent className="p-5"><div className="text-sm text-muted-foreground">{label}</div><div className="mt-2 text-2xl font-semibold">{number}</div></CardContent></Card>)}</div>
+      <Card>
+        <CardHeader><CardHeading>İletişim E-posta Bildirimleri</CardHeading></CardHeader>
+        <CardContent className="grid gap-4 p-5">
+          <p className="text-sm text-muted-foreground">Form mesajları her durumda bu gelen kutusuna kaydedilir. İsterseniz belirlediğiniz adrese bildirim ve formu gönderen kişiye otomatik alındı e-postası gönderin.</p>
+          {mailSettings?<div className="grid gap-4">
+            <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={mailSettings.enabled} onChange={e=>setMailSettings(x=>x?{...x,enabled:e.target.checked}:x)}/> Yeni mesajları e-posta ile bildir</label>
+            <label className="grid gap-2 text-sm font-medium">Bildirim alıcı adresi<Input type="email" value={mailSettings.recipient} placeholder="iletisim@ticarti.com" onChange={e=>setMailSettings(x=>x?{...x,recipient:e.target.value}:x)}/></label>
+            <label className="grid gap-2 text-sm font-medium">Bildirim konusu<Input value={mailSettings.subject} maxLength={180} onChange={e=>setMailSettings(x=>x?{...x,subject:e.target.value}:x)}/></label>
+            <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={mailSettings.acknowledgeSender} onChange={e=>setMailSettings(x=>x?{...x,acknowledgeSender:e.target.checked}:x)}/> E-posta adresi bırakan gönderene otomatik alındı mesajı gönder</label>
+            {mailSettings.acknowledgeSender?<div className="grid gap-3">
+              <label className="grid gap-2 text-sm font-medium">Gönderene e-posta konusu<Input value={mailSettings.acknowledgmentSubject} maxLength={180} onChange={e=>setMailSettings(x=>x?{...x,acknowledgmentSubject:e.target.value}:x)}/></label>
+              <label className="grid gap-2 text-sm font-medium">Gönderene e-posta içeriği<Textarea rows={4} maxLength={4000} value={mailSettings.acknowledgmentBody} onChange={e=>setMailSettings(x=>x?{...x,acknowledgmentBody:e.target.value}:x)}/></label>
+            </div>:null}
+            <p className="text-xs text-muted-foreground">Kullanılabilir değişkenler: {'{{fullName}}'}, {'{{email}}'}, {'{{subject}}'}, {'{{phone}}'}, {'{{message}}'}. E-postalar için RESEND_API_KEY ve CONTACT_EMAIL_FROM (veya CALLBACK_EMAIL_FROM) yapılandırılmalı.</p>
+            {!mailSettings.providerConfigured?<p className="text-sm text-amber-700">E-posta sağlayıcısı henüz tanımlanmamış. Mesajlar gelen kutusuna kaydedilmeye devam eder.</p>:null}
+            <div className="flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{mailNotice}</span><Button disabled={mailBusy} onClick={()=>void saveMail()}>{mailBusy?<LoaderCircle className="size-4 animate-spin"/>:null}E-posta ayarlarını kaydet</Button></div>
+          </div>:<p className="text-sm text-muted-foreground">{mailNotice||'E-posta ayarları yükleniyor...'}</p>}
+        </CardContent>
+      </Card>
       <Card><CardContent className="grid gap-3 p-5 md:grid-cols-[1fr_220px]"><div className="relative"><Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input className="ps-9" placeholder="İsim, e-posta, konu veya mesaj ara" value={q} onChange={e=>setQ(e.target.value)}/></div><Select value={filter} onValueChange={setFilter}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">Tüm durumlar</SelectItem>{Object.entries(STATUS).map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></CardContent></Card>
       {error&&!selected?<div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>:null}
       <Card><CardHeader><CardHeading>Gelen Kutusu</CardHeading></CardHeader><CardContent className="overflow-x-auto p-0">
