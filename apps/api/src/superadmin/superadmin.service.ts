@@ -431,6 +431,7 @@ export class SuperAdminService {
     return {
       providers:[
         {key:'GOOGLE',label:'Google ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-google-oauth-client-secret',scopes:['openid','email','profile']},
+        {key:'LINKEDIN',label:'LinkedIn ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-linkedin-oauth-client-secret',scopes:['openid','profile','email']},
         {key:'FACEBOOK',label:'Facebook ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-facebook-oauth-client-secret',scopes:['email','public_profile']},
         {key:'APPLE',label:'Apple ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-apple-oauth-client-secret',scopes:['name','email']},
         {key:'MICROSOFT',label:'Microsoft ile giriş',enabled:false,clientId:'',clientSecretRef:'ticarti-microsoft-oauth-client-secret',scopes:['openid','email','profile']},
@@ -442,7 +443,11 @@ export class SuperAdminService {
     const row:any=await (this.prisma as any).platformSetting.findUnique({where:{key:'auth_providers'}});
     const base:any=this.defaultAuthProviders();
     const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
-    return {providers:Array.isArray(value.providers)&&value.providers.length?value.providers:base.providers};
+    const rows=Array.isArray(value.providers)&&value.providers.length?value.providers:base.providers;
+    // Keep existing saved settings, including user-added providers; add new supported ones without losing data.
+    const normalized=rows.map((p:any)=>({...p}));
+    for(const def of base.providers)if(!normalized.some((p:any)=>p.key===def.key))normalized.push(def);
+    return {providers:normalized};
   }
 
   async updateAuthProviders(body:any){
