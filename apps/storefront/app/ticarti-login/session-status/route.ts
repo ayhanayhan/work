@@ -25,7 +25,8 @@ export async function GET(req:NextRequest){
  try{
   const response=await fetch(API+'/v1/merchant-auth/session',{
    method:'GET',cache:'no-store',signal:AbortSignal.timeout(4500),
-   headers:{cookie,'x-auth-client':'merchant-landing'}
+   headers:{cookie,'x-auth-client':'merchant-landing',
+    'user-agent':req.headers.get('user-agent')||''}
   });
   if(!response.ok)return NextResponse.json({authenticated:false},{headers});
   const data=await response.json();
