@@ -226,6 +226,28 @@ export class ContactService {
     return this.prisma.contactInquiry.update({where:{id},data});
   }
 
+  async replyToContact(id:string,body:any){
+    const inquiry=await this.prisma.contactInquiry.findUnique({where:{id}});
+    if(!inquiry)throw new NotFoundException('İletişim kaydı bulunamadı.');
+    if(!inquiry.email)throw new BadRequestException('Gönderenin e-posta adresi bulunmuyor.');
+    const reply=String(body?.message||'').trim();
+    if(reply.length<2||reply.length>10000)throw new BadRequestException('E-posta yanıtı 2–10.000 karakter olmalı.');
+    const token=process.env.RESEND_API_KEY;
+    const from=process.env.CONTACT_EMAIL_FROM||process.env.CALLBACK_EMAIL_FROM;
+    if(!token||!from)throw new HttpException('E-posta sağlayıcısı yapılandırılmamış.',HttpStatus.SERVICE_UNAVAILABLE);
+    let response:Response;
+    try{
+      response=await fetch('https://api.resend.com/emails',{
+        method:'POST',signal:AbortSignal.timeout(8000),
+        headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({from,to:[inquiry.email],subject:('Re: '+inquiry.subject).slice(0,180),text:reply})
+      });
+    }catch{throw new HttpException('E-posta gönderilemedi, tekrar deneyin.',HttpStatus.BAD_GATEWAY);}
+    if(!response.ok)throw new HttpException('E-posta sağlayıcısı mesajı kabul etmedi.',HttpStatus.BAD_GATEWAY);
+    return this.prisma.contactInquiry.update({where:{id},
+      data:{replyDraft:reply,status:'ANSWERED'}});
+  }
+
   async remove(id:string){
     await this.prisma.contactInquiry.delete({where:{id}}).catch(()=>{throw new NotFoundException('İletişim kaydı bulunamadı.')});
     return {deleted:true};
