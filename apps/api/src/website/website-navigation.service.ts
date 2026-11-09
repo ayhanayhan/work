@@ -6,6 +6,11 @@ import translatedLabels = require('./data/marketing-navigation-translations.json
 import featuredDefaults = require('./data/marketing-navigation-featured.json');
 
 const KEY='marketing_navigation_v1';
+/** Internal URL normalization happens in CMS data, never via HTTP redirects. */
+function nativeContactUrl(url:string):string{
+ return url.replace(/(^|\/)contacto(?:\.html)?(?=$|[?#])/,'$1iletisim');
+}
+
 type LocaleText=Record<string,string>;
 export type MenuFeatured={eyebrow:LocaleText;description:LocaleText;buttonLabel:LocaleText;buttonUrl:string};
 export type MenuNode={id:string;label:LocaleText;url:string;enabled:boolean;children:MenuNode[];featured?:MenuFeatured};
@@ -168,7 +173,12 @@ export class WebsiteNavigationService{
   // One-time migration: respect user deletions after the first upgraded save.
   const seeded=saved?.toolsFooterMigration===1?existing:seedFooterTools(existing);
   const menus=saved?.navigationTranslationsMigration===1?seeded:completeExistingTranslations(seeded);
-  return {version:Number(base.version)||0,menus,groups:base.groups};
+  const fix=(nodes:MenuNode[]):MenuNode[]=>nodes.map(node=>({...node,
+   url:nativeContactUrl(node.url),
+   featured:node.featured?{...node.featured,buttonUrl:nativeContactUrl(node.featured.buttonUrl)}:undefined,
+   children:fix(node.children||[])
+  }));
+  return {version:Number(base.version)||0,menus:{header:fix(menus.header),footer:fix(menus.footer)},groups:base.groups};
  }
  async save(input:any){
   const previous=await this.get();
