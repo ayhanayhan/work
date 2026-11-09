@@ -13,7 +13,7 @@ export default function FooterLanguagePicker({corporateDomain=false}:{corporateD
     .then(r=>r.ok?r.json():[])
     .then(rows=>{if(Array.isArray(rows))setLanguages(rows.filter((r:any)=>supported.includes(r.locale)).map((r:any)=>({locale:r.locale,label:r.label||labels[r.locale],isDefault:r.isDefault===true})));})
     .catch(()=>{});
- },[]);
+ },[origin]);
  const active=languages.length?languages:supported.map(locale=>({locale,label:labels[locale],isDefault:locale==='tr'}));
  const code=path.split('/').filter(Boolean)[0];
  const current=supported.includes(code)?code:'tr';
