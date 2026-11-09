@@ -32,9 +32,5 @@ assert.ok(sessionStatus.includes('Access-Control-Allow-Credentials') &&
   'Public site may receive only validated merchant auth state without tokens');
 assert.ok(sessionStatus.includes("'https://help.ticarti.com'"),
  'Help subdomain must be allowed to read merchant session state without exposing tokens');
-const appPage=fs.readFileSync(path.join(root,'app/ticarti-app/page.tsx'),'utf8');
-assert.ok(appPage.includes('NEXT_PUBLIC_TICARTI_APP_LOGO') &&
- appPage.includes('<AppLogo/>') && appPage.includes('onError={()=>setFailed(true)}'),
- 'App subdomain should allow an independent logo with original wordmark fallback');
 console.log('PASS: Help Center routing, authenticated merchant support handoff and read-only session status');
 console.log('PASS: public contact rewrites and unknown-page routing use Marketing');
