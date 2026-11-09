@@ -78,6 +78,19 @@ function defaultModules(){
 @Injectable()
 export class WebsiteService{
   constructor(private readonly prisma:PrismaService){}
+  /** Public, read-only brand assets. Do not expose internal platform settings. */
+  async publicBranding(){
+    const record=await this.prisma.platformSetting.findUnique({where:{key:'general'}});
+    const value:any=record?.value&&typeof record.value==='object'&&!Array.isArray(record.value)?record.value:{};
+    const raw=value.branding&&typeof value.branding==='object'&&!Array.isArray(value.branding)?value.branding:{};
+    const asset=(src:unknown)=>{
+      const v=String(src||'').trim();
+      return v.length<=2048&&(/^https:\/\/[^\s<>]+$/i.test(v)||/^\/assets\/images\/[a-zA-Z0-9._/-]+$/.test(v))?v:'';
+    };
+    return {logos:{main:asset(raw.main)||asset(value.company?.logoUrl),help:asset(raw.help),
+      app:asset(raw.app),dev:asset(raw.dev)}};
+  }
+
   /** Explicit maintenance operation, never part of API bootstrap.
    * This keeps Cloud Run startup, readiness and normal requests independent of content migration.
    * The transaction writes the content and marker atomically without overwriting edited translations.
