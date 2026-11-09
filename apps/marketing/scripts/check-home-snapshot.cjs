@@ -194,8 +194,8 @@ const shellSource=fs.readFileSync(path.resolve(__dirname,'../components/site-she
 const blogSource=fs.readFileSync(path.resolve(__dirname,'../components/blog-pages.tsx'),'utf8');
 assert.ok(!homepageSource.includes('<HeaderSnapshot')&&!homepageSource.includes('<FooterSnapshot'),
  'Homepage content modules must not duplicate site header or footer');
-assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost}/>')&&
- shellSource.includes('<FooterSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost}/>')&&
+assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>')&&
+ shellSource.includes('<FooterSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>')&&
  shellSource.includes('<HomeInteractions className="tc-page-home tc-shared-shell">'),
  'One central shell must own both header and footer for corporate and help domains');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
@@ -255,6 +255,16 @@ assert.ok(helpCenter.includes("'https://help.ticarti.com/makale/'+helpArticleSlu
  'Help search and category listings must open canonical help-domain articles');
 assert.ok(topicModule.includes('helpArticleBySlug')&&helpArticle.includes('helpArticleBySlug'),
  'Help article routes must validate known published topic slugs');
+const brandConfig=fs.readFileSync(path.resolve(__dirname,'../lib/subdomain-branding.ts'),'utf8');
+assert.ok(brandConfig.includes('NEXT_PUBLIC_TICARTI_HELP_LOGO')&&
+ brandConfig.includes('NEXT_PUBLIC_TICARTI_DEV_LOGO')&&brandConfig.includes('DEFAULT_LOGO'),
+ 'Brand configuration must support Help and Dev with default logo fallback');
+assert.ok(shellSource.includes('logoForHost('),
+ 'Site shell must select configured brand logo by hostname');
+const brandingHeader=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/header.tsx'),'utf8');
+const brandingFooter=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/footer.tsx'),'utf8');
+assert.ok(brandingHeader.includes('src={logoSrc}')&&brandingFooter.includes('src={logoSrc}'),
+ 'Shared header and footer must display matching subdomain logo');
 const helpShell=fs.readFileSync(path.resolve(__dirname,'../components/site-shell.tsx'),'utf8');
 assert.ok(routeMiddleware.includes("candidates.includes('help.ticarti.com')"),
  'Help custom domain must be detected before marketing corporate rewrites');
