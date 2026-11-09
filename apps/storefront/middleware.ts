@@ -45,7 +45,11 @@ function originalHost(req:NextRequest){
   return exact||candidates[0]||'';
 }
 function assetOrApi(path:string){
-  return path.startsWith('/_next/')||path.startsWith('/api/')||path==='/favicon.ico'||path==='/robots.txt'||path==='/sitemap.xml'||/\.[a-z0-9]{2,6}$/i.test(path);
+  // Only true infrastructure endpoints bypass the Marketing proxy.
+  // A missing .html page is still a site page and must show Ticarti's 404,
+  // not the bare Storefront/Next.js 404.
+  return path.startsWith('/_next/')||path.startsWith('/api/')||
+    path==='/favicon.ico'||path==='/robots.txt'||path==='/sitemap.xml';
 }
 function internal(req:NextRequest,prefix:string,surface?:string){
   const url=req.nextUrl.clone();
