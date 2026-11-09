@@ -128,7 +128,7 @@ export default function FooterSnapshot({navigation,locale='tr',helpHost=false,lo
             {"\n"}
           </div>
           {"\n"}
-          <FooterLanguagePicker/>
+          <FooterLanguagePicker corporateDomain={helpHost}/>
         </div>
         {"\n"}
         <div className={"tc-home-footer-legal-bottom"}>
