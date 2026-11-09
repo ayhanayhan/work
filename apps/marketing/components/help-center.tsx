@@ -31,7 +31,7 @@ export default function HelpCenter({locale='tr',topics}:{locale?:string;topics:H
    <section className="tc-help__topics" aria-label={t.topics}>
     <h2>{t.topics}</h2>
     {filtered.length?<div className="tc-help__grid">{filtered.map(topic=><section key={topic.id} className="tc-help__topic" id={topic.id}>
-     <h3><a href={'https://help.ticarti.com/kategori/'+topic.id}>{topic.title}</a></h3><p>{topic.summary}</p>
+     <h3><a href={'https://help.ticarti.com/kategori/'+(topic.slug||topic.id)}>{topic.title}</a></h3><p>{topic.summary}</p>
      <div className="tc-help__questions">{topic.questions.map(item=>
       <a className="tc-help__article-link" href={articleUrl(item)} key={item.question}>
        <span>{item.question}</span><span aria-hidden="true">↗</span>
