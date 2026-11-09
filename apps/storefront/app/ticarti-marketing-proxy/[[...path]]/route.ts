@@ -17,7 +17,13 @@ type Context = { params: Promise<{ path?: string[] }> };
 async function proxy(req: NextRequest, context: Context): Promise<NextResponse> {
   const { path = [] } = await context.params;
   const url = new URL(MARKETING_ORIGIN);
-  url.pathname = '/' + path.map(encodeURIComponent).join('/');
+  // The browser keeps /iletisim; the Marketing app owns /contact.
+  // Resolve it in the server proxy so it works regardless of middleware
+  // rollout order between Storefront and Marketing.
+  const publicPath='/' + path.map(encodeURIComponent).join('/');
+  const localized=publicPath.match(/^\/(en|de|ru|ar|bg|uk|id|vi)\/iletisim\/?$/);
+  url.pathname=publicPath==='/iletisim'||publicPath==='/iletisim/'?'/contact':
+    localized?'/'+localized[1]+'/contact':publicPath;
   url.search = req.nextUrl.search;
 
   // Allow-list only public rendering headers; never forward cookies, bearer
