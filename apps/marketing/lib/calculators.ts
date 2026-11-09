@@ -80,7 +80,7 @@ export function salary2026(gross:number,month:number){
 }
 export function salaryNetToGross(target:number,month:number){
  if(!finite(target,28075.5,6000000))throw Error('invalid');
- let low=SALARY_2026.minimum,high=Math.max(low*2,target*3);
+ let low: number=SALARY_2026.minimum,high: number=Math.max(low*2,target*3);
  while(salary2026(high,month).net<target&&high<10000000)high*=1.4;
  for(let i=0;i<65;i++){
   const mid=(low+high)/2;
