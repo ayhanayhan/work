@@ -449,7 +449,7 @@
             "id": "Bantuan penyiapan dan migrasi",
             "vi": "Hỗ trợ thiết lập và chuyển đổi"
           },
-          "url": "/contacto.html",
+          "url": "/iletisim",
           "enabled": true
         }
       ]
@@ -740,7 +740,7 @@
             "id": "Kontak",
             "vi": "Liên hệ"
           },
-          "url": "/contacto.html",
+          "url": "/iletisim",
           "enabled": true
         }
       ]
@@ -902,7 +902,7 @@
             "id": "Tentang kami",
             "vi": "Về chúng tôi"
           },
-          "url": "/contacto.html",
+          "url": "/iletisim",
           "enabled": true
         },
         {
@@ -950,7 +950,7 @@
             "id": "Kontak",
             "vi": "Liên hệ"
           },
-          "url": "/contacto.html",
+          "url": "/iletisim",
           "enabled": true
         },
         {
