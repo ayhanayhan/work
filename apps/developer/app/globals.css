@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap');
+:root{color-scheme:light}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:#191d19;font-family:Inter,Arial,sans-serif}
+a{color:inherit}
+.tc-dev{padding-top:32px!important}
+
+.tc-portal-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid #e8ece6}
+.tc-portal-header__inner{max-width:1200px;padding:0 24px;margin:auto;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.tc-portal-logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:23px;font-weight:700;letter-spacing:-.055em}
+.tc-portal-logo__symbol{display:grid;place-items:center;border-radius:10px;background:#f0f97b;width:32px;height:32px;font-weight:700}
+.tc-portal-logo__suffix{font-weight:500;font-size:14px;letter-spacing:0;color:#5f6d5f}
+.tc-portal-header nav{display:flex;gap:26px;align-items:center}
+.tc-portal-header nav a,.tc-portal-header__help{font-size:13px;font-weight:600;text-decoration:none}
+.tc-portal-header nav a:hover,.tc-portal-header__help:hover{text-decoration:underline}
+.tc-portal-header__help{white-space:nowrap}
+.tc-portal-footer{border-top:1px solid #e7ece4;background:#fafbf8;padding:54px 24px 22px}
+.tc-portal-footer__inner{max-width:1200px;margin:auto;display:flex;justify-content:space-between;gap:24px;align-items:start}
+.tc-portal-footer__brand{font-size:24px;font-weight:700;letter-spacing:-.06em;text-decoration:none}
+.tc-portal-footer p{font-size:13px;color:#657264}
+.tc-portal-footer nav{display:flex;flex-wrap:wrap;gap:22px}
+.tc-portal-footer nav a{font-size:13px;text-decoration:none}
+.tc-portal-footer__bottom{max-width:1200px;margin:50px auto 0;padding-top:20px;border-top:1px solid #e7ece4;font-size:12px;color:#7c877b}
+@media(max-width:900px){.tc-portal-header nav{display:none}}
+@media(max-width:600px){.tc-portal-header__inner{padding:0 18px;min-height:68px}.tc-portal-header__help{font-size:12px}.tc-portal-footer__inner{flex-direction:column}}

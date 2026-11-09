@@ -55,7 +55,8 @@
     "dev:help": "npm --workspace @commerce/help run dev",
     "dev:master": "npm --workspace @commerce/master run dev",
     "dev:marketing": "npm --workspace @commerce/marketing run dev",
-    "check:marketing": "npm --workspace @commerce/marketing run check"
+    "check:marketing": "npm --workspace @commerce/marketing run check",
+    "build:developer": "npm --workspace @commerce/developer run build"
   },
   "overrides": {
     "multer": "2.4.0",

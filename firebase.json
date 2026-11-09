@@ -77,6 +77,18 @@
         ".patch-backups",
         ".patch-backups/**"
       ]
+    },
+    {
+      "backendId": "commerce-developer",
+      "rootDir": "./apps/developer",
+      "ignore": [
+        "node_modules",
+        ".next",
+        "dist",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
     }
   ]
 }
