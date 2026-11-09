@@ -71,6 +71,41 @@ export class MerchantAuthController {
     ]);
   }
 
+
+  private socialSignupCookie(res:any,identityToken:string){
+    const secure=process.env.NODE_ENV==='production'?'; Secure':'';
+    const previous=res.getHeader('Set-Cookie');
+    res.setHeader('Set-Cookie',[
+      ...(Array.isArray(previous)?previous:previous?[String(previous)]:[]),
+      `__Host-ticarti_social_signup=${encodeURIComponent(identityToken)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`
+    ]);
+  }
+  private clearSignupCookie(res:any) {
+    const secure=process.env.NODE_ENV==='production'?'; Secure':'';
+    const previous=res.getHeader('Set-Cookie');
+    res.setHeader('Set-Cookie',[
+      ...(Array.isArray(previous)?previous:previous?[String(previous)]:[]),
+      `__Host-ticarti_social_signup=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`
+    ]);
+  }
+  @Get('social/pending')
+  async pendingSocial(@Req() req:any,@Res({passthrough:true}) res:any) {
+    this.noStore(res);
+    const token=this.readCookie(req,'__Host-ticarti_social_signup');
+    if(!token) return {active:false};
+    try {const p=await this.auth.verifySocialRegistration(token);return {active:true,provider:p.provider,name:p.name,email:p.email};}
+    catch{return {active:false}}
+  }
+  @Post('social/register') @HttpCode(200)
+  async registerSocial(@Req() req:any,@Res({passthrough:true}) res:any,@Body() dto:any){
+    this.assertClient(req,true);this.noStore(res);
+    const token=this.readCookie(req,'__Host-ticarti_social_signup');
+    if(!token)throw new UnauthorizedException('Social registration expired');
+    const result=await this.auth.registerSocial(token,dto,req);
+    this.clearSignupCookie(res);
+    return result;
+  }
+
   @Get('google/start')
   async startGoogle(@Res() res:any) {
     this.noStore(res);
@@ -96,6 +131,7 @@ export class MerchantAuthController {
     }
     try{
       const result=await this.auth.googleCallback(code,verifier);
+      if('identity' in result){this.socialSignupCookie(res,await this.auth.signSocialRegistration(result.identity));res.redirect(303,'https://login.ticarti.com/register?social=google');return;}
       res.setHeader('Referrer-Policy','no-referrer');
       res.redirect(303,'https://login.ticarti.com/?socialHandoff='+encodeURIComponent(result.handoffCode));
     }catch{
@@ -128,6 +164,7 @@ export class MerchantAuthController {
     }
     try{
       const result=await this.auth.linkedinCallback(code,verifier);
+      if('identity' in result){this.socialSignupCookie(res,await this.auth.signSocialRegistration(result.identity));res.redirect(303,'https://login.ticarti.com/register?social=linkedin');return;}
       res.setHeader('Referrer-Policy','no-referrer');
       res.redirect(303,'https://login.ticarti.com/?socialHandoff='+encodeURIComponent(result.handoffCode));
     }catch{
