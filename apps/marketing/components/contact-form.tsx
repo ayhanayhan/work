@@ -7,7 +7,7 @@ const initial:FormState={fullName:'',email:'',phone:'',subject:'',message:'',web
 
 type Copy={title:string,intro:string,name:string,email:string,phone:string,subject:string,message:string,nameHint:string,subjectHint:string,messageHint:string,consent:string,send:string,sending:string,success:string,error:string};
 const translations:Record<string,Copy>={
- tr:{title:'Bize yazın',intro:'Mesajınızı bırakın, Ticarti ekibi size dönüş yapsın.',name:'Ad soyad',email:'E-posta',phone:'Telefon',subject:'Konu',message:'Mesajınız',nameHint:'Adınız ve soyadınız',subjectHint:'Nasıl yardımcı olabiliriz?',messageHint:'Mesajınızı buraya yazın...',consent:'Metnini okudum ve kişisel verilerimin iletişim talebim için işlenmesi hakkında bilgilendirildim.',send:'Mesajı gönder',sending:'Gönderiliyor...',success:t.success,error:t.error},
+ tr:{title:'Bize yazın',intro:'Mesajınızı bırakın, Ticarti ekibi size dönüş yapsın.',name:'Ad soyad',email:'E-posta',phone:'Telefon',subject:'Konu',message:'Mesajınız',nameHint:'Adınız ve soyadınız',subjectHint:'Nasıl yardımcı olabiliriz?',messageHint:'Mesajınızı buraya yazın...',consent:'Metnini okudum ve kişisel verilerimin iletişim talebim için işlenmesi hakkında bilgilendirildim.',send:'Mesajı gönder',sending:'Gönderiliyor...',success:'Mesajınız bize ulaştı. En kısa sürede size dönüş yapacağız.',error:'Mesaj gönderilemedi. Lütfen tekrar deneyin.'},
  en:{title:'Send us a message',intro:'Our team will get back to you.',name:'Full name',email:'Email',phone:'Phone',subject:'Subject',message:'Your message',nameHint:'Your full name',subjectHint:'How can we help?',messageHint:'Write your message...',consent:'I have read the privacy notice and understand how my information is processed to respond to my request.',send:'Send message',sending:'Sending...',success:'We received your message and will get back to you.',error:'Unable to send your message. Please try again.'},
  de:{title:'Schreiben Sie uns',intro:'Unser Team meldet sich bei Ihnen.',name:'Vollständiger Name',email:'E-Mail',phone:'Telefon',subject:'Betreff',message:'Nachricht',nameHint:'Ihr Name',subjectHint:'Wie können wir helfen?',messageHint:'Ihre Nachricht...',consent:'Ich habe die Datenschutzhinweise gelesen und wurde über die Verarbeitung meiner Angaben informiert.',send:'Nachricht senden',sending:'Wird gesendet...',success:'Ihre Nachricht wurde empfangen.',error:'Nachricht konnte nicht gesendet werden.'},
  ru:{title:'Напишите нам',intro:'Наша команда ответит вам.',name:'Полное имя',email:'Эл. почта',phone:'Телефон',subject:'Тема',message:'Сообщение',nameHint:'Ваше имя',subjectHint:'Чем можем помочь?',messageHint:'Напишите сообщение...',consent:'Я ознакомился с уведомлением о конфиденциальности и обработке данных.',send:'Отправить',sending:'Отправка...',success:'Мы получили ваше сообщение.',error:'Не удалось отправить сообщение.'},
@@ -36,7 +36,7 @@ export default function ContactForm({locale='tr'}:{locale?:string}){
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(Array.isArray(data.message)?data.message.join(', '):data.message||t.error);
    setValues(initial);
-   setFeedback({ok:true,message:'Mesajınız bize ulaştı. En kısa sürede size dönüş yapacağız.'});
+   setFeedback({ok:true,message:t.success});
   }catch(error){
    setFeedback({ok:false,message:error instanceof Error?error.message:t.error});
   }finally{setBusy(false)}
