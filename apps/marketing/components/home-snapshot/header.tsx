@@ -117,8 +117,8 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
                       {"\n"}
                       <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
                         {"\n"}
-                        <a href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} role={"menuitem"} data-tc-content-key={"a-005"}>
-                          {"Hakkımızda"}
+                        <a href={"/yardim"} role={"menuitem"} data-tc-content-key={"a-005"}>
+                          {"Yardım Merkezi"}
                         </a>
                         {"\n"}
                       </li>
