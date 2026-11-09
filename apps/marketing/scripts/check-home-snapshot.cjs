@@ -263,6 +263,9 @@ const helpCategory=fs.readFileSync(path.resolve(__dirname,'../app/help/category/
 const helpArticle=fs.readFileSync(path.resolve(__dirname,'../app/help/article/[slug]/page.tsx'),'utf8');
 assert.ok(helpCategory.includes('<SiteShell>')&&helpArticle.includes('<SiteShell>'),
  'Help category and article pages must reuse the existing site shell');
+assert.ok(!helpCategory.includes('HELP_TOPICS.find') &&
+ helpCategory.includes('const {slug}=await params,topic=(await getHelpTopics()).find'),
+ 'Category page and metadata must both read the live CMS, not a removed static variable');
 assert.ok(routeMiddleware.includes("helpDetail[1]==='kategori'?'category':'article'"),
  'Turkish category and article URLs must use native internal route rewrites');
 assert.ok(helpCenter.includes('articleUrl(item)')&&helpCategory.includes('articleUrl(item)'),
