@@ -24,6 +24,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
     alternates:{languages:Object.fromEntries(variants.map(code=>[code,origin+(code==='tr'?'':'/'+code)+path]))}});
   }
  }
+ data.push({url:origin+'/yardim',changeFrequency:'weekly',priority:0.7});
  for(const locale of locales){
   const tools=await listTools(locale);
   if(tools.length){
