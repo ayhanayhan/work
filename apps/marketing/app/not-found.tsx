@@ -30,9 +30,8 @@ export default async function NotFound(){
       <a className="tc-not-found__primary" href={prefix+'/'}>{t.home}<span aria-hidden="true">↗</span></a>
       <a className="tc-not-found__secondary" href={prefix+'/iletisim'}>{t.contact}</a>
      </div>
-     <p className="tc-not-found__helper">{t.helper} <a href={prefix+'/iletisim'}>{t.contact} <span aria-hidden="true">→</span></a></p>
     </div>
-    <div className="tc-not-found__visual" aria-hidden="true"><span className="tc-not-found__number">404</span><span className="tc-not-found__visual-line"/></div>
+    <div className="tc-not-found__visual" aria-hidden="true"><span className="tc-not-found__number">404</span><span className="tc-not-found__visual-line"/><span className="tc-not-found__visual-caption">{t.helper}</span></div>
    </div>
   </main>
  </SiteShell>;
