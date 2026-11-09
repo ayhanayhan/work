@@ -1,0 +1,30 @@
+/* Native Next.js contact page. Scoped to the Ticarti corporate site. */
+.tc-contact-native{background:#fff;padding:clamp(100px,12vw,165px) 24px 110px;color:#171b19;font-family:Inter,Arial,sans-serif}
+.tc-contact-native *{box-sizing:border-box}
+.tc-contact-native__layout{width:min(100%,1240px);margin:auto;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(28px,6vw,95px);align-items:start}
+.tc-contact-native__intro{padding-top:34px}
+.tc-contact-native__overline{font-size:12px;font-weight:650;letter-spacing:.12em;color:#717b70;margin:0 0 22px}
+.tc-contact-native h1{max-width:600px;font-size:clamp(32px,4vw,48px)!important;line-height:1.2!important;font-weight:600!important;letter-spacing:-.04em!important;color:#171b19;margin:0 0 20px!important}
+.tc-contact-native__intro>p:not(.tc-contact-native__overline){color:#566158;font-size:16px;line-height:1.8;max-width:490px;margin:0}
+.tc-contact-native__note{display:flex;align-items:flex-start;gap:15px;max-width:460px;margin-top:38px;padding-top:24px;border-top:1px solid #e6eae4;color:#5e675f;font-size:13px;line-height:1.7}
+.tc-contact-native__note>span:first-child{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;background:#f0f97b;color:#1d211b;font-size:18px}
+.tc-contact-native .tc-contact-form{display:grid;gap:18px;margin:0;padding:clamp(22px,3vw,36px);background:#f8faf7;border:1px solid #e2e8df;border-radius:16px}
+.tc-contact-native .tc-contact-form__title{margin:0!important;font-size:24px!important;line-height:1.3!important;letter-spacing:-.02em;font-weight:600;color:#181e19}
+.tc-contact-native .tc-contact-form__intro{margin:0;font-size:14px;line-height:1.6;color:#647068}
+.tc-contact-native .tc-contact-form__fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px}
+.tc-contact-native .tc-contact-form__field{display:grid;gap:8px;min-width:0;color:#2d372e;font-size:13px;font-weight:600}
+.tc-contact-native .tc-contact-form__field--full{grid-column:1/-1}
+.tc-contact-native .tc-contact-form__field b{color:#a23b32}
+.tc-contact-native .tc-contact-form__field input,.tc-contact-native .tc-contact-form__field textarea{width:100%;min-width:0;min-height:50px;margin:0;padding:12px 14px;border:1px solid #d8ded5;border-radius:9px;background:#fff;color:#172017;font:400 15px/1.5 Inter,Arial,sans-serif;outline:none}
+.tc-contact-native .tc-contact-form__field textarea{min-height:140px;resize:vertical}
+.tc-contact-native .tc-contact-form__field input:focus-visible,.tc-contact-native .tc-contact-form__field textarea:focus-visible{border-color:#8ec03f;box-shadow:0 0 0 3px rgba(142,192,63,.17)}
+.tc-contact-native .tc-contact-form__consent{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.7;color:#5c665d;cursor:pointer}
+.tc-contact-native .tc-contact-form__consent input{width:17px;height:17px;flex:none;margin:3px 0 0;accent-color:#8ec03f}
+.tc-contact-native .tc-contact-form__consent a{color:#2c392c;text-decoration:underline;text-underline-offset:3px}
+.tc-contact-native .tc-contact-form__submit{display:inline-flex;justify-content:center;align-items:center;min-height:50px;background:#f0f97b;border:0;border-radius:9px;color:#161b15;padding:12px 26px;font:600 15px/1.4 Inter,Arial,sans-serif;cursor:pointer}
+.tc-contact-native .tc-contact-form__submit:hover{background:#e5f063}
+.tc-contact-native .tc-contact-form__submit:disabled{opacity:.65;cursor:wait}
+.tc-contact-native .tc-contact-form__status{margin:0;color:#246729;font-size:13px;line-height:1.6}
+.tc-contact-native .tc-contact-form__status.is-error{color:#b42318}
+@media(max-width:860px){.tc-contact-native{padding:100px 20px 70px}.tc-contact-native__layout{grid-template-columns:1fr;gap:28px}.tc-contact-native__intro{padding:0}.tc-contact-native__note{margin-top:24px}}
+@media(max-width:560px){.tc-contact-native .tc-contact-form{padding:20px 16px}.tc-contact-native .tc-contact-form__fields{grid-template-columns:1fr}.tc-contact-native .tc-contact-form__submit{width:100%}}
