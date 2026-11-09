@@ -194,8 +194,8 @@ const shellSource=fs.readFileSync(path.resolve(__dirname,'../components/site-she
 const blogSource=fs.readFileSync(path.resolve(__dirname,'../components/blog-pages.tsx'),'utf8');
 assert.ok(!homepageSource.includes('<HeaderSnapshot')&&!homepageSource.includes('<FooterSnapshot'),
  'Homepage content modules must not duplicate site header or footer');
-assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>')&&
- shellSource.includes('<FooterSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>')&&
+assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>')&&
+ shellSource.includes('<FooterSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>')&&
  shellSource.includes('<HomeInteractions className="tc-page-home tc-shared-shell">'),
  'One central shell must own both header and footer for corporate and help domains');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
@@ -273,6 +273,15 @@ assert.ok(helpCenter.includes('articleUrl(item)')&&helpCategory.includes('articl
 const helpCms=fs.readFileSync(path.resolve(__dirname,'../lib/help-cms.ts'),'utf8');
 assert.ok(helpCms.includes('getHelpTopics()')&&helpArticle.includes('findHelpArticle(await getHelpTopics(),slug)')&&helpCategory.includes('await getHelpTopics()'),
  'Help routes must read published Master CMS content and validate article slugs');
+const developerPage=fs.readFileSync(path.resolve(__dirname,'../app/developer/page.tsx'),'utf8');
+const developerCss=fs.readFileSync(path.resolve(__dirname,'../public/assets/css/marketing-developer.css'),'utf8');
+assert.ok(developerPage.includes('<SiteShell>')&&developerPage.includes('https://dev.ticarti.com/v1/health'),
+ 'Developer landing must use the corporate shell and grounded API examples');
+assert.ok(developerCss.includes('.tc-dev__grid')&&developerCss.includes('.tc-dev__closing'),
+ 'Developer visual design must include responsive documentation and support sections');
+assert.ok(routeMiddleware.includes("candidates.includes('dev.ticarti.com')")&&
+ routeMiddleware.includes("forwarded.set('x-ticarti-dev-host','1')"),
+ 'Marketing middleware must preserve Developer hostname');
 const brandConfig=fs.readFileSync(path.resolve(__dirname,'../lib/subdomain-branding.ts'),'utf8');
 assert.ok(brandConfig.includes('NEXT_PUBLIC_TICARTI_HELP_LOGO')&&
  brandConfig.includes('NEXT_PUBLIC_TICARTI_DEV_LOGO')&&brandConfig.includes('DEFAULT_LOGO'),
@@ -297,8 +306,8 @@ assert.ok(rootLayout.includes("helpHost?'tc-page-home tc-page-help'"),
 assert.ok(routeMiddleware.includes("url.pathname='/help'")&&
  routeMiddleware.includes("'category':'article'"),
  'Help root and article routes must be internally rewritten to English-named pages');
-assert.ok(helpShell.includes('helpHost={helpHost}'),
- 'Help site must use existing shared header/footer with correct corporate links');
+assert.ok(helpShell.includes('helpHost={subdomain}')&&helpShell.includes('const subdomain=helpHost||devHost'),
+ 'Help and Developer sites must share the exact same header/footer with correct corporate links');
 assert.ok(sitemap.includes("https://help.ticarti.com/"),
  'Canonical help root should be indexed only on the help subdomain');
 assert.ok(helpPage.includes('https://help.ticarti.com/'),
