@@ -3,7 +3,7 @@ import {NextRequest,NextResponse} from 'next/server';
 export const dynamic='force-dynamic';
 export const runtime='nodejs';
 const API=(process.env.API_ORIGIN||'http://localhost:4000').replace(/\/$/,'');
-const ALLOWED=new Set(['https://ticarti.com','https://www.ticarti.com']);
+const ALLOWED=new Set(['https://ticarti.com','https://www.ticarti.com','https://help.ticarti.com']);
 const noStore={'Cache-Control':'private, no-store, max-age=0','Vary':'Origin'};
 function headersFor(req:NextRequest){
  const origin=req.headers.get('origin')||'';
