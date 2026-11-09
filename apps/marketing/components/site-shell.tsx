@@ -4,14 +4,14 @@ import {getNavigation,menuLocaleFromPath} from '@/lib/navigation';
 import HeaderSnapshot from '@/components/home-snapshot/header';
 import FooterSnapshot from '@/components/home-snapshot/footer';
 import HomeInteractions from '@/components/home-snapshot/interactions';
-import {logoForHost} from '@/lib/subdomain-branding';
+import {getPlatformLogoForHost} from '@/lib/subdomain-branding';
 
 /** Single shared site shell for all Marketing routes. Never import header/footer HTML from page templates. */
 export default async function SiteShell({children}:{children:ReactNode}){
  const requestHeaders=await headers();
  const locale=menuLocaleFromPath(requestHeaders.get('x-marketing-page')||'/');
  const helpHost=requestHeaders.get('x-ticarti-help-host')==='1';
- const logoSrc=logoForHost(helpHost?'help.ticarti.com':(requestHeaders.get('host')||'ticarti.com'));
+ const logoSrc=await getPlatformLogoForHost(helpHost?'help.ticarti.com':(requestHeaders.get('host')||'ticarti.com'));
  const nav=await getNavigation(locale);
  const relocate=(url:string)=>{
   if(!helpHost||!url||!url.startsWith('/'))return url;
