@@ -25,6 +25,7 @@ function migrate(groups:NavigationGroup[]):MenuTree{
 /** Normalize pre-Next.js CMS links when rendering navigation; no redirects or HTML routes. */
 function contactUrl(url:string):string{
  if(!url)return url;
+ if(url==='/yardim'||url==='/yardim/')return 'https://help.ticarti.com/';
  if(/^\/(?:(?:tr|en|de|ru|ar|bg|uk|id|vi)\/)?login(?:\.html)?\/?$/.test(url))return 'https://login.ticarti.com/';
  return url.replace(/(^|\/)contacto(?:\.html)?(?=$|[?#])/,'$1iletisim');
 }
