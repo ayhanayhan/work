@@ -3,10 +3,10 @@ import SiteShell from '@/components/site-shell';
 
 type Card={number:string;title:string;description:string;points:string[];href:string};
 const guides:Card[]=[
-  {number:'01',title:'Başlangıç',description:'Platformu tanıyın, ilk API isteğinizi hazırlayın ve entegrasyonun temelini atın.',points:['Platform yapısı','API bağlantısı','Yanıt ve hata yönetimi'],href:'#api'},
-  {number:'02',title:'Kimlik doğrulama',description:'Mağaza erişimini doğru izinlerle ve güvenli oturumlarla yönetin.',points:['Kimlik doğrulama','Erişim izinleri','Güvenli anahtar yönetimi'],href:'#guvenlik'},
-  {number:'03',title:'Uygulama geliştirme',description:'Mağazaların ihtiyaç duyduğu iş akışları için uygulamalar tasarlayın.',points:['Uygulama yaşam döngüsü','Mağaza izinleri','Entegrasyon deneyimi'],href:'#uygulamalar'},
-  {number:'04',title:'Webhook’lar',description:'Mağazadaki olaylara yanıt veren otomasyonlar ve sistemler kurun.',points:['Olay abonelikleri','İmza doğrulama','Teslimat yönetimi'],href:'#webhook'}
+  {number:'01',title:'Başlangıç',description:'Platformu tanıyın, ilk API isteğinizi hazırlayın ve entegrasyonun temelini atın.',points:['Platform yapısı','API bağlantısı','Yanıt ve hata yönetimi'],href:'/guide'},
+  {number:'02',title:'Kimlik doğrulama',description:'Mağaza erişimini doğru izinlerle ve güvenli oturumlarla yönetin.',points:['Kimlik doğrulama','Erişim izinleri','Güvenli anahtar yönetimi'],href:'/docs/security'},
+  {number:'03',title:'Uygulama geliştirme',description:'Mağazaların ihtiyaç duyduğu iş akışları için uygulamalar tasarlayın.',points:['Uygulama yaşam döngüsü','Mağaza izinleri','Entegrasyon deneyimi'],href:'/apps'},
+  {number:'04',title:'Webhook’lar',description:'Mağazadaki olaylara yanıt veren otomasyonlar ve sistemler kurun.',points:['Olay abonelikleri','İmza doğrulama','Teslimat yönetimi'],href:'/docs/webhooks'}
 ];
 const endpoints=[
   {method:'GET',path:'/v1/health',label:'API sağlık kontrolü',auth:'Genel'},
