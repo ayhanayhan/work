@@ -16,6 +16,19 @@ function load(relative){
 }
 const c=load('lib/calculators.ts');
 const {qrcodegen}=load('lib/vendor/qrcodegen.ts');
+const ean=load('lib/ean13.ts');
+assert.equal(ean.ean13CheckDigit('400638133393'),'1');
+assert.equal(ean.completeEan13('400638133393'),'4006381333931');
+assert.equal(ean.completeEan13('4006381333931'),'4006381333931');
+assert.equal(ean.ean13Bits('400638133393').length,95);
+assert.ok(ean.ean13Bits('4006381333931').startsWith('101'));
+assert.ok(ean.ean13Bits('4006381333931').endsWith('101'));
+assert.match(ean.ean13Svg('4006381333931'),/4006381333931/);
+assert.throws(()=>ean.completeEan13('4006381333932'));
+assert.throws(()=>ean.completeEan13('40063813339a'));
+assert.throws(()=>ean.completeEan13('123'));
+const genSource=fs.readFileSync(path.join(root,'components/code-generator.tsx'),'utf8');
+assert.ok(!genSource.includes('type="submit"'),'QR and EAN-13 must not have a calculate button');
 const almost=(a,b,tolerance=.03)=>assert.ok(Math.abs(a-b)<=tolerance,a+' != '+b);
 let r=c.vat(1000,20,false);
 almost(r.net,1000);almost(r.tax,200);almost(r.gross,1200);
@@ -47,4 +60,4 @@ for(const slug of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazara
  assert.ok(fs.readFileSync(path.join(root,'components/tool-calculator.tsx'),'utf8')
   .includes("'"+slug+"'"),slug+' missing from marketplace calculator');
 }
-console.log('PASS: QR encoding, VAT, desi, marketplace commission including fee VAT, 2026 SGK/payroll net-to-gross and customs CIF');
+console.log('PASS: live QR and EAN-13 with checksum, VAT, desi, marketplace commission including fee VAT, 2026 SGK/payroll net-to-gross and customs CIF');
