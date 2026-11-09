@@ -2,6 +2,7 @@ import {HeaderPrimaryTree,HeaderMegaTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
+import MerchantLoginLabel from '@/components/merchant-login-label';
 export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){
  return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
@@ -142,7 +143,7 @@ export default function HeaderSnapshot({navigation,locale='tr'}:{navigation:Navi
               <div className={"button btn1 account-btn"}>
                 {"\n"}
                 <a href={"https://login.ticarti.com/"} data-tc-content-key={"a-007"}>
-                  {"Giriş yap"}
+                  <MerchantLoginLabel locale={locale}/>
                 </a>
                 {"\n"}
               </div>
