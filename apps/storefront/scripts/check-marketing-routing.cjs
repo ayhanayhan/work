@@ -30,5 +30,7 @@ assert.ok(sessionStatus.includes("API+'/v1/merchant-auth/session'") &&
 assert.ok(sessionStatus.includes('Access-Control-Allow-Credentials') &&
   sessionStatus.includes('authenticated:Array.isArray(data?.memberships)'),
   'Public site may receive only validated merchant auth state without tokens');
+assert.ok(sessionStatus.includes("'https://help.ticarti.com'"),
+ 'Help subdomain must be allowed to read merchant session state without exposing tokens');
 console.log('PASS: Help Center routing, authenticated merchant support handoff and read-only session status');
 console.log('PASS: public contact rewrites and unknown-page routing use Marketing');
