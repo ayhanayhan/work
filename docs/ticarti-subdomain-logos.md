@@ -9,7 +9,7 @@ ayarlarından bağımsızdır.
 | ticarti.com | Ana site | commerce-marketing, ortak header/footer |
 | help.ticarti.com | Yardım Merkezi | commerce-marketing, ortak header/footer |
 | app.ticarti.com | Uygulama Mağazası | Veri kaydedilir, mevcut Storefront App arayüzü henüz bu ayarı kullanmaz |
-| dev.ticarti.com | Geliştirici/API | Veri kaydedilir, mevcut alan adında görsel arayüz yok |
+| dev.ticarti.com | Geliştirici/API | Developer ana sayfası Marketing ortak header/footer; logo Master'dan gelir |
 
 ## Teknik akış
 
@@ -19,18 +19,20 @@ ayarlarından bağımsızdır.
   halka açık güvenli logo URL'leriyle sunar. Kullanıcı bilgileri ve diğer
   platform ayarları dışarı verilmez.
 - Marketing sunucusu `API_ORIGIN` üzerinden merkezi logoyu okur.
-  Yalnızca Marketing'e ait ana site ve Help logosunu doğrudan gösterir.
+  Marketing'e ait ana site, Help ve Developer logolarını doğrudan gösterir.
 - Bir görsel atanmazsa mevcut Ticarti logosu görünür. API erişilemezse
   varsayılan logo korunur.
 - App Marketplace sayfası henüz Storefront içindedir. Bu sayfaya
   yeni logo kodu eklenmedi; bağımsız App uygulamasına taşınırken merkezi
   branding endpoint'i kullanılmalıdır.
-- Dev adresi API yönlendirmesidir, gösterilecek bir header yoktur.
+- Dev ana sayfası ve statik dosyaları Storefront üzerinden Marketing'e proxy edilir;
+  tüm API adresleri mevcut API proxy'sinde kalır. Developer görünümü aynı
+  header/footer bileşenini kullanır, logo Master'daki Dev alanından okunur.
 
 ## Yayınlama
 
-Kod değişiklikleri için **API**, **Master** ve **Marketing** deploy edilir;
-Storefront deploy edilmez.
+Developer portalının yönlendirme ve tasarım değişiklikleri için **Marketing** ve **Storefront** deploy edilir.
+Master'dan Dev logosu seçildiğinde ayrıca deploy gerekmez.
 
 Yeni logo seçmek için daha sonra kod/deploy gerekmez. Master'da medya
 seçip kaydettikten sonra Marketing yeni URL'yi sunucuda okuyabilir.
