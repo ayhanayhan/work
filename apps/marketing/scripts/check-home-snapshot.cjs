@@ -194,8 +194,10 @@ const shellSource=fs.readFileSync(path.resolve(__dirname,'../components/site-she
 const blogSource=fs.readFileSync(path.resolve(__dirname,'../components/blog-pages.tsx'),'utf8');
 assert.ok(!homepageSource.includes('<HeaderSnapshot')&&!homepageSource.includes('<FooterSnapshot'),
  'Homepage content modules must not duplicate site header or footer');
-assert.ok(shellSource.includes('<HeaderSnapshot navigation={nav}')&&shellSource.includes('<FooterSnapshot navigation={nav}'),
- 'One central shell must own both header and footer');
+assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost}/>')&&
+ shellSource.includes('<FooterSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost}/>')&&
+ shellSource.includes('<HomeInteractions className="tc-page-home tc-shared-shell">'),
+ 'One central shell must own both header and footer for corporate and help domains');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
  'Blog and homepage must use the exact same header/footer shell');
 for(const id of ['hero','builder','radar','channels','showcase','references','bottomCta','animated']){
