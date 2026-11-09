@@ -229,12 +229,12 @@ export class MerchantAuthService {
     };
   }
 
-  private async linkedInConfig(){
-    const row=await this.oauthRow('LINKEDIN');
-    if(row?.enabled!==true||!row.clientId)throw new ServiceUnavailableException('LinkedIn sign-in is not configured');
+  private async oauthSecretConfig(provider:'LINKEDIN'|'GOOGLE'){
+    const row=await this.oauthRow(provider);
+    if(row?.enabled!==true||!row.clientId)throw new ServiceUnavailableException(provider+' sign-in is not configured');
     const id=String(row.clientId).trim();
     const ref=String(row.clientSecretRef||'').trim();
-    let secret=String(process.env.LINKEDIN_CLIENT_SECRET||'').trim();
+    let secret=String(provider==='GOOGLE'?process.env.GOOGLE_CLIENT_SECRET||'':process.env.LINKEDIN_CLIENT_SECRET||'').trim();
     if(!secret&&ref)secret=String(process.env[ref]||process.env[ref.replace(/[^A-Za-z0-9_]/g,'_').toUpperCase()]||'').trim();
     if(!secret&&ref){
       const project=String(process.env.GOOGLE_CLOUD_PROJECT||process.env.GCLOUD_PROJECT||process.env.GCP_PROJECT||'').trim();
@@ -251,12 +251,51 @@ export class MerchantAuthService {
         }catch{}
       }
     }
-    if(!secret)throw new ServiceUnavailableException('LinkedIn client secret is not available to the API service');
+    if(!secret)throw new ServiceUnavailableException(provider+' client secret is not available to the API service');
     return {id,secret};
   }
 
+
+  async googleAuthUrl(state:string,verifier:string){
+    const {id}=await this.oauthSecretConfig('GOOGLE');
+    const url=new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    url.searchParams.set('response_type','code');
+    url.searchParams.set('client_id',id);
+    url.searchParams.set('redirect_uri','https://login.ticarti.com/api/v1/merchant-auth/google/callback');
+    url.searchParams.set('scope','openid email profile');
+    url.searchParams.set('state',state);
+    url.searchParams.set('code_challenge',createHash('sha256').update(verifier).digest('base64url'));
+    url.searchParams.set('code_challenge_method','S256');
+    return url.toString();
+  }
+
+  async googleCallback(code:string,verifier:string){
+    const {id,secret}=await this.oauthSecretConfig('GOOGLE');
+    const tokenResponse=await fetch('https://oauth2.googleapis.com/token',{
+      method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({
+        grant_type:'authorization_code',code,client_id:id,client_secret:secret,
+        redirect_uri:'https://login.ticarti.com/api/v1/merchant-auth/google/callback',
+        code_verifier:verifier
+      }),signal:AbortSignal.timeout(10000)
+    });
+    if(!tokenResponse.ok)throw new UnauthorizedException('Google authorization rejected');
+    const tokens:any=await tokenResponse.json();
+    if(!tokens?.id_token)throw new UnauthorizedException('Invalid Google token');
+    const verified=await this.google.verifyIdToken({idToken:tokens.id_token,audience:id});
+    const payload=verified.getPayload();
+    const email=String(payload?.email||'').trim().toLowerCase();
+    if(!payload?.sub||!email||payload.email_verified!==true)throw new UnauthorizedException('Google email not verified');
+    const user=await this.prisma.user.findFirst({where:{OR:[{googleSub:payload.sub},{email}]},include:{memberships:{select:{id:true}}}});
+    if(!user||!user.memberships.length)throw new UnauthorizedException('No Ticarti account for Google login');
+    if(user.googleSub&&user.googleSub!==payload.sub)throw new UnauthorizedException('Google identity mismatch');
+    if(!user.googleSub)await this.prisma.user.update({where:{id:user.id},data:{googleSub:payload.sub,emailVerifiedAt:new Date()}});
+    const profile=await this.memberships(user.id);
+    return this.createHandoff(user.id,profile.memberships);
+  }
+
   async linkedinAuthUrl(state:string,verifier:string){
-    const {id}=await this.linkedInConfig();
+    const {id}=await this.oauthSecretConfig('LINKEDIN');
     const challenge=createHash('sha256').update(verifier).digest('base64url');
     const url=new URL('https://www.linkedin.com/oauth/v2/authorization');
     url.searchParams.set('response_type','code');
@@ -270,7 +309,7 @@ export class MerchantAuthService {
   }
 
   async linkedinCallback(code:string,verifier:string){
-    const {id,secret}=await this.linkedInConfig();
+    const {id,secret}=await this.oauthSecretConfig('LINKEDIN');
     const body=new URLSearchParams({
       grant_type:'authorization_code',code,client_id:id,client_secret:secret,
       redirect_uri:'https://login.ticarti.com/api/v1/merchant-auth/linkedin/callback',
