@@ -6,6 +6,13 @@ export function middleware(request:NextRequest){
   forwarded.set('x-marketing-page',pathname);
   // Keep the public Turkish URL while routing to English-named Next.js files.
   // This is an internal rewrite, never a client-visible 301/302 redirect.
+  // Keep readable Turkish help URLs while using English directory names.
+  const helpDetail=pathname.match(/^\/yardim\/(kategori|makale)\/([a-z0-9-]+)\/?$/);
+  if(helpDetail){
+    const url=request.nextUrl.clone();
+    url.pathname='/help/'+(helpDetail[1]==='kategori'?'category':'article')+'/'+helpDetail[2];
+    return NextResponse.rewrite(url,{request:{headers:forwarded}});
+  }
   // Public Turkish help URL, native English-named Next.js route.
   if(pathname==='/yardim'||pathname==='/yardim/'){
     const url=request.nextUrl.clone();
