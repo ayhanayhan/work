@@ -42,7 +42,7 @@ export default function RegisterWizard(){
   },400);
   return()=>{controller.abort();clearTimeout(timer)}
  },[step,validSlug]);
- const set=<K extends keyof Signup>(key:K,val:Signup[K])=>{setValues(v=>({...v,[key]:val}));setError('')};
+ const set=<K extends keyof Signup,>(key:K,val:Signup[K])=>{setValues(v=>({...v,[key]:val}));setError('')};
  function check(){
   if(step===0){
    if(values.name.trim().length<2||!/^\S+@\S+\.\S+$/.test(values.email))return 'Adını ve geçerli bir e-posta adresini gir.';
