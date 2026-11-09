@@ -22,9 +22,19 @@ function migrate(groups:NavigationGroup[]):MenuTree{
  }
  return {header,footer:groups.filter(x=>x.area==='footer').map(column)};
 }
+/** Normalize pre-Next.js CMS links when rendering navigation; no redirects or HTML routes. */
+function contactUrl(url:string):string{
+ if(!url)return url;
+ return url.replace(/(^|\\/)(?:contacto(?:\\.html)?)(?=$|[?#])/,'$1iletisim');
+}
+function normalizeNode(node:MenuNode):MenuNode{
+ return {...node,url:contactUrl(node.url),featured:node.featured?{...node.featured,buttonUrl:contactUrl(node.featured.buttonUrl)}:undefined,
+  children:(node.children||[]).map(normalizeNode)};
+}
 export function menuTree(data:Navigation|null|undefined):MenuTree{
- if(data?.menus&&Array.isArray(data.menus.header)&&Array.isArray(data.menus.footer))return data.menus;
- return Array.isArray(data?.groups)?migrate(data.groups):{header:[],footer:[]};
+ const tree=data?.menus&&Array.isArray(data.menus.header)&&Array.isArray(data.menus.footer)?data.menus:
+  Array.isArray(data?.groups)?migrate(data.groups):{header:[],footer:[]};
+ return {header:tree.header.map(normalizeNode),footer:tree.footer.map(normalizeNode)};
 }
 export async function getNavigation(locale='tr'):Promise<Navigation>{
  if(!API)return {version:0,menus:{header:[],footer:[]}};
