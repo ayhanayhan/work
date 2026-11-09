@@ -5,7 +5,7 @@ import HelpCenter from '@/components/help-center';
 export const metadata:Metadata={
  title:'Yardım Merkezi | Ticarti',
  description:'Ticarti mağaza kurulumu, ürünler, siparişler, ödeme, kargo ve diğer konularda yardım alın.',
- alternates:{canonical:'https://ticarti.com/yardim'}
+ alternates:{canonical:'https://help.ticarti.com/'}
 };
 
 export default function HelpPage(){
