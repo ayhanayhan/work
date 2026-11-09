@@ -5,6 +5,8 @@ import {WebsiteService} from './website.service';
 @Controller()
 export class WebsiteController {
   constructor(private readonly svc:WebsiteService){}
+  @Get('public/website/branding')
+  publicBranding(){return this.svc.publicBranding()}
   @Get('public/website/home')
   publicHome(@Query('lang') lang?:string){return this.svc.publicHome(lang||'tr')}
   @Get('public/website/faq')
