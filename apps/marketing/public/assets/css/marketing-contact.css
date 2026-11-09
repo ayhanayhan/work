@@ -1,5 +1,5 @@
-/* Native Next.js Ticarti contact page — reference-inspired split layout. */
-.tc-contact-native{background:#f7facd;color:#1c201b;font-family:Inter,Arial,sans-serif;padding:clamp(115px,12vw,158px) clamp(24px,5.5vw,92px) clamp(70px,7vw,112px);box-sizing:border-box}
+/* Native Ticarti contact page — clean white canvas. */
+.tc-contact-native{background:#fff;color:#1c201b;font-family:Inter,Arial,sans-serif;padding:clamp(115px,12vw,158px) clamp(24px,5.5vw,92px) clamp(70px,7vw,112px);box-sizing:border-box}
 .tc-contact-native *{box-sizing:border-box}
 .tc-contact-native__layout{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);gap:clamp(40px,5.5vw,95px);align-items:stretch}
 .tc-contact-native__intro{display:flex;flex-direction:column;align-items:flex-start;min-height:640px;padding:0 0 6px}
@@ -8,7 +8,7 @@
 .tc-contact-native__intro>p:not(.tc-contact-native__overline){max-width:535px;margin:24px 0 0!important;font-size:clamp(15px,1.15vw,17px)!important;line-height:1.7!important;color:#465044}
 .tc-contact-native__note{display:block;max-width:455px;margin-top:auto;padding-top:70px;color:#4d584a;font-size:15px;line-height:1.7}
 .tc-contact-native__note>span:first-child{display:none}
-.tc-contact-native .tc-contact-form{display:grid;gap:25px;padding:clamp(28px,3.2vw,52px);background:#fff;border:0;border-radius:16px;box-shadow:none;margin:0;min-width:0;align-content:start}
+.tc-contact-native .tc-contact-form{display:grid;gap:25px;padding:clamp(28px,3.2vw,52px);background:#fff;border:1px solid #e6e9e4;border-radius:16px;box-shadow:none;margin:0;min-width:0;align-content:start}
 .tc-contact-native .tc-contact-form__title,.tc-contact-native .tc-contact-form__intro{display:none}
 .tc-contact-native .tc-contact-form__fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:21px}
 .tc-contact-native .tc-contact-form__field{display:flex;flex-direction:column;gap:8px;min-width:0;font-size:13px;font-weight:600;line-height:1.4;color:#1d231e}
