@@ -292,6 +292,7 @@ export class SuperAdminService {
   private defaultPlatformSettings(){
     return {
       company:{name:'Ticarti',legalName:'',email:'',phone:'',phoneCountry:'TR',website:'',taxOffice:'',taxNumber:'',address:'',country:'',city:'',district:'',postalCode:'',timezone:'Europe/Istanbul',logoUrl:'',logoDarkUrl:'',faviconUrl:'',socialLinks:[]},
+      branding:{main:'',help:'',app:'',dev:''},
       locales:[{locale:'tr',label:'Türkçe',flag:'🇹🇷',isActive:true,isDefault:true},{locale:'en',label:'English',flag:'🇬🇧',isActive:true,isDefault:false}],
       countries:[{code:'TR',name:'Türkiye',phoneCode:'+90',flag:'🇹🇷',isActive:true},{code:'DE',name:'Almanya',phoneCode:'+49',flag:'🇩🇪',isActive:true},{code:'GB',name:'Birleşik Krallık',phoneCode:'+44',flag:'🇬🇧',isActive:true}],
       currencies:[{code:'TRY',name:'Türk Lirası',symbol:'₺',symbolPosition:'BEFORE',isActive:true,isDefault:true},{code:'USD',name:'US Dollar',symbol:'$',symbolPosition:'BEFORE',isActive:true,isDefault:false},{code:'EUR',name:'Euro',symbol:'€',symbolPosition:'AFTER',isActive:true,isDefault:false}]
@@ -304,7 +305,7 @@ export class SuperAdminService {
     const locales=(Array.isArray(value.locales)&&value.locales.length?value.locales:base.locales).map((x:any)=>({...x,flag:String(x.flag||'')}));
     const currencies=(Array.isArray(value.currencies)&&value.currencies.length?value.currencies:base.currencies).map((x:any)=>({...x,symbolPosition:String(x.symbolPosition||'BEFORE').toUpperCase()==='AFTER'?'AFTER':'BEFORE'}));
     const countries=(Array.isArray(value.countries)&&value.countries.length?value.countries:base.countries).map((x:any)=>({...x,code:String(x.code||'').toUpperCase(),flag:String(x.flag||'')}));
-    return {...base,...value,company:{...base.company,...(value.company||{})},locales,currencies,countries};
+    return {...base,...value,branding:{...base.branding,...(value.branding||{})},company:{...base.company,...(value.company||{})},locales,currencies,countries};
   }
 
   async updatePlatformSettings(body:any){
@@ -321,7 +322,17 @@ export class SuperAdminService {
     let localeDefaultSeen=false;for(const x of locales){if(x.isDefault&&x.isActive&&!localeDefaultSeen)localeDefaultSeen=true;else x.isDefault=false;}if(!localeDefaultSeen){const x=locales.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
     let currencyDefaultSeen=false;for(const x of currencies){if(x.isDefault&&x.isActive&&!currencyDefaultSeen)currencyDefaultSeen=true;else x.isDefault=false;}if(!currencyDefaultSeen){const x=currencies.find((r:any)=>r.isActive);if(x)x.isDefault=true;}
     const countries=(Array.isArray(body?.countries)?body.countries:current.countries||[]).slice(0,250).map((x:any,i:number)=>({code:String(x.code||'').trim().toUpperCase(),name:String(x.name||x.code||'').trim(),phoneCode:String(x.phoneCode||'').trim(),flag:String(x.flag||'').trim(),isActive:x.isActive!==false,sortOrder:Number(x.sortOrder??i)})).filter((x:any)=>x.code);
-    const value={company,locales,currencies,countries};
+    // Central brand assets, never merchant / tenant logos. Only platform media
+    // files or trusted HTTPS image URLs can be published from Master.
+    const branding:any={...current.branding};
+    for(const key of ['main','help','app','dev']){
+      if(body?.branding?.[key]===undefined)continue;
+      const src=String(body.branding[key]||'').trim();
+      if(src.length>2048||src&& !(/^https:\/\/[^\s<>]+$/i.test(src)||/^\/assets\/images\/[a-zA-Z0-9._/-]+$/.test(src)))
+        throw new BadRequestException('Alt alan adı logo adresi geçersiz: '+key);
+      branding[key]=src;
+    }
+    const value={company,branding,locales,currencies,countries};
     await (this.prisma as any).platformSetting.upsert({where:{key:'general'},create:{key:'general',value},update:{value}});
     return value;
   }
