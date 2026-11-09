@@ -14,7 +14,7 @@ const endpoints=[
   {method:'GET',path:'/v1/admin/webhooks',label:'Webhook kayıtları',auth:'Yetkili mağaza oturumu'},
   {method:'POST',path:'/v1/admin/webhooks',label:'Webhook aboneliği',auth:'Yetkili mağaza oturumu'}
 ];
-function Arrow(){return <span className="arrow" aria-hidden="true">↗</span>}
+function Arrow(){return <span className="dev-arrow" aria-hidden="true">↗</span>}
 function Card({children}: {children:ReactNode}){return <article className="dev-guide-card">{children}</article>}
 export default function DeveloperHomePage(){
  return <SiteShell><main className="dev-content" id="icerik">
