@@ -10,7 +10,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
  if(!entry)return {robots:{index:false}};
  return {title:entry.article.question+' | Ticarti Yardım Merkezi',
   description:entry.article.answer.slice(0,160),
-  alternates:{canonical:'https://ticarti.com/yardim/makale/'+slug},
+  alternates:{canonical:'https://help.ticarti.com/makale/'+slug},
   robots:{index:false,follow:true}};
 }
 export default async function HelpArticlePage({params}:Props){
@@ -20,13 +20,13 @@ export default async function HelpArticlePage({params}:Props){
  return <SiteShell><main className="tc-help tc-help--article">
   <div className="tc-help__container">
    <nav className="tc-help__breadcrumb" aria-label="İçerik yolu">
-    <a href="/yardim">Yardım Merkezi</a><span aria-hidden="true">/</span>
-    <a href={'/yardim/kategori/'+topic.id}>{topic.title}</a>
+    <a href="https://help.ticarti.com/">Yardım Merkezi</a><span aria-hidden="true">/</span>
+    <a href={'https://help.ticarti.com/kategori/'+topic.id}>{topic.title}</a>
    </nav>
    <div className="tc-help__article-layout">
     <aside className="tc-help__article-menu" aria-label="Yardım kategorileri">
      <h2>Yardım konuları</h2>
-     <nav>{HELP_TOPICS.map(item=><a key={item.id} href={'/yardim/kategori/'+item.id} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
+     <nav>{HELP_TOPICS.map(item=><a key={item.id} href={'https://help.ticarti.com/kategori/'+item.id} aria-current={item.id===topic.id?'page':undefined}>{item.title}</a>)}</nav>
     </aside>
     <article className="tc-help__article-body">
      <p className="tc-help__eyebrow">{topic.title}</p>
@@ -35,7 +35,7 @@ export default async function HelpArticlePage({params}:Props){
      <section className="tc-help__related" aria-label="İlgili makaleler">
       <h2>Bu konuda diğer makaleler</h2>
       {topic.questions.filter(q=>q.question!==article.question).map(q=>
-       <a href={'/yardim/makale/'+helpArticleSlug(q.question)} key={q.question}>{q.question} <span aria-hidden="true">↗</span></a>)}
+       <a href={'https://help.ticarti.com/makale/'+helpArticleSlug(q.question)} key={q.question}>{q.question} <span aria-hidden="true">↗</span></a>)}
      </section>
      <section className="tc-help__article-footnote">
       <h2>Yardıma mı ihtiyacınız var?</h2>
