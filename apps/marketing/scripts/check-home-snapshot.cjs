@@ -227,4 +227,20 @@ assert.ok(routeMiddleware.includes('NextResponse.rewrite(url')&&!routeMiddleware
 
 assert.ok(sitemap.includes("['contact','/iletisim']")&&!sitemap.includes("['contact','/contacto.html']"),
   'Sitemap must index native /iletisim, not legacy HTML contact');
+const helpPage=fs.readFileSync(path.resolve(__dirname,'../app/help/page.tsx'),'utf8');
+const helpCenter=fs.readFileSync(path.resolve(__dirname,'../components/help-center.tsx'),'utf8');
+const helpData=fs.readFileSync(path.resolve(__dirname,'../lib/help-topics.ts'),'utf8');
+const marketingHeader=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/header.tsx'),'utf8');
+assert.ok(helpPage.includes('<SiteShell>')&&helpPage.includes('<HelpCenter locale="tr"/>'),
+ 'Help Center must share the identical Marketing site header/footer');
+assert.ok(routeMiddleware.includes("pathname==='/yardim'")&&routeMiddleware.includes("url.pathname='/help'"),
+ 'Public /yardim must render native Next.js /help without a redirect');
+assert.ok(helpCenter.includes('https://login.ticarti.com/?intent=support'),
+ 'Help support requests must use the existing merchant login, not anonymous tickets');
+assert.ok(helpData.includes("id:'siparisler'")&&helpData.includes("id:'odemeler'"),
+ 'Help topics must cover actual merchant modules');
+assert.ok(marketingHeader.includes('<MerchantLoginLabel locale={locale}/>') &&
+ marketingHeader.includes('https://login.ticarti.com/'),
+ 'Shared site header must use merchant login and authenticated state');
+console.log('PASS: native Ticarti Help Center, shared shell, existing merchant auth and support handoff');
 console.log('PASS: original unconfigured sections restored, configured missing locales hidden, shared site shell used');
