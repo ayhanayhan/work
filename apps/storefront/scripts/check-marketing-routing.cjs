@@ -19,4 +19,16 @@ assert.equal(upstream('/iletisim'),'/contact');
 assert.equal(upstream('/en/iletisim'),'/en/contact');
 assert.equal(upstream('/araclar/kdv-hesaplama'),'/araclar/kdv-hesaplama');
 assert.equal(upstream('/olmayan-bir-sayfa.html'),'/olmayan-bir-sayfa.html');
+const login=fs.readFileSync(path.join(root,'app/ticarti-login/page.tsx'),'utf8');
+const sessionStatus=fs.readFileSync(path.join(root,'app/ticarti-login/session-status/route.ts'),'utf8');
+assert.ok(middleware.includes("'/yardim'"),'Help Center must route to Marketing');
+assert.ok(login.includes("intent==='support'&&!returnTo?'/support'"),
+  'Support login must hand off to tenant support, not a new ticket system');
+assert.ok(sessionStatus.includes("API+'/v1/merchant-auth/session'") &&
+  sessionStatus.includes("'user-agent':req.headers.get('user-agent')"),
+  'Header session read must verify existing merchant authentication with browser binding');
+assert.ok(sessionStatus.includes('Access-Control-Allow-Credentials') &&
+  sessionStatus.includes('authenticated:Array.isArray(data?.memberships)'),
+  'Public site may receive only validated merchant auth state without tokens');
+console.log('PASS: Help Center routing, authenticated merchant support handoff and read-only session status');
 console.log('PASS: public contact rewrites and unknown-page routing use Marketing');
