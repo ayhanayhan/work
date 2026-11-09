@@ -5,9 +5,10 @@ import { dirname, join } from 'path';
 import { randomUUID } from 'crypto';
 import { Storage } from '@google-cloud/storage';
 import sharp from 'sharp';
+import {validateSvgForRasterization} from './svg-upload';
 
 const MAX_SIZE = 12 * 1024 * 1024;
-const ALLOWED = new Set(['image/jpeg','image/png','image/webp','image/avif']);
+const ALLOWED = new Set(['image/jpeg','image/png','image/webp','image/avif','image/svg+xml']);
 const DEFAULT_PROFILES:Record<string,{width:number;height:number,fit:'cover'|'inside'}>={
   thumb:{width:320,height:320,fit:'cover'},
   card:{width:640,height:800,fit:'inside'},
@@ -16,6 +17,7 @@ const DEFAULT_PROFILES:Record<string,{width:number;height:number,fit:'cover'|'in
   hero:{width:1920,height:1080,fit:'inside'},
 };
 function looksSafe(buffer: Buffer, mime: string) {
+  if (mime === 'image/svg+xml') return true; // validated and rasterized separately
   if (mime === 'image/jpeg') return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   if (mime === 'image/png') return buffer.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   if (mime === 'image/webp') return buffer.subarray(0,4).toString() === 'RIFF' && buffer.subarray(8,12).toString() === 'WEBP';
@@ -64,13 +66,14 @@ export class MediaService {
   }
   private async removeObject(key:string){const bucket=this.bucketName();if(bucket)return this.storage.bucket(bucket).file(key).delete({ignoreNotFound:true}).catch(()=>undefined);return unlink(join(this.localRoot(),key)).catch(()=>undefined)}
 
-  private async optimize(store:any, id:string, source:Buffer){
+  private async optimize(store:any, id:string, source:Buffer, svg=false){
     let pipeline: ReturnType<typeof sharp>;
-    try{pipeline=sharp(source,{failOn:'error'}).rotate()}catch{throw new BadRequestException('Görsel işlenemedi')}
-    const meta=await pipeline.metadata().catch(()=>null);if(!meta?.width||!meta?.height)throw new BadRequestException('Görsel boyutları okunamadı');
+    try{pipeline=sharp(source,{failOn:'error',limitInputPixels:25000000,...(svg?{density:144}:{})}).rotate()}catch{throw new BadRequestException('Görsel işlenemedi')}
+    const meta=await pipeline.metadata().catch(()=>null);if(!meta?.width||!meta?.height||meta.width*meta.height>25000000)throw new BadRequestException('Görsel boyutları okunamadı veya SVG çok büyük');
     const settings:any=store.settings||{};const quality=clamp(settings?.imageProcessing?.webpQuality,50,95,82);const avifQuality=clamp(settings?.imageProcessing?.avifQuality,35,90,60);const maxMaster=clamp(settings?.imageProcessing?.masterMax,1200,4000,2400);
     const baseDir=`tenants/${store.id}/media/${id}`;const variants:any={};
-    const master=await sharp(source).rotate().resize({width:maxMaster,height:maxMaster,fit:'inside',withoutEnlargement:true}).webp({quality}).toBuffer({resolveWithObject:true});
+    const sourceOptions=svg?{limitInputPixels:25000000,density:144}:{limitInputPixels:25000000};
+    const master=await sharp(source,sourceOptions).rotate().resize({width:maxMaster,height:maxMaster,fit:'inside',withoutEnlargement:true}).webp({quality}).toBuffer({resolveWithObject:true});
     const masterKey=`${baseDir}/master.webp`;await this.writeObject(masterKey,master.data,'image/webp');
     variants.master={webp:{key:masterKey,width:master.info.width,height:master.info.height,mime:'image/webp',size:master.data.length}};
     const profiles=this.profiles(settings);
@@ -86,7 +89,7 @@ export class MediaService {
   }
 
   private async createOptimizedAsset(store:any,source:Buffer,originalName:string,alt:string|undefined,sourceKind='UPLOAD',extra:any={}){
-    const id=randomUUID();const optimized=await this.optimize(store,id,source);const url=`${this.publicBase()}/v1/media/${id}/content`;
+    const id=randomUUID();const svg=extra.originalMimeType==='image/svg+xml';const optimized=await this.optimize(store,id,source,svg);const url=`${this.publicBase()}/v1/media/${id}/content`;
     return this.prisma.mediaAsset.create({data:{id,storeId:store.id,fileName:`${id}.webp`,originalName:String(originalName||`${id}.webp`).slice(0,240),mimeType:'image/webp',size:optimized.master.data.length,storageKey:optimized.masterKey,publicUrl:url,alt:alt?.slice(0,250),width:optimized.master.info.width,height:optimized.master.info.height,source:sourceKind,metadata:{...extra,optimized:true,sourceWidth:optimized.meta.width,sourceHeight:optimized.meta.height,variants:optimized.variants,webpQuality:optimized.quality,avifQuality:optimized.avifQuality}}});
   }
 
@@ -94,8 +97,9 @@ export class MediaService {
     const store=await this.assertStore(tenantId, storeId);
     if (!file?.buffer || !file?.size) throw new BadRequestException('Image file required');
     if (file.size > MAX_SIZE) throw new BadRequestException('Image may not exceed 12 MB');
-    if (!ALLOWED.has(file.mimetype) || !looksSafe(file.buffer, file.mimetype)) throw new BadRequestException('Only safe JPEG, PNG, WEBP or AVIF images are accepted');
-    return this.createOptimizedAsset(store,file.buffer,String(file.originalname||'upload'),alt,'UPLOAD',{originalMimeType:file.mimetype,originalSize:file.size});
+    if (!ALLOWED.has(file.mimetype) || !looksSafe(file.buffer, file.mimetype)) throw new BadRequestException('Only safe JPEG, PNG, WEBP, AVIF or SVG images are accepted');
+    const safe=file.mimetype==='image/svg+xml'?validateSvgForRasterization(file.buffer):file.buffer;
+    return this.createOptimizedAsset(store,safe,String(file.originalname||'upload'),alt,'UPLOAD',{originalMimeType:file.mimetype,originalSize:file.size});
   }
 
   async saveGenerated(tenantId: string, storeId: string, buffer: Buffer, mimeType = 'image/png', originalName = 'ai-generated.png', alt?: string, metadata?: Record<string, unknown>) {
