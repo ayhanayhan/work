@@ -120,7 +120,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
             {"\n"}
             <div className={"tc-footer-brand-support"}>
               {"\n"}
-              <a className={"tc-site-hero__cta tc-site-hero__cta--1 tc-support-link"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} data-tc-content-key={"a-273"}>
+              <a className={"tc-site-hero__cta tc-site-hero__cta--1 tc-support-link"} href={"/yardim"} data-tc-content-key={"a-273"}>
                 {"Destek al"}
               </a>
               {"\n"}
