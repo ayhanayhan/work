@@ -11,7 +11,8 @@ export default async function SiteShell({children}:{children:ReactNode}){
  const requestHeaders=await headers();
  const locale=menuLocaleFromPath(requestHeaders.get('x-marketing-page')||'/');
  const helpHost=requestHeaders.get('x-ticarti-help-host')==='1';
- const logoSrc=await getPlatformLogoForHost(helpHost?'help.ticarti.com':(requestHeaders.get('host')||'ticarti.com'));
+ const brandHost=helpHost?'help.ticarti.com':requestHeaders.get('x-ticarti-site-proxy')==='1'?'ticarti.com':(requestHeaders.get('host')||'ticarti.com');
+ const logoSrc=await getPlatformLogoForHost(brandHost);
  const nav=await getNavigation(locale);
  const relocate=(url:string)=>{
   if(!helpHost||!url||!url.startsWith('/'))return url;
