@@ -7,3 +7,26 @@ body{margin:0}
 .tc-dev__container{max-width:1200px}
 .tc-developer-shell .tc-site-header,.tc-developer-shell .tc-site-footer{font-family:Inter,Arial,sans-serif}
 @media(max-width:700px){.tc-dev{padding-top:20px!important}}
+
+
+/* Developer editorial content – no dashboard, decorative console, or numbered cards. */
+.tc-dev{padding:0 24px 75px!important;background:#fff}
+.tc-dev__container{max-width:1200px}
+.tc-dev__hero{display:block!important;padding:85px 0 70px!important;text-align:left!important;max-width:820px}
+.tc-dev__hero-copy{max-width:760px}
+.tc-dev__eyebrow{font-size:12px!important;font-weight:650!important;letter-spacing:.02em!important;text-transform:none!important;color:#606a5f!important;margin:0 0 18px!important}
+.tc-dev__hero h1{font-size:clamp(32px,4vw,48px)!important;letter-spacing:-.045em!important;line-height:1.16!important;font-weight:600!important}
+.tc-dev__hero .tc-dev__lead{max-width:680px!important;color:#646e64!important;font-size:16px!important;line-height:1.8!important;margin:24px 0 28px!important}
+.tc-dev__hero-actions{justify-content:flex-start!important}
+.tc-dev__primary{background:#f0f97b!important;color:#1e261d!important;border-radius:8px!important}
+.tc-dev__secondary{border-radius:8px!important}
+.tc-dev__quick-nav{border-top:1px solid #e6ebe4;border-bottom:1px solid #e6ebe4;margin:0!important;padding:18px 0!important}
+.tc-dev__section{padding-top:65px;padding-bottom:65px}
+.tc-dev__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0!important;border-top:1px solid #e6ebe4;border-left:1px solid #e6ebe4}
+.tc-dev__card,.tc-dev__card:nth-child(2){background:#fff!important;border:0!important;border-bottom:1px solid #e6ebe4!important;border-right:1px solid #e6ebe4!important;border-radius:0!important;padding:34px!important}
+.tc-dev__card h3{margin:0 0 12px!important;font-size:20px!important}
+.tc-dev__card p{margin:0 0 24px!important}
+.tc-dev__card a{margin-top:auto}
+.tc-dev__code{background:#202722;border-radius:9px}
+.tc-dev__closing{margin-top:0}
+@media(max-width:700px){.tc-dev{padding:0 18px 50px!important}.tc-dev__hero{padding:52px 0 45px!important}.tc-dev__grid{grid-template-columns:1fr}.tc-dev__card{padding:28px 24px!important}.tc-dev__section{padding:45px 0!important}}

@@ -25,23 +25,12 @@ export default function DeveloperHomePage(){
   <div className="tc-dev__container">
    <section className="tc-dev__hero" aria-labelledby="dev-title">
     <div className="tc-dev__hero-copy">
-     <p className="tc-dev__eyebrow">GELİŞTİRİCİ PLATFORMU</p>
-     <h1 id="dev-title">Ticarti üzerine kendi çözümlerini geliştir.</h1>
-     <p className="tc-dev__lead">Mağazalar, uygulamalar ve entegrasyonlar için ihtiyaç duyduğun teknik kaynaklara tek noktadan ulaş.</p>
+     <p className="tc-dev__eyebrow">Ticarti Developer</p>
+     <h1 id="dev-title">Ticarti geliştirici dokümantasyonu</h1>
+     <p className="tc-dev__lead">API bağlantıları, uygulama geliştirme ve webhook entegrasyonları için teknik rehberler.</p>
      <div className="tc-dev__hero-actions">
       <a className="tc-dev__primary" href="#rehberler">Dokümantasyonu keşfet <span aria-hidden="true">↗</span></a>
       <a className="tc-dev__secondary" href="#endpoints">API uç noktaları <span aria-hidden="true">↗</span></a>
-     </div>
-    </div>
-    <div className="tc-dev__hero-console" aria-label="API hızlı başlangıç örneği">
-     <div className="tc-dev__console-toolbar"><span className="tc-dev__console-title">API / HIZLI BAŞLANGIÇ</span><span>HTTPS · JSON</span></div>
-     <div className="tc-dev__console-content">
-      <p className="tc-dev__console-label">01 — Bağlantı</p>
-      <code>https://dev.ticarti.com/v1</code>
-      <p className="tc-dev__console-label">02 — İlk istek</p>
-      <pre><code>GET /v1/health</code></pre>
-      <p className="tc-dev__console-label">03 — Devam et</p>
-      <a href="#endpoints">Uç noktaları incele <span aria-hidden="true">↗</span></a>
      </div>
     </div>
    </section>
@@ -51,8 +40,8 @@ export default function DeveloperHomePage(){
    <section className="tc-dev__section" id="rehberler" aria-labelledby="dev-guides">
     <div className="tc-dev__section-head"><div><p className="tc-dev__eyebrow">DOKÜMANTASYON</p><h2 id="dev-guides">Geliştirici rehberleri</h2></div><p>Entegrasyon geliştirirken ihtiyaç duyacağınız temel konular.</p></div>
     <div className="tc-dev__grid">{sections.map(s=><article className="tc-dev__card" key={s.id}>
-     <span className="tc-dev__number">{s.no}</span><h3>{s.title}</h3><p>{s.desc}</p>
-     <ul>{s.items.map(x=><li key={x}>{x}</li>)}</ul><a href={s.href}>İncele <span aria-hidden="true">↗</span></a>
+     <h3>{s.title}</h3><p>{s.desc}</p>
+     <a href={s.href}>İncele <span aria-hidden="true">↗</span></a>
     </article>)}</div>
    </section>
    <section className="tc-dev__section tc-dev__api" id="api" aria-labelledby="dev-api">
