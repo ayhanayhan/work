@@ -11,6 +11,7 @@ export class MerchantRegisterDto {
   @IsOptional() @IsString() @MaxLength(40) phone?: string;
   @IsOptional() @IsString() @MaxLength(80) sector?: string;
   @IsOptional() @IsBoolean() pricesIncludeTax?: boolean;
+  @IsOptional() @IsString() @Matches(/^(start|grow|scale)$/) planCode?: string;
 }
 
 export class MerchantLoginDto {

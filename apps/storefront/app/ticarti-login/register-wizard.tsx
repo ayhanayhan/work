@@ -78,10 +78,10 @@ export default function RegisterWizard(){
     method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},
     body:JSON.stringify(social?{
       companyName:values.store.trim(),subdomain:validSlug,phone:values.phone.trim(),
-      sector:values.sector,pricesIncludeTax:values.pricesIncludeTax
+      sector:values.sector,pricesIncludeTax:values.pricesIncludeTax,planCode:values.plan
     }:{
       name:values.name.trim(),email:values.email.trim(),password:values.password,phone:values.phone.trim(),
-      companyName:values.store.trim(),sector:values.sector,subdomain:validSlug,pricesIncludeTax:values.pricesIncludeTax
+      companyName:values.store.trim(),sector:values.sector,subdomain:validSlug,pricesIncludeTax:values.pricesIncludeTax,planCode:values.plan
     })
    });
    const result=await response.json().catch(()=>({}));
@@ -130,7 +130,7 @@ export default function RegisterWizard(){
      {step===2&&<div className="tc-choices" role="radiogroup" aria-label="Sektör">{SECTORS.map(s=><button type="button" key={s} className={'tc-choice '+(values.sector===s?'selected':'')} onClick={()=>set('sector',s)} role="radio" aria-checked={values.sector===s}><span className="tc-choice-label">{s}</span><span className="tc-choice-check">{values.sector===s?'✓':''}</span></button>)}</div>}
      {step===3&&field('store','Mağaza adı','text','Örn. Nova Store')}
      {step===4&&<label>Mağaza adresi<div className="tc-domain-input"><input value={values.slug} onChange={e=>set('slug',slugify(e.target.value))} required minLength={3} maxLength={63} autoCapitalize="off" spellCheck={false} placeholder="magazam"/><span>.ticarti.com</span></div><small className={'tc-inline-hint '+(availability==='no'?'is-error':'')}>{availability==='checking'?'Adres kontrol ediliyor…':availability==='yes'?'Bu adres kullanılabilir':availability==='no'?availabilityMessage:'3-63 karakter; harf, rakam ve tire'}</small></label>}
-     {(step===5||step===6)&&<div className="tc-review"><h2>Mağaza özeti</h2><dl><dt>Ad soyad</dt><dd>{values.name}</dd><dt>E-posta</dt><dd>{values.email}</dd><dt>Mağaza</dt><dd>{values.store}</dd><dt>Adres</dt><dd>{validSlug}.ticarti.com</dd><dt>Paket tercihi</dt><dd>{PLANS.find(p=>p.id===values.plan)?.name}</dd></dl><p>Seçtiğin paket tercihi kayıt sonrasında ödeme sistemine otomatik aktarılmaz. Paket ve ödeme bilgileri ayrıca kesinleştirilecektir.</p></div>}
+     {(step===5||step===6)&&<div className="tc-review"><h2>Mağaza özeti</h2><dl><dt>Ad soyad</dt><dd>{values.name}</dd><dt>E-posta</dt><dd>{values.email}</dd><dt>Mağaza</dt><dd>{values.store}</dd><dt>Adres</dt><dd>{validSlug}.ticarti.com</dd><dt>Paket tercihi</dt><dd>{PLANS.find(p=>p.id===values.plan)?.name}</dd></dl><p>Seçtiğin paket ile 14 günlük deneme mağazan oluşturulacak. Ödeme aşaması daha sonra tamamlanabilir.</p></div>}
      {step===6&&<div className="tc-unpaid-summary"><p>Online ödeme henüz etkin değil. Ödeme alınmadan mağazanı açabilirsin.</p></div>}
     </div>
     {error&&<p className="tc-error" role="alert">{error}</p>}

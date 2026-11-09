@@ -127,11 +127,14 @@ export class MerchantAuthService {
     return { slug, available: !existing, reason: existing ? 'Bu mağaza adresi zaten kullanılıyor' : null };
   }
 
-  private async createTenantForUser(tx: any, userId: string, companyName: string, options: { subdomain?: string; phone?: string; sector?: string; pricesIncludeTax?: boolean } = {}) {
+  private async createTenantForUser(tx: any, userId: string, companyName: string, options: { subdomain?: string; phone?: string; sector?: string; pricesIncludeTax?: boolean; planCode?: string } = {}) {
     const slugBase = this.normalizeSubdomain(options.subdomain || companyName) || 'store';
     const publicSlug = options.subdomain ? slugBase : `${slugBase}-${randomBytes(3).toString('hex')}`;
     const slug = publicSlug;
-    const plan = await tx.plan.findFirst({ where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] });
+    const plan = options.planCode
+      ? await tx.plan.findFirst({where:{code:options.planCode,isActive:true}})
+      : await tx.plan.findFirst({ where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] });
+    if(!plan)throw new BadRequestException('Selected plan is unavailable');
     const trialDays = Math.max(1, Number(plan?.trialDays || 14));
     const trialEndsAt = new Date(Date.now() + trialDays * 86400000);
     const tenant = await tx.tenant.create({
@@ -169,7 +172,7 @@ export class MerchantAuthService {
     const passwordHash = await bcrypt.hash(dto.password, 13);
     const result = await this.prisma.$transaction(async tx => {
       const user = await tx.user.create({ data: { email, name: dto.name, passwordHash, isSuperAdmin: false, emailVerifiedAt: null } });
-      const tenant = await this.createTenantForUser(tx, user.id, dto.companyName, { subdomain: dto.subdomain, phone: dto.phone, sector: dto.sector, pricesIncludeTax: dto.pricesIncludeTax });
+      const tenant = await this.createTenantForUser(tx, user.id, dto.companyName, { subdomain: dto.subdomain, phone: dto.phone, sector: dto.sector, pricesIncludeTax: dto.pricesIncludeTax,planCode:dto.planCode });
       return { user, tenant };
     });
     const memberships = [{
@@ -349,7 +352,7 @@ export class MerchantAuthService {
       return {provider:String(p.provider),email:String(p.email).toLowerCase(),name:String(p.name||''),sub:String(p.sub)};
     }catch{throw new UnauthorizedException('Social registration expired; please sign in again')}
   }
-  async registerSocial(token:string,details:{companyName:string;subdomain:string;phone?:string;sector?:string;pricesIncludeTax?:boolean},req:any) {
+  async registerSocial(token:string,details:{companyName:string;subdomain:string;phone?:string;sector?:string;pricesIncludeTax?:boolean;planCode?:string},req:any) {
     const identity=await this.verifySocialRegistration(token);
     if(!details.companyName||details.companyName.trim().length<2||details.companyName.length>160)throw new BadRequestException('Invalid store name');
     const availability=await this.subdomainAvailability(details.subdomain);
@@ -364,7 +367,7 @@ export class MerchantAuthService {
       }});
       const tenant=await this.createTenantForUser(tx,user.id,details.companyName.trim(),{
         subdomain:availability.slug,phone:String(details.phone||'').slice(0,40),
-        sector:String(details.sector||'').slice(0,80),pricesIncludeTax:details.pricesIncludeTax
+        sector:String(details.sector||'').slice(0,80),pricesIncludeTax:details.pricesIncludeTax,planCode:details.planCode
       });
       return {user,tenant};
     });
