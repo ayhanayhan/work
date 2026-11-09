@@ -259,8 +259,9 @@ const brandConfig=fs.readFileSync(path.resolve(__dirname,'../lib/subdomain-brand
 assert.ok(brandConfig.includes('NEXT_PUBLIC_TICARTI_HELP_LOGO')&&
  brandConfig.includes('NEXT_PUBLIC_TICARTI_DEV_LOGO')&&brandConfig.includes('DEFAULT_LOGO'),
  'Brand configuration must support Help and Dev with default logo fallback');
-assert.ok(shellSource.includes('logoForHost('),
- 'Site shell must select configured brand logo by hostname');
+assert.ok(shellSource.includes('await getPlatformLogoForHost(')&&
+ brandConfig.includes("'/v1/public/website/branding'"),
+ 'Site shell must load Master-managed brand logo from public API by hostname');
 const brandingHeader=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/header.tsx'),'utf8');
 const brandingFooter=fs.readFileSync(path.resolve(__dirname,'../components/home-snapshot/footer.tsx'),'utf8');
 assert.ok(brandingHeader.includes('src={logoSrc}')&&brandingFooter.includes('src={logoSrc}'),
