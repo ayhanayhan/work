@@ -5,7 +5,7 @@ import MobileMegaMenu from './mobile-mega';
 import MerchantLoginLabel from '@/components/merchant-login-label';
 const helpLabels:Record<string,string>={tr:'Yardım Merkezi',en:'Help Center',de:'Hilfe-Center',ru:'Центр помощи',ar:'مركز المساعدة',bg:'Помощен център',uk:'Центр допомоги',id:'Pusat Bantuan',vi:'Trung tâm trợ giúp'};
 
-export default function HeaderSnapshot({navigation,locale='tr',helpHost=false}:{navigation:Navigation|null;locale?:string;helpHost?:boolean}){
+export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,logoSrc='/assets/images/ticarti-logo.svg'}:{navigation:Navigation|null;locale?:string;helpHost?:boolean;logoSrc?:string}){
  const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;
  return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-header"}>
@@ -55,7 +55,7 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false}:{
             {"\n"}
             <a href={main("/")}>
               {"\n"}
-              <img alt={"Ticarti"} loading={"lazy"} src={"/assets/images/ticarti-logo.svg"} data-tc-content-src={"image-001"} />
+              <img alt={"Ticarti"} loading={"lazy"} src={logoSrc} data-tc-content-src={"image-001"} />
               {"\n"}
             </a>
             {"\n"}
@@ -74,7 +74,7 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false}:{
           <div className={"tc-navigation-panel"}>
             <div className="tc-ui-drawer-header">
               <a className="tc-ui-drawer-brand" href={main("/")} aria-label="Ticarti ana sayfa">
-                <img src="/assets/images/ticarti-logo.svg" alt="Ticarti"/>
+                <img src={logoSrc} alt="Ticarti"/>
               </a>
               <button type="button" className="tc-ui-drawer-close" aria-label="Menüyü kapat">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
