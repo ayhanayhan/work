@@ -1,6 +1,6 @@
 'use client';
 import {useMemo,useState} from 'react';
-import {HELP_TOPICS} from '@/lib/help-topics';
+import {HELP_TOPICS,helpArticleSlug} from '@/lib/help-topics';
 
 const copy={
  tr:{eyebrow:'TİCARTİ YARDIM MERKEZİ',title:'Size nasıl yardımcı olabiliriz?',intro:'Mağazanızı yönetirken ihtiyaç duyduğunuz bilgilere ulaşın.',search:'Yardım konusu veya sorun arayın...',topics:'Yardım konuları',empty:'Aramanızla eşleşen bir konu bulunamadı.',support:'Destek talebi oluştur',supportInfo:'Sorun devam ediyorsa mağaza hesabınızla giriş yaparak destek ekibimize ulaşabilirsiniz.',login:'Mağazama giriş yap',contact:'İletişim'},
@@ -30,10 +30,11 @@ export default function HelpCenter({locale='tr'}:{locale?:string}){
    <section className="tc-help__topics" aria-label={t.topics}>
     <h2>{t.topics}</h2>
     {filtered.length?<div className="tc-help__grid">{filtered.map(topic=><section key={topic.id} className="tc-help__topic" id={topic.id}>
-     <h3>{topic.title}</h3><p>{topic.summary}</p>
-     <div className="tc-help__questions">{topic.questions.map(item=><details key={item.question}>
-      <summary>{item.question}</summary><p>{item.answer}</p>
-     </details>)}</div>
+     <h3><a href={'/yardim/kategori/'+topic.id}>{topic.title}</a></h3><p>{topic.summary}</p>
+     <div className="tc-help__questions">{topic.questions.map(item=>
+      <a className="tc-help__article-link" href={'/yardim/makale/'+helpArticleSlug(item.question)} key={item.question}>
+       <span>{item.question}</span><span aria-hidden="true">↗</span>
+      </a>)}</div>
     </section>)}</div>:<p className="tc-help__empty" role="status">{t.empty}</p>}
    </section>
    <section className="tc-help__support">
