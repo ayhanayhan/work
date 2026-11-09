@@ -79,9 +79,9 @@ export class MediaService {
     const profiles=this.profiles(settings);
     for(const [name,p] of Object.entries(profiles)){
       const resize={width:p.width,height:p.height,fit:p.fit,withoutEnlargement:true,position:'centre' as const};
-      const webp=await sharp(source).rotate().resize(resize as any).webp({quality}).toBuffer({resolveWithObject:true});
+      const webp=await sharp(source,sourceOptions).rotate().resize(resize as any).webp({quality}).toBuffer({resolveWithObject:true});
       const webpKey=`${baseDir}/${name}.webp`;await this.writeObject(webpKey,webp.data,'image/webp');
-      const avif=await sharp(source).rotate().resize(resize as any).avif({quality:avifQuality,effort:4}).toBuffer({resolveWithObject:true});
+      const avif=await sharp(source,sourceOptions).rotate().resize(resize as any).avif({quality:avifQuality,effort:4}).toBuffer({resolveWithObject:true});
       const avifKey=`${baseDir}/${name}.avif`;await this.writeObject(avifKey,avif.data,'image/avif');
       variants[name]={webp:{key:webpKey,width:webp.info.width,height:webp.info.height,mime:'image/webp',size:webp.data.length},avif:{key:avifKey,width:avif.info.width,height:avif.info.height,mime:'image/avif',size:avif.data.length}};
     }
