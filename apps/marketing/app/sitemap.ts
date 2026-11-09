@@ -1,4 +1,5 @@
 import type {MetadataRoute} from 'next';
+import {headers} from 'next/headers';
 import {getBlogPosts,getWebsiteLocales,blogPath} from '@/lib/blog';
 import {getWebsiteSeo,metadataFor} from '@/lib/site-seo';
 import {listTools,toolPath} from '@/components/tools-pages';
@@ -11,6 +12,10 @@ const pages=[
  ['terms','/uyelik-sozlesmesi.html'],['kvkk','/kvkk.html']
 ] as const;
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
+ if((await headers()).get('x-ticarti-help-host')==='1'){
+  // Articles are deliberately noindex until editorial content is approved.
+  return [{url:'https://help.ticarti.com/',changeFrequency:'weekly',priority:1}];
+ }
  const [seo,active]=await Promise.all([getWebsiteSeo(),getWebsiteLocales()]);
  if(seo?.allowIndexing===false)return [];
  const locales=active.length?active:['tr'];
