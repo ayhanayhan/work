@@ -15,7 +15,9 @@ const copy:Record<string,{eyebrow:string,title:string,description:string,home:st
  vi:{eyebrow:'404 · KHÔNG TÌM THẤY TRANG',title:'Không tìm thấy trang này.',description:'Liên kết có thể đã thay đổi. Hãy về trang chủ hoặc liên hệ với chúng tôi.',home:'Về trang chủ',contact:'Liên hệ',helper:'Bạn cần trợ giúp?'}
 };
 export default async function NotFound(){
- const path=(await headers()).get('x-marketing-page')||'/';
+ const requestHeaders=await headers();
+ const path=requestHeaders.get('x-marketing-page')||'/';
+ const helpHost=requestHeaders.get('x-ticarti-help-host')==='1';
  const locale=path.match(/^\/(tr|en|de|ru|ar|bg|uk|id|vi)(?:\/|$)/)?.[1]||'tr';
  const t=copy[locale]||copy.tr;
  const prefix=locale==='tr'?'':'/'+locale;
@@ -27,8 +29,8 @@ export default async function NotFound(){
     <h1>{t.title}</h1>
     <p className="tc-not-found__description">{t.description}</p>
     <div className="tc-not-found__actions">
-     <a className="tc-not-found__primary" href={prefix+'/'}>{t.home}<span aria-hidden="true">↗</span></a>
-     <a className="tc-not-found__secondary" href={prefix+'/iletisim'}>{t.contact}<span aria-hidden="true">→</span></a>
+     <a className="tc-not-found__primary" href={helpHost?'https://help.ticarti.com/':prefix+'/'}>{t.home}<span aria-hidden="true">↗</span></a>
+     <a className="tc-not-found__secondary" href={helpHost?'https://ticarti.com/iletisim':prefix+'/iletisim'}>{t.contact}<span aria-hidden="true">→</span></a>
     </div>
    </div>
   </main>
