@@ -1,6 +1,7 @@
 'use client';
 import {useMemo,useState} from 'react';
-import {type HelpCategory,articleUrl} from '@/lib/help-cms';
+import type {HelpCategory} from '@/lib/help-cms';
+import {articleUrl} from '@/lib/help-links';
 
 const copy={
  tr:{eyebrow:'TİCARTİ YARDIM MERKEZİ',title:'Size nasıl yardımcı olabiliriz?',intro:'Mağazanızı yönetirken ihtiyaç duyduğunuz bilgilere ulaşın.',search:'Yardım konusu veya sorun arayın...',topics:'Yardım konuları',empty:'Aramanızla eşleşen bir konu bulunamadı.',support:'Destek talebi oluştur',supportInfo:'Sorun devam ediyorsa mağaza hesabınızla giriş yaparak destek ekibimize ulaşabilirsiniz.',login:'Mağazama giriş yap',contact:'İletişim'},
