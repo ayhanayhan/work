@@ -1,3 +1,4 @@
+import { randomBytes, timingSafeEqual } from 'crypto';
 import { Body, Controller, ForbiddenException, Get, HttpCode, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { MerchantAuthService } from './merchant-auth.service';
 import {
@@ -46,6 +47,69 @@ export class MerchantAuthController {
     this.setRefresh(res, refreshToken);
     this.noStore(res);
     return safe;
+  }
+
+
+  @Get('providers')
+  async providers(@Res({ passthrough: true }) res:any) {
+    this.noStore(res);
+    return this.auth.publicProviders();
+  }
+
+  private linkedinCookie(req:any,key:string) {
+    return this.readCookie(req,key);
+  }
+  private linkedinCookies(res:any,state:string,verifier:string){
+    const secure=process.env.NODE_ENV==='production'?'; Secure':'';
+    res.setHeader('Set-Cookie',[
+      `__Host-ticarti_linkedin_state=${encodeURIComponent(state)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
+      `__Host-ticarti_linkedin_pkce=${encodeURIComponent(verifier)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
+    ]);
+  }
+  private clearLinkedinCookies(res:any) {
+    const secure=process.env.NODE_ENV==='production'?'; Secure':'';
+    res.setHeader('Set-Cookie',[
+      `__Host-ticarti_linkedin_state=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
+      `__Host-ticarti_linkedin_pkce=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
+    ]);
+  }
+
+  @Get('linkedin/start')
+  async startLinkedin(@Res() res:any) {
+    this.noStore(res);
+    const state=randomBytes(32).toString('base64url');
+    const verifier=randomBytes(48).toString('base64url');
+    const url=await this.auth.linkedinAuthUrl(state,verifier);
+    this.linkedinCookies(res,state,verifier);
+    res.redirect(302,url);
+  }
+
+  @Get('linkedin/callback')
+  async finishLinkedin(@Query('code') code:string,@Query('state') state:string,@Req() req:any,@Res() res:any) {
+    this.noStore(res);
+    const expected=this.linkedinCookie(req,'__Host-ticarti_linkedin_state');
+    const verifier=this.linkedinCookie(req,'__Host-ticarti_linkedin_pkce');
+    this.clearLinkedinCookies(res);
+    if(!code||!state||!expected||!verifier){
+      res.redirect(303,'https://login.ticarti.com/?socialError=invalid_state');return;
+    }
+    const a=Buffer.from(state),b=Buffer.from(expected);
+    if(a.length!==b.length||!timingSafeEqual(a,b)){
+      res.redirect(303,'https://login.ticarti.com/?socialError=invalid_state');return;
+    }
+    try{
+      const result=await this.auth.linkedinCallback(code,verifier);
+      res.setHeader('Referrer-Policy','no-referrer');
+      res.redirect(303,'https://login.ticarti.com/?socialHandoff='+encodeURIComponent(result.handoffCode));
+    }catch{
+      res.redirect(303,'https://login.ticarti.com/?socialError=login_failed');
+    }
+  }
+
+  @Post('linkedin/complete') @HttpCode(200)
+  async completeLinkedin(@Body() dto:MerchantHandoffDto,@Req() req:any,@Res({passthrough:true}) res:any) {
+    this.assertClient(req,true);this.noStore(res);
+    return this.auth.consumeSocialHandoff(dto.code);
   }
 
   @Get('subdomain-availability')
