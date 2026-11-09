@@ -11,24 +11,26 @@ export default async function SiteShell({children}:{children:ReactNode}){
  const requestHeaders=await headers();
  const locale=menuLocaleFromPath(requestHeaders.get('x-marketing-page')||'/');
  const helpHost=requestHeaders.get('x-ticarti-help-host')==='1';
- const brandHost=helpHost?'help.ticarti.com':requestHeaders.get('x-ticarti-site-proxy')==='1'?'ticarti.com':(requestHeaders.get('host')||'ticarti.com');
+ const devHost=requestHeaders.get('x-ticarti-dev-host')==='1';
+ const subdomain=helpHost||devHost;
+ const brandHost=devHost?'dev.ticarti.com':helpHost?'help.ticarti.com':requestHeaders.get('x-ticarti-site-proxy')==='1'?'ticarti.com':(requestHeaders.get('host')||'ticarti.com');
  const logoSrc=await getPlatformLogoForHost(brandHost);
  const nav=await getNavigation(locale);
  const relocate=(url:string)=>{
-  if(!helpHost||!url||!url.startsWith('/'))return url;
+  if(!subdomain||!url||!url.startsWith('/'))return url;
   if(url==='/yardim'||url==='/yardim/')return 'https://help.ticarti.com/';
   return 'https://ticarti.com'+url;
  };
  const node=(item:any):any=>({...item,url:relocate(item.url),
   featured:item.featured?{...item.featured,buttonUrl:relocate(item.featured.buttonUrl)}:undefined,
   children:Array.isArray(item.children)?item.children.map(node):[]});
- const scopedNav=helpHost&&nav?{...nav,
+ const scopedNav=subdomain&&nav?{...nav,
   menus:nav.menus?{header:nav.menus.header.map(node),footer:nav.menus.footer.map(node)}:undefined,
   groups:nav.groups?.map(group=>({...group,links:group.links.map(link=>({...link,url:relocate(link.url)}))}))
  }:nav;
  return <HomeInteractions className="tc-page-home tc-shared-shell">
-   <HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>
+   <HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>
    {children}
-   <FooterSnapshot navigation={scopedNav} locale={locale} helpHost={helpHost} logoSrc={logoSrc}/>
+   <FooterSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>
  </HomeInteractions>;
 }
