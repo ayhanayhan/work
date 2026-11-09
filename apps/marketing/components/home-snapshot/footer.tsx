@@ -2,7 +2,7 @@ import {FooterTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 import FooterLanguagePicker from '@/components/footer-language-picker';
 /* Original Ticarti footer markup converted to native JSX. */
-export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navigation|null;locale?:string}){return (
+export default function FooterSnapshot({navigation,locale='tr',helpHost=false}:{navigation:Navigation|null;locale?:string;helpHost?:boolean}){const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-footer"}>
     {"\n"}
     <footer aria-label={"Ticarti footer"} className={"tc-site-footer tc-home-footer"}>
@@ -20,7 +20,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
           {"\n"}
           <div className={"tc-home-footer-brand"}>
             {"\n"}
-            <a className={"footer-logo"} href={"/"}>
+            <a className={"footer-logo"} href={main("/")}>
               {"\n"}
               <img alt={"Ticarti"} loading={"lazy"} src={"/assets/images/ticarti-logo.svg"} data-tc-content-src={"image-108"} />
               {"\n"}
@@ -30,7 +30,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"Instagram"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"Instagram"} href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -52,7 +52,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"YouTube"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"YouTube"} href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -74,7 +74,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"Spotify"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"Spotify"} href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -96,7 +96,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"LinkedIn"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"LinkedIn"} href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -140,7 +140,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
                 <ul className={"tc-footer-legal-links"}>
                   {"\n"}
                   <li>
-                    <a href={"/kvkk.html"} data-tc-content-key={"a-276"}>
+                    <a href={main("/kvkk.html")} data-tc-content-key={"a-276"}>
                       {"KVKK Aydınlatma Metni"}
                     </a>
                   </li>
