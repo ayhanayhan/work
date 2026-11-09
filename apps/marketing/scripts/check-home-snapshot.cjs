@@ -205,11 +205,11 @@ assert.ok(sharedFooterCss.includes('.tc-shared-shell .tc-home-footer .footer-nav
  'One shared footer CSS must cover the homepage and every internal Marketing page');
 assert.ok(!sharedFooterCss.includes('html:not(.tc-page-home)'),
  'No duplicated footer rules may depend on an internal page HTML class');
-const contactView=fs.readFileSync(path.resolve(__dirname,'../components/contact-view.tsx'),'utf8');
+const sharedContactView=fs.readFileSync(path.resolve(__dirname,'../components/contact-view.tsx'),'utf8');
 const toolView=fs.readFileSync(path.resolve(__dirname,'../components/tools-pages.tsx'),'utf8');
 const helpView=fs.readFileSync(path.resolve(__dirname,'../app/help/page.tsx'),'utf8');
 const notFoundView=fs.readFileSync(path.resolve(__dirname,'../app/not-found.tsx'),'utf8');
-for(const [name,source] of [['contact',contactView],['tools',toolView],['help',helpView],['404',notFoundView]]){
+for(const [name,source] of [['contact',sharedContactView],['tools',toolView],['help',helpView],['404',notFoundView]]){
  assert.ok(source.includes('<SiteShell>'),name+' must get the same site header/footer component');
  assert.ok(!source.includes('<FooterSnapshot'),name+' may not declare its own footer');
 }
