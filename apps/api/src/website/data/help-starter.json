@@ -1,0 +1,302 @@
+[
+  {
+    "id": "baslangic",
+    "title": "Başlangıç ve Mağaza Kurulumu",
+    "summary": "Mağaza açma, kurulum adımları ve ilk yayın hazırlıkları.",
+    "enabled": true,
+    "sortOrder": 0,
+    "questions": [
+      {
+        "id": "baslangic-1",
+        "slug": "ticarti-magazami-nasil-acabilirim",
+        "question": "Ticarti mağazamı nasıl açabilirim?",
+        "answer": "Ticarti üzerinden mağaza oluşturma adımlarını tamamlayın, paketinizi seçin ve mağaza yönetim paneline geçin. Mağaza bilgilerinizi, alan adınızı ve ödeme ayarlarınızı yayın öncesinde kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "baslangic-2",
+        "slug": "magazami-yayinlamadan-once-neleri-kontrol-etmeliyim",
+        "question": "Mağazamı yayınlamadan önce neleri kontrol etmeliyim?",
+        "answer": "Mağaza iletişim bilgileri, yasal sayfalar, ürünler, stoklar, vergi ayarları, ödeme yöntemleri ve kargo seçeneklerini kontrol edin. Gerçek sipariş almadan önce uçtan uca test yapın.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "urunler",
+    "title": "Ürünler ve Kategoriler",
+    "summary": "Ürün oluşturma, varyantlar, fiyatlar ve koleksiyonlar.",
+    "enabled": true,
+    "sortOrder": 1,
+    "questions": [
+      {
+        "id": "urunler-1",
+        "slug": "bir-urune-farkli-beden-veya-renk-ekleyebilir-miyim",
+        "question": "Bir ürüne farklı beden veya renk ekleyebilir miyim?",
+        "answer": "Varyantlı ürün kullanarak renk, beden ve diğer seçenekleri ayrı varyantlar halinde tanımlayabilirsiniz. Her varyantın stok, fiyat, SKU ve barkod bilgilerini kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "urunler-2",
+        "slug": "urunleri-nasil-kategorilere-ayirabilirim",
+        "question": "Ürünleri nasıl kategorilere ayırabilirim?",
+        "answer": "Ürünlerinizi kategoriler ve koleksiyonlar altında düzenleyebilirsiniz. Kategori ağacı ve ilişkili ürünler mağaza gezinmesini kolaylaştırır.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "siparisler",
+    "title": "Siparişler ve İadeler",
+    "summary": "Sipariş takibi, sipariş durumları, iptal ve iade süreçleri.",
+    "enabled": true,
+    "sortOrder": 2,
+    "questions": [
+      {
+        "id": "siparisler-1",
+        "slug": "yeni-siparisleri-nereden-takip-edebilirim",
+        "question": "Yeni siparişleri nereden takip edebilirim?",
+        "answer": "Mağaza yönetim panelindeki sipariş alanından yeni siparişleri, ödeme ve gönderim durumlarını inceleyebilirsiniz.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "siparisler-2",
+        "slug": "bir-iade-talebi-nasil-islenir",
+        "question": "Bir iade talebi nasıl işlenir?",
+        "answer": "İlgili siparişin iade talebini inceleyin, iade nedenini ve ürün durumunu kontrol edin. İade ve stok hareketlerinin doğru işlendiğini doğrulayın.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "odemeler",
+    "title": "Ödemeler ve Vergiler",
+    "summary": "Ödeme sağlayıcıları, vergi ayarları ve ödeme sorunları.",
+    "enabled": true,
+    "sortOrder": 3,
+    "questions": [
+      {
+        "id": "odemeler-1",
+        "slug": "odeme-yontemlerini-nereden-yapilandirabilirim",
+        "question": "Ödeme yöntemlerini nereden yapılandırabilirim?",
+        "answer": "Mağaza yönetim panelindeki ödeme ve entegrasyon ayarlarından kullanacağınız ödeme sağlayıcılarını yapılandırabilirsiniz. Sağlayıcınızın hesap ve doğrulama gerekliliklerini kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "odemeler-2",
+        "slug": "kdv-oranlarini-nasil-yonetebilirim",
+        "question": "KDV oranlarını nasıl yönetebilirim?",
+        "answer": "Mağaza vergi ayarlarını ürünlerinizin tabi olduğu vergi oranlarına göre düzenleyin. Tereddüt ettiğiniz vergi uygulamalarında mali müşavirinize danışın.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "kargo",
+    "title": "Kargo, Stok ve Depolar",
+    "summary": "Gönderiler, stok hareketleri ve depo operasyonları.",
+    "enabled": true,
+    "sortOrder": 4,
+    "questions": [
+      {
+        "id": "kargo-1",
+        "slug": "birden-fazla-depoda-stok-takip-edebilir-miyim",
+        "question": "Birden fazla depoda stok takip edebilir miyim?",
+        "answer": "Depo ve stok yönetimi alanından ürünlerin depolara göre stoklarını takip edebilir, depo hareketlerini ve transfer taleplerini yönetebilirsiniz.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "kargo-2",
+        "slug": "kargo-hesaplamalari-icin-ne-kullanabilirim",
+        "question": "Kargo hesaplamaları için ne kullanabilirim?",
+        "answer": "Gönderim ücretleri ve desi hesapları için kargo ayarlarınızı gözden geçirin. Ticarti hesaplama araçlarından desi hesaplayıcısını da kullanabilirsiniz.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "magaza-tasarimi",
+    "title": "Mağaza Tasarımı ve İçerik",
+    "summary": "Tema, menüler, sayfalar ve mağaza görünümü.",
+    "enabled": true,
+    "sortOrder": 5,
+    "questions": [
+      {
+        "id": "magaza-tasarimi-1",
+        "slug": "magaza-menulerini-nasil-duzenleyebilirim",
+        "question": "Mağaza menülerini nasıl düzenleyebilirim?",
+        "answer": "Mağaza yönetim panelinizden gezinme menülerini ve ilgili sayfaları düzenleyin. Değişikliklerden sonra masaüstü ve mobil görünümü kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "magaza-tasarimi-2",
+        "slug": "magazamin-seo-bilgilerini-nereden-duzenlerim",
+        "question": "Mağazamın SEO bilgilerini nereden düzenlerim?",
+        "answer": "Ürün ve sayfa SEO alanlarında başlık, açıklama ve bağlantı bilgilerini düzenleyebilirsiniz. Sitenizdeki içeriğin ve dil sürümlerinin tutarlı olmasına dikkat edin.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "entegrasyonlar",
+    "title": "Entegrasyonlar ve Pazaryerleri",
+    "summary": "Pazaryeri bağlantıları ve harici hizmetler.",
+    "enabled": true,
+    "sortOrder": 6,
+    "questions": [
+      {
+        "id": "entegrasyonlar-1",
+        "slug": "pazaryeri-entegrasyonu-kurarken-neler-gerekli",
+        "question": "Pazaryeri entegrasyonu kurarken neler gerekli?",
+        "answer": "Bağlanacağınız pazaryerinin satıcı hesabı, API yetkileri ve mağaza eşleştirme bilgileri gerekebilir. Kullanılabilir entegrasyonları yönetim panelinizden kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "entegrasyonlar-2",
+        "slug": "siparisler-neden-esitlenmiyor-olabilir",
+        "question": "Siparişler neden eşitlenmiyor olabilir?",
+        "answer": "Bağlantının yetkilerini, seçili mağazayı ve entegrasyon durumunu kontrol edin. Sorun sürerse mağazanızdan destek talebi oluşturup etkilenen sipariş örneğini paylaşın.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "hesap",
+    "title": "Hesap ve Güvenlik",
+    "summary": "Mağaza girişi, hesap erişimi ve kullanıcı yetkileri.",
+    "enabled": true,
+    "sortOrder": 7,
+    "questions": [
+      {
+        "id": "hesap-1",
+        "slug": "magaza-hesabima-nasil-giris-yaparim",
+        "question": "Mağaza hesabıma nasıl giriş yaparım?",
+        "answer": "Ticarti’nin mağaza giriş sayfasını kullanın. Birden fazla mağazanız varsa girişten sonra yönetmek istediğiniz mağazayı seçin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "hesap-2",
+        "slug": "destek-talebini-nasil-olusturabilirim",
+        "question": "Destek talebini nasıl oluşturabilirim?",
+        "answer": "Mağaza hesabınızla oturum açın ve yönetim panelindeki Destek bölümüne gidin. Talebinizi doğru mağazada oluşturduğunuzu kontrol edin.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "pazarlama",
+    "title": "Pazarlama ve Kampanyalar",
+    "summary": "İndirimler, kampanyalar ve mağazanızı büyütme araçları.",
+    "enabled": true,
+    "sortOrder": 8,
+    "questions": [
+      {
+        "id": "pazarlama-1",
+        "slug": "indirim-kampanyalarini-nasil-yonetebilirim",
+        "question": "İndirim kampanyalarını nasıl yönetebilirim?",
+        "answer": "Kampanyaları mağazanızın pazarlama bölümünden tanımlayın. İndirim koşulları, kullanım sınırları, öncelik ve birlikte uygulanma kurallarını yayınlamadan önce kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "pazarlama-2",
+        "slug": "e-posta-sablonlarini-nasil-ozellestiririm",
+        "question": "E-posta şablonlarını nasıl özelleştiririm?",
+        "answer": "Mağaza bildirimleri için mevcut e-posta şablonlarını ilgili yönetim bölümünden düzenleyin. Değişiklikten sonra farklı dil ve ekran boyutlarında önizleme yapın.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "musteriler",
+    "title": "Müşteriler ve Hesaplar",
+    "summary": "Müşteri bilgileri, hesap işlemleri ve müşteri deneyimi.",
+    "enabled": true,
+    "sortOrder": 9,
+    "questions": [
+      {
+        "id": "musteriler-1",
+        "slug": "musteri-bilgilerini-nereden-inceleyebilirim",
+        "question": "Müşteri bilgilerini nereden inceleyebilirim?",
+        "answer": "Yönetim panelindeki Müşteriler bölümünden kayıtlı müşterilerin bilgilerini ve ilgili işlemleri inceleyebilirsiniz. Kişisel verileri yalnızca yetkiniz kapsamında işleyin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "musteriler-2",
+        "slug": "musteriler-siparislerinden-iade-baslatabilir-mi",
+        "question": "Müşteriler siparişlerinden iade başlatabilir mi?",
+        "answer": "Mağazanın müşteri alanında iade süreci etkinse müşteriler ilgili sipariş üzerinden iade talebi oluşturabilir. Talep, mağaza yönetimindeki iade akışıyla değerlendirilir.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "ayarlar",
+    "title": "Mağaza Ayarları ve Yerelleştirme",
+    "summary": "Dil, para birimi, vergi, alan adı ve mağaza bilgileri.",
+    "enabled": true,
+    "sortOrder": 10,
+    "questions": [
+      {
+        "id": "ayarlar-1",
+        "slug": "magazanin-dil-ve-para-birimini-nereden-duzenlerim",
+        "question": "Mağazanın dil ve para birimini nereden düzenlerim?",
+        "answer": "Mağaza ayarlarındaki yerelleştirme alanından desteklenen dilleri, para birimlerini ve ölçü birimlerini gözden geçirebilirsiniz. Yayın öncesi çevirileri kontrol edin.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "ayarlar-2",
+        "slug": "alan-adi-baglantisinda-sorun-yasarsam-ne-yapmaliyim",
+        "question": "Alan adı bağlantısında sorun yaşarsam ne yapmalıyım?",
+        "answer": "Alan adı DNS kayıtlarınızı ve sağlayıcınızın yönlendirmelerini kontrol edin. DNS değişiklikleri zaman alabilir. Sorun sürerse mağazanızdan destek talebi oluşturun.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  },
+  {
+    "id": "faturalandirma",
+    "title": "Paketler ve Faturalandırma",
+    "summary": "Abonelik, kullanım bilgileri ve ödeme belgeleri.",
+    "enabled": true,
+    "sortOrder": 11,
+    "questions": [
+      {
+        "id": "faturalandirma-1",
+        "slug": "abonelik-bilgilerini-nerede-bulurum",
+        "question": "Abonelik bilgilerini nerede bulurum?",
+        "answer": "Mağazanızın hesap ve faturalandırma bölümünden paket, dönem ve geçmiş işlemleri gözden geçirebilirsiniz.",
+        "enabled": true,
+        "sortOrder": 0
+      },
+      {
+        "id": "faturalandirma-2",
+        "slug": "paketle-ilgili-yardima-nasil-ulasirim",
+        "question": "Paketle ilgili yardıma nasıl ulaşırım?",
+        "answer": "Paket veya fatura ile ilgili sorularınız için mağaza hesabınızla giriş yaparak Destek bölümünden talep oluşturabilirsiniz.",
+        "enabled": true,
+        "sortOrder": 1
+      }
+    ]
+  }
+]
