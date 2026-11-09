@@ -287,7 +287,8 @@ export class MerchantAuthService {
     const email=String(payload?.email||'').trim().toLowerCase();
     if(!payload?.sub||!email||payload.email_verified!==true)throw new UnauthorizedException('Google email not verified');
     const user=await this.prisma.user.findFirst({where:{OR:[{googleSub:payload.sub},{email}]},include:{memberships:{select:{id:true}}}});
-    if(!user||!user.memberships.length)throw new UnauthorizedException('No Ticarti account for Google login');
+    if(!user)return {identity:{provider:'GOOGLE',email,name:String(payload.name||email.split('@')[0]),sub:payload.sub}};
+    if(!user.memberships.length)throw new UnauthorizedException('No merchant membership');
     if(user.googleSub&&user.googleSub!==payload.sub)throw new UnauthorizedException('Google identity mismatch');
     if(!user.googleSub)await this.prisma.user.update({where:{id:user.id},data:{googleSub:payload.sub,emailVerifiedAt:new Date()}});
     const profile=await this.memberships(user.id);
@@ -331,10 +332,46 @@ export class MerchantAuthService {
     if(profile.email_verified!==true||!email||!String(profile.sub||''))
       throw new UnauthorizedException('LinkedIn verified email required');
     const user=await this.prisma.user.findUnique({where:{email},select:{id:true}});
-    if(!user)throw new UnauthorizedException('No Ticarti account exists for this verified email');
+    if(!user)return {identity:{provider:'LINKEDIN',email,name:String(profile.name||email.split('@')[0]),sub:String(profile.sub)}};
     const members=await this.memberships(user.id);
     if(!members.memberships.length)throw new UnauthorizedException('No merchant membership');
     return this.createHandoff(user.id,members.memberships);
+  }
+
+
+  async signSocialRegistration(identity:{provider:string;email:string;name:string;sub:string}) {
+    return this.jwt.signAsync(identity,{expiresIn:'10m',issuer:'commerce-api',audience:'ticarti-social-registration'});
+  }
+  async verifySocialRegistration(token:string) {
+    try {
+      const p=await this.jwt.verifyAsync(token,{issuer:'commerce-api',audience:'ticarti-social-registration'});
+      if(!['GOOGLE','LINKEDIN'].includes(p.provider)||!p.email||!p.sub)throw new Error('Invalid social identity');
+      return {provider:String(p.provider),email:String(p.email).toLowerCase(),name:String(p.name||''),sub:String(p.sub)};
+    }catch{throw new UnauthorizedException('Social registration expired; please sign in again')}
+  }
+  async registerSocial(token:string,details:{companyName:string;subdomain:string;phone?:string;sector?:string;pricesIncludeTax?:boolean},req:any) {
+    const identity=await this.verifySocialRegistration(token);
+    if(!details.companyName||details.companyName.trim().length<2||details.companyName.length>160)throw new BadRequestException('Invalid store name');
+    const availability=await this.subdomainAvailability(details.subdomain);
+    if(!availability.available)throw new ConflictException(availability.reason||'Store address unavailable');
+    const result=await this.prisma.$transaction(async tx=>{
+      const existing=await tx.user.findUnique({where:{email:identity.email}});
+      if(existing)throw new ConflictException('An account with this email already exists');
+      const user=await tx.user.create({data:{
+        email:identity.email,name:identity.name||identity.email.split('@')[0],
+        passwordHash:null,googleSub:identity.provider==='GOOGLE'?identity.sub:null,
+        emailVerifiedAt:new Date(),isSuperAdmin:false
+      }});
+      const tenant=await this.createTenantForUser(tx,user.id,details.companyName.trim(),{
+        subdomain:availability.slug,phone:String(details.phone||'').slice(0,40),
+        sector:String(details.sector||'').slice(0,80),pricesIncludeTax:details.pricesIncludeTax
+      });
+      return {user,tenant};
+    });
+    return this.createHandoff(result.user.id,[{
+      tenantId:result.tenant.id,tenantName:result.tenant.name,tenantStatus:result.tenant.status,
+      site:{name:result.tenant.name,publicSlug:result.tenant.publicSlug,domain:result.tenant.domain}
+    }]);
   }
 
   async consumeSocialHandoff(code:string){
