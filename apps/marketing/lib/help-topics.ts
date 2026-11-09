@@ -21,7 +21,7 @@ export const HELP_TOPICS:HelpTopic[]=[
  {id:'entegrasyonlar',title:'Entegrasyonlar ve Pazaryerleri',summary:'Pazaryeri bağlantıları ve harici hizmetler.',questions:[
   {question:'Pazaryeri entegrasyonu kurarken neler gerekli?',answer:'Bağlanacağınız pazaryerinin satıcı hesabı, API yetkileri ve mağaza eşleştirme bilgileri gerekebilir. Kullanılabilir entegrasyonları yönetim panelinizden kontrol edin.'},
   {question:'Siparişler neden eşitlenmiyor olabilir?',answer:'Bağlantının yetkilerini, seçili mağazayı ve entegrasyon durumunu kontrol edin. Sorun sürerse mağazanızdan destek talebi oluşturup etkilenen sipariş örneğini paylaşın.'}]},
- {id:'hesap',title:'Hesap, Güvenlik ve Faturalandırma',summary:'Giriş, mağaza erişimi, kullanıcı yetkileri ve paketler.',questions:[
+ {id:'hesap',title:'Hesap ve Güvenlik',summary:'Mağaza girişi, hesap erişimi ve kullanıcı yetkileri.',questions:[
   {question:'Mağaza hesabıma nasıl giriş yaparım?',answer:'Ticarti’nin mağaza giriş sayfasını kullanın. Birden fazla mağazanız varsa girişten sonra yönetmek istediğiniz mağazayı seçin.'},
   {question:'Destek talebini nasıl oluşturabilirim?',answer:'Mağaza hesabınızla oturum açın ve yönetim panelindeki Destek bölümüne gidin. Talebinizi doğru mağazada oluşturduğunuzu kontrol edin.'}]}
  ,{id:'pazarlama',title:'Pazarlama ve Kampanyalar',summary:'İndirimler, kampanyalar ve mağazanızı büyütme araçları.',questions:[
