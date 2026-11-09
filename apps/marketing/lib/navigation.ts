@@ -25,7 +25,7 @@ function migrate(groups:NavigationGroup[]):MenuTree{
 /** Normalize pre-Next.js CMS links when rendering navigation; no redirects or HTML routes. */
 function contactUrl(url:string):string{
  if(!url)return url;
- return url.replace(/(^|\\/)(?:contacto(?:\\.html)?)(?=$|[?#])/,'$1iletisim');
+ return url.replace(/(^|\/)contacto(?:\.html)?(?=$|[?#])/,'$1iletisim');
 }
 function normalizeNode(node:MenuNode):MenuNode{
  return {...node,url:contactUrl(node.url),featured:node.featured?{...node.featured,buttonUrl:contactUrl(node.featured.buttonUrl)}:undefined,
