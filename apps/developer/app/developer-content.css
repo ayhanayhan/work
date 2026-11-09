@@ -14,3 +14,11 @@
 @media(max-width:540px){.dev-wrap{width:calc(100% - 36px)}.dev-brand__word{font-size:25px}.dev-brand__label{font-size:12px}.dev-hero{padding:50px 0}.dev-hero__actions .dev-btn{width:100%}.dev-code-window__body{font-size:11px}.dev-jump-nav{gap:14px 22px}.dev-cards,.dev-security-grid{grid-template-columns:1fr}.dev-guide-card{min-height:0}.dev-section{padding:58px 0}.dev-footer__top{flex-direction:column;gap:28px;padding-bottom:40px}.dev-footer__links{gap:60px}.dev-footer__bottom{flex-direction:column}.dev-closing__actions{align-items:flex-start;flex-direction:column;gap:12px}}
 @media(prefers-reduced-motion:reduce){.dev-content{scroll-behavior:auto}.dev-content *{transition:none!important}}
 
+
+/* Corporate typography rules: no eyebrow labels and no compressed tracking. */
+.dev-content,.dev-content *{letter-spacing:normal!important}
+.dev-eyebrow,.dev-eyebrow__mark,.dev-guide-card__number{display:none!important}
+.dev-content h1,.dev-content h2,.dev-content h3{letter-spacing:normal!important}
+.dev-hero h1 span{color:inherit!important}
+.dev-section__heading{align-items:center}
+.dev-content .dev-hero{padding-top:72px}

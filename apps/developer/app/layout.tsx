@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import './globals.css';
 import './developer-content.css';
+import './dev-doc.css';
 export default function RootLayout({children}:{children:ReactNode}){
  const origin='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
  return <html lang="tr" className="tc-page-home tc-page-developer">

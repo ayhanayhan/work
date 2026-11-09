@@ -1,0 +1,2 @@
+import DevPage from '@/components/dev-page';
+export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;return <DevPage title="Uygulama detayları" description="Geliştirici uygulamasının ayar ve sürüm yönetimi."><div className="dev-doc__notice"><p><strong>{id}</strong> uygulama kaydı için yetkili geliştirici API'si gerekir. Bu sürümde uygulama verileri yüklenmez.</p></div><a href="/apps">Uygulamalara dön</a></DevPage>}

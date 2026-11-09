@@ -28,9 +28,31 @@ export default async function SiteShell({children}:{children:ReactNode}){
   menus:nav.menus?{header:nav.menus.header.map(node),footer:nav.menus.footer.map(node)}:undefined,
   groups:nav.groups?.map(group=>({...group,links:group.links.map(link=>({...link,url:relocate(link.url)}))}))
  }:null;
+ const developerMenu={
+  id:'developer-navigation',label:{tr:'Geliştirici'},url:'/docs',enabled:true,
+  children:[
+   {id:'developer-guides',label:{tr:'Dokümantasyon'},url:'/docs',enabled:true,children:[]},
+   {id:'developer-api',label:{tr:'API referansı'},url:'/docs/api',enabled:true,children:[]},
+   {id:'developer-apps',label:{tr:'Uygulamalarım'},url:'/apps',enabled:true,children:[]},
+   {id:'developer-theme',label:{tr:'Tema rehberi'},url:'/docs/themes',enabled:true,children:[]},
+   {id:'developer-register',label:{tr:'Geliştirici hesabı'},url:'/register',enabled:true,children:[]}
+  ]
+ };
+ const primaryMenus=scopedNav?.menus||{header:[],footer:[]};
+ const developerNav={...(scopedNav||{version:0}),menus:{
+  header:[...primaryMenus.header,developerMenu],
+  footer:[...primaryMenus.footer,{
+   id:'developer-footer',label:{tr:'Geliştirici'},url:'',enabled:true,
+   children:[
+    {id:'developer-footer-docs',label:{tr:'Dokümantasyon'},url:'/docs',enabled:true,children:[]},
+    {id:'developer-footer-apps',label:{tr:'Uygulamalarım'},url:'/apps',enabled:true,children:[]},
+    {id:'developer-footer-guide',label:{tr:'Başlangıç'},url:'/guide',enabled:true,children:[]}
+   ]
+  }]
+ }};
  return <HomeInteractions className="tc-page-home tc-shared-shell tc-developer-shell">
-  <HeaderSnapshot navigation={scopedNav} locale={locale} helpHost logoSrc={publicLogo(logoSrc)}/>
+  <HeaderSnapshot navigation={developerNav} locale={locale} helpHost logoSrc={publicLogo(logoSrc)}/>
   {children}
-  <FooterSnapshot navigation={scopedNav} locale={locale} helpHost logoSrc={publicLogo(logoSrc)}/>
+  <FooterSnapshot navigation={developerNav} locale={locale} helpHost logoSrc={publicLogo(logoSrc)}/>
  </HomeInteractions>;
 }
