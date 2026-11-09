@@ -256,6 +256,11 @@ assert.ok(topicModule.includes('helpArticleBySlug')&&helpArticle.includes('helpA
 const helpShell=fs.readFileSync(path.resolve(__dirname,'../components/site-shell.tsx'),'utf8');
 assert.ok(routeMiddleware.includes("candidates.includes('help.ticarti.com')"),
  'Help custom domain must be detected before marketing corporate rewrites');
+assert.ok(routeMiddleware.includes('request.nextUrl.hostname'),
+ 'Help custom domain routing must inspect the actual request URL hostname');
+const rootLayout=fs.readFileSync(path.resolve(__dirname,'../app/layout.tsx'),'utf8');
+assert.ok(rootLayout.includes("helpHost?'tc-page-home tc-page-help'"),
+ 'Help pages should retain Ticarti header/footer CSS without rendering homepage content');
 assert.ok(routeMiddleware.includes("url.pathname='/help'")&&
  routeMiddleware.includes("'category':'article'"),
  'Help root and article routes must be internally rewritten to English-named pages');
