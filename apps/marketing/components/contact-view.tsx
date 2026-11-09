@@ -4,7 +4,7 @@ import ContactForm from '@/components/contact-form';
 export const contactLocales=['tr','en','de','ru','ar','bg','uk','id','vi'] as const;
 export type ContactLocale=typeof contactLocales[number];
 const copy:Record<ContactLocale,{eyebrow:string,title:string,description:string,note:string}>={
- tr:{eyebrow:'TİCARTİ · İLETİŞİM',title:'Birlikte konuşalım.',description:'Ticarti ile ilgili sorularınız, iş ortaklığı talepleriniz veya önerileriniz için bize yazın. Mesajınız doğrudan ekibimize ulaşsın.',note:'Formdan gelen tüm mesajları güvenli biçimde kaydediyor ve ekibimiz tarafından değerlendiriyoruz.'},
+ tr:{eyebrow:'TİCARTİ · İLETİŞİM',title:'Ticarti ile iletişime geçin.',description:'Sorularınızı yanıtlamak, fikirlerinizi dinlemek ve işinizi büyütmenize yardımcı olmak için buradayız.',note:'Ticarti hakkında merak ettikleriniz, iş birliği önerileriniz veya diğer talepleriniz için formu doldurun. Mesajınız doğrudan ekibimize ulaşır.'},
  en:{eyebrow:'TICARTI · CONTACT',title:'Let’s talk.',description:'Questions, partnership requests or suggestions about Ticarti? Send us a message. Our team is here to help.',note:'Your message will be securely recorded and reviewed by our team.'},
  de:{eyebrow:'TICARTI · KONTAKT',title:'Sprechen wir miteinander.',description:'Haben Sie Fragen, Partnerschaftsanfragen oder Vorschläge zu Ticarti? Schreiben Sie uns.',note:'Ihre Nachricht wird sicher gespeichert und von unserem Team geprüft.'},
  ru:{eyebrow:'TICARTI · КОНТАКТЫ',title:'Давайте поговорим.',description:'Есть вопросы или предложения о Ticarti? Напишите нам, и наша команда свяжется с вами.',note:'Ваше сообщение будет надёжно сохранено и рассмотрено нашей командой.'},
