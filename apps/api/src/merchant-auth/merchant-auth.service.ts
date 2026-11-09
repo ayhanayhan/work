@@ -10,7 +10,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { createHash, randomBytes } from 'crypto';
-import { OAuth2Client } from 'google-auth-library';
+import { GoogleAuth, OAuth2Client } from 'google-auth-library';
 import { PrismaService } from '../prisma/prisma.service';
 import { requestIp, securityHash } from '../common/security';
 import {
@@ -214,8 +214,105 @@ export class MerchantAuthService {
     return this.createHandoff(profile.user.id, profile.memberships);
   }
 
+
+  private async oauthRow(key:string){
+    const settings=await this.prisma.platformSetting.findUnique({where:{key:'auth_providers'}});
+    const data:any=settings?.value&&typeof settings.value==='object'?settings.value:{};
+    return (Array.isArray(data.providers)?data.providers:[]).find((x:any)=>String(x.key).toUpperCase()===key);
+  }
+
+  async publicProviders(){
+    const [g,l]=await Promise.all([this.oauthRow('GOOGLE'),this.oauthRow('LINKEDIN')]);
+    return {
+      google:{enabled:g?.enabled===true&&!!g.clientId,clientId:g?.enabled===true?String(g.clientId||''):''},
+      linkedin:{enabled:l?.enabled===true&&!!l.clientId}
+    };
+  }
+
+  private async linkedInConfig(){
+    const row=await this.oauthRow('LINKEDIN');
+    if(row?.enabled!==true||!row.clientId)throw new ServiceUnavailableException('LinkedIn sign-in is not configured');
+    const id=String(row.clientId).trim();
+    const ref=String(row.clientSecretRef||'').trim();
+    let secret=String(process.env.LINKEDIN_CLIENT_SECRET||'').trim();
+    if(!secret&&ref)secret=String(process.env[ref]||process.env[ref.replace(/[^A-Za-z0-9_]/g,'_').toUpperCase()]||'').trim();
+    if(!secret&&ref){
+      const project=String(process.env.GOOGLE_CLOUD_PROJECT||process.env.GCLOUD_PROJECT||process.env.GCP_PROJECT||'').trim();
+      const name=/^projects\/[^/]+\/secrets\/[^/]+\/versions\/[^/]+$/.test(ref)?ref:
+        /^[A-Za-z0-9_-]+$/.test(ref)&&project?`projects/${project}/secrets/${ref}/versions/latest`:'';
+      if(name){
+        try{
+          const auth=new GoogleAuth({scopes:['https://www.googleapis.com/auth/cloud-platform']});
+          const client=await auth.getClient(),token=await client.getAccessToken();
+          const r=await fetch('https://secretmanager.googleapis.com/v1/'+name+':access',{
+            headers:{authorization:'Bearer '+token.token},signal:AbortSignal.timeout(7000)
+          });
+          if(r.ok){const data:any=await r.json();if(data?.payload?.data)secret=Buffer.from(data.payload.data,'base64').toString('utf8').trim();}
+        }catch{}
+      }
+    }
+    if(!secret)throw new ServiceUnavailableException('LinkedIn client secret is not available to the API service');
+    return {id,secret};
+  }
+
+  async linkedinAuthUrl(state:string,verifier:string){
+    const {id}=await this.linkedInConfig();
+    const challenge=createHash('sha256').update(verifier).digest('base64url');
+    const url=new URL('https://www.linkedin.com/oauth/v2/authorization');
+    url.searchParams.set('response_type','code');
+    url.searchParams.set('client_id',id);
+    url.searchParams.set('redirect_uri','https://login.ticarti.com/api/v1/merchant-auth/linkedin/callback');
+    url.searchParams.set('state',state);
+    url.searchParams.set('scope','openid profile email');
+    url.searchParams.set('code_challenge',challenge);
+    url.searchParams.set('code_challenge_method','S256');
+    return url.toString();
+  }
+
+  async linkedinCallback(code:string,verifier:string){
+    const {id,secret}=await this.linkedInConfig();
+    const body=new URLSearchParams({
+      grant_type:'authorization_code',code,client_id:id,client_secret:secret,
+      redirect_uri:'https://login.ticarti.com/api/v1/merchant-auth/linkedin/callback',
+      code_verifier:verifier
+    });
+    const tokenResponse=await fetch('https://www.linkedin.com/oauth/v2/accessToken',{
+      method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body,
+      signal:AbortSignal.timeout(10000)
+    });
+    if(!tokenResponse.ok)throw new UnauthorizedException('LinkedIn authorization was rejected');
+    const token:any=await tokenResponse.json();
+    if(!token?.access_token)throw new UnauthorizedException('LinkedIn authorization failed');
+    const profileResponse=await fetch('https://api.linkedin.com/v2/userinfo',{
+      headers:{authorization:'Bearer '+String(token.access_token)},signal:AbortSignal.timeout(10000)
+    });
+    if(!profileResponse.ok)throw new UnauthorizedException('LinkedIn profile verification failed');
+    const profile:any=await profileResponse.json();
+    const email=String(profile.email||'').trim().toLowerCase();
+    if(profile.email_verified!==true||!email||!String(profile.sub||''))
+      throw new UnauthorizedException('LinkedIn verified email required');
+    const user=await this.prisma.user.findUnique({where:{email},select:{id:true}});
+    if(!user)throw new UnauthorizedException('No Ticarti account exists for this verified email');
+    const members=await this.memberships(user.id);
+    if(!members.memberships.length)throw new UnauthorizedException('No merchant membership');
+    return this.createHandoff(user.id,members.memberships);
+  }
+
+  async consumeSocialHandoff(code:string){
+    const row=await this.prisma.merchantAuthHandoff.findFirst({
+      where:{tokenHash:this.tokenHash(code),usedAt:null,expiresAt:{gt:new Date()}},
+      select:{id:true,userId:true}
+    });
+    if(!row)throw new UnauthorizedException('Expired social sign-in');
+    const updated=await this.prisma.merchantAuthHandoff.updateMany({where:{id:row.id,usedAt:null},data:{usedAt:new Date()}});
+    if(updated.count!==1)throw new UnauthorizedException('Expired social sign-in');
+    const profile=await this.memberships(row.userId);
+    return this.createHandoff(row.userId,profile.memberships);
+  }
+
   async googleLogin(dto: MerchantGoogleDto, req: any, handoffOnly = false) {
-    const clientId = String(process.env.GOOGLE_CLIENT_ID || '').trim();
+    const provider=await this.oauthRow('GOOGLE');
+    const clientId=provider?.enabled===true?String(provider.clientId||'').trim():'';
     if (!clientId) throw new ServiceUnavailableException('Google sign-in is not configured');
     let payload: any;
     try {
