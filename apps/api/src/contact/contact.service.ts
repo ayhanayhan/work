@@ -40,7 +40,7 @@ export class ContactService {
   }
   async updateContactEmailSettings(body:any){
     const email=String(body?.recipient||'').trim().toLowerCase();
-    if(email&&(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||email.length>254))throw new BadRequestException('Geçerli bir bildirim adresi girin.');
+    if(email&&(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254))throw new BadRequestException('Geçerli bir bildirim adresi girin.');
     const settings={
       enabled:body?.enabled===true,recipient:email,acknowledgeSender:body?.acknowledgeSender===true,
       subject:String(body?.subject||this.defaultContactEmail.subject).trim().slice(0,180),
