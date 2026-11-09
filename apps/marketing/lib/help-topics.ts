@@ -38,3 +38,17 @@ export const HELP_TOPICS:HelpTopic[]=[
   {question:'Paketle ilgili yardıma nasıl ulaşırım?',answer:'Paket veya fatura ile ilgili sorularınız için mağaza hesabınızla giriş yaparak Destek bölümünden talep oluşturabilirsiniz.'}]}
 
 ];
+
+/** Stable, URL-safe article slugs. The source titles are Turkish for now. */
+export function helpArticleSlug(value:string){
+ const letters:Record<string,string>={ç:'c',ğ:'g',ı:'i',ö:'o',ş:'s',ü:'u'};
+ return value.toLocaleLowerCase('tr').replace(/[çğıöşü]/g,ch=>letters[ch]||ch)
+  .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100);
+}
+export function helpArticleBySlug(slug:string){
+ for(const topic of HELP_TOPICS){
+  const index=topic.questions.findIndex(q=>helpArticleSlug(q.question)===slug);
+  if(index>=0)return {topic,article:topic.questions[index],index};
+ }
+ return null;
+}
