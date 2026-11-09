@@ -10,7 +10,7 @@ import {Textarea} from '@/components/ui/textarea';
 import {Switch} from '@/components/ui/switch';
 
 type Article={id:string;slug:string;question:string;answer:string;enabled:boolean;sortOrder:number};
-type Topic={id:string;title:string;summary:string;enabled:boolean;sortOrder:number;questions:Article[]};
+type Topic={id:string;slug?:string;title:string;summary:string;enabled:boolean;sortOrder:number;questions:Article[]};
 type Snapshot={version:number;topics:Topic[]};
 const clone=<T,>(data:T):T=>JSON.parse(JSON.stringify(data));
 const slug=(value:string)=>value.toLocaleLowerCase('tr')
@@ -52,7 +52,7 @@ export default function HelpContentEditor(){
  }:old);
  const addTopic=()=>{
   const nextId='kategori-'+id();
-  setDraft(old=>old?{...old,topics:[...old.topics,{id:nextId,title:'Yeni kategori',summary:'',enabled:false,sortOrder:old.topics.length,questions:[]}]}:old);
+  setDraft(old=>old?{...old,topics:[...old.topics,{id:nextId,slug:nextId,title:'Yeni kategori',summary:'',enabled:false,sortOrder:old.topics.length,questions:[]}]}:old);
   setActive(nextId);setSuccess('');
  };
  const addArticle=(topicId:string)=>{
@@ -121,7 +121,7 @@ export default function HelpContentEditor(){
       <div className="grid gap-4">
        <Field label="Kategori başlığı"><Input value={topic.title} maxLength={220} onChange={e=>patchTopic(topic.id,{title:e.target.value})}/></Field>
        <Field label="Bağlantı (slug)" help="Kategori bağlantısı değişirse eski bağlantı çalışmaz. Sadece küçük harf, rakam ve tire.">
-        <Input value={topic.id} disabled title="Mevcut bağlantıları korumak için kategori slug'ı sabittir."/></Field>
+        <Input value={topic.slug||topic.id} maxLength={100} onChange={e=>patchTopic(topic.id,{slug:slug(e.target.value)})}/></Field>
        <Field label="Kategori açıklaması"><Textarea rows={3} value={topic.summary} maxLength={1500} onChange={e=>patchTopic(topic.id,{summary:e.target.value})}/></Field>
       </div>
       <Button variant="outline" className="mt-4" onClick={()=>removeTopic(topic)}><Trash2 className="size-4"/>Kategoriyi sil</Button>
