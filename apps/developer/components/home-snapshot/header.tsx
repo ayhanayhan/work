@@ -11,38 +11,6 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,lo
       <div className="tc-ui-drawer-overlay" aria-hidden="true"></div>
       {"\n"}
       <div className={"container"}>
-          {"\n"}
-          <div className={"tc-announcement-bar__text"}>
-            {"\n"}
-            <p>
-              {"\n"}
-              <strong>
-                {"Lansmana özel %50 indirim!"}
-              </strong>
-              {" Tüm Ticarti paketlerinde geçerli lansman fırsatını keşfet.\n              "}
-            </p>
-            {"\n"}
-          </div>
-          {"\n"}
-          <a className={"tc-announcement-bar__cta"} href={main("/paketler.html")} data-tc-content-key={"a-001"}>
-            {"Paketleri incele"}
-          </a>
-          {"\n"}
-          <button aria-label={"Duyuruyu kapat"} className={"tc-announcement-bar__close"} data-tc-ui-topbar-close={""} type={"button"}>
-            {"\n"}
-            <svg aria-hidden={true} fill={"none"} viewBox={"0 0 24 24"} xmlns={"http://www.w3.org/2000/svg"}>
-              {"\n"}
-              <path d={"M18 6L6 18M6 6L18 18"} stroke={"currentColor"} strokeLinecap={"round"} strokeLinejoin={"round"} strokeWidth={"2"}></path>
-              {"\n"}
-            </svg>
-            {"\n"}
-          </button>
-          {"\n"}
-        </div>
-        {"\n"}
-      </div>
-      {"\n"}
-      <div className={"container"}>
         {"\n"}
         <div className={"header-inner dis-flex align-center"}>
           {"\n"}
