@@ -13,6 +13,20 @@ async function main(){
  assert.equal(initial.version,0);
  assert.deepEqual(initial.tools.map(x=>x.id),[...TOOL_IDS]);
  assert.equal(initial.tools.length,12);
+ const ean=initial.tools.find((x:any)=>x.id==='ean13-barkod-olusturucu');
+ assert.ok(ean,'EAN-13 tool missing');
+ assert.equal(ean?.status,'PUBLISHED');
+ for(const locale of ['tr','en','de','ru','ar','bg','uk','id','vi']){
+  assert.ok(ean?.fields.title[locale],'Missing EAN-13 title '+locale);
+  assert.ok(ean?.fields.description[locale],'Missing EAN-13 description '+locale);
+  assert.ok(ean?.fields.seoDescription[locale],'Missing EAN-13 SEO '+locale);
+  assert.equal(ean?.faqs.filter((faq:any)=>faq.question[locale]&&faq.answer[locale]).length,4);
+ }
+ for(const entry of initial.tools){
+  assert.ok(entry.fields.description.tr,'Missing article '+entry.id);
+  assert.ok(entry.fields.seoTitle.tr,'Missing SEO title '+entry.id);
+  assert.ok(entry.faqs.length>=4,'Missing FAQs '+entry.id);
+ }
  for(const id of ['trendyol','amazon','hepsiburada','n11','ciceksepeti','pazarama']){
   const entry=initial.tools.find((x:any)=>x.id===id+'-komisyon-hesaplama');
   assert.ok(entry,'Missing marketplace tool '+id);
