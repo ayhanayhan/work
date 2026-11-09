@@ -116,6 +116,8 @@ function jsonLd(page:PageData,lang:BlogLocale,seo:WebsiteSeo|null=null):object[]
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  // Legacy HTML contact URLs must never render a copied template.
+  if(slug.at(-1)==='contacto.html'||slug.at(-1)==='contacto')notFound();
   const route=toolRequest(slug);
   if(route){
    if(!route.slug)return {title:'Sayfa bulunamadı',robots:{index:false,follow:false}};
@@ -200,6 +202,8 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 // runtime HTML replacements or website-home-cms.js.
 export default async function MarketingPage({params,searchParams}:Props){
   const {slug=[]}=await params;
+  // Legacy HTML contact URLs must never render a copied template.
+  if(slug.at(-1)==='contacto.html'||slug.at(-1)==='contacto')notFound();
   const route=toolRequest(slug);
   if(route){
    if(!route.slug)notFound();
