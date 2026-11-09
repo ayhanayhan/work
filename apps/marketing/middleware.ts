@@ -2,6 +2,7 @@ import {NextResponse,type NextRequest} from 'next/server';
 /** The original CSS selects classes on <html>; preserve them on first SSR paint. */
 export function middleware(request:NextRequest){
   const forwarded=new Headers(request.headers);
+  forwarded.delete('x-ticarti-help-host');
   const pathname=request.nextUrl.pathname;
   forwarded.set('x-marketing-page',pathname);
   // help.ticarti.com is served directly by the Marketing backend.
