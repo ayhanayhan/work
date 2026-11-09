@@ -213,3 +213,22 @@
 .tc-next-auth .tc-choices{width:100%}
 .tc-next-auth .tc-buttons button:disabled{opacity:.65;cursor:progress}
 @media(max-width:700px){.tc-next-auth .tc-auth-shell-progress-header{height:72px;padding:16px 20px!important}.tc-next-auth .tc-auth{padding:42px 18px 64px!important}.tc-next-auth .tc-plan-choices{grid-template-columns:1fr!important}.tc-next-auth .tc-plan-choice{padding:17px 18px}.tc-next-auth .tc-auth-legal-footer nav{gap:12px}.tc-next-auth .tc-auth-legal-footer a{font-size:11px}}
+
+/* Restore the original two-column Ticarti authentication composition and corner TicAi text. */
+.tc-next-auth .tc-auth-shell-shell-root{background:#faffec!important;display:flex;align-items:stretch;justify-content:stretch}
+.tc-next-auth .tc-auth-shell-shell-content-col{flex:1;min-width:0;background:#fff}
+.tc-next-auth .tc-auth-shell-shell-alma-col{flex:0 0 clamp(340px,31%,501px);display:flex;align-items:center;justify-content:center;min-height:100vh;background:#faffec;padding:55px 32px}
+.tc-next-auth .tc-auth-shell-alma-inner{max-width:374px;width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:17px}
+.tc-next-auth .tc-auth-alma-figure{width:138px;height:138px}
+.tc-next-auth .tc-auth-alma-figure svg{display:block;width:100%;height:100%;--alma-tint-hi:#bcf5bb;--alma-tint-lo:#7ac86d;--alma-tint-eye:#17412c;--alma-thought-hi:#effbb0;--alma-thought-lo:#c9efa0}
+.tc-next-auth .tc-auth-alma-message{border-radius:0 14px 14px 14px;background:#f2f9c5;padding:20px 24px;font-family:Inter,Arial,sans-serif}
+.tc-next-auth .tc-auth-alma-message .tc-auth-alma-label{font-size:15px;color:#707c69;margin:0 0 10px}
+.tc-next-auth .tc-auth-alma-message p{font-size:20px;line-height:1.4;font-weight:400;color:#333e33;letter-spacing:normal;margin:0}
+.tc-next-auth .tc-auth-language-wrap{position:relative}
+.tc-next-auth .tc-auth-language-label{appearance:none;background:#fff;cursor:pointer;font:inherit;font-size:13px;display:flex;align-items:center;gap:8px;border:1px solid #e1e5df;border-radius:7px;padding:8px 11px;color:#222}
+.tc-next-auth .tc-auth-language-options{position:absolute;right:0;top:100%;background:#fff;border:1px solid #e1e5df;border-radius:8px;z-index:15;min-width:160px;box-shadow:0 10px 30px #0001;padding:6px}
+.tc-next-auth .tc-auth-language-options button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:8px;cursor:pointer}
+.tc-next-auth .tc-auth-language-options button:hover{background:#f7f9f4}
+.tc-next-auth .tc-auth-shell-progress-header{z-index:5}
+.tc-next-auth .tc-auth-legal-footer{max-width:none}
+@media(max-width:1024px){.tc-next-auth .tc-auth-shell-shell-alma-col{display:none}.tc-next-auth .tc-auth-shell-shell-content-col{width:100%;flex:1}.tc-next-auth .tc-auth-shell-shell-root{display:block}}
