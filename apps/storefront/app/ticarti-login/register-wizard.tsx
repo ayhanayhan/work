@@ -26,10 +26,23 @@ type Signup={name:string;email:string;password:string;phone:string;sector:string
 const init:Signup={name:'',email:'',password:'',phone:'',sector:'',store:'',slug:'',plan:'',terms:false,marketing:false,pricesIncludeTax:true};
 export default function RegisterWizard(){
  const[welcome,setWelcome]=useState(true),[step,setStep]=useState(0),[values,setValues]=useState<Signup>(init);
+ const[social,setSocial]=useState<'GOOGLE'|'LINKEDIN'|null>(null);
+ const[providers,setProviders]=useState<{google:{enabled:boolean};linkedin:{enabled:boolean}}>({google:{enabled:false},linkedin:{enabled:false}});
  const[error,setError]=useState(''),[busy,setBusy]=useState(false),[showPassword,setShowPassword]=useState(false);
  const[availability,setAvailability]=useState<'idle'|'checking'|'yes'|'no'>('idle'),[availabilityMessage,setAvailabilityMessage]=useState('');
  const validSlug=useMemo(()=>slugify(values.slug),[values.slug]);
- useEffect(()=>{const p=new URLSearchParams(window.location.search).get('plan');if(PLANS.some(x=>x.id===p))setValues(v=>({...v,plan:p||''}))},[]);
+ useEffect(()=>{
+  const p=new URLSearchParams(window.location.search).get('plan');
+  if(PLANS.some(x=>x.id===p))setValues(v=>({...v,plan:p||''}));
+  void fetch(API+'/merchant-auth/providers',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(data=>{
+    setProviders({google:{enabled:data?.google?.enabled===true},linkedin:{enabled:data?.linkedin?.enabled===true}});
+  }).catch(()=>{});
+  void fetch(API+'/merchant-auth/social/pending',{cache:'no-store',credentials:'include'}).then(r=>r.ok?r.json():{}).then(data=>{
+    if(data?.active===true&&['GOOGLE','LINKEDIN'].includes(data.provider)){
+      setSocial(data.provider);setWelcome(false);setValues(v=>({...v,email:String(data.email||''),name:String(data.name||'')}));
+    }
+  }).catch(()=>{});
+ },[]);
  useEffect(()=>{
   if(step!==4||validSlug.length<3||validSlug.length>63){setAvailability('idle');return}
   const controller=new AbortController();setAvailability('checking');
@@ -46,7 +59,7 @@ export default function RegisterWizard(){
  function check(){
   if(step===0){
    if(values.name.trim().length<2||!/^\S+@\S+\.\S+$/.test(values.email))return 'Adını ve geçerli bir e-posta adresini gir.';
-   if(!passwordRule.test(values.password))return 'Şifre en az 8 karakter; büyük ve küçük harf, rakam ve sembol içermelidir.';
+   if(!social&&!passwordRule.test(values.password))return 'Şifre en az 8 karakter; büyük ve küçük harf, rakam ve sembol içermelidir.';
    if(!values.terms)return 'Üyelik Sözleşmesi onaylanmalıdır.';
   }
   if(step===1&&!values.plan)return 'Bir paket seç.';
@@ -58,12 +71,19 @@ export default function RegisterWizard(){
  function forward(e:FormEvent){e.preventDefault();const issue=check();if(issue){setError(issue);return}if(step===3&&!values.slug)setValues(v=>({...v,slug:slugify(v.store)}));setStep(s=>Math.min(s+1,6));setError('')}
  async function createStore(){
   if(busy)return;
-  if(!values.name||!values.email||!values.password||!values.store||!validSlug||!values.terms||!values.sector||!values.plan){setError('Mağaza bilgilerini tamamla.');return}
+  if(!values.name||!values.email||(!social&&!values.password)||!values.store||!validSlug||!values.terms||!values.sector||!values.plan){setError('Mağaza bilgilerini tamamla.');return}
   setBusy(true);setError('');
   try{
-   const response=await fetch(API+'/merchant-auth/register',{method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},body:JSON.stringify({
-    name:values.name.trim(),email:values.email.trim(),password:values.password,phone:values.phone.trim(),companyName:values.store.trim(),sector:values.sector,subdomain:validSlug,pricesIncludeTax:values.pricesIncludeTax
-   })});
+   const response=await fetch(API+(social?'/merchant-auth/social/register':'/merchant-auth/register'),{
+    method:'POST',credentials:'include',headers:{'content-type':'application/json','x-auth-client':'merchant-landing'},
+    body:JSON.stringify(social?{
+      companyName:values.store.trim(),subdomain:validSlug,phone:values.phone.trim(),
+      sector:values.sector,pricesIncludeTax:values.pricesIncludeTax
+    }:{
+      name:values.name.trim(),email:values.email.trim(),password:values.password,phone:values.phone.trim(),
+      companyName:values.store.trim(),sector:values.sector,subdomain:validSlug,pricesIncludeTax:values.pricesIncludeTax
+    })
+   });
    const result=await response.json().catch(()=>({}));
    if(!response.ok)throw new Error(errorMessage(result,'Mağaza oluşturulamadı.'));
    const m=result?.memberships?.[0];
@@ -74,14 +94,19 @@ export default function RegisterWizard(){
    window.location.assign(dest.toString());
   }catch(e:any){setError(e.message||'İşlem başarısız.')}finally{setBusy(false)}
  }
+ function startSocial(provider:'google'|'linkedin'){
+  if(!providers[provider].enabled){setError((provider==='google'?'Google':'LinkedIn')+' giriş ayarı Master üzerinden etkinleştirilmelidir.');return}
+  window.location.assign(API+'/merchant-auth/'+provider+'/start');
+ }
  const field=(key:keyof Signup,label:string,type='text',placeholder='')=><label key={key}>{label}<input type={type} placeholder={placeholder} autoComplete={key==='email'?'email':key==='name'?'name':key==='password'?'new-password':key==='phone'?'tel':'off'} value={String(values[key])} onChange={e=>set(key as any,e.target.value as any)} required={key!=='phone'} /></label>;
  return <AuthShell progress={welcome?0:Math.round(((step+1)/STEPS.length)*100)}>
  {welcome?<section className="tc-view" id="tc-welcome">
    <h1>Mağazanı birlikte kuralım.</h1>
    <p className="tc-sub">Ücretsiz hesabını oluştur, mağazanı birkaç adımda hazırla.</p>
    <div className="tc-actions">
-    <button className="tc-btn tc-provider-btn" type="button" disabled aria-label="LinkedIn kaydı henüz etkin değil"><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/>LinkedIn ile kaydol (yakında)</button>
-    <button className="tc-btn tc-provider-btn" type="button" disabled aria-label="Google kaydı henüz etkin değil"><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/>Google ile kaydol (yakında)</button>
+    <button className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/>LinkedIn ile kaydol</button>
+    <button className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/>Google ile kaydol</button>
+    {error&&<p className="tc-error" role="alert">{error}</p>}
     <div className="tc-or"><span>veya</span></div>
     <button className="tc-btn primary" type="button" onClick={()=>setWelcome(false)}>E-posta ile devam et</button>
     <p className="tc-switch">Zaten hesabın var mı? <Link className="tc-link" href="/">Giriş yap</Link></p>
@@ -92,9 +117,9 @@ export default function RegisterWizard(){
    <form className="tc-form" onSubmit={forward}>
     <div className="tc-fields">
      {step===0&&<>
-      {field('name','Ad ve soyad','text','Ad Soyad')}
-      {field('email','E-posta adresi','email','ornek@eposta.com')}
-      <label>Şifre<div className="tc-password-wrap"><input required minLength={8} type={showPassword?'text':'password'} value={values.password} onChange={e=>set('password',e.target.value)} autoComplete="new-password" placeholder="En az 8 karakter"/><button type="button" className="tc-password-toggle" onClick={()=>setShowPassword(x=>!x)}>{showPassword?'Gizle':'Göster'}</button></div></label>
+      {social?<p className="tc-social-confirm">{social==='GOOGLE'?'Google':'LinkedIn'} hesabın doğrulandı. Adın ve e-posta adresin sağlayıcıdan alındı.</p>:null}
+      {social?<p className="tc-social-profile"><strong>{values.name}</strong><span>{values.email}</span></p>:<>{field('name','Ad ve soyad','text','Ad Soyad')}{field('email','E-posta adresi','email','ornek@eposta.com')}</>}
+      {!social&&<label>Şifre<div className="tc-password-wrap"><input required minLength={8} type={showPassword?'text':'password'} value={values.password} onChange={e=>set('password',e.target.value)} autoComplete="new-password" placeholder="En az 8 karakter"/><button type="button" className="tc-password-toggle" onClick={()=>setShowPassword(x=>!x)}>{showPassword?'Gizle':'Göster'}</button></div></label>}
       {field('phone','Telefon (isteğe bağlı)','tel','+90 5xx xxx xx xx')}
       <div className="tc-agreements">
        <label className="tc-agreement"><input type="checkbox" checked={values.terms} onChange={e=>set('terms',e.target.checked)} required/><span><a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/uyelik-sozlesmesi.html">Üyelik Sözleşmesi</a>'ni kabul ediyorum ve <a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/gizlilik-politikasi.html">Gizlilik Politikası</a> hakkında bilgilendirildim.</span></label>
