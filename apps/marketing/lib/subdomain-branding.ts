@@ -23,3 +23,28 @@ export function logoForHost(hostname:string):string{
  const host=hostname.toLowerCase().replace(/:\d+$/,'').replace(/\.$/,'');
  return safeBrandLogo(overrides[host]);
 }
+
+/**
+ * Public platform branding comes from Master -> platform-settings.
+ * This is read on the server for each request; a missing API response keeps
+ * the existing logo instead of breaking the corporate site.
+ */
+export async function getPlatformLogoForHost(hostname:string):Promise<string>{
+ const host=hostname.toLowerCase().replace(/:\d+$/,'').replace(/\.$/,'');
+ const key:Record<string,'main'|'help'|'app'|'dev'>={
+  'ticarti.com':'main','www.ticarti.com':'main',
+  'help.ticarti.com':'help','app.ticarti.com':'app','dev.ticarti.com':'dev'
+ };
+ const backup=logoForHost(host);
+ const origin=String(process.env.API_ORIGIN||'').replace(/\/$/,'');
+ if(!origin||!key[host])return backup;
+ try{
+  const response=await fetch(origin+'/v1/public/website/branding',{
+   cache:'no-store',signal:AbortSignal.timeout(3500)
+  });
+  if(!response.ok)return backup;
+  const json=await response.json();
+  const candidate=json?.logos?.[key[host]];
+  return safeBrandLogo(typeof candidate==='string'?candidate:'',backup);
+ }catch{return backup;}
+}
