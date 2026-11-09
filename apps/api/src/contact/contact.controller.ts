@@ -30,6 +30,14 @@ export class ContactController {
   @Patch('superadmin/contact/callback-email-template')
   saveCallbackEmailTemplate(@Body() body:any){return this.svc.updateCallbackEmailTemplate(body)}
   @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/contact/email-settings')
+  contactEmailSettings(){return this.svc.contactEmailSettings()}
+
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/contact/email-settings')
+  saveContactEmailSettings(@Body() body:any){return this.svc.updateContactEmailSettings(body)}
+
+  @UseGuards(SuperAdminAuthGuard)
   @Get('superadmin/contact')
   inbox(){return this.svc.inbox()}
 
