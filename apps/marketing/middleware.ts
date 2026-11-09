@@ -8,9 +8,11 @@ export function middleware(request:NextRequest){
   // help.ticarti.com is served directly by the Marketing backend.
   // Its public root is the native /help page; category/article URLs stay clean.
   // Never issue a browser redirect or change the address bar.
-  const candidates=[request.headers.get('host'),request.headers.get('x-forwarded-host'),request.headers.get('x-original-host')]
+  const candidates=[request.nextUrl.hostname,request.headers.get('host'),
+    request.headers.get('x-forwarded-host'),request.headers.get('x-original-host'),
+    request.headers.get('x-forwarded-server')]
     .filter(Boolean).flatMap(value=>String(value).split(','))
-    .map(value=>value.trim().toLowerCase().replace(/:\d+$/,''));
+    .map(value=>value.trim().toLowerCase().replace(/:\d+$/,'').replace(/\.$/,''));
   if(candidates.includes('help.ticarti.com')){
     forwarded.set('x-ticarti-help-host','1');
     const url=request.nextUrl.clone();
