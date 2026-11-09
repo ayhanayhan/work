@@ -16,7 +16,7 @@ type Tool={id:string;sortOrder:number;status:'DRAFT'|'PUBLISHED';image:string;
  fields:Record<string,Localized>;sections:Section[];faqs:FAQ[]};
 type Snapshot={version:number;tools:Tool[]};
 const names:Record<string,string>={
- 'qr-kod-olusturucu':'QR Kod Oluşturucu','kdv-hesaplama':'KDV Hesaplama',
+ 'qr-kod-olusturucu':'QR Kod Oluşturucu','ean13-barkod-olusturucu':'EAN-13 Barkod Oluşturucu','kdv-hesaplama':'KDV Hesaplama',
  'trendyol-komisyon-hesaplama':'Trendyol Komisyon Hesaplama',
  'amazon-komisyon-hesaplama':'Amazon Komisyon Hesaplama',
  'hepsiburada-komisyon-hesaplama':'Hepsiburada Komisyon Hesaplama',
@@ -97,7 +97,7 @@ export default function ToolsEditor(){
  return <Container className="grid gap-5 pb-12">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h1 className="text-xl font-semibold">Araçlar · İçerik Yönetimi</h1>
-    <p className="mt-1 text-sm text-muted-foreground">Ticarti.com'un mevcut tasarımını değiştirmeden 11 araç sayfasının tüm içeriğini yönetin.</p></div>
+    <p className="mt-1 text-sm text-muted-foreground">Ticarti.com'un mevcut tasarımını değiştirmeden 12 araç sayfasının tüm içeriğini yönetin.</p></div>
    <div className="flex gap-2">
     <Button variant="outline" onClick={()=>void load()} disabled={loading||saving}><RefreshCw className="size-4"/>Yenile</Button>
     <Button onClick={()=>void save()} disabled={!draft||saving||loading}>{saving?<LoaderCircle className="size-4 animate-spin"/>:<Save className="size-4"/>}Kaydet</Button>
