@@ -56,22 +56,51 @@ export class MerchantAuthController {
     return this.auth.publicProviders();
   }
 
-  private linkedinCookie(req:any,key:string) {
-    return this.readCookie(req,key);
-  }
-  private linkedinCookies(res:any,state:string,verifier:string){
+  private socialCookies(res:any,provider:'google'|'linkedin',state:string,verifier:string){
     const secure=process.env.NODE_ENV==='production'?'; Secure':'';
     res.setHeader('Set-Cookie',[
-      `__Host-ticarti_linkedin_state=${encodeURIComponent(state)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
-      `__Host-ticarti_linkedin_pkce=${encodeURIComponent(verifier)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
+      `__Host-ticarti_${provider}_state=${encodeURIComponent(state)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
+      `__Host-ticarti_${provider}_pkce=${encodeURIComponent(verifier)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600${secure}`,
     ]);
   }
-  private clearLinkedinCookies(res:any) {
+  private clearSocialCookies(res:any,provider:'google'|'linkedin'){
     const secure=process.env.NODE_ENV==='production'?'; Secure':'';
     res.setHeader('Set-Cookie',[
-      `__Host-ticarti_linkedin_state=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
-      `__Host-ticarti_linkedin_pkce=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
+      `__Host-ticarti_${provider}_state=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
+      `__Host-ticarti_${provider}_pkce=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${secure}`,
     ]);
+  }
+
+  @Get('google/start')
+  async startGoogle(@Res() res:any) {
+    this.noStore(res);
+    const state=randomBytes(32).toString('base64url');
+    const verifier=randomBytes(48).toString('base64url');
+    const url=await this.auth.googleAuthUrl(state,verifier);
+    this.socialCookies(res,'google',state,verifier);
+    res.redirect(302,url);
+  }
+
+  @Get('google/callback')
+  async finishGoogle(@Query('code') code:string,@Query('state') state:string,@Req() req:any,@Res() res:any) {
+    this.noStore(res);
+    const expected=this.readCookie(req,'__Host-ticarti_google_state');
+    const verifier=this.readCookie(req,'__Host-ticarti_google_pkce');
+    this.clearSocialCookies(res,'google');
+    if(!code||!state||!expected||!verifier){
+      res.redirect(303,'https://login.ticarti.com/?socialError=invalid_state');return;
+    }
+    const a=Buffer.from(state),b=Buffer.from(expected);
+    if(a.length!==b.length||!timingSafeEqual(a,b)){
+      res.redirect(303,'https://login.ticarti.com/?socialError=invalid_state');return;
+    }
+    try{
+      const result=await this.auth.googleCallback(code,verifier);
+      res.setHeader('Referrer-Policy','no-referrer');
+      res.redirect(303,'https://login.ticarti.com/?socialHandoff='+encodeURIComponent(result.handoffCode));
+    }catch{
+      res.redirect(303,'https://login.ticarti.com/?socialError=login_failed');
+    }
   }
 
   @Get('linkedin/start')
@@ -80,16 +109,16 @@ export class MerchantAuthController {
     const state=randomBytes(32).toString('base64url');
     const verifier=randomBytes(48).toString('base64url');
     const url=await this.auth.linkedinAuthUrl(state,verifier);
-    this.linkedinCookies(res,state,verifier);
+    this.socialCookies(res,'linkedin',state,verifier);
     res.redirect(302,url);
   }
 
   @Get('linkedin/callback')
   async finishLinkedin(@Query('code') code:string,@Query('state') state:string,@Req() req:any,@Res() res:any) {
     this.noStore(res);
-    const expected=this.linkedinCookie(req,'__Host-ticarti_linkedin_state');
-    const verifier=this.linkedinCookie(req,'__Host-ticarti_linkedin_pkce');
-    this.clearLinkedinCookies(res);
+    const expected=this.readCookie(req,'__Host-ticarti_linkedin_state');
+    const verifier=this.readCookie(req,'__Host-ticarti_linkedin_pkce');
+    this.clearSocialCookies(res,'linkedin');
     if(!code||!state||!expected||!verifier){
       res.redirect(303,'https://login.ticarti.com/?socialError=invalid_state');return;
     }
