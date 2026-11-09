@@ -1,1 +1,0 @@
-import {Module} from '@nestjs/common';import {SystemController} from './system.controller';import {StoreLifecycleService} from './store-lifecycle.service';@Module({controllers:[SystemController],providers:[StoreLifecycleService]})export class SystemModule{}

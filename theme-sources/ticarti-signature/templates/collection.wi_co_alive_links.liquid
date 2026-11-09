@@ -1,6 +1,0 @@
-{%- layout none -%}
-{%- assign handles = collection.sort_by | remove_last: '||' | split: '||' -%}
-{%- for handle in handles -%}
-{%- assign product = all_products[handle] -%}
-{%- if product == blank -%}{{ handle }},{%- endif -%}
-{%- endfor -%}
