@@ -2,7 +2,7 @@ import {FooterTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 import FooterLanguagePicker from '@/components/footer-language-picker';
 /* Original Ticarti footer markup converted to native JSX. */
-export default function FooterSnapshot({navigation,locale='tr',helpHost=false}:{navigation:Navigation|null;locale?:string;helpHost?:boolean}){const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;return (
+export default function FooterSnapshot({navigation,locale='tr',helpHost=false,logoSrc='/assets/images/ticarti-logo.svg'}:{navigation:Navigation|null;locale?:string;helpHost?:boolean;logoSrc?:string}){const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;return (
   <div className={"tc-component tc-component__content tc-component--section"} id={"tc-global-footer"}>
     {"\n"}
     <footer aria-label={"Ticarti footer"} className={"tc-site-footer tc-home-footer"}>
@@ -22,7 +22,7 @@ export default function FooterSnapshot({navigation,locale='tr',helpHost=false}:{
             {"\n"}
             <a className={"footer-logo"} href={main("/")}>
               {"\n"}
-              <img alt={"Ticarti"} loading={"lazy"} src={"/assets/images/ticarti-logo.svg"} data-tc-content-src={"image-108"} />
+              <img alt={"Ticarti"} loading={"lazy"} src={logoSrc} data-tc-content-src={"image-108"} />
               {"\n"}
             </a>
             {"\n"}
