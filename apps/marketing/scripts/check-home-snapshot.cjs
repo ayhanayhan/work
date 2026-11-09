@@ -200,6 +200,20 @@ assert.ok(shellSource.includes('<HeaderSnapshot navigation={scopedNav} locale={l
  'One central shell must own both header and footer for corporate and help domains');
 assert.ok(blogSource.includes('<SiteShell>')&&page.includes('<SiteShell>'),
  'Blog and homepage must use the exact same header/footer shell');
+const sharedFooterCss=fs.readFileSync(path.resolve(__dirname,'../public/assets/css/shared-footer.css'),'utf8');
+assert.ok(sharedFooterCss.includes('.tc-shared-shell .tc-home-footer .footer-nav-columns'),
+ 'One shared footer CSS must cover the homepage and every internal Marketing page');
+assert.ok(!sharedFooterCss.includes('html:not(.tc-page-home)'),
+ 'No duplicated footer rules may depend on an internal page HTML class');
+const contactView=fs.readFileSync(path.resolve(__dirname,'../components/contact-view.tsx'),'utf8');
+const toolView=fs.readFileSync(path.resolve(__dirname,'../components/tools-pages.tsx'),'utf8');
+const helpView=fs.readFileSync(path.resolve(__dirname,'../app/help/page.tsx'),'utf8');
+const notFoundView=fs.readFileSync(path.resolve(__dirname,'../app/not-found.tsx'),'utf8');
+for(const [name,source] of [['contact',contactView],['tools',toolView],['help',helpView],['404',notFoundView]]){
+ assert.ok(source.includes('<SiteShell>'),name+' must get the same site header/footer component');
+ assert.ok(!source.includes('<FooterSnapshot'),name+' may not declare its own footer');
+}
+
 for(const id of ['hero','builder','radar','channels','showcase','references','bottomCta','animated']){
  const original=fs.readFileSync(path.join(dir,id+'.tsx'),'utf8');
  assert.ok(original.includes('module?.configured')&&original.includes("CmsSection"),
