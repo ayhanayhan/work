@@ -2,8 +2,6 @@ import {HeaderPrimaryTree,HeaderMegaTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
-import MerchantLoginLabel from '@/components/merchant-login-label';
-const helpLabels:Record<string,string>={tr:'Yardım Merkezi',en:'Help Center',de:'Hilfe-Center',ru:'Центр помощи',ar:'مركز المساعدة',bg:'Помощен център',uk:'Центр допомоги',id:'Pusat Bantuan',vi:'Trung tâm trợ giúp'};
 
 export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,logoSrc='/assets/images/ticarti-logo.svg'}:{navigation:Navigation|null;locale?:string;helpHost?:boolean;logoSrc?:string}){
  const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;
@@ -105,48 +103,18 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,lo
             {"\n"}
             <div className={"tc-navigation-actions"}>
               {"\n"}
-              <div className={"tc-menu secondary-menu js-enabled"}>
-                {"\n"}
-                <span className={"tc-component tc-component__content tc-component--menu"} id={"tc-widget-015"}>
-                  {"\n"}
-                  <a className={"mobile-trigger"}>
-                    {"\n"}
-                    <i></i>
-                    {"\n"}
-                  </a>
-                  {"\n"}
-                  <div aria-label={"Navigation Menu"} className={"tc-nav-wrapper active-branch no-flyouts tc-nav-horizontal"} data-menu-id={"218746190423"} data-sitemap-name={"default"} id={"tc-widget-051"} role={"navigation"}>
-                    {"\n"}
-                    <ul role={"menu"}>
-                      {"\n"}
-                      <li className={"tc-nav-item tc-nav-primary"} role={"none"}>
-                        {"\n"}
-                        <a href={"https://help.ticarti.com/"} role={"menuitem"} data-tc-content-key={"a-005"}>
-                          {helpLabels[locale]||helpLabels.tr}
-                        </a>
-                        {"\n"}
-                      </li>
-                      {"\n"}
-                    </ul>
-                    {"\n"}
-                  </div>
-                  {"\n"}
-                </span>
-                {"\n"}
-              </div>
-              {"\n"}
               <div className={"button btn2 login-btn"}>
                 {"\n"}
-                <a href={main(locale==="tr"?"/iletisim":"/"+locale+"/iletisim")} data-tc-content-key={"a-006"}>
-                  {"İletişim"}
+                <a href={"https://login.ticarti.com/"} data-tc-content-key={"a-006"}>
+                  {"Giriş yap"}
                 </a>
                 {"\n"}
               </div>
               {"\n"}
               <div className={"button btn1 account-btn"}>
                 {"\n"}
-                <a href={"https://login.ticarti.com/"} data-tc-content-key={"a-007"}>
-                  <MerchantLoginLabel locale={locale}/>
+                <a href={"https://login.ticarti.com/register"} data-tc-content-key={"a-007"}>
+                  {"Siteni oluştur"}
                 </a>
                 {"\n"}
               </div>

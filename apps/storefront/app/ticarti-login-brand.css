@@ -1,0 +1,30 @@
+/* Ticarti account screens. Scope overrides to login.ticarti.com only. */
+.tc-auth-portal{--tc-lime:#f0f97b;--tc-ink:#1d241f;--tc-muted:#626b63;font-family:Inter,Arial,sans-serif;color:var(--tc-ink);min-height:100vh}
+.tc-auth-portal,.tc-auth-portal *{letter-spacing:normal!important;box-sizing:border-box}
+.tc-auth-portal.tc-auth-portal,.tc-auth-register{display:grid;grid-template-columns:minmax(330px,40%) minmax(0,1fr)}
+.tc-auth-portal .ticarti-login-brand{background:#f5f7f0!important;color:var(--tc-ink)!important;padding:clamp(30px,4.8vw,75px);border-right:1px solid #e5e9e1}
+.tc-auth-portal .tc-auth-logo{display:block;width:140px;max-width:100%}
+.tc-auth-portal .tc-auth-logo img{display:block;width:100%;height:auto;object-fit:contain}
+.tc-auth-portal .ticarti-login-brand h1{font-size:clamp(34px,3.8vw,48px)!important;line-height:1.16!important;font-weight:600!important;margin:0 0 20px}
+.tc-auth-portal .ticarti-login-brand p{font-size:16px!important;line-height:1.8!important;color:var(--tc-muted)!important}
+.tc-auth-portal .ticarti-login-brand small{color:#697369!important;font-size:12px}
+.tc-auth-portal .ticarti-login-card{max-width:430px}
+.tc-auth-portal .ticarti-login-title h2{font-size:30px!important;font-weight:600!important}
+.tc-auth-portal .ticarti-login-title p{color:var(--tc-muted)}
+.tc-auth-portal input:focus,.tc-auth-portal select:focus{border-color:#869c35!important;box-shadow:0 0 0 3px rgba(142,192,63,.13)!important}
+.tc-auth-portal .ticarti-btn.primary{background:var(--tc-lime)!important;border-color:var(--tc-lime)!important;color:var(--tc-ink)!important;border-radius:8px!important}
+.tc-auth-portal .ticarti-login-meta a,.tc-auth-portal .ticarti-login-bottom a,.tc-auth-portal .ticarti-onboarding-login a{color:#334e15!important;text-decoration:underline;text-underline-offset:3px}
+.tc-auth-register__panel{min-width:0;display:flex;align-items:center;justify-content:center;padding:52px 36px;background:#fff}
+.tc-auth-register__inner{max-width:650px;width:100%}
+.tc-auth-portal .tc-auth-benefits{display:flex;flex-direction:column;gap:13px;margin-top:32px}
+.tc-auth-portal .tc-auth-benefits span{font-size:14px;color:#4f6250}
+.tc-auth-portal .tc-auth-benefits span:before{content:'✓';font-weight:700;color:#607e30;margin-right:10px}
+.tc-auth-return{display:inline-block;font-size:13px;color:#48554a;text-decoration:underline;text-underline-offset:3px;margin-bottom:25px}
+.tc-auth-portal .ticarti-onboarding-head>span{display:none}
+.tc-auth-portal .ticarti-onboarding-head h2{font-size:28px!important;font-weight:600!important}
+.tc-auth-portal .ticarti-onboarding-head p{font-size:14px;line-height:1.7;color:#626b63}
+.tc-auth-portal .ticarti-onboarding-grid label{font-size:13px;font-weight:600}
+.tc-auth-portal .ticarti-onboarding-grid input,.tc-auth-portal .ticarti-onboarding-grid select{font-size:14px;height:46px;border-radius:8px}
+.tc-auth-portal .ticarti-onboarding-form{padding:0!important}
+@media(max-width:900px){.tc-auth-portal.tc-auth-portal,.tc-auth-register{grid-template-columns:1fr}.tc-auth-portal .ticarti-login-brand{min-height:220px;padding:28px 24px;gap:22px}.tc-auth-portal .ticarti-login-brand h1{font-size:30px!important}.tc-auth-portal .ticarti-login-brand p{font-size:14px!important}.tc-auth-portal .ticarti-login-brand small{display:none}.tc-auth-portal .ticarti-login-panel{padding:42px 24px}.tc-auth-register__panel{padding:36px 24px 70px}.tc-auth-portal .tc-auth-benefits{display:none}}
+@media(max-width:540px){.tc-auth-portal .ticarti-onboarding-grid{grid-template-columns:1fr}.tc-auth-portal .ticarti-onboarding-grid label.wide{grid-column:auto}}

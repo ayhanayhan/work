@@ -116,6 +116,10 @@ function jsonLd(page:PageData,lang:BlogLocale,seo:WebsiteSeo|null=null):object[]
 }
 export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{
   const {slug=[]}=await params;
+  // The public authentication pages must use the actual merchant auth service.
+  // Old HTML demo forms have no working authentication and must not be served.
+  if(['login','login.html'].includes(slug.at(-1)||''))redirect('https://login.ticarti.com/');
+  if(['register','register.html'].includes(slug.at(-1)||''))redirect('https://login.ticarti.com/register');
   // Legacy HTML contact URLs must never render a copied template.
   if(slug.at(-1)==='contacto.html'||slug.at(-1)==='contacto')notFound();
   const route=toolRequest(slug);
