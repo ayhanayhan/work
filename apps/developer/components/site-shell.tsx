@@ -41,14 +41,7 @@ export default async function SiteShell({children}:{children:ReactNode}){
  }};
  const devFooterNav={...(scopedNav||{version:0}),menus:{
   header:[],
-  footer:[...(scopedNav?.menus?.footer||[]),{
-   id:'developer-footer',label:{tr:'Geliştirici'},url:'',enabled:true,
-   children:[
-    {id:'developer-footer-docs',label:{tr:'Dokümantasyon'},url:'/docs',enabled:true,children:[]},
-    {id:'developer-footer-apps',label:{tr:'Uygulamalarım'},url:'/apps',enabled:true,children:[]},
-    {id:'developer-footer-guide',label:{tr:'Başlangıç'},url:'/guide',enabled:true,children:[]}
-   ]
-  }]
+  footer:scopedNav?.menus?.footer||[]
  }};
  return <HomeInteractions className="tc-page-home tc-shared-shell tc-developer-shell">
   <HeaderSnapshot navigation={devHeaderNav} locale={locale} helpHost logoSrc={publicLogo(logoSrc)}/>
