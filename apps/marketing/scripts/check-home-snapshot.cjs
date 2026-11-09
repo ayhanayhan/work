@@ -209,4 +209,16 @@ assert.ok(!page.includes('HOME_VISUAL_SCRIPTS'),'No legacy homepage script injec
 const behavior=fs.readFileSync(path.join(dir,'interactions.tsx'),'utf8');
 assert.ok(!behavior.includes('innerHTML') || behavior.includes('No legacy <script> injection'),'No runtime HTML replacement');
 assert.ok(!behavior.includes('appendChild('),'No legacy DOM append operations');
+const nativeContact=fs.readFileSync(path.resolve(__dirname,'../app/iletisim/page.tsx'),'utf8');
+const contactView=fs.readFileSync(path.resolve(__dirname,'../components/contact-view.tsx'),'utf8');
+const contactForm=fs.readFileSync(path.resolve(__dirname,'../components/contact-form.tsx'),'utf8');
+const contactRoutes=fs.readFileSync(path.resolve(__dirname,'../app/[lang]/iletisim/page.tsx'),'utf8');
+const sitemap=fs.readFileSync(path.resolve(__dirname,'../app/sitemap.ts'),'utf8');
+assert.ok(nativeContact.includes('<ContactView locale="tr"'), 'Contact page must be native React, not legacy HTML');
+assert.ok(contactView.includes('<SiteShell>')&&contactView.includes('<ContactForm locale={locale}/>'),
+  'Native contact page must reuse site shell and React form');
+assert.ok(contactForm.includes("fetch('/api/v1/public/contact'"),'Contact form must use existing API');
+assert.ok(contactRoutes.includes('<ContactView locale={lang}/>'),'Localized contact routes must be native');
+assert.ok(sitemap.includes("['contact','/iletisim']")&&!sitemap.includes("['contact','/contacto.html']"),
+  'Sitemap must index native /iletisim, not legacy HTML contact');
 console.log('PASS: original unconfigured sections restored, configured missing locales hidden, shared site shell used');
