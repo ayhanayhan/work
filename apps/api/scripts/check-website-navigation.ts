@@ -21,6 +21,19 @@ async function main(){
  assert.equal(initial.version,0);
  assert.equal(initial.menus.header.length,3);
  assert.equal(initial.menus.footer.length,4);
+ assert.ok([...all(initial.menus.header),...all(initial.menus.footer)].every(x=>!x.url.includes('contacto')),
+  'Navigation must never expose obsolete contacto HTML routes');
+ const oldMenus=structuredClone(initial.menus);
+ const contact=all(oldMenus.footer).find(x=>x.url==='/iletisim');
+ assert.ok(contact,'Missing native contact link');
+ contact.url='/contacto.html';
+ const previousNavigation=navigation;
+ navigation={version:0,menus:oldMenus,groups:[],toolsFooterMigration:1,navigationTranslationsMigration:1};
+ const migrated=await service.get();
+ assert.ok([...all(migrated.menus.header),...all(migrated.menus.footer)].every(x=>!x.url.includes('contacto')),
+  'Saved legacy contact URLs should be normalized at read time');
+ navigation=previousNavigation;
+
  assert.ok(!all(initial.menus.header).some(row=>row.url==='/araclar'),
   'Header must not link to retired Tools listing');
  assert.ok(!all(initial.menus.footer).some(row=>row.url==='/araclar'),
