@@ -30,7 +30,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"Instagram"} href={"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"Instagram"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -52,7 +52,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"YouTube"} href={"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"YouTube"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -74,7 +74,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"Spotify"} href={"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"Spotify"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -96,7 +96,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
               {"\n"}
               <li>
                 {"\n"}
-                <a aria-label={"LinkedIn"} href={"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
+                <a aria-label={"LinkedIn"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} title={"Sosyal medya hesabı bağlantısı yapılandırılacak"}>
                   {"\n"}
                   <span className={"tc-component tc-component__content tc-component--icon"} id={"tc-widget-007"}>
                     {"\n"}
@@ -120,7 +120,7 @@ export default function FooterSnapshot({navigation,locale='tr'}:{navigation:Navi
             {"\n"}
             <div className={"tc-footer-brand-support"}>
               {"\n"}
-              <a className={"tc-site-hero__cta tc-site-hero__cta--1 tc-support-link"} href={"/iletisim"} data-tc-content-key={"a-273"}>
+              <a className={"tc-site-hero__cta tc-site-hero__cta--1 tc-support-link"} href={locale==="tr"?"/iletisim":"/"+locale+"/iletisim"} data-tc-content-key={"a-273"}>
                 {"Destek al"}
               </a>
               {"\n"}
