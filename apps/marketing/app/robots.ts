@@ -5,6 +5,10 @@ import {getWebsiteSeo} from '@/lib/site-seo';
 export const dynamic='force-dynamic';
 export default async function robots():Promise<MetadataRoute.Robots>{
  const h=await headers();
+ if(h.get('x-ticarti-help-host')==='1'){
+  return {rules:{userAgent:'*',allow:['/'],disallow:['/help','/yardim','/api/']},
+   sitemap:'https://help.ticarti.com/sitemap.xml'};
+ }
  const publicProxy=h.get('x-ticarti-site-proxy')==='1'&&h.get('x-forwarded-host')==='ticarti.com';
  const host=h.get('host')||'';
  if(!publicProxy&&(host.endsWith('.hosted.app')||host.includes('localhost')||host.includes('127.0.0.1'))){
