@@ -4,6 +4,7 @@ import {activePlatformLocales} from '../common/platform-locales';
 import { getTicartiSkinPreset, normalizeTicartiSkinSlug, ticartiSkinCatalog } from '../theme-presets/ticarti-skins';
 import { ticartiSourceDesignForSkin, ticartiSourceHomePreset } from '../theme-presets/ticarti-source-preset';
 import * as bcrypt from 'bcryptjs';
+import {LEGACY_PRICING_CATEGORIES,LEGACY_PRICING_FEATURES} from './pricing-legacy-seed';
 
 @Injectable()
 export class SuperAdminService {
@@ -179,6 +180,22 @@ export class SuperAdminService {
       for(const lang of locales)translations[lang]={title:lang==='tr'?(categoryLabels as Record<string,string>)[kind]:(categoryEn as Record<string,string>)[kind],description:''};
       categories.push({id,code:'INTEGRATION_'+kind.toUpperCase(),isActive:true,sortOrder:110+Object.keys(categoryLabels).indexOf(kind)*10,translations});
     }
+    // Import the original 90 comparison features individually, without overwriting existing Master entries.
+    for(const group of LEGACY_PRICING_CATEGORIES){
+      if(categories.some((c:any)=>c.id===group.id))continue;
+      const translations:any={};
+      for(const lang of locales)translations[lang]={title:lang==='tr'?group.label:group.label,description:''};
+      categories.push({id:group.id,code:group.code,isActive:true,sortOrder:15+categories.length,translations});
+    }
+    for(const row of LEGACY_PRICING_FEATURES){
+      if(features.some((f:any)=>f.id===row.id||f.code===row.code))continue;
+      const translations:any={};
+      for(const lang of locales)translations[lang]={title:row.title,subtitle:'',slug:row.id,
+        description:row.description,body:'',seoTitle:row.title+' | Ticarti',
+        seoDescription:row.description};
+      features.push({id:row.id,code:row.code,categoryId:row.categoryId,
+        valueType:'TEXT',isActive:true,isPageEnabled:false,sortOrder:features.length,translations,imageUrl:''});
+    }
     let added=0;
     for(const spec of specs){
       if(features.some((f:any)=>f.id===spec.id||f.code===spec.code))continue;
@@ -193,7 +210,6 @@ export class SuperAdminService {
       features.push({id:spec.id,code:spec.code,categoryId:'integration-category-'+spec.kind,valueType:'BOOLEAN',isActive:true,isPageEnabled:false,sortOrder:200+spec.index,translations,imageUrl:''});
       added++;
     }
-    const currentCatalog:any=await this.prisma.platformSetting.findUnique({where:{key:'plan_feature_catalog'}});
     if(added||categories.length!==snapshot.categories.length){
       await this.prisma.platformSetting.upsert({where:{key:'plan_feature_catalog'},create:{key:'plan_feature_catalog',value:{categories,features}},update:{value:{categories,features}}});
     }
@@ -206,6 +222,14 @@ export class SuperAdminService {
       const current:any=plan.features&&typeof plan.features==='object'&&!Array.isArray(plan.features)?plan.features:{};
       const selections:any[]=Array.isArray(current._catalog)?[...current._catalog]:[];
       let changed=false;
+      for(const [index,row] of LEGACY_PRICING_FEATURES.entries()){
+        if(selections.some((x:any)=>x.featureId===row.id))continue;
+        const column=code==='start'?0:code==='grow'?1:2;
+        const raw=String(row.values[column]||'').trim();
+        const available=!!raw&&!/^(?:—|–|-|yok|değerlendirmede|planlanıyor)$/i.test(raw);
+        selections.push({featureId:row.id,code:row.code,enabled:available,
+          value:/^(?:✓|dahil)$/i.test(raw)?'':raw});changed=true;assigned++;
+      }
       for(const spec of specs){
         if(selections.some((x:any)=>x.featureId===spec.id))continue;
         const selected=(tiers as Record<string,string[]>)[code].includes(spec.id.replace('integration-',''));
