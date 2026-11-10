@@ -131,8 +131,8 @@ export class WebsiteService{
       this.pricingFaq()
     ]);
     const base=record?.value&&typeof record.value==='object'?record.value:{};
-    const categories=Array.isArray(base.categories)?base.categories:[];
-    const features=Array.isArray(base.features)?base.features:[];
+    const categories=(Array.isArray(base.categories)?base.categories:[]).slice().sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+    const features=(Array.isArray(base.features)?base.features:[]).slice().sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
     const visible=plans.filter((p:any)=>p.features?._meta?.frontendVisible!==false).slice(0,3);
     const localized=(translations:any,fallback:any,field='title')=>{
       const active=translations?.[locale]||translations?.tr||translations?.en||{};
