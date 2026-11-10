@@ -46,7 +46,6 @@ export default async function RootLayout({children}:{children:ReactNode}) {
     <link rel="stylesheet" href="/assets/css/marketing-help.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/marketing-developer.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/navigation-tree.css?v=1"/>
-    {contentParts[0]==='paketler'||contentParts[0]==='paketler.html'?<link rel="stylesheet" href="/assets/css/pricing-master.css?v=1"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=3"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
   </head><body>{children}</body></html>;
