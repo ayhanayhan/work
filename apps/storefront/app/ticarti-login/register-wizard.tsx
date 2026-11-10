@@ -11,7 +11,7 @@ const PLANS=[
  {id:'grow',name:'Grow',desc:'Büyüyen mağazalar için',price:'6.998',oldPrice:'8.230',features:['Start kapsamındaki özellikler','Çoklu depo ve gelişmiş pazarlama'],popular:true},
  {id:'scale',name:'Scale',desc:'Yüksek satış hacimleri için',price:'11.618',oldPrice:'13.670',features:['Grow kapsamındaki özellikler','Depolar arası transfer ve gelişmiş raporlama'],popular:false}
 ] as const;
-const annualPrice=(monthly:string)=>new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(Number(monthly.replace(/\\./g,''))*12);
+const annualPrice=(monthly:string)=>new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(Number(monthly.replace(/\./g,''))*12);
 const STEPS=[
  {title:'Önce hesabını oluşturalım.',desc:'Ad, e-posta ve şifre bilgilerini tamamla.'},
  {title:'Sana uygun paketi seç.',desc:'Başlangıç için kullanmak istediğin paketi belirle.'},
@@ -27,7 +27,7 @@ function errorMessage(data:any,fallback:string){return Array.isArray(data?.messa
 type Signup={name:string;email:string;password:string;phone:string;sector:string;store:string;slug:string;plan:string;terms:boolean;marketing:boolean;pricesIncludeTax:boolean};
 const init:Signup={name:'',email:'',password:'',phone:'',sector:'',store:'',slug:'',plan:'',terms:false,marketing:false,pricesIncludeTax:true};
 export default function RegisterWizard(){
- const {t,locale}=useAuthLocale();
+ const {t}=useAuthLocale();
  const[welcome,setWelcome]=useState(true),[step,setStep]=useState(0),[values,setValues]=useState<Signup>(init);
  const[social,setSocial]=useState<'GOOGLE'|'LINKEDIN'|null>(null);
  const[providers,setProviders]=useState<{google:{enabled:boolean};linkedin:{enabled:boolean}}>({google:{enabled:false},linkedin:{enabled:false}});
@@ -168,7 +168,7 @@ export default function RegisterWizard(){
      <button className="tc-back" type="button" onClick={()=>{if(step===0)setWelcome(true);else setStep(s=>s-1);setError('')}}>{t('back')}</button>
     </div>
    </form>
-   <p className="tc-switch">Zaten hesabın var mı? <Link className="tc-link" href="/">Giriş yap</Link></p>
+   <p className="tc-switch">{t('haveAccount')} <Link className="tc-link" href="/">{t('signIn')}</Link></p>
   </section>}
  </AuthShell>;
 }
