@@ -78,9 +78,9 @@ function updateCards(source:string,plans:PublicPlan[]){
  return source.slice(0,grid)+segment+source.slice(close);
 }
 function setCell(template:string,enabled:boolean,value:string){
- const display=enabled?(value||'Dahil'):(value||'—');
- const tag=enabled?'tc-val':'tc-dash';
- return template.replace(/<span class="(?:tc-val|tc-dash)"[^>]*>[\s\S]*?<\/span>/i,
+ const display=enabled?(value||'✓'):(value||'—');
+ const tag=!enabled?'tc-dash':display==='✓'?'tc-check':'tc-val';
+ return template.replace(/<span class="(?:tc-val|tc-check|tc-dash)"[^>]*>[\s\S]*?<\/span>/i,
  '<span class="'+tag+'">'+safe(display)+'</span>');
 }
 function planSelection(p:PublicPlan,featureId:string){
