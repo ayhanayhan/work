@@ -151,10 +151,11 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     // Other homepage modules still use the existing integration.
     // Homepage text is no longer patched by any client-side CMS script.
   }
-  // Pricing is rendered on the server from Master rather than static HTML demo prices.
-  if(source==='en/paketler.html'){data.pricing=await getPricingFeed(lang);data.html=applyPricingFeed(data.html,data.pricing);}
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
+  // Patch only the original theme nodes, after generic CMS values, so pricing
+  // cannot be overwritten by stale static content keys.
+  if(source==='en/paketler.html'){data.pricing=await getPricingFeed(lang);data.html=applyPricingFeed(data.html,data.pricing);}
   data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
   if(isHome&&data.faq){
     data.html=applyHomepageFaq(data.html,data.faq);
