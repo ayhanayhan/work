@@ -1,5 +1,5 @@
 'use client';
-import {useRef,useState,type ReactNode,type MouseEvent} from 'react';
+import {useState,type ReactNode,type MouseEvent} from 'react';
 import {useAuthLocale} from './auth-locale';
 import {LOGIN_HEADER_HTML,REGISTER_HEADER_HTML,LOGIN_AI_HTML,REGISTER_AI_HTML,LOGIN_LEGAL_HTML,REGISTER_LEGAL_HTML} from './original-template-markup';
 export const AUTH_ASSET_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
@@ -9,7 +9,6 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
  const sourceHeader=originalRegister?REGISTER_HEADER_HTML:LOGIN_HEADER_HTML;
  // Preserve the original header as the direct flex child: no extra wrapper changes its layout.
  const headerInner=sourceHeader.slice(sourceHeader.indexOf('>')+1,sourceHeader.lastIndexOf('</div>'));
- const headerRef=useRef<HTMLDivElement>(null);
  const[languageOpen,setLanguageOpen]=useState(false);
  const aiTexts:Record<string,string[]> = {
   tr:['Tekrar hoş geldin! Mağazana giriş yaparak ürünlerini, siparişlerini ve tüm operasyonunu kaldığın yerden yönetebilirsin.','E-posta adresin ve şifrenle güvenle devam et. Hesap açman gerekiyorsa kayıt ekranına dönebilirsin.','Ticarti’ye hoş geldin! Hesabını oluşturduktan sonra mağazanı birkaç basit adımda birlikte hazırlayacağız.','Önce seni tanıyalım. Adın, e-posta adresin ve şifren Ticarti hesabının temelini oluşturacak.','Başlangıç için sana uygun paketi seç. Sonraki adımlarda mağazanı hazırlayacağız.','Ne satacağını seç. Bu bilgi başlangıçta sana daha uygun mağaza önerileri sunmamıza yardımcı olacak.','Şimdi markana bir isim verelim. Mağaza adını daha sonra yönetim panelinden değiştirebilirsin.','Mağazan için kısa ve akılda kalıcı bir internet adresi seç. Kendi alan adını sonradan bağlayabileceksin.','Mağaza bilgilerini tamamladın. Son adım olan ödeme özetine geçmeden önce seçimlerini kontrol edebilirsin.','Son adımda paket özetini görüyorsun. Gerçek ödeme, güvenli ödeme sağlayıcısı bağlandıktan sonra etkinleştirilecek.'],
@@ -27,7 +26,11 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
  const aiMessage=list[contextIndex];
  const aiSource=originalRegister?REGISTER_AI_HTML:LOGIN_AI_HTML;
  const localizedAi=aiSource.replace('<p class="tc-mobile-ai-message" id="tc-mobile-ai-message"></p>','<p class="tc-mobile-ai-message" id="tc-mobile-ai-message">'+aiMessage+'</p>');
- const localHeader=headerInner.replace(/(<span data-slot="select-value">)[^<]*/,'$1'+locale.toUpperCase());
+ const localHeader=headerInner
+  .replace(/(<span data-slot="select-value">)[^<]*/,'$1'+locale.toUpperCase())
+  .replace('class="tc-auth-shell-progress-fill h-1 rounded-full bg-sh-lime-500 tc-auth-progress-initial"','class="tc-auth-shell-progress-fill h-1 rounded-full bg-sh-lime-500 tc-auth-progress-initial" style="width:'+String(progress||0)+'%"');
+ const localizedFooter=(originalRegister?REGISTER_LEGAL_HTML:LOGIN_LEGAL_HTML)
+  .replace('Üyelik Sözleşmesi',t('terms')).replace('Gizlilik Politikası',t('privacy')).replace('KVKK Aydınlatma Metni',t('kvkk'));
  function handleHeaderClick(e:MouseEvent<HTMLDivElement>){
   if((e.target as Element).closest('button[aria-label="Change language"]')){e.preventDefault();setLanguageOpen(x=>!x);}
  }
@@ -36,14 +39,14 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
    <div className="tc-auth-shell-shell-viewport fixed inset-0 overflow-clip">
     <div className="tc-auth-shell-shell-root flex h-full w-full overflow-x-auto bg-[color-mix(in_srgb,var(--color-sh-lime-100)_40%,var(--background))]">
      <div className="tc-auth-shell-shell-content-col flex h-full min-h-0 min-w-[778px] flex-1 flex-col bg-background tc-auth-content-width">
-      <div className="tc-auth-shell-progress-header flex w-full shrink-0 items-center justify-between px-8 pt-8" ref={headerRef} onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:localHeader}}/>
+      <div className="tc-auth-shell-progress-header flex w-full shrink-0 items-center justify-between px-8 pt-8" onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:localHeader}}/>
       {languageOpen?<div className="tc-auth-source-lang" role="listbox" aria-label={t('localeLabel')}>{locales.map(x=><button type="button" key={x.locale} role="option" aria-selected={x.locale===locale} onClick={()=>{setLocale(x.locale);setLanguageOpen(false)}}>{x.label} · {x.locale.toUpperCase()}{x.locale===locale?' ✓':''}</button>)}</div>:null}
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-gutter:stable] tc-auth-scroll-spacer"><div className="tc-auth" id="tc-app">{children}</div></div>
      </div>
     </div>
    </div>
    <div dangerouslySetInnerHTML={{__html:localizedAi}}/>
-   <div dangerouslySetInnerHTML={{__html:originalRegister?REGISTER_LEGAL_HTML:LOGIN_LEGAL_HTML}}/>
+   <div dangerouslySetInnerHTML={{__html:localizedFooter}}/>
   </div>
  </>;
 }
