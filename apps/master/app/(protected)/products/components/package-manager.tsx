@@ -43,7 +43,7 @@ export function PackagesListPage(){
   const[status,setStatus]=useState('ALL');
   const[seeding,setSeeding]=useState(false);
   const[seedMessage,setSeedMessage]=useState('');
-  const seedIntegrations=async()=>{setSeeding(true);setSeedMessage('');try{const result=await w.request('/superadmin/plan-feature-catalog/seed-integrations',{method:'POST',body:'{}'});setSeedMessage('Katalog hazır: '+result.added+' yeni entegrasyon, '+result.assigned+' paket eşleştirmesi. Mevcut ayarlar korundu.');await w.load();}catch(e:any){setSeedMessage(e.message||'Entegrasyonlar eklenemedi.')}finally{setSeeding(false)}};
+  const seedIntegrations=async()=>{setSeeding(true);setSeedMessage('');try{const result=await w.request('/superadmin/plan-feature-catalog/seed-integrations',{method:'POST',body:'{}'});setSeedMessage('Katalog hazır: '+(result.legacyFeaturesAdded||0)+' tema özelliği, '+(result.integrationsAdded||0)+' entegrasyon sağlayıcısı ve '+result.assigned+' paket eşleştirmesi. Mevcut ayarlar korundu.');await w.load();}catch(e:any){setSeedMessage(e.message||'Entegrasyonlar eklenemedi.')}finally{setSeeding(false)}};
   const rows=useMemo(()=>{const all=w.data?.plans||[];const needle=q.trim().toLocaleLowerCase('tr');return all.filter(p=>(status==='ALL'||(status==='ACTIVE'?p.isActive:!p.isActive))&&(!needle||p.name.toLocaleLowerCase('tr').includes(needle)||p.code.toLocaleLowerCase('tr').includes(needle)))},[w.data,q,status]);
   const active=(w.data?.plans||[]).filter(x=>x.isActive).length;
   const featured=(w.data?.plans||[]).filter(x=>x.features?._meta?.isFeatured).length;
