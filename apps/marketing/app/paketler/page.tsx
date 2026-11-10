@@ -46,6 +46,13 @@ export default async function PricingPage(){
   return {value:state.value||(state.enabled?'✓':'—'),enabled:state.enabled};
  };
  const faq=feed?.faq;
+ const faqJsonLd=faq?.enabled&&faq.items.length?{
+  '@context':'https://schema.org','@type':'FAQPage',
+  mainEntity:faq.items.map(item=>({
+   '@type':'Question',name:item.question,
+   acceptedAnswer:{'@type':'Answer',text:item.answer}
+  }))
+ }:null;
  return <>
  <SiteShell><main className="tc-pricing-page" id="tc-pricing-top">
   <section className="tc-pricing-hero"><div className="tc-pricing-container">
@@ -114,6 +121,7 @@ export default async function PricingPage(){
   {faq?.enabled!==false&&faq?.items?.length?<PricingFaq faq={faq}/>:null}
  </main></SiteShell>
  <LegacyScripts sources={['/assets/js/pages/pricing.js?v=20261111-native']} htmlClasses="tc-page-pricing tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight"/>
+ {faqJsonLd?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(faqJsonLd).replace(/</g,'\\u003c')}}/>:null}
  </>;
 }
 function ReactFragment({title,rows,planRow}:{title:string;rows:any[];planRow:(row:any,index:number)=>{value:string;enabled:boolean}}){
