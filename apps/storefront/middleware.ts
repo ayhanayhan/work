@@ -121,8 +121,9 @@ export function middleware(req:NextRequest){
   if(host===PLATFORM_DOMAIN||host===`www.${PLATFORM_DOMAIN}`){
     // Preserve authenticated APIs, tenant creation and dynamic package checkout.
     if(path.startsWith('/api/')||path.startsWith('/__proxy-api/')||path.startsWith('/ticarti-platform'))return NextResponse.next();
-    if(path==='/paketler'||path.startsWith('/paketler/')||
-       path==='/ucretsiz-dene'||path.startsWith('/ucretsiz-dene/')||
+    // The public pricing page is native Next.js in commerce-marketing.
+    // Do not send /paketler to the legacy Platform pricing route.
+    if(path==='/ucretsiz-dene'||path.startsWith('/ucretsiz-dene/')||
        path==='/magaza-ac'||path.startsWith('/magaza-ac/')){
       return internal(req,'/ticarti-platform','platform');
     }
