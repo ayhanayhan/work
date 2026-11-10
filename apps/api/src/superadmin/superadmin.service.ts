@@ -162,6 +162,63 @@ export class SuperAdminService {
     return this.planFeatureCatalog();
   }
 
+
+  /** Additive, repeat-safe catalogue bootstrap. Never overwrites edited features or existing plan selections. */
+  async seedIntegrationCatalog(){
+    const specs=[{"kind":"marketplace","code":"integration_trendyol","id":"integration-trendyol","title":"Trendyol","index":0},{"kind":"marketplace","code":"integration_hepsiburada","id":"integration-hepsiburada","title":"Hepsiburada","index":1},{"kind":"marketplace","code":"integration_amazon_tr","id":"integration-amazon_tr","title":"Amazon Türkiye","index":2},{"kind":"marketplace","code":"integration_n11","id":"integration-n11","title":"n11","index":3},{"kind":"marketplace","code":"integration_ciceksepeti","id":"integration-ciceksepeti","title":"Çiçeksepeti","index":4},{"kind":"marketplace","code":"integration_pazarama","id":"integration-pazarama","title":"Pazarama","index":5},{"kind":"accounting","code":"integration_parasut","id":"integration-parasut","title":"Paraşüt","index":6},{"kind":"accounting","code":"integration_logo","id":"integration-logo","title":"Logo","index":7},{"kind":"accounting","code":"integration_mikro","id":"integration-mikro","title":"Mikro Yazılım","index":8},{"kind":"accounting","code":"integration_zirve","id":"integration-zirve","title":"Zirve","index":9},{"kind":"accounting","code":"integration_nebim","id":"integration-nebim","title":"Nebim","index":10},{"kind":"accounting","code":"integration_bizimhesap","id":"integration-bizimhesap","title":"BizimHesap","index":11},{"kind":"shipping","code":"integration_yurtici_kargo","id":"integration-yurtici_kargo","title":"Yurtiçi Kargo","index":12},{"kind":"shipping","code":"integration_aras_kargo","id":"integration-aras_kargo","title":"Aras Kargo","index":13},{"kind":"shipping","code":"integration_mng_kargo","id":"integration-mng_kargo","title":"MNG Kargo","index":14},{"kind":"shipping","code":"integration_surat_kargo","id":"integration-surat_kargo","title":"Sürat Kargo","index":15},{"kind":"shipping","code":"integration_ptt_kargo","id":"integration-ptt_kargo","title":"PTT Kargo","index":16},{"kind":"shipping","code":"integration_hepsijet","id":"integration-hepsijet","title":"HepsiJET","index":17},{"kind":"shipping","code":"integration_kolay_gelsin","id":"integration-kolay_gelsin","title":"Kolay Gelsin","index":18}];
+    const categoryLabels={"marketplace":"Pazaryeri Entegrasyonları","accounting":"Muhasebe Entegrasyonları","shipping":"Kargo Entegrasyonları"};
+    const categoryEn={"marketplace":"Marketplace integrations","accounting":"Accounting integrations","shipping":"Shipping integrations"};
+    const tiers={"start":["trendyol","yurtici_kargo"],"grow":["trendyol","hepsiburada","amazon_tr","n11","parasut","logo","yurtici_kargo","aras_kargo","mng_kargo","surat_kargo"],"scale":["trendyol","hepsiburada","amazon_tr","n11","ciceksepeti","pazarama","parasut","logo","mikro","zirve","nebim","bizimhesap","yurtici_kargo","aras_kargo","mng_kargo","surat_kargo","ptt_kargo","hepsijet","kolay_gelsin"]};
+    const snapshot:any=await this.planFeatureCatalog();
+    const categories=[...snapshot.categories],features=[...snapshot.features];
+    const locales=(snapshot.locales||[]).map((x:any)=>String(x.locale));
+    for(const kind of ['marketplace','accounting','shipping']){
+      const id='integration-category-'+kind;
+      if(categories.some((c:any)=>c.id===id||c.code==='INTEGRATION_'+kind.toUpperCase()))continue;
+      const translations:any={};
+      for(const lang of locales)translations[lang]={title:lang==='tr'?categoryLabels[kind]:categoryEn[kind],description:''};
+      categories.push({id,code:'INTEGRATION_'+kind.toUpperCase(),isActive:true,sortOrder:110+Object.keys(categoryLabels).indexOf(kind)*10,translations});
+    }
+    let added=0;
+    for(const spec of specs){
+      if(features.some((f:any)=>f.id===spec.id||f.code===spec.code))continue;
+      const translations:any={};
+      for(const lang of locales){
+        const title=spec.title;
+        translations[lang]={title,subtitle:'',slug:spec.id,description:lang==='tr'?
+          title+' için entegrasyon paket kapsamı. Teknik bağlantının kullanıma açık olup olmadığı ayrıca doğrulanmalıdır.':
+          title+' integration plan entitlement. Availability of the live connector must be verified separately.',
+          body:'',seoTitle:title+' | Ticarti',seoDescription:title+' entegrasyonu için paket kapsamını inceleyin.'};
+      }
+      features.push({id:spec.id,code:spec.code,categoryId:'integration-category-'+spec.kind,valueType:'BOOLEAN',isActive:true,isPageEnabled:false,sortOrder:200+spec.index,translations,imageUrl:''});
+      added++;
+    }
+    const currentCatalog:any=await this.prisma.platformSetting.findUnique({where:{key:'plan_feature_catalog'}});
+    if(added||categories.length!==snapshot.categories.length){
+      await this.prisma.platformSetting.upsert({where:{key:'plan_feature_catalog'},create:{key:'plan_feature_catalog',value:{categories,features}},update:{value:{categories,features}}});
+    }
+    let assigned=0;
+    const plans:any[]=await this.prisma.plan.findMany();
+    for(const plan of plans){
+      const key=String(plan.code||'').toLowerCase();
+      const code=key.includes('start')?'start':key.includes('grow')?'grow':key.includes('scale')?'scale':'';
+      if(!code)continue;
+      const current:any=plan.features&&typeof plan.features==='object'&&!Array.isArray(plan.features)?plan.features:{};
+      const selections:any[]=Array.isArray(current._catalog)?[...current._catalog]:[];
+      let changed=false;
+      for(const spec of specs){
+        if(selections.some((x:any)=>x.featureId===spec.id))continue;
+        const selected=tiers[code].includes(spec.id.replace('integration-',''));
+        if(!selected)continue;
+        selections.push({featureId:spec.id,code:spec.code,enabled:true,value:''});changed=true;assigned++;
+      }
+      if(changed){
+        await this.prisma.plan.update({where:{id:plan.id},data:{features:{...current,_catalog:selections}}});
+      }
+    }
+    return {ok:true,added,assigned,categoriesAdded:categories.length-snapshot.categories.length,existingSettingsPreserved:true};
+  }
+
   async planWorkspace(){
     const [plans,catalog,platform]:any=await Promise.all([this.plans(),this.planFeatureCatalog(),this.platformSettings()]);
     return {plans,categories:catalog.categories,features:catalog.features,locales:catalog.locales,currencies:(platform.currencies||[]).filter((x:any)=>x.isActive!==false)};
