@@ -5,6 +5,14 @@ export function middleware(request:NextRequest){
   forwarded.delete('x-ticarti-help-host');
   forwarded.delete('x-ticarti-dev-host');
   const pathname=request.nextUrl.pathname;
+  // Canonical public pricing URL is the native Next.js /paketler route.
+  // Preserve any query string (campaign tracking) during redirect.
+  const pricingAlias=pathname.match(/^\/(?:([a-z]{2})\/)?paketler\.html\/?$/i);
+  if(pricingAlias){
+    const destination=request.nextUrl.clone();
+    destination.pathname=(pricingAlias[1]?'/'+pricingAlias[1]:'')+'/paketler';
+    return NextResponse.redirect(destination,308);
+  }
   forwarded.set('x-marketing-page',pathname);
   // help.ticarti.com is served directly by the Marketing backend.
   // Its public root is the native /help page; category/article URLs stay clean.

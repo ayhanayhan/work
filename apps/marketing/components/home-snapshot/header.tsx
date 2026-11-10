@@ -27,7 +27,7 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,lo
             {"\n"}
           </div>
           {"\n"}
-          <a className={"tc-announcement-bar__cta"} href={main("/paketler.html")} data-tc-content-key={"a-001"}>
+          <a className={"tc-announcement-bar__cta"} href={main("/paketler")} data-tc-content-key={"a-001"}>
             {"Paketleri incele"}
           </a>
           {"\n"}

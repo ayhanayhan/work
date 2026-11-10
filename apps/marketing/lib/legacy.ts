@@ -54,7 +54,8 @@ function normalizeLegacyLinks(html:string,source:string,locale:BlogLocale){
     else if(/^blog\/[a-z0-9-]+(?:\.html)?$/.test(relative))dest=prefix+'/blog/'+relative.slice(5).replace(/\.html$/,'');
     else if(relative==='index.html')dest=prefix+'/';
     else if(relative==='success-stories/index.html')dest=prefix+'/success-stories/';
-    else if(/^(?:paketler|contacto|login|register|kvkk|gizlilik-politikasi|uyelik-sozlesmesi|companies\/enterprise|success-stories\/crowdy)\.html$/.test(relative))dest=prefix+'/'+relative;
+    else if(relative==='paketler.html')dest=prefix+'/paketler';
+    else if(/^(?:contacto|login|register|kvkk|gizlilik-politikasi|uyelik-sozlesmesi|companies\/enterprise|success-stories\/crowdy)\.html$/.test(relative))dest=prefix+'/'+relative;
     return dest===null?whole:'href="'+dest+suffix+'"';
   });
 }
