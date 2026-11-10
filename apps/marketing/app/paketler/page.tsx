@@ -55,7 +55,7 @@ export default async function PricingPage(){
    </div>
    <div className="tc-plan-grid">
     {ORIGINAL_PRICING_CARDS.map((source,index)=>{
-     const p=plans.find(x=>x.code.toLowerCase()===source.code);
+     const p=plans.find(x=>x?.code.toLowerCase()===source.code);
      const plus=source.code==='plus';
      const price=p?.price??(Number(source.price.replace(/\./g,''))||0);
      const old=p?.originalPrice;
@@ -95,7 +95,7 @@ export default async function PricingPage(){
        <span className="tc-search-status" id="tc-search-status" aria-live="polite"/>
        <label className="tc-diff-filter"><input id="tc-only-differences" role="switch" type="checkbox" aria-label="Sadece farklı olan özellikleri listele"/><span aria-hidden="true" className="tc-diff-track"><span className="tc-diff-thumb"/></span><span>Sadece farklı olan özellikleri listele</span></label>
       </th>
-      {API_PLANS.map((code,i)=>{const p=plans.find(x=>x.code.toLowerCase()===code);
+      {API_PLANS.map((code,i)=>{const p=plans.find(x=>x?.code.toLowerCase()===code);
        const source=ORIGINAL_PRICING_CARDS[i];
        const symbol=SYMBOL[p?.currency||'TRY']||'₺';
        return <th scope="col" key={code}><span className="tc-th-plan">{p?.name||source.name}</span>
