@@ -92,6 +92,18 @@ function jsonLd(page:PageData,lang:BlogLocale,seo:WebsiteSeo|null=null):object[]
       ]}
     ];
   }
+  if(page.pricing){
+    const faq=page.pricing.faq;
+    return faq?.enabled&&faq.items?.length?[{
+      '@context':'https://schema.org','@type':'FAQPage',
+      '@id':absolute(lang==='tr'?'/paketler.html':'/'+lang+'/paketler.html')+'#faq',
+      inLanguage:lang,
+      mainEntity:faq.items.map(item=>({
+        '@type':'Question',name:item.question,
+        acceptedAnswer:{'@type':'Answer',text:item.answer}
+      }))
+    }]:[];
+  }
   if(page.isHome){
     const url=absolute(lang==='tr'?'/':'/'+lang+'/');
     return [
