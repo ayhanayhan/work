@@ -5,6 +5,7 @@ import {activePlatformLocales} from '../common/platform-locales';
 import initialBlog = require('./data/ticarti-blog-initial.json');
 import {FAQ_SEED_MARKER,mergeFaqSeed} from './faq-seed';
 import improvedFaq = require('./data/ticarti-faq-improved-5-locales.json');
+import {PRICING_FAQ_EXTRA_TRANSLATIONS,PRICING_FAQ_EXTRA_HEADINGS} from './data/pricing-faq-locales';
 
 const HOME_KEY='marketing_homepage_v1';
 const BLOG_KEY='marketing_blog_v1';
@@ -99,10 +100,16 @@ export class WebsiteService{
   private pricingFaqKey='marketing_pricing_faq_v1';
   private defaultPricingFaq(){
     const faq=[["Paketler arasında geçiş yapabilir miyim?","Evet. Paket değişiklikleri mağaza yönetiminden yapılabilir; fiyat ve kullanım koşulları seçilen döneme göre uygulanır.","Can I change my plan?","Plan changes can be managed in your store; pricing and usage rules depend on your subscription period."],["Paket ücretleri aylık mı, yıllık mı ödenir?","Paketlerde ödeme dönemi Master’da tanımlanır. Şu anda yıllık teklif esas alınır.","Is billing monthly or annually?","Billing periods are configured in Master. The current offer focuses on annual billing."],["14 günlük deneme sürecinde ödeme gerekir mi?","Mağaza oluşturma sırasında ödeme yapmadan denemeye başlayabilirsin. Deneme sonrası ücretlendirme seçtiğin pakete göre yapılır.","Is payment required for the 14-day trial?","You can open a store without paying up front. Billing after the trial depends on your chosen plan."],["Pazaryeri entegrasyonları her pakette var mı?","Hayır. Trendyol, Hepsiburada, Amazon Türkiye ve diğer pazaryerleri paket karşılaştırmasında ayrı ayrı belirtilir. Teknik kullanılabilirlik ayrıca doğrulanmalıdır.","Are marketplace integrations included in every plan?","No. Each marketplace has its own plan entitlement. Live connector availability must be confirmed separately."],["Muhasebe entegrasyonlarını nasıl karşılaştırabilirim?","Paraşüt, Logo, Mikro ve diğer muhasebe sağlayıcıları karşılaştırma tablosunda ayrı satırlarda gösterilir.","How can I compare accounting integrations?","Each accounting provider appears as a separate row in the comparison table."],["Kargo firmaları için paket farkı var mı?","Evet. Kargo firmaları ayrı özellikler olarak listelenir ve hangi pakete dahil oldukları gösterilir.","Do shipping providers differ by plan?","Yes. Shipping providers are listed individually with their corresponding plan entitlement."],["Paket fiyatlarına KDV dahil mi?","KDV durumu ve geçerli fiyatlar paket kartlarında Master’da kaydedilmiş değerlerden gösterilir.","Does pricing include VAT?","VAT inclusion and the current prices are displayed from the package settings in Master."],["Kurulum için yardım alabilir miyim?","Evet. TicAi üzerinden geri arama talebi oluşturabilir veya Ticarti ekibiyle iletişime geçebilirsin.","Can I get help setting up my store?","Yes. Request a callback through TicAi or contact the Ticarti team."]];
-    return {enabled:true,heading:{tr:'Sıkça sorulan sorular',en:'Frequently asked questions'},
-      description:{tr:'Paketler ve entegrasyonlarla ilgili merak ettiklerin.',en:'Answers about plans and integrations.'},
-      items:faq.map((row:string[],i:number)=>({id:'pricing-faq-'+(i+1),enabled:true,
-        question:{tr:row[0],en:row[2]},answer:{tr:row[1],en:row[3]}}))};
+    const extra=PRICING_FAQ_EXTRA_TRANSLATIONS as Record<string,readonly (readonly string[])[]>;
+    const heading:any={tr:'Sıkça sorulan sorular',en:'Frequently asked questions'};
+    const description:any={tr:'Paketler ve entegrasyonlarla ilgili merak ettiklerin.',en:'Answers about plans and integrations.'};
+    for(const [locale,labels] of Object.entries(PRICING_FAQ_EXTRA_HEADINGS)){heading[locale]=labels[0];description[locale]=labels[1];}
+    return {enabled:true,heading,description,
+      items:faq.map((row:string[],i:number)=>{
+        const question:any={tr:row[0],en:row[2]},answer:any={tr:row[1],en:row[3]};
+        for(const [locale,rows] of Object.entries(extra)){question[locale]=rows[i]?.[0]||'';answer[locale]=rows[i]?.[1]||'';}
+        return {id:'pricing-faq-'+(i+1),enabled:true,question,answer};
+      })};
   }
   async pricingFaq(){
     const row=await this.prisma.platformSetting.findUnique({where:{key:this.pricingFaqKey}});
