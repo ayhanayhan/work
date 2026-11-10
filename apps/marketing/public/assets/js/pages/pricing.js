@@ -72,6 +72,50 @@ document.addEventListener('DOMContentLoaded', () => {
   if (headClone) cloneTable.appendChild(headClone);
   cloneHost.appendChild(cloneTable);
   document.body.appendChild(cloneHost);
+  // Mirror the currently active original category heading below the fixed plan header.
+  // The real rows remain in the document to preserve original layout and scrolling.
+  const groupRows = [...table.tBodies[0].rows].filter(row => row.classList.contains('tc-table-group'));
+  const groupHost = document.createElement('div');
+  groupHost.className = 'tc-pricing-floating-group tc-comparison';
+  groupHost.setAttribute('aria-hidden', 'true');
+  groupHost.hidden = true;
+  const groupTable = document.createElement('table');
+  groupTable.className = 'tc-pricing-floating-table';
+  const groupBody = document.createElement('tbody');
+  groupTable.appendChild(groupBody);
+  groupHost.appendChild(groupTable);
+  document.body.appendChild(groupHost);
+  let activeGroup = null;
+  function syncFloatingGroup(top, headerHeight, tableWidth, regionLeft, regionWidth, scrollLeft, tableBottom) {
+    const categoryTop = top + headerHeight;
+    let current = null;
+    let next = null;
+    for (const row of groupRows) {
+      if (row.hidden || !row.getClientRects().length) continue;
+      const rect = row.getBoundingClientRect();
+      if (rect.top <= categoryTop + 1) current = row;
+      else { next = rect; break; }
+    }
+    const groupHeight = current ? Math.ceil(current.getBoundingClientRect().height) : 0;
+    const visible = !!current && !cloneHost.hidden && tableBottom > categoryTop + groupHeight;
+    groupHost.hidden = !visible;
+    if (!visible) { activeGroup = null; return; }
+    if (activeGroup !== current) {
+      activeGroup = current;
+      groupBody.replaceChildren(current.cloneNode(true));
+      // Dynamic content is rendered from Master; use source markup for identical design.
+      groupBody.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    }
+    groupHost.style.top = categoryTop + 'px';
+    groupHost.style.left = regionLeft + 'px';
+    groupHost.style.width = regionWidth + 'px';
+    groupHost.style.height = groupHeight + 'px';
+    groupTable.style.width = tableWidth + 'px';
+    groupTable.style.transform = 'translateX(' + (-scrollLeft) + 'px)';
+    // Allow the approaching category to push the current one away naturally.
+    const nextTop = next?.top ?? Infinity;
+    groupTable.style.marginTop = Math.min(0, nextTop - (categoryTop + groupHeight)) + 'px';
+  }
   const sourceHeadCells = [...(thead?.rows?.[0]?.cells || [])];
   const cloneHeadCells = [...(headClone?.querySelectorAll('th') || [])];
   for (const element of cloneHost.querySelectorAll('[id]')) {
@@ -122,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const shouldShow = rect.width > 0 && height > 0
       && sourceRect.top < offset && tableRect.bottom > offset + height;
     cloneHost.hidden = !shouldShow;
-    if (!shouldShow) return;
+    if (!shouldShow) { groupHost.hidden = true; activeGroup = null; return; }
     cloneHost.style.top = offset + 'px';
     cloneHost.style.left = rect.left + 'px';
     cloneHost.style.width = rect.width + 'px';
@@ -138,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       target.style.maxWidth = width;
     });
     syncFloatingContent();
+    syncFloatingGroup(offset, height, tableRect.width, rect.left, rect.width, region.scrollLeft, tableRect.bottom);
   }
   let framePending = false;
   function queueStickySync() {

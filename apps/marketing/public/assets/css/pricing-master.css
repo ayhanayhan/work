@@ -43,3 +43,35 @@ html.tc-page-pricing .tc-pricing-floating-head .tc-pricing-floating-table th {
 html.tc-page-pricing .tc-site-header {
   z-index: 100;
 }
+
+/* Active feature category stays fixed directly beneath the plan header.
+   Both floating rows follow the table's horizontal scroll and leave the
+   viewport at the end of the comparison. */
+html.tc-page-pricing .tc-pricing-floating-group {
+  position: fixed !important;
+  z-index: 89;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  overflow: hidden;
+  background: #fff;
+  box-sizing: border-box;
+  box-shadow: 0 1px 0 #e3e9e7;
+  pointer-events: none;
+}
+html.tc-page-pricing .tc-pricing-floating-group[hidden] {
+  display: none !important;
+}
+html.tc-page-pricing .tc-pricing-floating-group .tc-pricing-floating-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  position: relative;
+  margin-bottom: 0 !important;
+}
+html.tc-page-pricing .tc-pricing-floating-group .tc-table-group th {
+  position: static !important;
+  top: auto !important;
+  background: #fff !important;
+  box-sizing: border-box;
+}
