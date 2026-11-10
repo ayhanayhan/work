@@ -176,7 +176,7 @@ export class SuperAdminService {
       const id='integration-category-'+kind;
       if(categories.some((c:any)=>c.id===id||c.code==='INTEGRATION_'+kind.toUpperCase()))continue;
       const translations:any={};
-      for(const lang of locales)translations[lang]={title:lang==='tr'?categoryLabels[kind]:categoryEn[kind],description:''};
+      for(const lang of locales)translations[lang]={title:lang==='tr'?(categoryLabels as Record<string,string>)[kind]:(categoryEn as Record<string,string>)[kind],description:''};
       categories.push({id,code:'INTEGRATION_'+kind.toUpperCase(),isActive:true,sortOrder:110+Object.keys(categoryLabels).indexOf(kind)*10,translations});
     }
     let added=0;
@@ -208,7 +208,7 @@ export class SuperAdminService {
       let changed=false;
       for(const spec of specs){
         if(selections.some((x:any)=>x.featureId===spec.id))continue;
-        const selected=tiers[code].includes(spec.id.replace('integration-',''));
+        const selected=(tiers as Record<string,string[]>)[code].includes(spec.id.replace('integration-',''));
         if(!selected)continue;
         selections.push({featureId:spec.id,code:spec.code,enabled:true,value:''});changed=true;assigned++;
       }
