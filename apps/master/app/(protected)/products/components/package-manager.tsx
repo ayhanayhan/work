@@ -41,12 +41,15 @@ export function PackagesListPage(){
   const w=useWorkspace();
   const[q,setQ]=useState('');
   const[status,setStatus]=useState('ALL');
+  const[seeding,setSeeding]=useState(false);
+  const[seedMessage,setSeedMessage]=useState('');
+  const seedIntegrations=async()=>{setSeeding(true);setSeedMessage('');try{const result=await w.request('/superadmin/plan-feature-catalog/seed-integrations',{method:'POST',body:'{}'});setSeedMessage('Katalog hazır: '+result.added+' yeni entegrasyon, '+result.assigned+' paket eşleştirmesi. Mevcut ayarlar korundu.');await w.load();}catch(e:any){setSeedMessage(e.message||'Entegrasyonlar eklenemedi.')}finally{setSeeding(false)}};
   const rows=useMemo(()=>{const all=w.data?.plans||[];const needle=q.trim().toLocaleLowerCase('tr');return all.filter(p=>(status==='ALL'||(status==='ACTIVE'?p.isActive:!p.isActive))&&(!needle||p.name.toLocaleLowerCase('tr').includes(needle)||p.code.toLocaleLowerCase('tr').includes(needle)))},[w.data,q,status]);
   const active=(w.data?.plans||[]).filter(x=>x.isActive).length;
   const featured=(w.data?.plans||[]).filter(x=>x.features?._meta?.isFeatured).length;
   return <>
-    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Paketler</h1><ToolbarDescription>Paketleri, limitleri, yıllık fiyatları ve paket özelliklerini yönetin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" asChild><Link href="/products/features"><Sparkles/>Paket Özellikleri</Link></Button><Button asChild><Link href="/products/new"><Plus/>Yeni Paket</Link></Button></ToolbarActions></Toolbar></Container>
-    <Container className="grid gap-5 pb-10">
+    <Container><Toolbar><ToolbarHeading><h1 className="text-xl font-semibold text-mono">Paketler</h1><ToolbarDescription>Paketleri, limitleri, yıllık fiyatları ve paket özelliklerini yönetin.</ToolbarDescription></ToolbarHeading><ToolbarActions><Button variant="outline" onClick={()=>void seedIntegrations()} disabled={seeding}>{seeding?<LoaderCircle className="animate-spin"/>:<Sparkles/>}Entegrasyonları Ekle</Button><Button variant="outline" asChild><Link href="/website/pricing">Paket SSS</Link></Button><Button variant="outline" asChild><Link href="/products/features"><Sparkles/>Paket Özellikleri</Link></Button><Button asChild><Link href="/products/new"><Plus/>Yeni Paket</Link></Button></ToolbarActions></Toolbar></Container>
+    <Container className="grid gap-5 pb-10">{seedMessage?<div className="rounded-lg border bg-muted/20 p-3 text-sm" role="status">{seedMessage}</div>:null}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card><CardContent className="flex items-center justify-between p-5"><div><div className="text-sm text-muted-foreground">Toplam Paket</div><div className="mt-2 text-2xl font-semibold">{w.data?.plans.length||0}</div></div><Boxes className="size-5 text-muted-foreground"/></CardContent></Card>
         <Card><CardContent className="flex items-center justify-between p-5"><div><div className="text-sm text-muted-foreground">Aktif</div><div className="mt-2 text-2xl font-semibold">{active}</div></div><PackageSearch className="size-5 text-muted-foreground"/></CardContent></Card>
