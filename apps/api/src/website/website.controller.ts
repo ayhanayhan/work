@@ -5,6 +5,14 @@ import {WebsiteService} from './website.service';
 @Controller()
 export class WebsiteController {
   constructor(private readonly svc:WebsiteService){}
+  @Get('public/website/pricing')
+  publicPricing(@Query('lang') lang?:string){return this.svc.publicPricing(lang||'tr')}
+  @UseGuards(SuperAdminAuthGuard)
+  @Get('superadmin/website/pricing-faq')
+  adminPricingFaq(){return this.svc.pricingFaq()}
+  @UseGuards(SuperAdminAuthGuard)
+  @Patch('superadmin/website/pricing-faq')
+  savePricingFaq(@Body() body:any){return this.svc.updatePricingFaq(body)}
   @Get('public/website/branding')
   publicBranding(){return this.svc.publicBranding()}
   @Get('public/website/home')
