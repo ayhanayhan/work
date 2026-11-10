@@ -2,6 +2,7 @@
 import {FormEvent,useEffect,useMemo,useState} from 'react';
 import Link from 'next/link';
 import AuthShell,{AUTH_ASSET_ORIGIN} from './auth-shell';
+import {useAuthLocale,type AuthKey} from './auth-locale';
 
 const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
 const SECTORS=['Giyim ve moda','Kozmetik ve kişisel bakım','Elektronik','Ev ve yaşam','Gıda','Diğer / Henüz karar vermedim'];
@@ -26,12 +27,18 @@ function errorMessage(data:any,fallback:string){return Array.isArray(data?.messa
 type Signup={name:string;email:string;password:string;phone:string;sector:string;store:string;slug:string;plan:string;terms:boolean;marketing:boolean;pricesIncludeTax:boolean};
 const init:Signup={name:'',email:'',password:'',phone:'',sector:'',store:'',slug:'',plan:'',terms:false,marketing:false,pricesIncludeTax:true};
 export default function RegisterWizard(){
+ const {t,locale}=useAuthLocale();
  const[welcome,setWelcome]=useState(true),[step,setStep]=useState(0),[values,setValues]=useState<Signup>(init);
  const[social,setSocial]=useState<'GOOGLE'|'LINKEDIN'|null>(null);
  const[providers,setProviders]=useState<{google:{enabled:boolean};linkedin:{enabled:boolean}}>({google:{enabled:false},linkedin:{enabled:false}});
  const[error,setError]=useState(''),[busy,setBusy]=useState(false),[showPassword,setShowPassword]=useState(false);
  const[availability,setAvailability]=useState<'idle'|'checking'|'yes'|'no'>('idle'),[availabilityMessage,setAvailabilityMessage]=useState('');
  const validSlug=useMemo(()=>slugify(values.slug),[values.slug]);
+ const STEP_TITLE_KEYS:AuthKey[]=['accountTitle','planTitle','sectorTitle','storeTitle','domainTitle','reviewTitle','paymentTitle'];
+ const STEP_DESC_KEYS:AuthKey[]=['accountDesc','planDesc','sectorDesc','storeDesc','domainDesc','reviewDesc','paymentDesc'];
+ const sectorKeys:AuthKey[]=['sectorFashion','sectorBeauty','sectorElectronics','sectorHome','sectorFood','sectorOther'];
+ const planDescriptions:Record<string,AuthKey>={start:'planStartDesc',grow:'planGrowDesc',scale:'planScaleDesc'};
+ const planFeatures:Record<string,AuthKey[]>={start:['featureStart1','featureStart2'],grow:['featureGrow1','featureGrow2'],scale:['featureScale1','featureScale2']};
  useEffect(()=>{
   const p=new URLSearchParams(window.location.search).get('plan');
   if(PLANS.some(x=>x.id===p))setValues(v=>({...v,plan:p||''}));
@@ -59,20 +66,20 @@ export default function RegisterWizard(){
  const set=<K extends keyof Signup,>(key:K,val:Signup[K])=>{setValues(v=>({...v,[key]:val}));setError('')};
  function check(){
   if(step===0){
-   if(values.name.trim().length<2||!/^\S+@\S+\.\S+$/.test(values.email))return 'Adını ve geçerli bir e-posta adresini gir.';
-   if(!social&&!passwordRule.test(values.password))return 'Şifre en az 8 karakter; büyük ve küçük harf, rakam ve sembol içermelidir.';
-   if(!values.terms)return 'Üyelik Sözleşmesi onaylanmalıdır.';
+   if(values.name.trim().length<2||!/^\S+@\S+\.\S+$/.test(values.email))return t('accountInvalid');
+   if(!social&&!passwordRule.test(values.password))return t('passwordRule');
+   if(!values.terms)return t('requiredConsent');
   }
-  if(step===1&&!values.plan)return 'Bir paket seç.';
-  if(step===2&&!values.sector)return 'Bir sektör seç.';
-  if(step===3&&values.store.trim().length<2)return 'Mağaza adı en az 2 karakter olmalı.';
-  if(step===4&&(validSlug.length<3||availability!=='yes'))return 'Kullanılabilir bir mağaza adresi seç.';
+  if(step===1&&!values.plan)return t('planRequired');
+  if(step===2&&!values.sector)return t('sectorRequired');
+  if(step===3&&values.store.trim().length<2)return t('storeRequired');
+  if(step===4&&(validSlug.length<3||availability!=='yes'))return t('domainRequired');
   return '';
  }
  function forward(e:FormEvent){e.preventDefault();const issue=check();if(issue){setError(issue);return}if(step===3&&!values.slug)setValues(v=>({...v,slug:slugify(v.store)}));setStep(s=>Math.min(s+1,6));setError('')}
  async function createStore(){
   if(busy)return;
-  if(!values.name||!values.email||(!social&&!values.password)||!values.store||!validSlug||!values.terms||!values.sector||!values.plan){setError('Mağaza bilgilerini tamamla.');return}
+  if(!values.name||!values.email||(!social&&!values.password)||!values.store||!validSlug||!values.terms||!values.sector||!values.plan){setError(t('invalidForm'));return}
   setBusy(true);setError('');
   try{
    const response=await fetch(API+(social?'/merchant-auth/social/register':'/merchant-auth/register'),{
@@ -86,79 +93,79 @@ export default function RegisterWizard(){
     })
    });
    const result=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(errorMessage(result,'Mağaza oluşturulamadı.'));
+   if(!response.ok)throw new Error(errorMessage(result,t('createError')));
    const m=result?.memberships?.[0];
    const slug=String(m?.site?.publicSlug||validSlug).toLowerCase();
-   if(!result?.handoffCode||!m?.tenantId||!slug)throw new Error('Mağaza oluşturuldu ancak güvenli oturum başlatılamadı. Lütfen giriş yap.');
+   if(!result?.handoffCode||!m?.tenantId||!slug)throw new Error(t('storeCreated'));
    const dest=new URL('/admin/login','https://'+slug+'.ticarti.com');
    dest.searchParams.set('handoff',result.handoffCode);dest.searchParams.set('tenant',m.tenantId);dest.searchParams.set('next','/dashboard');
    window.location.assign(dest.toString());
-  }catch(e:any){setError(e.message||'İşlem başarısız.')}finally{setBusy(false)}
+  }catch(e:any){setError(e.message||t('createError'))}finally{setBusy(false)}
  }
  function startSocial(provider:'google'|'linkedin'){
-  if(!providers[provider].enabled){setError((provider==='google'?'Google':'LinkedIn')+' giriş ayarı Master üzerinden etkinleştirilmelidir.');return}
+  if(!providers[provider].enabled){setError(t('socialNotReady'));return}
   window.location.assign(API+'/merchant-auth/'+provider+'/start');
  }
  const field=(key:keyof Signup,label:string,type='text',placeholder='')=><label key={key}>{label}<input type={type} placeholder={placeholder} autoComplete={key==='email'?'email':key==='name'?'name':key==='password'?'new-password':key==='phone'?'tel':'off'} value={String(values[key])} onChange={e=>set(key as any,e.target.value as any)} required={key!=='phone'} /></label>;
  return <AuthShell progress={welcome?0:Math.round(((step+1)/STEPS.length)*100)} aiContext={welcome?'registerWelcome':step}>
  {welcome?<section className="tc-view" id="tc-welcome">
-   <div className="tc-symbol" id="tc-welcome-icon" aria-hidden="true">⇥</div><h1 id="tc-welcome-title">Mağazanı birlikte kuralım.</h1>
-   <p className="tc-sub">Ücretsiz hesabını oluştur, mağazanı birkaç adımda hazırla.</p>
+   <div className="tc-symbol" id="tc-welcome-icon" aria-hidden="true">⇥</div><h1 id="tc-welcome-title">{t('registerWelcome')}</h1>
+   <p className="tc-sub">{t('registerSubtitle')}</p>
    <div className="tc-actions">
-    <button id="tc-linkedin" aria-label="LinkedIn ile kaydol" className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo tc-provider-logo--linkedin" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/><span id="tc-linkedin-text">ile kaydol</span></button>
-    <button id="tc-google" aria-label="Google ile kaydol" className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo tc-provider-logo--google" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/><span id="tc-google-text">ile kaydol</span></button>
+    <button id="tc-linkedin" aria-label={t('linkedInRegister')} className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo tc-provider-logo--linkedin" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/><span id="tc-linkedin-text">{t('registerLink')}</span></button>
+    <button id="tc-google" aria-label={t('googleRegister')} className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo tc-provider-logo--google" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/><span id="tc-google-text">{t('registerLink')}</span></button>
     {error&&<p className="tc-error" role="alert">{error}</p>}
-    <div className="tc-or"><span id="tc-or-text">veya</span></div>
-    <button className="tc-btn primary" type="button" onClick={()=>setWelcome(false)}>E-posta ile devam et</button>
-    <p className="tc-switch">Zaten hesabın var mı? <Link className="tc-link" href="/">Giriş yap</Link></p>
+    <div className="tc-or"><span id="tc-or-text">{t('or')}</span></div>
+    <button className="tc-btn primary" type="button" onClick={()=>setWelcome(false)}>{t('continueEmail')}</button>
+    <p className="tc-switch">{t('haveAccount')} <Link className="tc-link" href="/">{t('signIn')}</Link></p>
    </div>
   </section>:
   <section className={'tc-view '+(step===1?'tc-view--plans':'')} id="tc-register">
-   <h1>{STEPS[step].title}</h1><p className="tc-sub">{STEPS[step].desc}</p>
+   <h1>{t(STEP_TITLE_KEYS[step])}</h1><p className="tc-sub">{t(STEP_DESC_KEYS[step])}</p>
    <form className="tc-form" onSubmit={forward}>
     <div className="tc-fields">
      {step===0&&<>
-      {social?<p className="tc-social-confirm">{social==='GOOGLE'?'Google':'LinkedIn'} hesabın doğrulandı. Adın ve e-posta adresin sağlayıcıdan alındı.</p>:null}
-      {social?<p className="tc-social-profile"><strong>{values.name}</strong><span>{values.email}</span></p>:<>{field('name','Ad ve soyad','text','Ad Soyad')}{field('email','E-posta adresi','email','ornek@eposta.com')}</>}
-      {!social&&<label>Şifre<div className="tc-password-wrap"><input required minLength={8} type={showPassword?'text':'password'} value={values.password} onChange={e=>set('password',e.target.value)} autoComplete="new-password" placeholder="En az 8 karakter"/><button type="button" className="tc-password-toggle" onClick={()=>setShowPassword(x=>!x)}>{showPassword?'Gizle':'Göster'}</button></div></label>}
-      {field('phone','Telefon (isteğe bağlı)','tel','+90 5xx xxx xx xx')}
+      {social?<p className="tc-social-confirm">{social==='GOOGLE'?'Google':'LinkedIn'}{' '}{t('verifiedName')}</p>:null}
+      {social?<p className="tc-social-profile"><strong>{values.name}</strong><span>{values.email}</span></p>:<>{field('name',t('name'),'text',t('name'))}{field('email',t('email'),'email',t('emailPlaceholder'))}</>}
+      {!social&&<label>{t('password')}<div className="tc-password-wrap"><input required minLength={8} type={showPassword?'text':'password'} value={values.password} onChange={e=>set('password',e.target.value)} autoComplete="new-password" placeholder={t('passwordPlaceholder')}/><button type="button" className="tc-password-toggle" onClick={()=>setShowPassword(x=>!x)}>{showPassword?t('hide'):t('show')}</button></div></label>}
+      {field('phone',t('phone'),'tel','+90 5xx xxx xx xx')}
       <div className="tc-agreements">
-       <label className="tc-agreement"><input type="checkbox" checked={values.terms} onChange={e=>set('terms',e.target.checked)} required/><span><a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/uyelik-sozlesmesi.html">Üyelik Sözleşmesi</a>'ni kabul ediyorum ve <a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/gizlilik-politikasi.html">Gizlilik Politikası</a> hakkında bilgilendirildim.</span></label>
-       <label className="tc-agreement"><input type="checkbox" checked={values.marketing} onChange={e=>set('marketing',e.target.checked)}/><span>Ticarti'den yenilikler ve duyurular almak istiyorum.</span></label>
+       <label className="tc-agreement"><input type="checkbox" checked={values.terms} onChange={e=>set('terms',e.target.checked)} required/><span><a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/uyelik-sozlesmesi.html">{t('terms')}</a>{' '}{t('termsConsent')} <a target="_blank" rel="noopener noreferrer" href="https://ticarti.com/gizlilik-politikasi.html">{t('privacy')}</a></span></label>
+       <label className="tc-agreement"><input type="checkbox" checked={values.marketing} onChange={e=>set('marketing',e.target.checked)}/><span >{t('marketingConsent')}</span></label>
       </div>
      </>}
      {step===1&&<>
-      <div className="tc-plan-choices" role="radiogroup" aria-label="Paket seçimi">
+      <div className="tc-plan-choices" role="radiogroup" aria-label={t('choosePlan')}>
        {PLANS.map(p=><button key={p.id} type="button" className={'tc-plan-choice'+(values.plan===p.id?' is-selected':'')+(p.popular?' is-popular':'')} role="radio" aria-checked={values.plan===p.id} tabIndex={values.plan===p.id||(!values.plan&&p.id==='start')?0:-1} onClick={()=>set('plan',p.id)}>
         <span className="tc-plan-choice-head"><span className="tc-plan-choice-name">{p.name}</span><span className="tc-plan-choice-indicator" aria-hidden="true">{values.plan===p.id?'✓':''}</span></span>
-        {p.popular?<span className="tc-plan-choice-badge">En çok tercih edilen</span>:<span className="tc-plan-choice-badge-placeholder" aria-hidden="true"/>}
-        <span className="tc-plan-choice-desc">{p.desc}</span>
-        <span className="tc-plan-choice-price"><strong>₺{annualPrice(p.price)}</strong><small>/yıl</small></span>
-        <span className="tc-plan-choice-tax"><s>₺{annualPrice(p.oldPrice)}/yıl</s><span>KDV dahil · yıllık ödeme</span></span>
+        {p.popular?<span className="tc-plan-choice-badge">{t('popular')}</span>:<span className="tc-plan-choice-badge-placeholder" aria-hidden="true"/>}
+        <span className="tc-plan-choice-desc">{t(planDescriptions[p.id])}</span>
+        <span className="tc-plan-choice-price"><strong>₺{annualPrice(p.price)}</strong><small>{t('year')}</small></span>
+        <span className="tc-plan-choice-tax"><s>₺{annualPrice(p.oldPrice)}{t('year')}</s><span>{t('taxIncluded')}</span></span>
         <span className="tc-plan-choice-divider" aria-hidden="true"/>
-        <span className="tc-plan-choice-features">{p.features.map(f=><span key={f} className="tc-plan-choice-feature"><span className="tc-plan-choice-check" aria-hidden="true">✓</span>{f}</span>)}</span>
-        <span className="tc-plan-choice-select-label" aria-hidden="true">{values.plan===p.id?'Seçildi':'Paketi seç'} <span>{values.plan===p.id?'✓':'→'}</span></span>
+        <span className="tc-plan-choice-features">{planFeatures[p.id].map(key=><span key={key} className="tc-plan-choice-feature"><span className="tc-plan-choice-check" aria-hidden="true">✓</span>{t(key)}</span>)}</span>
+        <span className="tc-plan-choice-select-label" aria-hidden="true">{values.plan===p.id?t('selected'):t('selectPlan')} <span>{values.plan===p.id?'✓':'→'}</span></span>
        </button>)}
       </div>
-      <p className="tc-plan-note">14 gün ücretsiz dene. Yıllık tutar tek seferde tahsil edilir; fiyatlar örnektir.</p>
+      <p className="tc-plan-note">{t('planNote')} {t('taxHint')}</p>
      </>}
-     {step===2&&<div className="tc-choices" role="radiogroup" aria-label="Sektör">{SECTORS.map(s=><button type="button" key={s} className={'tc-choice '+(values.sector===s?'selected':'')} onClick={()=>set('sector',s)} role="radio" aria-checked={values.sector===s}><span className="tc-choice-label">{s}</span><span className="tc-choice-check">{values.sector===s?'✓':''}</span></button>)}</div>}
-     {step===3&&field('store','Mağaza adı','text','Örn. Nova Store')}
-     {step===4&&<label>Mağaza adresi<div className="tc-domain-input"><input value={values.slug} onChange={e=>set('slug',slugify(e.target.value))} required minLength={3} maxLength={63} autoCapitalize="off" spellCheck={false} placeholder="magazam"/><span>.ticarti.com</span></div><small className={'tc-inline-hint '+(availability==='no'?'is-error':'')}>{availability==='checking'?'Adres kontrol ediliyor…':availability==='yes'?'Bu adres kullanılabilir':availability==='no'?availabilityMessage:'3-63 karakter; harf, rakam ve tire'}</small></label>}
+     {step===2&&<div className="tc-choices" role="radiogroup" aria-label={t('selectSector')}>{SECTORS.map(s=><button type="button" key={s} className={'tc-choice '+(values.sector===s?'selected':'')} onClick={()=>set('sector',s)} role="radio" aria-checked={values.sector===s}><span className="tc-choice-label">{t(sectorKeys[SECTORS.indexOf(s)])}</span><span className="tc-choice-check">{values.sector===s?'✓':''}</span></button>)}</div>}
+     {step===3&&field('store',t('storeName'),'text',t('storePlaceholder'))}
+     {step===4&&<label>{t('storeAddress')}<div className="tc-domain-input"><input value={values.slug} onChange={e=>set('slug',slugify(e.target.value))} required minLength={3} maxLength={63} autoCapitalize="off" spellCheck={false} placeholder={t('domainPlaceholder')}/><span>.ticarti.com</span></div><small className={'tc-inline-hint '+(availability==='no'?'is-error':'')}>{availability==='checking'?t('checkingDomain'):availability==='yes'?t('available'):availability==='no'?availabilityMessage:t('domainHint')}</small></label>}
      {(step===5||step===6)&&<div className="tc-payment-summary">
-      <div className="tc-payment-summary-heading"><strong>{step===6?'Ödeme özeti':'Kurulum özeti'}</strong><span className="tc-payment-trial">14 gün ücretsiz deneme</span></div>
-      <div className="tc-payment-summary-row"><span>Seçilen paket</span><strong>{PLANS.find(p=>p.id===values.plan)?.name||'—'}</strong></div>
-      <div className="tc-payment-summary-row"><span>Mağaza adı</span><strong>{values.store||'—'}</strong></div>
-      <div className="tc-payment-summary-row"><span>Mağaza adresi</span><strong>{validSlug?validSlug+'.ticarti.com':'—'}</strong></div>
-      <div className="tc-payment-summary-total"><span>Deneme sonrası yıllık abonelik<small>Yıllık tek ödeme · KDV dahil · örnek fiyat</small></span><strong>₺{annualPrice(PLANS.find(p=>p.id===values.plan)?.price||'0')}<small> / yıl</small></strong></div>
+      <div className="tc-payment-summary-heading"><strong>{step===6?t('payment'):t('review')}</strong><span className="tc-payment-trial">{t('trial')}</span></div>
+      <div className="tc-payment-summary-row"><span>{t('planName')}</span><strong>{PLANS.find(p=>p.id===values.plan)?.name||'—'}</strong></div>
+      <div className="tc-payment-summary-row"><span>{t('storeName')}</span><strong>{values.store||'—'}</strong></div>
+      <div className="tc-payment-summary-row"><span>{t('storeAddress')}</span><strong>{validSlug?validSlug+'.ticarti.com':'—'}</strong></div>
+      <div className="tc-payment-summary-total"><span>{t('postTrial')}<small>{t('annualSummary')}</small></span><strong>₺{annualPrice(PLANS.find(p=>p.id===values.plan)?.price||'0')}<small> {t('year')}</small></strong></div>
      </div>}
-          {step===6&&<div className="tc-unpaid-summary"><p>Online ödeme henüz etkin değil. Ödeme alınmadan mağazanı açabilirsin.</p></div>}
+          {step===6&&<div className="tc-unpaid-summary"><p>{t('unpaidHint')}</p></div>}
     </div>
     {error&&<p className="tc-error" role="alert">{error}</p>}
     <div className="tc-buttons">
-     {step<5?<button type="submit" className="tc-btn primary">Devam</button>:step===5?<button type="submit" className="tc-btn primary">Ödeme adımına geç</button>:null}
-     {(step===5||step===6)&&<button className="tc-btn primary" type="button" onClick={createStore} disabled={busy}>{busy?'Mağazan oluşturuluyor…':'Ödeme yapmadan mağazanı aç'}</button>}
-     <button className="tc-back" type="button" onClick={()=>{if(step===0)setWelcome(true);else setStep(s=>s-1);setError('')}}>← Geri</button>
+     {step<5?<button type="submit" className="tc-btn primary">{t('next')}</button>:step===5?<button type="submit" className="tc-btn primary">{t('goPayment')}</button>:null}
+     {(step===5||step===6)&&<button className="tc-btn primary" type="button" onClick={createStore} disabled={busy}>{busy?t('creating'):t('openWithoutPayment')}</button>}
+     <button className="tc-back" type="button" onClick={()=>{if(step===0)setWelcome(true);else setStep(s=>s-1);setError('')}}>{t('back')}</button>
     </div>
    </form>
    <p className="tc-switch">Zaten hesabın var mı? <Link className="tc-link" href="/">Giriş yap</Link></p>
