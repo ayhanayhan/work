@@ -234,9 +234,11 @@ export class SuperAdminService {
       }
       for(const spec of specs){
         if(selections.some((x:any)=>x.featureId===spec.id))continue;
+        // Explicitly record both included and excluded integrations for every package.
+        // A future manual choice is never overwritten because existing rows are skipped.
         const selected=(tiers as Record<string,string[]>)[code].includes(spec.id.replace('integration-',''));
-        if(!selected)continue;
-        selections.push({featureId:spec.id,code:spec.code,enabled:true,value:''});changed=true;assigned++;
+        selections.push({featureId:spec.id,code:spec.code,enabled:selected,value:''});
+        changed=true;assigned++;
       }
       if(changed){
         await this.prisma.plan.update({where:{id:plan.id},data:{features:{...current,_catalog:selections}}});
