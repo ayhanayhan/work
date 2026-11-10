@@ -27,7 +27,8 @@ function contactUrl(url:string):string{
  if(!url)return url;
  if(url==='/yardim'||url==='/yardim/')return 'https://help.ticarti.com/';
  if(/^\/(?:(?:tr|en|de|ru|ar|bg|uk|id|vi)\/)?login(?:\.html)?\/?$/.test(url))return 'https://login.ticarti.com/';
- return url.replace(/(^|\/)contacto(?:\.html)?(?=$|[?#])/,'$1iletisim');
+ return url.replace(/(^|\/)paketler\.html(?=$|[?#])/,'$1paketler')
+  .replace(/(^|\/)contacto(?:\.html)?(?=$|[?#])/,'$1iletisim');
 }
 function normalizeNode(node:MenuNode):MenuNode{
  return {...node,url:contactUrl(node.url),featured:node.featured?{...node.featured,buttonUrl:contactUrl(node.featured.buttonUrl)}:undefined,
