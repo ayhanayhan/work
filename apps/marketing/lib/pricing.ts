@@ -35,14 +35,6 @@ const slug=(value:string)=>value.toLocaleLowerCase('tr')
 const textContent=(html:string)=>html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
 const planCode=(p:PublicPlan)=>String(p.code||'').toLowerCase();
 const planUrl=(p:PublicPlan)=>'https://login.ticarti.com/register?plan='+encodeURIComponent(p.code);
-const updateText=(html:string,selector:string,value:string)=>{
- const expression=new RegExp('(<'+selector+'\\b[^>]*>)[\\s\\S]*?(<\\/'+selector+'>)','i');
- return html.replace(expression,(_all,open:string,close:string)=>open+safe(value)+close);
-};
-const replaceContents=(html:string,selector:string,value:string)=>html.replace(
- new RegExp('(<'+selector+'\\b[^>]*>)[\\s\\S]*?(<\\/'+selector+'>)','i'),
- (_all,open:string,close:string)=>open+value+close
-);
 function matchingElement(html:string,start:number,tag:string){
  const begin=html.indexOf('<'+tag,start);
  if(begin<0)return null;
