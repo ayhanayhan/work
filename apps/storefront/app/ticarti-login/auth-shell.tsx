@@ -4,6 +4,9 @@ import {LOGIN_HEADER_HTML,REGISTER_HEADER_HTML,LOGIN_AI_HTML,REGISTER_AI_HTML,LO
 export const AUTH_ASSET_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
 export default function AuthShell({children,progress,locale='tr',aiContext}:{children:ReactNode;progress?:number;locale?:'tr'|'en';aiContext?:'login'|'email'|'registerWelcome'|number}){
  const originalRegister=typeof progress==='number';
+ const sourceHeader=originalRegister?REGISTER_HEADER_HTML:LOGIN_HEADER_HTML;
+ // Preserve the original header as the direct flex child: no extra wrapper changes its layout.
+ const headerInner=sourceHeader.slice(sourceHeader.indexOf('>')+1,sourceHeader.lastIndexOf('</div>'));
  const headerRef=useRef<HTMLDivElement>(null),aiRef=useRef<HTMLDivElement>(null);
  const[languageOpen,setLanguageOpen]=useState(false);
  useEffect(()=>{document.documentElement.classList.add('tc-page-auth');document.body.classList.add('tc-auth-page');return()=>{document.documentElement.classList.remove('tc-page-auth');document.body.classList.remove('tc-auth-page')}},[]);
@@ -39,7 +42,7 @@ export default function AuthShell({children,progress,locale='tr',aiContext}:{chi
    <div className="tc-auth-shell-shell-viewport fixed inset-0 overflow-clip">
     <div className="tc-auth-shell-shell-root flex h-full w-full overflow-x-auto bg-[color-mix(in_srgb,var(--color-sh-lime-100)_40%,var(--background))]">
      <div className="tc-auth-shell-shell-content-col flex h-full min-h-0 min-w-[778px] flex-1 flex-col bg-background tc-auth-content-width">
-      <div ref={headerRef} onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:originalRegister?REGISTER_HEADER_HTML:LOGIN_HEADER_HTML}}/>
+      <div className="tc-auth-shell-progress-header flex w-full shrink-0 items-center justify-between px-8 pt-8" ref={headerRef} onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:headerInner}}/>
       {languageOpen?<div className="tc-auth-source-lang"><button type="button" onClick={()=>setLanguageOpen(false)}>Türkçe · TR</button><button type="button" onClick={()=>setLanguageOpen(false)}>English · EN</button></div>:null}
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-gutter:stable] tc-auth-scroll-spacer"><div className="tc-auth" id="tc-app">{children}</div></div>
      </div>
