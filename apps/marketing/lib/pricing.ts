@@ -26,10 +26,10 @@ function planCards(data:PricingFeed){
   const benefits=included.length?included.map(f=>'<li><span aria-hidden="true" class="tc-feature-check">✓</span><span><strong>'+safe(f.title)+'</strong><small>'+safe(f.description)+'</small></span></li>').join(''):
    '<li><span aria-hidden="true" class="tc-feature-check">✓</span><span><strong>'+safe(p.description)+'</strong></span></li>';
   const url='https://login.ticarti.com/register?plan='+encodeURIComponent(p.code);
-  return '<article class="tc-plan-card'+(p.badge?' tc-plan-card--popular':'')+'">'+
-   '<div class="tc-card-top">'+(p.badge?'<p class="tc-plan-badge">'+safe(p.badge)+'</p>':'')+
+  return '<article class="tc-plan-card'+(p.badge?' tc-plan-featured':'')+'">'+
+   '<div class="tc-card-top">'+(p.badge?'<p class="tc-popular">'+safe(p.badge)+'</p>':'')+
    '<h2>'+safe(p.name)+'</h2><p class="tc-plan-desc">'+safe(p.description)+'</p>'+
-   '<div class="tc-price-line"><span class="tc-price">'+money(p.price,p.currency)+'</span><span class="tc-price-suffix">/yıl</span></div>'+
+   '<div class="tc-price-line"><span class="tc-price-currency">'+safe(currencySymbol(p.currency))+'</span><span class="tc-price">'+amount(p.price)+'</span><span class="tc-price-suffix">/yıl</span></div>'+
    '<p class="tc-price-discount">'+(p.originalPrice!==null?'<s class="tc-old-price">'+money(p.originalPrice,p.currency)+'/yıl</s>':'')+
     '<span class="tc-tax-note">'+(p.vatIncluded?'KDV dahil':'KDV hariç')+'</span></p>'+
    '<a class="tc-cta tc-site-hero__cta tc-site-hero__cta--1" href="'+url+'">'+safe(p.buttonText||'Ücretsiz dene')+'<span aria-hidden="true">↗</span></a>'+
@@ -50,8 +50,11 @@ function compareTable(data:PricingFeed){
  const body=groups.map(cat=>'<tr class="tc-table-group"><th colspan="'+(plans.length+1)+'" scope="colgroup">'+safe(cat.title)+'</th></tr>'+
   data.features.filter(f=>f.categoryId===cat.id).map(f=>'<tr><th scope="row"><div class="tc-feature-meta"><div class="tc-feature-title-row"><strong>'+safe(f.title)+'</strong></div>'+
    (f.description?'<p class="tc-feature-description">'+safe(f.description)+'</p>':'')+'</div></th>'+
-    plans.map(p=>'<td>'+(p.featureIds.includes(f.id)?
-     '<span class="tc-val" aria-label="Paket kapsamında">✓</span>':'<span class="tc-dash" aria-label="Pakete dahil değil">—</span>')+'</td>').join('')+'</tr>').join('')
+    plans.map(p=>{const selected=p.featureValues?.find(x=>x.featureId===f.id);
+      const included=selected?selected.enabled:p.featureIds.includes(f.id);
+      return '<td>'+(included?'<span class="tc-val">'+safe(selected?.value||'✓')+'</span>':
+       '<span class="tc-dash">'+safe(selected?.value||'—')+'</span>')+'</td>';
+     }).join('')+'</tr>').join('')
  ).join('');
  return '<table>'+head+'<tbody>'+body+'</tbody></table>';
 }
@@ -87,7 +90,7 @@ export function applyPricingFeed(html:string,feed:PricingFeed|null){
  const faqStart=out.indexOf('<section class="tc-faq" id="tc-faq">');
  if(faqStart>=0){
   const faqEnd=out.indexOf('</section>',faqStart);
-  if(faqEnd>faqStart)out=out.slice(0,faqStart)+faqSection(feed.faq)+out.slice(faqEnd+'</section>'.length);
+  if(faqEnd>faqStart)out=out.slice(0,faqStart)+faqSection(feed.faq||{enabled:false,heading:'',description:'',items:[]})+out.slice(faqEnd+'</section>'.length);
  }
  return out;
 }
