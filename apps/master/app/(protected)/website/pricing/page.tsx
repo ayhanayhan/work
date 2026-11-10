@@ -20,7 +20,7 @@ const normalize=(data:any):PricingFaq=>({
   id:String(x.id||''),enabled:x.enabled!==false,question:x.question||{},answer:x.answer||{}
  })):[]
 });
-export function PricingFaqPage(){
+function PricingFaqPage(){
  const {request,restoring,locales,localesLoading}=useMasterSession();
  const [data,setData]=useState<PricingFaq|null>(null);
  const [locale,setLocale]=useState('tr');
