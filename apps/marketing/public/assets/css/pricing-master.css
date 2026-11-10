@@ -1,16 +1,45 @@
-/* Master-managed Start / Grow / Scale pricing — preserve original card styling. */
-@media (min-width:981px){
-  html.tc-page-pricing .tc-plan-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+/* Ticarti pricing comparison: original visual styles, corrected sticky behavior only.
+   The source table remains in normal document flow. A synchronized clone
+   stays immediately below the visible site navigation while scrolling. */
+html.tc-page-pricing .tc-comparison:not(.tc-pricing-floating-head) thead,
+html.tc-page-pricing .tc-comparison:not(.tc-pricing-floating-head) thead th {
+  position: static !important;
+  top: auto !important;
 }
-@media (min-width:641px) and (max-width:980px){
-  html.tc-page-pricing .tc-plan-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-  html.tc-page-pricing .tc-plan-card:last-child{grid-column:1 / -1;}
+html.tc-page-pricing .tc-comparison tbody .tc-table-group th {
+  position: static !important;
+  top: auto !important;
 }
-@media (max-width:640px){
-  html.tc-page-pricing .tc-plan-grid{grid-template-columns:minmax(0,1fr);}
-  html.tc-page-pricing .tc-plan-card:last-child{grid-column:auto;}
+html.tc-page-pricing .tc-pricing-floating-head {
+  position: fixed !important;
+  z-index: 90;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  overflow: hidden;
+  background: #fff;
+  box-sizing: border-box;
+  box-shadow: 0 1px 0 #e2e6e9;
 }
-html.tc-page-pricing .tc-plan-card.tc-plan-featured{outline-color:#d7e8a0;background:#faffec;}
-html.tc-page-pricing .tc-plan-card .tc-price-suffix,html.tc-page-pricing .tc-th-suffix{white-space:nowrap;}
-html.tc-page-pricing .tc-table-scroll{overflow-x:auto;}
-html.tc-page-pricing .tc-table-scroll table{min-width:760px;}
+html.tc-page-pricing .tc-pricing-floating-head[hidden] {
+  display: none !important;
+}
+html.tc-page-pricing .tc-pricing-floating-head .tc-pricing-floating-table {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  margin: 0 !important;
+}
+html.tc-page-pricing .tc-pricing-floating-head thead,
+html.tc-page-pricing .tc-pricing-floating-head thead th {
+  position: static !important;
+  top: auto !important;
+}
+html.tc-page-pricing .tc-pricing-floating-head .tc-pricing-floating-table th {
+  box-sizing: border-box;
+}
+/* Keep the menu above the floating comparison bar, including dropdowns. */
+html.tc-page-pricing .tc-site-header {
+  z-index: 100;
+}

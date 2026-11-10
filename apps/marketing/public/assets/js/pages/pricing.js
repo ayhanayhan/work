@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // horizontally scrollable table region on narrower viewports.
   const region = table.closest('.tc-table-scroll');
   const cloneHost = document.createElement('div');
-  cloneHost.className = 'tc-pricing-floating-head';
+  cloneHost.className = 'tc-pricing-floating-head tc-comparison';
   cloneHost.setAttribute('aria-hidden', 'false');
   cloneHost.hidden = true;
   const cloneTable = document.createElement('table');
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('scroll', queueStickySync, { passive: true });
   region?.addEventListener('scroll', queueStickySync, { passive: true });
-  syncFloatingHeader();
+  queueStickySync();
   window.addEventListener('resize', queueStickySync, { passive: true });
   if ('ResizeObserver' in window) {
     const observer = new ResizeObserver(queueStickySync);
