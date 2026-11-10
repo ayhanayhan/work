@@ -22,6 +22,7 @@ export class SuperAdminController {
   @Get('plans') plans() { return this.svc.plans(); }
   @Get('plan-workspace') planWorkspace() { return this.svc.planWorkspace(); }
   @Get('plan-feature-catalog') planFeatureCatalog() { return this.svc.planFeatureCatalog(); }
+  @Post('plan-feature-catalog/seed-integrations') seedIntegrations() { return this.svc.seedIntegrationCatalog(); }
   @Patch('plan-feature-catalog') updatePlanFeatureCatalog(@Body() b:any) { return this.svc.updatePlanFeatureCatalog(b); }
   @Post('plans') createPlan(@Body() b: any) { return this.svc.createPlan(b); }
   @Patch('plans/:id') updatePlan(@Param('id') id: string, @Body() b: any) { return this.svc.updatePlan(id, b); }
