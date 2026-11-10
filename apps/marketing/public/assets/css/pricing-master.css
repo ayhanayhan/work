@@ -1,0 +1,16 @@
+/* Master-managed Start / Grow / Scale pricing — preserve original card styling. */
+@media (min-width:981px){
+  html.tc-page-pricing .tc-plan-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (min-width:641px) and (max-width:980px){
+  html.tc-page-pricing .tc-plan-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  html.tc-page-pricing .tc-plan-card:last-child{grid-column:1 / -1;}
+}
+@media (max-width:640px){
+  html.tc-page-pricing .tc-plan-grid{grid-template-columns:minmax(0,1fr);}
+  html.tc-page-pricing .tc-plan-card:last-child{grid-column:auto;}
+}
+html.tc-page-pricing .tc-plan-card.tc-plan-featured{outline-color:#d7e8a0;background:#faffec;}
+html.tc-page-pricing .tc-plan-card .tc-price-suffix,html.tc-page-pricing .tc-th-suffix{white-space:nowrap;}
+html.tc-page-pricing .tc-table-scroll{overflow-x:auto;}
+html.tc-page-pricing .tc-table-scroll table{min-width:760px;}
