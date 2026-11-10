@@ -13,8 +13,14 @@ function initTicartiPricingComparison() {
   const norm = text => (text || '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr-TR');
 
   function featureValues(row) {
-    // Compare actual package cell contents, not feature labels/descriptions.
-    return [...row.cells].slice(1).map(cell => norm(cell.textContent));
+    // Compare package inclusions and limits, not feature names or descriptions.
+    // The source design may represent "included" as a check or as a word.
+    return [...row.cells].slice(1).map(cell => {
+      const value = norm(cell.textContent);
+      if (cell.querySelector('.tc-dash') || ['—', '–', '-', 'yok'].includes(value)) return 'not-included';
+      if (cell.querySelector('.tc-check') || ['✓', '✔', 'dahil', 'included'].includes(value)) return 'included';
+      return value;
+    });
   }
   function refresh() {
     const query = norm(input.value);
