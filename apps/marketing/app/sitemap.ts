@@ -7,7 +7,7 @@ import {listTools,toolPath} from '@/components/tools-pages';
 export const dynamic='force-dynamic';
 const origin=(process.env.NEXT_PUBLIC_SITE_URL||'https://ticarti.com').replace(/\/$/,'');
 const pages=[
- ['home','/'],['blog','/blog'],['pricing','/paketler.html'],['contact','/iletisim'],
+ ['home','/'],['blog','/blog'],['pricing','/paketler'],['contact','/iletisim'],
  ['enterprise','/companies/enterprise.html'],['privacy','/gizlilik-politikasi.html'],
  ['terms','/uyelik-sozlesmesi.html'],['kvkk','/kvkk.html']
 ] as const;
