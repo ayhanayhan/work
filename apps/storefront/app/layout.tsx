@@ -35,7 +35,8 @@ export default async function Layout({children}:{children:React.ReactNode}){
   const designPreview=h.get('x-ticarti-design-preview')==='1';
   const hosts=[cleanHost(h.get('host')),cleanHost(h.get('x-forwarded-host')),cleanHost(h.get('x-original-host'))].filter(Boolean);
   const platform=surface==='platform'||surface==='login'||surface==='app-marketplace'||hosts.some(platformHost);
+  const loginSurface=surface==='login'||hosts.some(x=>x==='login.ticarti.com');
   const current=hosts.find(x=>!x.endsWith('.hosted.app'))||hosts[0]||'';const boot=platform?null:await storefrontBoot(current);const locale=String(boot?.store?.locale||'tr-TR');const rtl=locale.toLowerCase().startsWith('ar');const schema=boot?.store?.settings?.seoAdvanced?.schema||{};
   const organization=boot&&!platform?{ '@context':'https://schema.org','@type':'Organization',name:schema.organizationName||boot.store?.name,url:`https://${current}`,...(schema.logoUrl?{logo:schema.logoUrl}:{}),...(schema.phone?{telephone:schema.phone}:{}),...(schema.email?{email:schema.email}:{})}:null;
-  return <html lang={locale.split('-')[0]||'tr'} dir={rtl?'rtl':'ltr'}><body className={designPreview?'ticarti-design-preview-loading':undefined}>{organization&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organization).replace(/</g,'\\u003c')}}/>}{platform?children:<StorefrontGate>{children}</StorefrontGate>}</body></html>;
+  return <html lang={locale.split('-')[0]||'tr'} dir={rtl?'rtl':'ltr'} className={loginSurface?'tc-page-auth':undefined}><body className={loginSurface?'tc-auth-page':designPreview?'ticarti-design-preview-loading':undefined}>{organization&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organization).replace(/</g,'\\u003c')}}/>}{platform?children:<StorefrontGate>{children}</StorefrontGate>}</body></html>;
 }
