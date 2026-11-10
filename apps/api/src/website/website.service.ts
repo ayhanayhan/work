@@ -136,7 +136,7 @@ export class WebsiteService{
     const visible=plans.filter((p:any)=>p.features?._meta?.frontendVisible!==false).slice(0,3);
     const localized=(translations:any,fallback:any,field='title')=>{
       const active=translations?.[locale]||translations?.tr||translations?.en||{};
-      return String(active?.[field]||fallback||'');
+      return String((field?active?.[field]:active)||fallback||'');
     };
     return {
       locale,plans:visible.map((p:any)=>{
