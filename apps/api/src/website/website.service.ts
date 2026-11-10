@@ -140,7 +140,9 @@ export class WebsiteService{
     const base=record?.value&&typeof record.value==='object'?record.value:{};
     const categories=(Array.isArray(base.categories)?base.categories:[]).slice().sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
     const features=(Array.isArray(base.features)?base.features:[]).slice().sort((a:any,b:any)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
-    const visible=plans.filter((p:any)=>p.features?._meta?.frontendVisible!==false).slice(0,3);
+    const published=plans.filter((p:any)=>p.features?._meta?.frontendVisible!==false);
+    const tierPlans=published.filter((p:any)=>['start','grow','scale'].includes(String(p.code||'').toLowerCase()));
+    const visible=(tierPlans.length?['start','grow','scale'].map(code=>tierPlans.find((p:any)=>String(p.code).toLowerCase()===code)).filter(Boolean):published).slice(0,3);
     const localized=(translations:any,fallback:any,field='title')=>{
       const active=translations?.[locale]||translations?.tr||translations?.en||{};
       return String((field?active?.[field]:active)||fallback||'');
