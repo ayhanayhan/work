@@ -46,12 +46,12 @@ export default function Login(){
  {checking?<section className="tc-view"><p className="tc-sub" role="status">Oturum kontrol ediliyor…</p></section>:
  result?<section className="tc-view"><h1>Mağazanı seç.</h1><p className="tc-sub">Devam etmek istediğin mağazayı seç.</p><div className="tc-store-list">{result.memberships.map((m:Membership)=><button type="button" key={m.tenantId} onClick={()=>choose(m)}><strong>{m.site.name}</strong><span>{m.site.domain||m.site.publicSlug+'.ticarti.com'}</span></button>)}</div></section>:
  view==='welcome'?<section className="tc-view" id="tc-welcome">
-   <div className="tc-symbol" aria-hidden="true">⇥</div><h1>Ticarti'ye tekrar <em>hoş geldin.</em></h1><p className="tc-sub">Mağazanı yönetmek için hesabına giriş yap.</p>
+   <div className="tc-symbol" id="tc-welcome-icon" aria-hidden="true">⇥</div><h1 id="tc-welcome-title">Ticarti'ye tekrar <em>hoş geldin.</em></h1><p className="tc-sub">Mağazanı yönetmek için hesabına giriş yap.</p>
    {error&&<p className="tc-error" role="alert">{error}</p>}
    <div className="tc-actions">
-    <button className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/>LinkedIn ile giriş yap</button>
-    <button className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/>Google ile giriş yap</button>
-    <div className="tc-or"><span>veya</span></div>
+    <button id="tc-linkedin" aria-label="LinkedIn ile giriş yap" className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo tc-provider-logo--linkedin" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/><span id="tc-linkedin-text">ile giriş yap</span></button>
+    <button id="tc-google" aria-label="Google ile giriş yap" className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo tc-provider-logo--google" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/><span id="tc-google-text">ile giriş yap</span></button>
+    <div className="tc-or"><span id="tc-or-text">veya</span></div>
     <button className="tc-btn primary" type="button" onClick={()=>{setView('email');setError('')}}>E-posta ile giriş yap</button>
     <p className="tc-switch">Hesabın yok mu? <Link className="tc-link" href="/register">Kayıt ol</Link></p>
    </div>
