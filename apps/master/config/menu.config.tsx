@@ -20,6 +20,7 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Tüm Paketler', path: '/products' },
       { title: 'Yeni Paket', path: '/products/new' },
       { title: 'Paket Özellikleri', path: '/products/features' },
+      { title: 'Paketler SSS', path: '/website/pricing' },
       { title: 'Özellik Kategorileri', path: '/products/feature-categories' },
     ],
   },
