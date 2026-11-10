@@ -187,8 +187,10 @@ export class SuperAdminService {
       for(const lang of locales)translations[lang]={title:lang==='tr'?group.label:group.label,description:''};
       categories.push({id:group.id,code:group.code,isActive:true,sortOrder:15+categories.length,translations});
     }
+    let legacyAdded=0;
     for(const row of LEGACY_PRICING_FEATURES){
       if(features.some((f:any)=>f.id===row.id||f.code===row.code))continue;
+      legacyAdded++;
       const translations:any={};
       for(const lang of locales)translations[lang]={title:row.title,subtitle:'',slug:row.id,
         description:row.description,body:'',seoTitle:row.title+' | Ticarti',
@@ -210,7 +212,7 @@ export class SuperAdminService {
       features.push({id:spec.id,code:spec.code,categoryId:'integration-category-'+spec.kind,valueType:'BOOLEAN',isActive:true,isPageEnabled:false,sortOrder:200+spec.index,translations,imageUrl:''});
       added++;
     }
-    if(added||categories.length!==snapshot.categories.length){
+    if(added||legacyAdded||categories.length!==snapshot.categories.length){
       await this.prisma.platformSetting.upsert({where:{key:'plan_feature_catalog'},create:{key:'plan_feature_catalog',value:{categories,features}},update:{value:{categories,features}}});
     }
     let assigned=0;
@@ -240,7 +242,7 @@ export class SuperAdminService {
         await this.prisma.plan.update({where:{id:plan.id},data:{features:{...current,_catalog:selections}}});
       }
     }
-    return {ok:true,added,assigned,categoriesAdded:categories.length-snapshot.categories.length,existingSettingsPreserved:true};
+    return {ok:true,added:added+legacyAdded,integrationsAdded:added,legacyFeaturesAdded:legacyAdded,assigned,categoriesAdded:categories.length-snapshot.categories.length,existingSettingsPreserved:true};
   }
 
   async planWorkspace(){
