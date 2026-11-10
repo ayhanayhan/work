@@ -34,7 +34,7 @@ export default function RegisterWizard(){
  useEffect(()=>{
   const p=new URLSearchParams(window.location.search).get('plan');
   if(PLANS.some(x=>x.id===p))setValues(v=>({...v,plan:p||''}));
-  void fetch(API+'/merchant-auth/providers',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(data=>{
+  void fetch(API+'/merchant-auth/providers',{cache:'no-store'}).then(async r=>(r.ok?await r.json():{}) as {google?:{enabled?:boolean};linkedin?:{enabled?:boolean}}).then(data=>{
     setProviders({google:{enabled:data?.google?.enabled===true},linkedin:{enabled:data?.linkedin?.enabled===true}});
   }).catch(()=>{});
   void fetch(API+'/merchant-auth/social/pending',{cache:'no-store',credentials:'include'}).then(r=>r.ok?r.json():{}).then(data=>{
