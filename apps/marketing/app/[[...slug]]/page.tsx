@@ -282,7 +282,7 @@ export default async function MarketingPage({params,searchParams}:Props){
       :<SiteShell><div className={page.classes}
          dangerouslySetInnerHTML={{__html:stripLegacyShell(page.html)}}/></SiteShell>}
     {page.isBlogList?<BlogInteractions/>:null}
-    <LegacyScripts sources={page.scripts.filter(src=>!/(?:header-navigation|topbar-features)\.js(?:\?|$)/.test(src))} htmlClasses={page.classes}/>
+    <LegacyScripts sources={page.scripts.filter(src=>!/(?:header-navigation|topbar-features)\.js(?:\?|$)/.test(src)).map(src=>src.endsWith('/pages/pricing.js')?src+'?v=20261111-sticky-filter':src)} htmlClasses={page.classes}/>
     {schemas.map((schema,i)=><script key={i} type="application/ld+json" dangerouslySetInnerHTML={{
       __html:JSON.stringify(schema).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029')
     }}/>)}
