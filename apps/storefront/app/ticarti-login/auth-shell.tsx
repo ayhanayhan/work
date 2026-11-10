@@ -16,10 +16,8 @@ export default function AuthShell({children,locale='tr',progress}:{children:Reac
      <a className="tc-auth-home-link" href="https://ticarti.com/" aria-label="Ticarti ana sayfa">
       <img className="tc-logo-original" src={AUTH_ASSET_ORIGIN+'/assets/images/ticarti-logo.svg'} alt="Ticarti"/>
      </a>
-     <div className="tc-auth-shell-header-actions">
-      {typeof progress==='number'?<div className="tc-auth-shell-progress-track" role="progressbar" aria-label="Kayıt ilerlemesi" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><div className="tc-auth-shell-progress-fill" style={{width:progress+'%'}}/></div>:null}
-      <div className="tc-auth-language-wrap"><button className="tc-auth-language-label" type="button" aria-expanded={langOpen} aria-label="Change language" onClick={()=>setLangOpen(x=>!x)}>EN <span aria-hidden="true">⌄</span></button>{langOpen?<div className="tc-auth-language-options"><button type="button" onClick={()=>setLangOpen(false)}>Türkçe · TR</button><button type="button" onClick={()=>setLangOpen(false)}>English · EN</button></div>:null}</div>
-     </div>
+     {typeof progress==='number'?<div className="tc-auth-shell-progress-track" role="progressbar" aria-label="Kayıt ilerlemesi" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><div className="tc-auth-shell-progress-fill" style={{width:progress+'%'}}/></div>:<div className="tc-auth-shell-progress-track" aria-hidden="true" hidden/>}
+     <div className="tc-auth-language-wrap"><button className="tc-auth-language-label" type="button" aria-expanded={langOpen} aria-label="Change language" onClick={()=>setLangOpen(x=>!x)}>EN <span aria-hidden="true">⌄</span></button>{langOpen?<div className="tc-auth-language-options"><button type="button" onClick={()=>setLangOpen(false)}>Türkçe · TR</button><button type="button" onClick={()=>setLangOpen(false)}>English · EN</button></div>:null}</div>
     </header>
     <div className="tc-auth-shell-form-scroll">
      <div className="tc-auth" id="tc-app">{children}</div>
