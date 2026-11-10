@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState,type ReactNode,type MouseEvent} from 'react';
 import {LOGIN_HEADER_HTML,REGISTER_HEADER_HTML,LOGIN_AI_HTML,REGISTER_AI_HTML,LOGIN_LEGAL_HTML,REGISTER_LEGAL_HTML} from './original-template-markup';
 export const AUTH_ASSET_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
-export default function AuthShell({children,progress,locale='tr'}:{children:ReactNode;progress?:number;locale?:'tr'|'en'}){
+export default function AuthShell({children,progress,locale='tr',aiContext}:{children:ReactNode;progress?:number;locale?:'tr'|'en';aiContext?:'login'|'email'|'registerWelcome'|number}){
  const originalRegister=typeof progress==='number';
  const headerRef=useRef<HTMLDivElement>(null),aiRef=useRef<HTMLDivElement>(null);
  const[languageOpen,setLanguageOpen]=useState(false);
@@ -16,10 +16,20 @@ export default function AuthShell({children,progress,locale='tr'}:{children:Reac
  },[progress,originalRegister]);
  useEffect(()=>{
   const message=aiRef.current?.querySelector<HTMLElement>('#tc-mobile-ai-message');
-  if(message)message.textContent=originalRegister?
-   'Ticarti’ye hoş geldin! Hesabını oluşturduktan sonra mağazanı birkaç basit adımda birlikte hazırlayacağız.':
-   'Tekrar hoş geldin! Mağazana giriş yaparak ürünlerini, siparişlerini ve tüm operasyonunu kaldığın yerden yönetebilirsin.';
- },[originalRegister]);
+  const steps=[
+   'Önce seni tanıyalım. Adın, e-posta adresin ve şifren Ticarti hesabının temelini oluşturacak.',
+   'Başlangıç için sana uygun paketi seç. Sonraki adımlarda mağazanı hazırlayacağız.',
+   'Ne satacağını seç. Bu bilgi başlangıçta sana daha uygun mağaza önerileri sunmamıza yardımcı olacak.',
+   'Şimdi markana bir isim verelim. Mağaza adını daha sonra yönetim panelinden değiştirebilirsin.',
+   'Mağazan için kısa ve akılda kalıcı bir internet adresi seç. Kendi alan adını sonradan bağlayabileceksin.',
+   'Mağaza bilgilerini tamamladın. Son adım olan ödeme özetine geçmeden önce seçimlerini kontrol edebilirsin.',
+   'Son adımda paket özetini görüyorsun. Gerçek ödeme, güvenli ödeme sağlayıcısı bağlandıktan sonra etkinleştirilecek.'
+  ];
+  if(message)message.textContent=typeof aiContext==='number'?steps[aiContext]||steps[0]:
+    aiContext==='email'?'E-posta adresin ve şifrenle güvenle devam et. Hesap açman gerekiyorsa kayıt ekranına dönebilirsin.':
+    originalRegister?'Ticarti’ye hoş geldin! Hesabını oluşturduktan sonra mağazanı birkaç basit adımda birlikte hazırlayacağız.':
+    'Tekrar hoş geldin! Mağazana giriş yaparak ürünlerini, siparişlerini ve tüm operasyonunu kaldığın yerden yönetebilirsin.';
+ },[originalRegister,aiContext]);
  function handleHeaderClick(e:MouseEvent<HTMLDivElement>){
   if((e.target as Element).closest('button[aria-label="Change language"]')){e.preventDefault();setLanguageOpen(x=>!x);}
  }

@@ -42,7 +42,7 @@ export default function Login(){
    if(!providers[provider].enabled){setError(provider==='google'?'Google ile giriş için Master sağlayıcı ayarlarının etkinleştirilmesi gerekiyor.':'LinkedIn ile giriş için Master sağlayıcı ayarlarının etkinleştirilmesi gerekiyor.');return}
    window.location.assign(API+'/merchant-auth/'+provider+'/start');
  }
- return <AuthShell>
+ return <AuthShell aiContext={view==='email'?'email':'login'}>
  {checking?<section className="tc-view"><p className="tc-sub" role="status">Oturum kontrol ediliyor…</p></section>:
  result?<section className="tc-view"><h1>Mağazanı seç.</h1><p className="tc-sub">Devam etmek istediğin mağazayı seç.</p><div className="tc-store-list">{result.memberships.map((m:Membership)=><button type="button" key={m.tenantId} onClick={()=>choose(m)}><strong>{m.site.name}</strong><span>{m.site.domain||m.site.publicSlug+'.ticarti.com'}</span></button>)}</div></section>:
  view==='welcome'?<section className="tc-view" id="tc-welcome">

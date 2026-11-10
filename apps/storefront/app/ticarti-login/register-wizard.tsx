@@ -99,7 +99,7 @@ export default function RegisterWizard(){
   window.location.assign(API+'/merchant-auth/'+provider+'/start');
  }
  const field=(key:keyof Signup,label:string,type='text',placeholder='')=><label key={key}>{label}<input type={type} placeholder={placeholder} autoComplete={key==='email'?'email':key==='name'?'name':key==='password'?'new-password':key==='phone'?'tel':'off'} value={String(values[key])} onChange={e=>set(key as any,e.target.value as any)} required={key!=='phone'} /></label>;
- return <AuthShell progress={welcome?0:Math.round(((step+1)/STEPS.length)*100)}>
+ return <AuthShell progress={welcome?0:Math.round(((step+1)/STEPS.length)*100)} aiContext={welcome?'registerWelcome':step}>
  {welcome?<section className="tc-view" id="tc-welcome">
    <div className="tc-symbol" id="tc-welcome-icon" aria-hidden="true">⇥</div><h1 id="tc-welcome-title">Mağazanı birlikte kuralım.</h1>
    <p className="tc-sub">Ücretsiz hesabını oluştur, mağazanı birkaç adımda hazırla.</p>
