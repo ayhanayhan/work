@@ -37,8 +37,8 @@ export default function RegisterWizard(){
   void fetch(API+'/merchant-auth/providers',{cache:'no-store'}).then(async r=>(r.ok?await r.json():{}) as {google?:{enabled?:boolean};linkedin?:{enabled?:boolean}}).then(data=>{
     setProviders({google:{enabled:data?.google?.enabled===true},linkedin:{enabled:data?.linkedin?.enabled===true}});
   }).catch(()=>{});
-  void fetch(API+'/merchant-auth/social/pending',{cache:'no-store',credentials:'include'}).then(r=>r.ok?r.json():{}).then(data=>{
-    if(data?.active===true&&['GOOGLE','LINKEDIN'].includes(data.provider)){
+  void fetch(API+'/merchant-auth/social/pending',{cache:'no-store',credentials:'include'}).then(async r=>(r.ok?await r.json():{}) as {active?:boolean;provider?:string;email?:string;name?:string}).then(data=>{
+    if(data.active===true&&(data.provider==='GOOGLE'||data.provider==='LINKEDIN')){
       setSocial(data.provider);setWelcome(false);setValues(v=>({...v,email:String(data.email||''),name:String(data.name||'')}));
     }
   }).catch(()=>{});
