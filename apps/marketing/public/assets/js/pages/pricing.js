@@ -1,7 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initTicartiPricingComparison() {
+  // LegacyScripts injects this script after React hydration; DOMContentLoaded
+  // has often fired already, so initialize immediately in that case.
+  if (document.documentElement.dataset.tcPricingComparisonReady === '1') return;
   const input = document.getElementById('tc-feature-search');
   const table = document.querySelector('.tc-comparison table');
   if (!input || !table || !table.tBodies.length) return;
+  document.documentElement.dataset.tcPricingComparisonReady = '1';
   const toggle = document.getElementById('tc-only-differences');
   const status = document.getElementById('tc-search-status');
   const empty = document.getElementById('tc-no-results');
@@ -26,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         endGroup(); group = row; groupRows = []; group.hidden = false; continue;
       }
       const values = featureValues(row);
+      // Compare actual per-package values. Exclude the feature label and
+      // descriptions; normalize case/spacing to avoid false differences.
       const differs = new Set(values).size > 1;
       const isMatch = !query || norm(row.cells[0]?.textContent).includes(query);
       row.hidden = !isMatch || (differencesOnly && !differs);
@@ -35,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     endGroup();
     if (status) status.textContent = (query || differencesOnly) ? `${matches} özellik gösteriliyor` : '';
     if (empty) empty.hidden = matches > 0;
+    queueStickySync();
   }
   input.addEventListener('input', refresh);
   toggle?.addEventListener('change', refresh);
@@ -204,4 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (header) observer.observe(header);
   }
   refresh();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTicartiPricingComparison, { once: true });
+} else {
+  initTicartiPricingComparison();
+}
