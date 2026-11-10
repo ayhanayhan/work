@@ -1,6 +1,7 @@
 'use client';
 import {useState,type ReactNode,type MouseEvent} from 'react';
 import {useAuthLocale} from './auth-locale';
+import TicAiSupport from './tic-ai-support';
 import {LOGIN_HEADER_HTML,REGISTER_HEADER_HTML,LOGIN_AI_HTML,REGISTER_AI_HTML,LOGIN_LEGAL_HTML,REGISTER_LEGAL_HTML} from './original-template-markup';
 export const AUTH_ASSET_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
 export default function AuthShell({children,progress,aiContext}:{children:ReactNode;progress?:number;aiContext?:'login'|'email'|'registerWelcome'|number}){
@@ -10,6 +11,7 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
  // Preserve the original header as the direct flex child: no extra wrapper changes its layout.
  const headerInner=sourceHeader.slice(sourceHeader.indexOf('>')+1,sourceHeader.lastIndexOf('</div>'));
  const[languageOpen,setLanguageOpen]=useState(false);
+ const[menuPosition,setMenuPosition]=useState<{top:number;left:number}>({top:70,left:20});
  const aiTexts:Record<string,string[]> = {
   tr:['Tekrar hoş geldin! Mağazana giriş yaparak ürünlerini, siparişlerini ve tüm operasyonunu kaldığın yerden yönetebilirsin.','E-posta adresin ve şifrenle güvenle devam et. Hesap açman gerekiyorsa kayıt ekranına dönebilirsin.','Ticarti’ye hoş geldin! Hesabını oluşturduktan sonra mağazanı birkaç basit adımda birlikte hazırlayacağız.','Önce seni tanıyalım. Adın, e-posta adresin ve şifren Ticarti hesabının temelini oluşturacak.','Başlangıç için sana uygun paketi seç. Sonraki adımlarda mağazanı hazırlayacağız.','Ne satacağını seç. Bu bilgi başlangıçta sana daha uygun mağaza önerileri sunmamıza yardımcı olacak.','Şimdi markana bir isim verelim. Mağaza adını daha sonra yönetim panelinden değiştirebilirsin.','Mağazan için kısa ve akılda kalıcı bir internet adresi seç. Kendi alan adını sonradan bağlayabileceksin.','Mağaza bilgilerini tamamladın. Son adım olan ödeme özetine geçmeden önce seçimlerini kontrol edebilirsin.','Son adımda paket özetini görüyorsun. Gerçek ödeme, güvenli ödeme sağlayıcısı bağlandıktan sonra etkinleştirilecek.'],
   en:['Welcome back! Sign in to manage your store, orders and operations.','Continue securely with your email and password.','Welcome to Ticarti! We will set up your store together.','First, tell us about yourself to create your account.','Choose a plan that suits your business.','Choose what you plan to sell.','Give your brand a name; you can change it later.','Choose a memorable store address.','Review your details before continuing.','Review your plan; payment will be available when enabled.'],
@@ -32,7 +34,11 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
  const localizedFooter=(originalRegister?REGISTER_LEGAL_HTML:LOGIN_LEGAL_HTML)
   .replace('Üyelik Sözleşmesi',t('terms')).replace('Gizlilik Politikası',t('privacy')).replace('KVKK Aydınlatma Metni',t('kvkk'));
  function handleHeaderClick(e:MouseEvent<HTMLDivElement>){
-  if((e.target as Element).closest('button[aria-label="Change language"]')){e.preventDefault();setLanguageOpen(x=>!x);}
+  const button=(e.target as Element).closest<HTMLButtonElement>('button[aria-label="Change language"]');
+  if(button){e.preventDefault();const rect=button.getBoundingClientRect();const menuWidth=220;
+   setMenuPosition({top:Math.min(window.innerHeight-24,rect.bottom+7),left:Math.max(12,Math.min(rect.left,window.innerWidth-menuWidth-12))});
+   setLanguageOpen(x=>!x);
+  }
  }
  return <>
   <div id="root" className="tc-auth-source" lang={locale}>
@@ -40,12 +46,18 @@ export default function AuthShell({children,progress,aiContext}:{children:ReactN
     <div className="tc-auth-shell-shell-root flex h-full w-full overflow-x-auto bg-[color-mix(in_srgb,var(--color-sh-lime-100)_40%,var(--background))]">
      <div className="tc-auth-shell-shell-content-col flex h-full min-h-0 min-w-[778px] flex-1 flex-col bg-background tc-auth-content-width">
       <div className="tc-auth-shell-progress-header flex w-full shrink-0 items-center justify-between px-8 pt-8" onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:localHeader}}/>
-      {languageOpen?<div className="tc-auth-source-lang" role="listbox" aria-label={t('localeLabel')}>{locales.map(x=><button type="button" key={x.locale} role="option" aria-selected={x.locale===locale} onClick={()=>{setLocale(x.locale);setLanguageOpen(false)}}>{x.label} · {x.locale.toUpperCase()}{x.locale===locale?' ✓':''}</button>)}</div>:null}
+      {languageOpen?<div className="tc-auth-source-lang" dir="ltr" style={menuPosition} role="listbox" aria-label={t('localeLabel')}>{locales.map(x=><button type="button" key={x.locale} role="option" aria-selected={x.locale===locale} onClick={()=>{setLocale(x.locale);setLanguageOpen(false)}}>{x.label} · {x.locale.toUpperCase()}{x.locale===locale?' ✓':''}</button>)}</div>:null}
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-gutter:stable] tc-auth-scroll-spacer"><div className="tc-auth" id="tc-app">{children}</div></div>
      </div>
     </div>
    </div>
-   <div dangerouslySetInnerHTML={{__html:localizedAi}}/>
+   <aside aria-label="TicAi kurulum rehberi" className="tc-mobile-ai-overlay" id="tc-mobile-ai-overlay">
+    <section aria-label="TicAi açıklaması" className="tc-mobile-ai-panel">
+     <p className="tc-mobile-ai-title">TicAi</p>
+     <p className="tc-mobile-ai-message" id="tc-mobile-ai-message">{aiMessage}</p>
+     <div id="tc-mobile-ai-panel-support-slot"><TicAiSupport/></div>
+    </section>
+   </aside>
    <div dangerouslySetInnerHTML={{__html:localizedFooter}}/>
   </div>
  </>;
