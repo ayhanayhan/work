@@ -101,13 +101,13 @@ export default function RegisterWizard(){
  const field=(key:keyof Signup,label:string,type='text',placeholder='')=><label key={key}>{label}<input type={type} placeholder={placeholder} autoComplete={key==='email'?'email':key==='name'?'name':key==='password'?'new-password':key==='phone'?'tel':'off'} value={String(values[key])} onChange={e=>set(key as any,e.target.value as any)} required={key!=='phone'} /></label>;
  return <AuthShell progress={welcome?0:Math.round(((step+1)/STEPS.length)*100)}>
  {welcome?<section className="tc-view" id="tc-welcome">
-   <h1>Mağazanı birlikte kuralım.</h1>
+   <div className="tc-symbol" id="tc-welcome-icon" aria-hidden="true">⇥</div><h1 id="tc-welcome-title">Mağazanı birlikte kuralım.</h1>
    <p className="tc-sub">Ücretsiz hesabını oluştur, mağazanı birkaç adımda hazırla.</p>
    <div className="tc-actions">
-    <button className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/>LinkedIn ile kaydol</button>
-    <button className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/>Google ile kaydol</button>
+    <button id="tc-linkedin" aria-label="LinkedIn ile kaydol" className="tc-btn primary tc-provider-btn" type="button" onClick={()=>startSocial('linkedin')}><img className="tc-provider-logo tc-provider-logo--linkedin" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/linkedin-logo.svg'} alt=""/><span id="tc-linkedin-text">ile kaydol</span></button>
+    <button id="tc-google" aria-label="Google ile kaydol" className="tc-btn tc-provider-btn" type="button" onClick={()=>startSocial('google')}><img className="tc-provider-logo tc-provider-logo--google" src={AUTH_ASSET_ORIGIN+'/assets/images/auth/google-logo.svg'} alt=""/><span id="tc-google-text">ile kaydol</span></button>
     {error&&<p className="tc-error" role="alert">{error}</p>}
-    <div className="tc-or"><span>veya</span></div>
+    <div className="tc-or"><span id="tc-or-text">veya</span></div>
     <button className="tc-btn primary" type="button" onClick={()=>setWelcome(false)}>E-posta ile devam et</button>
     <p className="tc-switch">Zaten hesabın var mı? <Link className="tc-link" href="/">Giriş yap</Link></p>
    </div>
