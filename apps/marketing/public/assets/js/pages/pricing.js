@@ -58,10 +58,103 @@ document.addEventListener('DOMContentLoaded', () => {
     root.style.setProperty('--tc-fixed-header-height', `${Math.ceil(headerBottom)}px`);
     root.style.setProperty('--tc-group-offset', `${Math.ceil(headerBottom + headHeight - 1)}px`);
   }
-  syncStickyOffsets();
-  window.addEventListener('resize', syncStickyOffsets, { passive: true });
+  // Preserve the exact original thead design while keeping it visible below
+  // the site navigation. A normal position:sticky stops working inside the
+  // horizontally scrollable table region on narrower viewports.
+  const region = table.closest('.tc-table-scroll');
+  const cloneHost = document.createElement('div');
+  cloneHost.className = 'tc-pricing-floating-head';
+  cloneHost.setAttribute('aria-hidden', 'false');
+  cloneHost.hidden = true;
+  const cloneTable = document.createElement('table');
+  cloneTable.className = 'tc-pricing-floating-table';
+  const headClone = thead?.cloneNode(true);
+  if (headClone) cloneTable.appendChild(headClone);
+  cloneHost.appendChild(cloneTable);
+  document.body.appendChild(cloneHost);
+  const sourceHeadCells = [...(thead?.rows?.[0]?.cells || [])];
+  const cloneHeadCells = [...(headClone?.querySelectorAll('th') || [])];
+  for (const element of cloneHost.querySelectorAll('[id]')) {
+    element.id = 'floating-' + element.id;
+  }
+  const cloneInput = cloneHost.querySelector('input[type="search"]');
+  const cloneToggle = cloneHost.querySelector('input[type="checkbox"]');
+  const cloneStatus = cloneHost.querySelector('.tc-search-status');
+  if (cloneInput) {
+    cloneInput.value = input.value;
+    cloneInput.addEventListener('input', () => {
+      input.value = cloneInput.value;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+  if (cloneToggle && toggle) {
+    cloneToggle.checked = toggle.checked;
+    cloneToggle.addEventListener('change', () => {
+      toggle.checked = cloneToggle.checked;
+      toggle.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+  function syncFloatingContent() {
+    if (cloneInput && cloneInput !== document.activeElement) cloneInput.value = input.value;
+    if (cloneToggle && toggle) cloneToggle.checked = toggle.checked;
+    if (cloneStatus && status) cloneStatus.textContent = status.textContent;
+  }
+  input.addEventListener('input', syncFloatingContent);
+  toggle?.addEventListener('change', syncFloatingContent);
+  function navBottom() {
+    if (!header) return 0;
+    // The header itself can contain an announcement bar which scrolls away.
+    // Use visible navigation bounds, not the total document-header height.
+    const visible = [...header.querySelectorAll('.tc-navigation-bar, .tc-navigation, .tc-header-main, .tc-header-inner, .tc-navigation-wrapper')]
+      .map(x => x.getBoundingClientRect())
+      .filter(rect => rect.height > 0 && rect.top <= 1 && rect.bottom > 0);
+    if (visible.length) return Math.ceil(Math.max(...visible.map(rect => rect.bottom)));
+    const rect = header.getBoundingClientRect();
+    return rect.top <= 1 && rect.bottom > 0 ? Math.ceil(rect.bottom) : 0;
+  }
+  function syncFloatingHeader() {
+    if (!region || !thead || !sourceHeadCells.length) return;
+    const rect = region.getBoundingClientRect();
+    const tableRect = table.getBoundingClientRect();
+    const sourceRect = thead.getBoundingClientRect();
+    const offset = navBottom();
+    const height = Math.ceil(sourceRect.height);
+    const shouldShow = rect.width > 0 && height > 0
+      && sourceRect.top < offset && tableRect.bottom > offset + height;
+    cloneHost.hidden = !shouldShow;
+    if (!shouldShow) return;
+    cloneHost.style.top = offset + 'px';
+    cloneHost.style.left = rect.left + 'px';
+    cloneHost.style.width = rect.width + 'px';
+    cloneHost.style.height = height + 'px';
+    cloneTable.style.width = tableRect.width + 'px';
+    cloneTable.style.transform = 'translateX(' + (-region.scrollLeft) + 'px)';
+    sourceHeadCells.forEach((cell, index) => {
+      const target = cloneHeadCells[index];
+      if (!target) return;
+      const width = cell.getBoundingClientRect().width + 'px';
+      target.style.width = width;
+      target.style.minWidth = width;
+      target.style.maxWidth = width;
+    });
+    syncFloatingContent();
+  }
+  let framePending = false;
+  function queueStickySync() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(() => {
+      framePending = false;
+      syncStickyOffsets();
+      syncFloatingHeader();
+    });
+  }
+  window.addEventListener('scroll', queueStickySync, { passive: true });
+  region?.addEventListener('scroll', queueStickySync, { passive: true });
+  syncFloatingHeader();
+  window.addEventListener('resize', queueStickySync, { passive: true });
   if ('ResizeObserver' in window) {
-    const observer = new ResizeObserver(syncStickyOffsets);
+    const observer = new ResizeObserver(queueStickySync);
     observer.observe(thead);
     if (header) observer.observe(header);
   }
