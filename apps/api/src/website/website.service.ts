@@ -153,7 +153,10 @@ export class WebsiteService{
           badge:localized(tr,v._meta?.badge||'','badge'),buttonText:localized(tr,'Ücretsiz dene','buttonText'),
           cardFeatures:localized(tr,'','cardFeatures'),trialDays:p.trialDays,price:sale??price,
           originalPrice:sale!==null?price:null,currency:p.currency,vatIncluded:v._meta?.vatIncluded!==false,
-          featureIds:(Array.isArray(v._catalog)?v._catalog:[]).filter((x:any)=>x.enabled!==false).map((x:any)=>String(x.featureId))};
+          featureIds:(Array.isArray(v._catalog)?v._catalog:[]).filter((x:any)=>x.enabled!==false).map((x:any)=>String(x.featureId)),
+          featureValues:(Array.isArray(v._catalog)?v._catalog:[]).map((x:any)=>({
+            featureId:String(x.featureId||''),enabled:x.enabled!==false,value:String(x.value||'')
+          }))};
       }),
       categories:categories.filter((x:any)=>x.isActive!==false).map((x:any)=>({
         id:x.id,title:localized(x.translations,x.code)})),
