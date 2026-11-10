@@ -1,4 +1,3 @@
-import '../../../marketing/public/assets/css/style.css';
 import type {ReactNode} from 'react';
 import {cookies} from 'next/headers';
 import {AuthLocaleProvider,AUTH_DICTIONARIES} from './auth-locale';
