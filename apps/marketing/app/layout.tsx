@@ -28,9 +28,11 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   // homepage fallback used when a legacy static HTML template is absent.
   const contentParts=parts[0]&&['tr','en','de','ru','ar','bg','uk','id','vi'].includes(parts[0])?parts.slice(1):parts;
   const toolsPage=contentParts[0]==='araclar';
+  const pricingPage=contentParts[0]==='paketler';
   const helpHost=(await headers()).get('x-ticarti-help-host')==='1';
   const devHost=(await headers()).get('x-ticarti-dev-host')==='1';
-  const cls=devHost?'tc-page-home tc-page-developer':helpHost?'tc-page-home tc-page-help':toolsPage?
+  const cls=devHost?'tc-page-home tc-page-developer':helpHost?'tc-page-home tc-page-help':pricingPage?
+   'tc-page-pricing tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight':toolsPage?
    (contentParts.length>1?
     'tc-page-crowdy tc-vendor-aos tc-vendor-theme tc-page-stories tc-marketing-blog':
     'tc-page-stories tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight tc-marketing-blog'):
@@ -46,7 +48,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
     <link rel="stylesheet" href="/assets/css/marketing-help.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/marketing-developer.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/navigation-tree.css?v=1"/>
-    {contentParts[0]==='paketler'||contentParts[0]==='paketler.html'?<link rel="stylesheet" href="/assets/css/pricing-master.css?v=2"/>:null}
+    {pricingPage?<link rel="stylesheet" href="/assets/css/pricing-master.css?v=2"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=3"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
   </head><body>{children}</body></html>;
