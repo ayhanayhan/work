@@ -1,7 +1,7 @@
 import './globals.css';
 import './core-commerce.css';
 import './ticarti-login-brand.css';
-import './ticarti-auth-original.css';
+import './ticarti-auth-source-glue.css';
 import type {Metadata} from 'next';
 import {headers} from 'next/headers';
 import StorefrontGate from '../components/StorefrontGate';

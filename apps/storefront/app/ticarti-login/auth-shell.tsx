@@ -1,41 +1,42 @@
 'use client';
-import {useState,type ReactNode} from 'react';
-
+import {useEffect,useRef,useState,type ReactNode,type MouseEvent} from 'react';
+import {LOGIN_HEADER_HTML,REGISTER_HEADER_HTML,LOGIN_AI_HTML,REGISTER_AI_HTML,LOGIN_LEGAL_HTML,REGISTER_LEGAL_HTML} from './original-template-markup';
 export const AUTH_ASSET_ORIGIN='https://commerce-marketing--wedidit-64fae.europe-west4.hosted.app';
-const texts={
- tr:{legal:'Yasal bağlantılar',terms:'Üyelik Sözleşmesi',privacy:'Gizlilik Politikası',kvkk:'KVKK Aydınlatma Metni',back:'Ana sayfa',lang:'Dil'},
- en:{legal:'Legal links',terms:'Membership Agreement',privacy:'Privacy Policy',kvkk:'Data Protection Notice',back:'Homepage',lang:'Language'}
-};
-export default function AuthShell({children,locale='tr',progress}:{children:ReactNode;locale?:'tr'|'en';progress?:number}){
- const t=texts[locale];
- const [langOpen,setLangOpen]=useState(false);
- return <main className="tc-next-auth tc-auth-shell-shell-viewport" lang={locale}>
-  <div className="tc-auth-shell-shell-root">
-   <div className="tc-auth-shell-shell-content-col">
-    <header className="tc-auth-shell-progress-header">
-     <a className="tc-auth-home-link" href="https://ticarti.com/" aria-label="Ticarti ana sayfa">
-      <img className="tc-logo-original" src={AUTH_ASSET_ORIGIN+'/assets/images/ticarti-logo.svg'} alt="Ticarti"/>
-     </a>
-     {typeof progress==='number'?<div className="tc-auth-shell-progress-track" role="progressbar" aria-label="Kayıt ilerlemesi" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><div className="tc-auth-shell-progress-fill" style={{width:progress+'%'}}/></div>:<div className="tc-auth-shell-progress-track" aria-hidden="true" hidden/>}
-     <div className="tc-auth-language-wrap"><button className="tc-auth-language-label" type="button" aria-expanded={langOpen} aria-label="Change language" onClick={()=>setLangOpen(x=>!x)}>EN <span aria-hidden="true">⌄</span></button>{langOpen?<div className="tc-auth-language-options"><button type="button" onClick={()=>setLangOpen(false)}>Türkçe · TR</button><button type="button" onClick={()=>setLangOpen(false)}>English · EN</button></div>:null}</div>
-    </header>
-    <div className="tc-auth-shell-form-scroll">
-     <div className="tc-auth" id="tc-app">{children}</div>
+export default function AuthShell({children,progress,locale='tr'}:{children:ReactNode;progress?:number;locale?:'tr'|'en'}){
+ const originalRegister=typeof progress==='number';
+ const headerRef=useRef<HTMLDivElement>(null),aiRef=useRef<HTMLDivElement>(null);
+ const[languageOpen,setLanguageOpen]=useState(false);
+ useEffect(()=>{document.documentElement.classList.add('tc-page-auth');document.body.classList.add('tc-auth-page');return()=>{document.documentElement.classList.remove('tc-page-auth');document.body.classList.remove('tc-auth-page')}},[]);
+ useEffect(()=>{
+  const el=headerRef.current;
+  const bar=el?.querySelector<HTMLElement>('.tc-auth-shell-progress-track');
+  const fill=el?.querySelector<HTMLElement>('.tc-auth-shell-progress-fill');
+  if(bar)bar.hidden=!originalRegister;
+  if(fill)fill.style.width=String(progress||0)+'%';
+ },[progress,originalRegister]);
+ useEffect(()=>{
+  const message=aiRef.current?.querySelector<HTMLElement>('#tc-mobile-ai-message');
+  if(message)message.textContent=originalRegister?
+   'Ticarti’ye hoş geldin! Hesabını oluşturduktan sonra mağazanı birkaç basit adımda birlikte hazırlayacağız.':
+   'Tekrar hoş geldin! Mağazana giriş yaparak ürünlerini, siparişlerini ve tüm operasyonunu kaldığın yerden yönetebilirsin.';
+ },[originalRegister]);
+ function handleHeaderClick(e:MouseEvent<HTMLDivElement>){
+  if((e.target as Element).closest('button[aria-label="Change language"]')){e.preventDefault();setLanguageOpen(x=>!x);}
+ }
+ return <>
+  <link rel="stylesheet" href={AUTH_ASSET_ORIGIN+'/assets/css/style.css?v=v2-pricing-payment-footer-1104'}/>
+  <div id="root" className="tc-auth-source" lang={locale}>
+   <div className="tc-auth-shell-shell-viewport fixed inset-0 overflow-clip">
+    <div className="tc-auth-shell-shell-root flex h-full w-full overflow-x-auto bg-[color-mix(in_srgb,var(--color-sh-lime-100)_40%,var(--background))]">
+     <div className="tc-auth-shell-shell-content-col flex h-full min-h-0 min-w-[778px] flex-1 flex-col bg-background tc-auth-content-width">
+      <div ref={headerRef} onClick={handleHeaderClick} dangerouslySetInnerHTML={{__html:originalRegister?REGISTER_HEADER_HTML:LOGIN_HEADER_HTML}}/>
+      {languageOpen?<div className="tc-auth-source-lang"><button type="button" onClick={()=>setLanguageOpen(false)}>Türkçe · TR</button><button type="button" onClick={()=>setLanguageOpen(false)}>English · EN</button></div>:null}
+      <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-gutter:stable] tc-auth-scroll-spacer"><div className="tc-auth" id="tc-app">{children}</div></div>
+     </div>
     </div>
-    <footer className="tc-auth-legal-footer" aria-label={t.legal}>
-     <nav aria-label={t.legal}>
-      <a href="https://ticarti.com/uyelik-sozlesmesi.html" target="_blank" rel="noopener noreferrer">{t.terms}</a>
-      <a href="https://ticarti.com/gizlilik-politikasi.html" target="_blank" rel="noopener noreferrer">{t.privacy}</a>
-      <a href="https://ticarti.com/kvkk.html" target="_blank" rel="noopener noreferrer">{t.kvkk}</a>
-     </nav>
-    </footer>
    </div>
-   <aside className="tc-mobile-ai-overlay" aria-label="TicAi kurulum rehberi">
-    <div className="tc-mobile-ai-panel">
-     
-     <div className="tc-auth-alma-message"><p className="tc-mobile-ai-title">TicAi</p><p className="tc-mobile-ai-message">Merhaba, ben TicAi. Ticarti deneyiminde sana yardımcı olacağım.</p></div>
-    </div>
-   </aside>
+   <div ref={aiRef} dangerouslySetInnerHTML={{__html:originalRegister?REGISTER_AI_HTML:LOGIN_AI_HTML}}/>
+   <div dangerouslySetInnerHTML={{__html:originalRegister?REGISTER_LEGAL_HTML:LOGIN_LEGAL_HTML}}/>
   </div>
- </main>;
+ </>;
 }
