@@ -70,10 +70,10 @@ export default async function PricingPage(){
          <p className="tc-price-discount"><s className="tc-old-price">{old!==null&&old!==undefined?(SYMBOL[p?.currency||'TRY']||'₺')+tl(old)+'/yıl':source.oldPrice.replaceAll('/ay','/yıl')}</s>
           <span className="tc-tax-note">{p?.vatIncluded===false?'KDV hariç':'KDV dahil'}</span></p></>}
         <a className="tc-cta tc-site-hero__cta tc-site-hero__cta--1" href={plus?'/iletisim':'https://login.ticarti.com/register?plan='+source.code}>
-          {plus?'İletişime geç':p?.buttonText||'Ücretsiz dene'}<span aria-hidden="true">↗</span>
+          {p?.buttonText||source.ctaText}<span aria-hidden="true">↗</span>
         </a>
        </div>
-       <div className="tc-plan-benefits"><p className="tc-benefits-heading">{index===0?'Başlamak için gereken her şey':index===1?'Büyümek için daha fazlası':index===2?'Gelişmiş mağaza operasyonları':'Kurumsal ihtiyaçlarına özel'}</p>
+       <div className="tc-plan-benefits"><p className="tc-benefits-heading">{source.benefitsHeading}</p>
         <ul className="tc-rich-benefits">{source.benefits.map((benefit,i)=><li key={i}>
           <span aria-hidden="true" className="tc-feature-check">✓</span>
           <span><strong>{benefit.title}</strong>{benefit.label?<span className="tc-mini-label">{benefit.label}</span>:null}<small>{benefit.description}</small></span>
