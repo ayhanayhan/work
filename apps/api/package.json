@@ -16,7 +16,8 @@
     "test:media": "tsx scripts/check-platform-media.ts",
     "test:callback": "tsx scripts/check-callback-forms.ts",
     "test:website-tools": "tsx scripts/check-website-tools.ts",
-    "test:website-navigation": "tsx scripts/check-website-navigation.ts"
+    "test:website-navigation": "tsx scripts/check-website-navigation.ts",
+    "prebuild": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
