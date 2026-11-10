@@ -95,6 +95,79 @@ export class WebsiteService{
    * This keeps Cloud Run startup, readiness and normal requests independent of content migration.
    * The transaction writes the content and marker atomically without overwriting edited translations.
    */
+
+  private pricingFaqKey='marketing_pricing_faq_v1';
+  private defaultPricingFaq(){
+    const faq=[["Paketler arasında geçiş yapabilir miyim?","Evet. Paket değişiklikleri mağaza yönetiminden yapılabilir; fiyat ve kullanım koşulları seçilen döneme göre uygulanır.","Can I change my plan?","Plan changes can be managed in your store; pricing and usage rules depend on your subscription period."],["Paket ücretleri aylık mı, yıllık mı ödenir?","Paketlerde ödeme dönemi Master’da tanımlanır. Şu anda yıllık teklif esas alınır.","Is billing monthly or annually?","Billing periods are configured in Master. The current offer focuses on annual billing."],["14 günlük deneme sürecinde ödeme gerekir mi?","Mağaza oluşturma sırasında ödeme yapmadan denemeye başlayabilirsin. Deneme sonrası ücretlendirme seçtiğin pakete göre yapılır.","Is payment required for the 14-day trial?","You can open a store without paying up front. Billing after the trial depends on your chosen plan."],["Pazaryeri entegrasyonları her pakette var mı?","Hayır. Trendyol, Hepsiburada, Amazon Türkiye ve diğer pazaryerleri paket karşılaştırmasında ayrı ayrı belirtilir. Teknik kullanılabilirlik ayrıca doğrulanmalıdır.","Are marketplace integrations included in every plan?","No. Each marketplace has its own plan entitlement. Live connector availability must be confirmed separately."],["Muhasebe entegrasyonlarını nasıl karşılaştırabilirim?","Paraşüt, Logo, Mikro ve diğer muhasebe sağlayıcıları karşılaştırma tablosunda ayrı satırlarda gösterilir.","How can I compare accounting integrations?","Each accounting provider appears as a separate row in the comparison table."],["Kargo firmaları için paket farkı var mı?","Evet. Kargo firmaları ayrı özellikler olarak listelenir ve hangi pakete dahil oldukları gösterilir.","Do shipping providers differ by plan?","Yes. Shipping providers are listed individually with their corresponding plan entitlement."],["Paket fiyatlarına KDV dahil mi?","KDV durumu ve geçerli fiyatlar paket kartlarında Master’da kaydedilmiş değerlerden gösterilir.","Does pricing include VAT?","VAT inclusion and the current prices are displayed from the package settings in Master."],["Kurulum için yardım alabilir miyim?","Evet. TicAi üzerinden geri arama talebi oluşturabilir veya Ticarti ekibiyle iletişime geçebilirsin.","Can I get help setting up my store?","Yes. Request a callback through TicAi or contact the Ticarti team."]];
+    return {enabled:true,heading:{tr:'Sıkça sorulan sorular',en:'Frequently asked questions'},
+      description:{tr:'Paketler ve entegrasyonlarla ilgili merak ettiklerin.',en:'Answers about plans and integrations.'},
+      items:faq.map((row:string[],i:number)=>({id:'pricing-faq-'+(i+1),enabled:true,
+        question:{tr:row[0],en:row[2]},answer:{tr:row[1],en:row[3]}}))};
+  }
+  async pricingFaq(){
+    const row=await this.prisma.platformSetting.findUnique({where:{key:this.pricingFaqKey}});
+    return row?.value&&typeof row.value==='object'?row.value:this.defaultPricingFaq();
+  }
+  async updatePricingFaq(input:any){
+    const languages=new Set((await activePlatformLocales(this.prisma)).map(x=>x.locale));
+    const clean=(v:any)=>Object.fromEntries(Object.entries(v&&typeof v==='object'&&!Array.isArray(v)?v:{})
+      .filter(([lang])=>languages.has(lang)).map(([lang,text])=>[lang,String(text||'').trim().slice(0,5000)]));
+    const value={
+      enabled:input?.enabled!==false,heading:clean(input?.heading),description:clean(input?.description),
+      items:(Array.isArray(input?.items)?input.items:[]).slice(0,40).map((x:any,i:number)=>({
+        id:String(x?.id||'pricing-faq-'+i).replace(/[^a-z0-9-]/gi,'').slice(0,80),
+        enabled:x?.enabled!==false,question:clean(x?.question),answer:clean(x?.answer)
+      }))
+    };
+    await this.prisma.platformSetting.upsert({where:{key:this.pricingFaqKey},
+      create:{key:this.pricingFaqKey,value},update:{value}});
+    return value;
+  }
+  async publicPricing(lang='tr'){
+    const locale=String(lang||'tr').toLowerCase();
+    const [plans,record,faq]:any=await Promise.all([
+      this.prisma.plan.findMany({where:{isActive:true},orderBy:[{sortOrder:'asc'},{yearlyPrice:'asc'}]}),
+      this.prisma.platformSetting.findUnique({where:{key:'plan_feature_catalog'}}),
+      this.pricingFaq()
+    ]);
+    const base=record?.value&&typeof record.value==='object'?record.value:{};
+    const categories=Array.isArray(base.categories)?base.categories:[];
+    const features=Array.isArray(base.features)?base.features:[];
+    const visible=plans.filter((p:any)=>p.features?._meta?.frontendVisible!==false).slice(0,3);
+    const localized=(translations:any,fallback:any,field='title')=>{
+      const active=translations?.[locale]||translations?.tr||translations?.en||{};
+      return String(active?.[field]||fallback||'');
+    };
+    return {
+      locale,plans:visible.map((p:any)=>{
+        const v=p.features&&typeof p.features==='object'?p.features:{};
+        const tr=v._translations||{};
+        const prices=Array.isArray(v._pricing)?v._pricing:[];
+        const yearly=prices.find((x:any)=>x.period==='YEARLY'&&x.enabled===true);
+        const price=Number(yearly?.price??p.yearlyPrice??0);
+        const start=yearly?.saleStartAt?Date.parse(yearly.saleStartAt):NaN;
+        const end=yearly?.saleEndAt?Date.parse(yearly.saleEndAt):NaN;
+        const now=Date.now();
+        const sale=yearly?.salePrice!=null&&Number(yearly.salePrice)>=0&&(!Number.isFinite(start)||start<=now)&&(!Number.isFinite(end)||end>=now)?Number(yearly.salePrice):null;
+        return {code:p.code,name:localized(tr,p.name,'name'),description:localized(tr,p.description,'description'),
+          badge:localized(tr,v._meta?.badge||'','badge'),buttonText:localized(tr,'Ücretsiz dene','buttonText'),
+          cardFeatures:localized(tr,'','cardFeatures'),trialDays:p.trialDays,price:sale??price,
+          originalPrice:sale!==null?price:null,currency:p.currency,vatIncluded:v._meta?.vatIncluded!==false,
+          featureIds:(Array.isArray(v._catalog)?v._catalog:[]).filter((x:any)=>x.enabled!==false).map((x:any)=>String(x.featureId))};
+      }),
+      categories:categories.filter((x:any)=>x.isActive!==false).map((x:any)=>({
+        id:x.id,title:localized(x.translations,x.code)})),
+      features:features.filter((x:any)=>x.isActive!==false).map((x:any)=>({
+        id:x.id,categoryId:x.categoryId,title:localized(x.translations,x.code),
+        description:localized(x.translations,'','description'),isIntegration:String(x.code||'').startsWith('integration_')
+      })),
+      faq:{enabled:faq?.enabled!==false,heading:localized(faq?.heading,'Sıkça sorulan sorular',''),
+        description:localized(faq?.description,'',''),items:(faq?.items||[]).filter((x:any)=>x.enabled!==false)
+          .map((x:any)=>({id:String(x.id),question:localized(x.question,'',''),answer:localized(x.answer,'','')}))
+          .filter((x:any)=>x.question&&x.answer)}
+    };
+  }
+
   async seedInitialFaq(){
     const marker=await this.prisma.platformSetting.findUnique({where:{key:FAQ_SEED_MARKER}});
     if(marker)return {alreadySeeded:true,inserted:0};
