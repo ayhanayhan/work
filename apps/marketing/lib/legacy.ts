@@ -4,6 +4,7 @@ import {notFound} from 'next/navigation';
 import {archiveCard,BlogLocale,BlogPost,blogLabel,blogPath,escapeHtml,getBlogPosts,getWebsiteLocales,homeCard,renderBlogContent,replaceMarker,safeImage,slugValid} from './blog';
 import {applyPageValues,pageValues} from './page-content';
 import {applyHomepageFaq,FaqContent,getHomepageFaq} from './faq';
+import {applyPricingFeed,getPricingFeed} from './pricing';
 
 export type PageData={html:string;classes:string;title:string;description:string;scripts:string[];isBlogList:boolean;post?:BlogPost;posts?:BlogPost[];locale?:BlogLocale;isHome?:boolean;faq?:FaqContent};
 function extract(html:string):PageData{
@@ -150,6 +151,8 @@ export async function renderPage(segments:string[],search:Record<string,string|u
     // Other homepage modules still use the existing integration.
     // Homepage text is no longer patched by any client-side CMS script.
   }
+  // Pricing is rendered on the server from Master rather than static HTML demo prices.
+  if(source==='en/paketler.html')data.html=applyPricingFeed(data.html,await getPricingFeed(lang));
   const id=pageKey(source);
   if(id){const values=await pageValues(id,lang);if(Object.keys(values).length)data.html=applyPageValues(data.html,values,id);}
   data.html=hideUnpublishedBlogLinks(normalizeLegacyLinks(data.html,source,lang),posts,lang);
