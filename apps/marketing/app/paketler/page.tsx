@@ -25,7 +25,7 @@ export default async function PricingPage(){
  const req=await headers(),path=req.get('x-marketing-page')||'/paketler';
  const lang=path.match(/^\/(en|de|ru|ar|bg|uk|id|vi)\//)?.[1]||'tr';
  const feed=await getPricingFeed(lang);
- const plans=API_PLANS.map(code=>feed?.plans.find(p=>p.code.toLowerCase()===code)).filter((p):p is NonNullable<typeof p>=>!!p);
+ const plans=API_PLANS.map(code=>feed?.plans.find(p=>p.code.toLowerCase()===code));
  const categories=[...ORIGINAL_PRICING_CATEGORIES.map(c=>({id:c.id,title:feed?.categories.find(x=>x.id===c.id)?.title||c.title})),
  ...(feed?.categories||[]).filter(c=>!ORIGINAL_PRICING_CATEGORIES.some(x=>x.id===c.id))];
  const saved=feed?.features||[];
