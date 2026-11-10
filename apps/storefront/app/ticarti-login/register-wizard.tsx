@@ -6,10 +6,11 @@ import AuthShell,{AUTH_ASSET_ORIGIN} from './auth-shell';
 const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
 const SECTORS=['Giyim ve moda','Kozmetik ve kişisel bakım','Elektronik','Ev ve yaşam','Gıda','Diğer / Henüz karar vermedim'];
 const PLANS=[
- {id:'start',name:'Start',desc:'Yeni başlayan işletmeler için'},
- {id:'grow',name:'Grow',desc:'Büyüyen mağazalar için'},
- {id:'scale',name:'Scale',desc:'Gelişmiş operasyonlar için'}
+ {id:'start',name:'Start',desc:'Yeni başlayan işletmeler için',price:'4.660',oldPrice:'5.490',features:['Online mağaza ve ürün yönetimi','Sipariş, müşteri ve stok takibi'],popular:false},
+ {id:'grow',name:'Grow',desc:'Büyüyen mağazalar için',price:'6.998',oldPrice:'8.230',features:['Start kapsamındaki özellikler','Çoklu depo ve gelişmiş pazarlama'],popular:true},
+ {id:'scale',name:'Scale',desc:'Yüksek satış hacimleri için',price:'11.618',oldPrice:'13.670',features:['Grow kapsamındaki özellikler','Depolar arası transfer ve gelişmiş raporlama'],popular:false}
 ] as const;
+const annualPrice=(monthly:string)=>new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(Number(monthly.replace(/\\./g,''))*12);
 const STEPS=[
  {title:'Önce hesabını oluşturalım.',desc:'Ad, e-posta ve şifre bilgilerini tamamla.'},
  {title:'Sana uygun paketi seç.',desc:'Başlangıç için kullanmak istediğin paketi belirle.'},
@@ -126,12 +127,32 @@ export default function RegisterWizard(){
        <label className="tc-agreement"><input type="checkbox" checked={values.marketing} onChange={e=>set('marketing',e.target.checked)}/><span>Ticarti'den yenilikler ve duyurular almak istiyorum.</span></label>
       </div>
      </>}
-     {step===1&&<div className="tc-plan-choices" role="radiogroup" aria-label="Paket seçimi">{PLANS.map(p=><button key={p.id} type="button" className={'tc-plan-choice '+(values.plan===p.id?'is-selected':'')} role="radio" aria-checked={values.plan===p.id} onClick={()=>set('plan',p.id)}><span className="tc-plan-choice-name">{p.name}</span><span className="tc-plan-choice-desc">{p.desc}</span><span className="tc-plan-choice-select-label">{values.plan===p.id?'Seçildi':'Paketi seç'}</span></button>)}</div>}
+     {step===1&&<>
+      <div className="tc-plan-choices" role="radiogroup" aria-label="Paket seçimi">
+       {PLANS.map(p=><button key={p.id} type="button" className={'tc-plan-choice'+(values.plan===p.id?' is-selected':'')+(p.popular?' is-popular':'')} role="radio" aria-checked={values.plan===p.id} tabIndex={values.plan===p.id||(!values.plan&&p.id==='start')?0:-1} onClick={()=>set('plan',p.id)}>
+        <span className="tc-plan-choice-head"><span className="tc-plan-choice-name">{p.name}</span><span className="tc-plan-choice-indicator" aria-hidden="true">{values.plan===p.id?'✓':''}</span></span>
+        {p.popular?<span className="tc-plan-choice-badge">En çok tercih edilen</span>:<span className="tc-plan-choice-badge-placeholder" aria-hidden="true"/>}
+        <span className="tc-plan-choice-desc">{p.desc}</span>
+        <span className="tc-plan-choice-price"><strong>₺{annualPrice(p.price)}</strong><small>/yıl</small></span>
+        <span className="tc-plan-choice-tax"><s>₺{annualPrice(p.oldPrice)}/yıl</s><span>KDV dahil · yıllık ödeme</span></span>
+        <span className="tc-plan-choice-divider" aria-hidden="true"/>
+        <span className="tc-plan-choice-features">{p.features.map(f=><span key={f} className="tc-plan-choice-feature"><span className="tc-plan-choice-check" aria-hidden="true">✓</span>{f}</span>)}</span>
+        <span className="tc-plan-choice-select-label" aria-hidden="true">{values.plan===p.id?'Seçildi':'Paketi seç'} <span>{values.plan===p.id?'✓':'→'}</span></span>
+       </button>)}
+      </div>
+      <p className="tc-plan-note">14 gün ücretsiz dene. Yıllık tutar tek seferde tahsil edilir; fiyatlar örnektir.</p>
+     </>}
      {step===2&&<div className="tc-choices" role="radiogroup" aria-label="Sektör">{SECTORS.map(s=><button type="button" key={s} className={'tc-choice '+(values.sector===s?'selected':'')} onClick={()=>set('sector',s)} role="radio" aria-checked={values.sector===s}><span className="tc-choice-label">{s}</span><span className="tc-choice-check">{values.sector===s?'✓':''}</span></button>)}</div>}
      {step===3&&field('store','Mağaza adı','text','Örn. Nova Store')}
      {step===4&&<label>Mağaza adresi<div className="tc-domain-input"><input value={values.slug} onChange={e=>set('slug',slugify(e.target.value))} required minLength={3} maxLength={63} autoCapitalize="off" spellCheck={false} placeholder="magazam"/><span>.ticarti.com</span></div><small className={'tc-inline-hint '+(availability==='no'?'is-error':'')}>{availability==='checking'?'Adres kontrol ediliyor…':availability==='yes'?'Bu adres kullanılabilir':availability==='no'?availabilityMessage:'3-63 karakter; harf, rakam ve tire'}</small></label>}
-     {(step===5||step===6)&&<div className="tc-review"><h2>Mağaza özeti</h2><dl><dt>Ad soyad</dt><dd>{values.name}</dd><dt>E-posta</dt><dd>{values.email}</dd><dt>Mağaza</dt><dd>{values.store}</dd><dt>Adres</dt><dd>{validSlug}.ticarti.com</dd><dt>Paket tercihi</dt><dd>{PLANS.find(p=>p.id===values.plan)?.name}</dd></dl><p>Seçtiğin paket ile 14 günlük deneme mağazan oluşturulacak. Ödeme aşaması daha sonra tamamlanabilir.</p></div>}
-     {step===6&&<div className="tc-unpaid-summary"><p>Online ödeme henüz etkin değil. Ödeme alınmadan mağazanı açabilirsin.</p></div>}
+     {(step===5||step===6)&&<div className="tc-payment-summary">
+      <div className="tc-payment-summary-heading"><strong>{step===6?'Ödeme özeti':'Kurulum özeti'}</strong><span className="tc-payment-trial">14 gün ücretsiz deneme</span></div>
+      <div className="tc-payment-summary-row"><span>Seçilen paket</span><strong>{PLANS.find(p=>p.id===values.plan)?.name||'—'}</strong></div>
+      <div className="tc-payment-summary-row"><span>Mağaza adı</span><strong>{values.store||'—'}</strong></div>
+      <div className="tc-payment-summary-row"><span>Mağaza adresi</span><strong>{validSlug?validSlug+'.ticarti.com':'—'}</strong></div>
+      <div className="tc-payment-summary-total"><span>Deneme sonrası yıllık abonelik<small>Yıllık tek ödeme · KDV dahil · örnek fiyat</small></span><strong>₺{annualPrice(PLANS.find(p=>p.id===values.plan)?.price||'0')}<small> / yıl</small></strong></div>
+     </div>}
+          {step===6&&<div className="tc-unpaid-summary"><p>Online ödeme henüz etkin değil. Ödeme alınmadan mağazanı açabilirsin.</p></div>}
     </div>
     {error&&<p className="tc-error" role="alert">{error}</p>}
     <div className="tc-buttons">
