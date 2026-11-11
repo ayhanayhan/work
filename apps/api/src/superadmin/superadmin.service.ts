@@ -797,7 +797,7 @@ export class SuperAdminService {
     const screenshots=Array.isArray(body.screenshots)?body.screenshots.map((x:any)=>String(x).trim()).filter(Boolean):String(body.screenshots||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
     const translations:any={};const rawTranslations=body?.translations&&typeof body.translations==='object'&&!Array.isArray(body.translations)?body.translations:{};
     for(const [locale,row] of Object.entries(rawTranslations)){const r:any=row||{};translations[String(locale)]={name:String(r.name||'').trim(),summary:String(r.summary||'').trim(),description:String(r.description||'').trim(),usageGuide:String(r.usageGuide||'').trim()};}
-    return {logoUrl:String(body.logoUrl||'').trim()||null,usageGuide:String(body.usageGuide||'').trim()||null,screenshots,translations,categoryId:String(body.categoryId||'').trim(),planTrials:body.planTrials&&typeof body.planTrials==='object'?body.planTrials:{}};
+    return {logoUrl:String(body.logoUrl||'').trim()||null,usageGuide:String(body.usageGuide||'').trim()||null,screenshots,translations,categoryId:String(body.categoryId||'').trim(),planTrials:body.planTrials&&typeof body.planTrials==='object'?body.planTrials:{},languages:Array.isArray(body.languages)?body.languages.map((x:any)=>String(x).trim()).filter(Boolean):[],version:String(body.version||'').trim(),publishedAt:body.publishedAt?String(body.publishedAt):null};
   }
 
   createApp(body:any){
@@ -815,7 +815,7 @@ export class SuperAdminService {
     for(const k of ['name','category','summary','description','icon','developer','kind','provider','currency','billingType']) if(body[k]!==undefined)data[k]=body[k];
     if(body.integrationType!==undefined)data.integrationType=body.integrationType||null;
     if(body.settingsSchema!==undefined)data.settingsSchema=body.settingsSchema;
-    if(['logoUrl','usageGuide','screenshots','translations','categoryId','planTrials'].some(k=>body[k]!==undefined)){
+    if(['logoUrl','usageGuide','screenshots','translations','categoryId','planTrials','languages','version','publishedAt'].some(k=>body[k]!==undefined)){
       const currentSchema:any=data.settingsSchema&&typeof data.settingsSchema==='object'&&!Array.isArray(data.settingsSchema)?data.settingsSchema:(current.settingsSchema&&typeof current.settingsSchema==='object'&&!Array.isArray(current.settingsSchema)?current.settingsSchema:{});
       data.settingsSchema={...currentSchema,marketplace:{...(currentSchema.marketplace||{}),...this.appMarketplaceMeta({...currentSchema.marketplace,...body})}};
     }
