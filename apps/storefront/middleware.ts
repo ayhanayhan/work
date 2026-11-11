@@ -66,8 +66,9 @@ function proxyAppMarket(req:NextRequest){
   const pathname=req.nextUrl.pathname;
   // All App pages use the exact same Marketing site shell and CMS navigation.
   // Assets remain at /assets so shared site logos and CSS load normally.
-  url.pathname=pathname.startsWith('/assets/')?'/ticarti-marketing-proxy'+pathname:
-    '/ticarti-marketing-proxy/apps'+(pathname==='/'?'':pathname);
+  url.pathname=pathname.startsWith('/assets/')||pathname.startsWith('/_next/')||pathname==='/favicon.ico'
+    ?'/ticarti-marketing-proxy'+pathname
+    :'/ticarti-marketing-proxy/apps'+(pathname==='/'?'':pathname);
   const headers=new Headers(req.headers);
   headers.set('x-ticarti-surface','app-marketplace');
   return NextResponse.rewrite(url,{request:{headers}});
@@ -123,6 +124,8 @@ export function middleware(req:NextRequest){
   }
 
   if(host===`app.${PLATFORM_DOMAIN}`){
+    if(path.startsWith('/api/'))return NextResponse.next();
+    if(path.startsWith('/_next/')||path.startsWith('/assets/')||path==='/favicon.ico')return proxyAppMarket(req);
     if(assetOrApi(path))return NextResponse.next();
     if(path==='/admin'||path.startsWith('/admin/'))return redirectLogin(req);
     if(path.startsWith('/ticarti-marketing-proxy'))return NextResponse.next();
