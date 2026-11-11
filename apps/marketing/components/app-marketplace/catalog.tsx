@@ -10,7 +10,7 @@ export default function AppMarketplace(){
  const[sort,setSort]=useState('featured');
  useEffect(()=>{const next=new URLSearchParams(window.location.search).get('sort');if(next==='newest'||next==='popular')setSort(next)},[]);
  const categories=useMemo(()=>['Tümü',...Array.from(new Set(market.apps.map(a=>a.category).filter(Boolean))).slice(0,5)],[market.apps]);
- const iconApps=useMemo(()=>market.apps.filter(a=>a.logoUrl&&(/^(https:\/\/|\/)/.test(a.logoUrl))).slice(0,9),[market.apps]);
+ const iconApps=useMemo(()=>market.apps.filter(a=>a.isFeatured).concat(market.apps.filter(a=>!a.isFeatured)).slice(0,9),[market.apps]);
  const filtered=useMemo(()=>{
   const q=search.trim().toLocaleLowerCase('tr-TR');
   const rows=market.apps.filter(a=>(category==='Tümü'||a.category===category)&&(!installedOnly||market.installations[a.slug]?.installed)&&
@@ -26,7 +26,7 @@ export default function AppMarketplace(){
    <div className="am-hero-ornament" aria-hidden="true">
     <div className="am-hero-ornament-line"/>
     <div className="am-hero-icon-rail">
-     {iconApps.map(app=><span className="am-hero-icon" key={app.id}><img src={app.logoUrl||''} alt=""/></span>)}
+     {iconApps.map(app=><span className="am-hero-icon" key={app.id} title={app.name}>{app.logoUrl&&/^(https:\/\/|\/)/.test(app.logoUrl)?<img src={app.logoUrl} alt=""/>:<span className="am-hero-icon-fallback">{app.name.slice(0,1).toLocaleUpperCase("tr-TR")}</span>}</span>)}
     </div>
    </div>
    <div className="am-hero-copy">
