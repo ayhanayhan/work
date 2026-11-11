@@ -86,7 +86,7 @@ export class PlatformService {
         createdAt:market.publishedAt||app.createdAt,updatedAt:app.updatedAt,
         screenshots:Array.isArray(market.screenshots)?market.screenshots.filter((x:any)=>typeof x==='string'&&/^https:\/\//.test(x)):[],
         languages:Array.isArray(market.languages)?market.languages.filter((x:any)=>typeof x==='string'):[],
-        usageGuide:String(market.usageGuide||''),version:String(market.version||''),
+        usageGuide:String(translations.usageGuide||market.usageGuide||''),version:String(market.version||''),
         websiteUrl:String(market.websiteUrl||''),
       };
     });
