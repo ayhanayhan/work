@@ -31,7 +31,7 @@
 .am-visual-tiles span{display:grid;place-items:center;background:#fff;border-radius:12px;aspect-ratio:1;font-size:34px;color:#303a23}
 .am-hero-visual p{font-size:19px;font-weight:650;color:#27321a;margin:0}
 .am-section{padding:58px 0 12px}
-.am-section-title{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:23px}
+.am-section-title{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:23px}
 .am-section-title h2{font-size:27px;line-height:1.25;letter-spacing:-.025em;font-weight:650;margin:0 0 7px}
 .am-section-title p{color:var(--am-muted);font-size:13px;margin:0}
 .am-sort-label{display:flex;align-items:center;gap:10px;color:var(--am-muted);font-size:12px}
