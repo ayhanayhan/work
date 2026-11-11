@@ -1,7 +1,7 @@
 /* Native Ticarti contact page — clean white canvas. */
 .tc-contact-native{background:#fff;color:#1c201b;font-family:Inter,Arial,sans-serif;padding:clamp(115px,12vw,158px) clamp(24px,5.5vw,92px) clamp(70px,7vw,112px);box-sizing:border-box}
 .tc-contact-native *{box-sizing:border-box}
-.tc-contact-native__layout{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);gap:clamp(40px,5.5vw,95px);align-items:stretch}
+.tc-contact-native__layout{width:100%;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);gap:clamp(40px,5.5vw,95px);align-items:stretch}
 .tc-contact-native__intro{display:flex;flex-direction:column;align-items:flex-start;min-height:640px;padding:0 0 6px}
 .tc-contact-native__overline{margin:0 0 25px!important;font-size:12px;line-height:1.5;font-weight:650;letter-spacing:.11em;color:#59634d}
 .tc-contact-native h1{max-width:620px;margin:0!important;font-size:clamp(36px,4.1vw,48px)!important;line-height:1.15!important;letter-spacing:-.045em!important;font-weight:600!important;color:#171b16}
