@@ -4,6 +4,7 @@ export function middleware(request:NextRequest){
   const forwarded=new Headers(request.headers);
   forwarded.delete('x-ticarti-help-host');
   forwarded.delete('x-ticarti-dev-host');
+  forwarded.delete('x-ticarti-app-host');
   const pathname=request.nextUrl.pathname;
   // Canonical public pricing URL is the native Next.js /paketler route.
   // Preserve any query string (campaign tracking) during redirect.
@@ -22,6 +23,10 @@ export function middleware(request:NextRequest){
     request.headers.get('x-forwarded-server')]
     .filter(Boolean).flatMap(value=>String(value).split(','))
     .map(value=>value.trim().toLowerCase().replace(/:\d+$/,'').replace(/\.$/,''));
+  if(candidates.includes('app.ticarti.com')) {
+    forwarded.set('x-ticarti-app-host','1');
+    return NextResponse.next({request:{headers:forwarded}});
+  }
   // Developer is served by Marketing but the Storefront proxy must preserve
   // the original dev hostname; never redirect API paths here.
   if(candidates.includes('dev.ticarti.com')){
