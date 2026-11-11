@@ -10,6 +10,7 @@
     "check": "tsc --noEmit --pretty false"
   },
   "dependencies": {
+    "@commerce/shared": "0.1.0",
     "next": "15.5.27",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
