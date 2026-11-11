@@ -13,13 +13,20 @@ function shopUrl(m?:Membership,segment='/admin/dashboard'){
     :'https://login.ticarti.com/';
 }
 const labels={
-  tr:{login:'Giriş yap',register:'Siteni oluştur',panel:'Yönetim Paneli',account:'Hesabım',help:'Yardım Merkezi',support:'Destek Taleplerim',settings:'Mağaza Ayarları',logout:'Çıkış yap',shops:'Mağazalarım',loading:'Oturum kontrol ediliyor'},
-  en:{login:'Sign in',register:'Create store',panel:'Dashboard',account:'My account',help:'Help Center',support:'Support',settings:'Store settings',logout:'Sign out',shops:'My stores',loading:'Checking session'}
+  tr:{login:'Giriş yap',register:'Siteni oluştur',panel:'Yönetim Paneli',account:'Hesabım',help:'Yardım Merkezi',support:'Destek Taleplerim',settings:'Mağaza Ayarları',logout:'Tüm cihazlardan çıkış',shops:'Mağazalarım',loading:'Oturum kontrol ediliyor'},
+  en:{login:'Sign in',register:'Create store',panel:'Dashboard',account:'My account',help:'Help Center',support:'Support',settings:'Store settings',logout:'Sign out of all devices',shops:'My stores',loading:'Checking session'},
+  de:{login:'Anmelden',register:'Shop erstellen',panel:'Verwaltung',account:'Mein Konto',help:'Hilfe',support:'Support',settings:'Shop-Einstellungen',logout:'Von allen Geräten abmelden',shops:'Meine Shops',loading:'Sitzung wird geprüft'},
+  ru:{login:'Войти',register:'Создать магазин',panel:'Панель управления',account:'Мой аккаунт',help:'Центр помощи',support:'Поддержка',settings:'Настройки магазина',logout:'Выйти на всех устройствах',shops:'Мои магазины',loading:'Проверка входа'},
+  ar:{login:'تسجيل الدخول',register:'إنشاء متجر',panel:'لوحة التحكم',account:'حسابي',help:'مركز المساعدة',support:'الدعم',settings:'إعدادات المتجر',logout:'تسجيل الخروج من جميع الأجهزة',shops:'متاجري',loading:'جارٍ التحقق من الجلسة'},
+  uk:{login:'Увійти',register:'Створити магазин',panel:'Панель керування',account:'Мій акаунт',help:'Центр допомоги',support:'Підтримка',settings:'Налаштування магазину',logout:'Вийти на всіх пристроях',shops:'Мої магазини',loading:'Перевірка входу'},
+  bg:{login:'Вход',register:'Създай магазин',panel:'Контролен панел',account:'Моят профил',help:'Помощ',support:'Поддръжка',settings:'Настройки на магазина',logout:'Изход от всички устройства',shops:'Моите магазини',loading:'Проверка на сесията'},
+  id:{login:'Masuk',register:'Buat toko',panel:'Dasbor',account:'Akun saya',help:'Pusat Bantuan',support:'Dukungan',settings:'Pengaturan toko',logout:'Keluar dari semua perangkat',shops:'Toko saya',loading:'Memeriksa sesi'},
+  vi:{login:'Đăng nhập',register:'Tạo cửa hàng',panel:'Bảng điều khiển',account:'Tài khoản',help:'Trung tâm trợ giúp',support:'Hỗ trợ',settings:'Cài đặt cửa hàng',logout:'Đăng xuất mọi thiết bị',shops:'Cửa hàng của tôi',loading:'Đang kiểm tra phiên'}
 };
 export function TicartiAccountHeader({locale='tr',loginHref='https://login.ticarti.com/',registerHref='https://login.ticarti.com/register',loginLabel,registerLabel,variant='site'}:{
   locale?:string;loginHref?:string;registerHref?:string;loginLabel?:string;registerLabel?:string;variant?:'site'|'app';
 }){
-  const t=locale==='tr'?labels.tr:labels.en;
+  const t=labels[locale as keyof typeof labels]||labels.en;
   const[session,setSession]=useState<Session|null>(null);
   const[ready,setReady]=useState(false);
   const[open,setOpen]=useState(false);
@@ -61,7 +68,7 @@ export function TicartiAccountHeader({locale='tr',loginHref='https://login.ticar
   const store=String(selected?.site?.name||selected?.tenantName||'');
   const initials=name.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toLocaleUpperCase(locale==='tr'?'tr-TR':'en-US');
   const panel=shopUrl(selected);
-  return <div ref={root} className={'tc-account-header tc-account-header--'+variant}>
+  return <div ref={root} dir={locale==='ar'?'rtl':'ltr'} className={'tc-account-header tc-account-header--'+variant}>
     <style>{`
       .tc-account-header{display:flex;align-items:center;gap:10px;position:relative;min-width:0}
       .tc-account-header .tc-account-cta,.tc-account-header .tc-account-guest{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:41px;padding:0 15px;border-radius:9px;text-decoration:none;font-weight:600;font-size:13px;white-space:nowrap}
@@ -77,6 +84,7 @@ export function TicartiAccountHeader({locale='tr',loginHref='https://login.ticar
       .tc-account-header .tc-account-dropdown a,.tc-account-header .tc-account-dropdown button{display:flex;width:100%;align-items:center;gap:9px;padding:11px 12px;background:transparent;border:0;border-radius:8px;text-align:left;text-decoration:none;font:inherit;font-size:13px;color:#202414;cursor:pointer}
       .tc-account-header .tc-account-dropdown a:hover,.tc-account-header .tc-account-dropdown button:hover{background:#f4f6e9}
       .tc-account-header .tc-account-dropdown .tc-account-separator{height:1px;margin:7px 4px;background:#e8e9e4}
+      .tc-account-header[dir="rtl"] .tc-account-dropdown{right:auto;left:0;text-align:right}
       .tc-account-header .tc-account-dropdown .tc-account-profile{padding:10px 12px;display:flex;flex-direction:column;gap:2px;word-break:break-word}
       .tc-account-header .tc-account-dropdown .tc-account-profile small{color:#657062;font-size:12px}
       .tc-account-header .tc-account-dropdown .tc-account-store-label{font-size:11px;font-weight:700;letter-spacing:.03em;color:#677068;padding:6px 12px}
