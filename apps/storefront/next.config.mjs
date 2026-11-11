@@ -8,6 +8,7 @@ const workspaceRoot=path.resolve(process.cwd(),'../..');
 const nextConfig={
   poweredByHeader:false,
   output:'standalone',
+  transpilePackages:['@commerce/shared'],
   // Firebase installs dependencies at the monorepo root. Include them in the
   // standalone runtime bundle instead of emitting an app-only trace.
   outputFileTracingRoot:workspaceRoot,
