@@ -37,12 +37,10 @@ export default function PluginView({page,data,slug,sid,req,reload,refreshInstall
   return <PluginDetail data={data} slug={slug||''} sid={sid} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
 }
 
-function PluginStore({data,req,reload,refreshInstalledApps}:Pick<Props,'data'|'req'|'reload'|'refreshInstalledApps'>){
+function PluginStore({data}:Pick<Props,'data'>){
   const items=Array.isArray(data?.items)?data.items:[];
   const[query,setQuery]=useState('');
   const[category,setCategory]=useState('Tümü');
-  const[progress,setProgress]=useState<Record<string,number>>({});
-  const[error,setError]=useState('');
   const router=useRouter();
   const categories=useMemo<string[]>(()=>['Tümü',...Array.from(new Set<string>(items.map((x:any)=>String(x.category||'Diğer'))))],[items]);
   const filtered=items.filter((x:any)=>{
@@ -51,26 +49,10 @@ function PluginStore({data,req,reload,refreshInstalledApps}:Pick<Props,'data'|'r
     return (!q||text.includes(q))&&(category==='Tümü'||x.category===category);
   });
 
-  async function install(app:any){
-    if(app.installed)return;
-    setError('');setProgress(x=>({...x,[app.slug]:8}));
-    const timer=window.setInterval(()=>setProgress(x=>({...x,[app.slug]:Math.min(86,(x[app.slug]||8)+7)})),180);
-    try{
-      const r=await req(`/admin/apps/${encodeURIComponent(app.slug)}/install`,{method:'POST',body:'{}'});
-      window.clearInterval(timer);
-      if(r?.paymentRequired&&r?.checkoutUrl){setProgress(x=>({...x,[app.slug]:100}));window.location.href=r.checkoutUrl;return}
-      setProgress(x=>({...x,[app.slug]:100}));
-      await refreshInstalledApps();await reload();
-      window.setTimeout(()=>setProgress(x=>{const n={...x};delete n[app.slug];return n}),650);
-      router.push('/extensions/my-apps/'+encodeURIComponent(app.slug));
-    }catch(e:any){window.clearInterval(timer);setProgress(x=>{const n={...x};delete n[app.slug];return n});setError(e.message||'Eklenti kurulamadı')}
-  }
-
   return <>
     <div className="card mb-3 plugin-market-hero"><div className="card-body py-3"><div className="row align-items-center g-3"><div className="col-lg-7"><div className="d-flex align-items-center gap-3"><span className="plugin-market-mark"><Icon icon="iconoir:puzzle"/></span><div><h3 className="mb-1">Eklenti Mağazası</h3><p className="text-muted mb-0">Kargo, fatura, muhasebe, pazaryeri, pazarlama ve AI uygulamalarını mağazana ekle.</p></div></div></div><div className="col-lg-5"><div className="input-group"><span className="input-group-text"><Icon icon="iconoir:search"/></span><input className="form-control" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Eklenti ara..."/></div></div></div></div></div>
-    {error&&<div className="alert alert-danger">{error}</div>}
     <div className="plugin-category-tabs mb-3">{categories.map(c=><button type="button" key={c} onClick={()=>setCategory(c)} className={'btn btn-sm '+(category===c?'btn-primary':'btn-outline-secondary')}>{c}</button>)}</div>
-    <div className="row g-3">{filtered.map((app:any)=>{const p=progress[app.slug];return <div className="col-sm-6 col-lg-4 col-xxl-3" key={app.id}><div className={'card h-100 plugin-card plugin-card-compact '+(app.isFeatured?'plugin-featured ':'')+(app.installed?'plugin-installed':'')}><div className="card-body p-3 d-flex flex-column"><div className="d-flex justify-content-between align-items-start gap-2"><AppIcon app={app}/><div className="d-flex flex-column align-items-end gap-1">{app.installed&&<span className="badge bg-success-subtle text-success"><Icon icon="iconoir:check-circle" className="me-1"/>Yüklü</span>}{app.isFeatured&&<span className="badge bg-primary-subtle text-primary">Öne çıkan</span>}</div></div><h5 className="mt-3 mb-1 plugin-card-title">{app.name}</h5><div className="text-muted fs-12 mb-2">{app.developer} · {app.category}</div><p className="text-muted plugin-card-summary flex-grow-1">{app.summary}</p><div className="plugin-card-meta"><span><Icon icon="iconoir:download"/> {Number(app.downloadCount||0).toLocaleString('tr-TR')}</span><strong>{money(app.price,app.currency,app.billingType,app.included)}</strong></div><div className="d-flex gap-2 mt-3"><button type="button" className="btn btn-sm btn-primary flex-grow-1" onClick={()=>router.push('/extensions/market/'+encodeURIComponent(app.slug))}><Icon icon="iconoir:eye" className="me-1"/>İncele</button></div>{p!==undefined&&<div className="mt-2"><div className="progress plugin-install-progress"><div className="progress-bar progress-bar-striped progress-bar-animated" style={{width:`${p}%`}}>{p}%</div></div></div>}</div></div></div>})}{!filtered.length&&<div className="col-12"><div className="card"><div className="card-body text-center text-muted py-5">Aramana uygun eklenti bulunamadı.</div></div></div>}</div>
+    <div className="row g-3">{filtered.map((app:any)=>{return <div className="col-sm-6 col-lg-4 col-xxl-3" key={app.id}><div className={'card h-100 plugin-card plugin-card-compact '+(app.isFeatured?'plugin-featured ':'')+(app.installed?'plugin-installed':'')}><div className="card-body p-3 d-flex flex-column"><div className="d-flex justify-content-between align-items-start gap-2"><AppIcon app={app}/><div className="d-flex flex-column align-items-end gap-1">{app.installed&&<span className="badge bg-success-subtle text-success"><Icon icon="iconoir:check-circle" className="me-1"/>Yüklü</span>}{app.isFeatured&&<span className="badge bg-primary-subtle text-primary">Öne çıkan</span>}</div></div><h5 className="mt-3 mb-1 plugin-card-title">{app.name}</h5><div className="text-muted fs-12 mb-2">{app.developer} · {app.category}</div><p className="text-muted plugin-card-summary flex-grow-1">{app.summary}</p><div className="plugin-card-meta"><span><Icon icon="iconoir:download"/> {Number(app.downloadCount||0).toLocaleString('tr-TR')}</span><strong>{money(app.price,app.currency,app.billingType,app.included)}</strong></div><div className="d-flex gap-2 mt-3"><button type="button" className="btn btn-sm btn-primary flex-grow-1" onClick={()=>router.push('/extensions/market/'+encodeURIComponent(app.slug))}><Icon icon="iconoir:eye" className="me-1"/>İncele</button></div>}</div></div></div>})}{!filtered.length&&<div className="col-12"><div className="card"><div className="card-body text-center text-muted py-5">Aramana uygun eklenti bulunamadı.</div></div></div>}</div>
 
   </>;
 }
