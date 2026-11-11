@@ -98,12 +98,6 @@ export function Action({app,market,full=false}:{app:AppItem;market:Market;full?:
 export function MarketplaceShell({children,market}:{children:ReactNode;market:Market}){
  return <div className="ticarti-app-site am-shell">
   <main className="am-main">
-   {market.session?.authenticated&&market.session.memberships?.length?<div className="am-store-bar">
-    <div><span className="am-store-dot"/> <strong>Mağazanız</strong><span className="am-store-sub">Yükleyeceğiniz uygulamalar seçtiğiniz mağazaya eklenir.</span></div>
-    <select aria-label="Mağaza seç" value={market.tenant} onChange={e=>market.setTenant(e.target.value)}>
-     {market.session.memberships.map(m=><option key={m.tenantId} value={m.tenantId}>{m.site?.name||m.tenantName||'Mağaza'}</option>)}
-    </select>
-   </div>:null}
    {market.actionError?<p className="am-alert am-alert-error" role="alert">{market.actionError}</p>:null}
    {market.notice?<p className="am-alert" role="status">{market.notice}</p>:null}
    {children}
