@@ -5,5 +5,6 @@ import { PermissionGuard } from '../common/permission.guard';
 import { IntegrationsModule } from '../integrations/integrations.module';
 import { MerchantController } from './merchant.controller';
 import { MerchantService } from './merchant.service';
-@Module({ imports:[IntegrationsModule], controllers: [MerchantController], providers: [MerchantService, MerchantAuthGuard, TenantGuard, PermissionGuard], exports: [MerchantService] })
+import { MerchantCommerceService } from './merchant-commerce.service';
+@Module({ imports:[IntegrationsModule], controllers: [MerchantController], providers: [MerchantService, MerchantCommerceService, MerchantAuthGuard, TenantGuard, PermissionGuard], exports: [MerchantService] })
 export class MerchantModule {}
