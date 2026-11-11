@@ -97,6 +97,70 @@ export class MerchantController {
   @RequirePermission('settings.manage')
   @Delete('api-keys/:id') revokeApiKey(@CurrentTenant() t:string,@Param('id') id:string,@Query('storeId') s:string){ return this.svc.revokeApiKey(t,s,id); }
 
+  // Read-only compatibility endpoints for the Metronic admin. Keep the legacy
+  // /admin/products, /admin/orders and /admin/customers contracts unchanged.
+  // These adapt the envelope only; advanced commerce writes need their own service.
+  private commercePage(rows: any[], query: any, summary: Record<string, number>) {
+    const pageInput = Number(query?.page);
+    const limitInput = Number(query?.limit);
+    const page = Number.isFinite(pageInput) ? Math.max(1, Math.floor(pageInput)) : 1;
+    const limit = Number.isFinite(limitInput) ? Math.min(100, Math.max(1, Math.floor(limitInput))) : 25;
+    const total = rows.length;
+    return {
+      items: rows.slice((page - 1) * limit, page * limit),
+      page,
+      limit,
+      total,
+      pages: Math.max(1, Math.ceil(total / limit)),
+      summary,
+    };
+  }
+
+  @RequirePermission('products.read')
+  @Get('commerce/products')
+  async commerceProductsCompat(@CurrentTenant() tenantId: string, @Query() query: any) {
+    const rows: any[] = await this.svc.products(tenantId, query.storeId, query.q);
+    const selected = rows.filter(row =>
+      (!query.status || String(row.status || '').toUpperCase() === String(query.status).toUpperCase()) &&
+      (!query.brandId || String(row.brandId || '') === String(query.brandId)) &&
+      (!query.categoryId || (row.categories || []).some((x: any) =>
+        String(x.categoryId || x.category?.id || '') === String(query.categoryId)))
+    );
+    const summary = {
+      total: rows.length,
+      active: rows.filter(row => String(row.status || '').toUpperCase() === 'ACTIVE').length,
+      draft: rows.filter(row => String(row.status || '').toUpperCase() === 'DRAFT').length,
+      archived: rows.filter(row => String(row.status || '').toUpperCase() === 'ARCHIVED').length,
+    };
+    return this.commercePage(selected, query, summary);
+  }
+
+  @RequirePermission('orders.read')
+  @Get('commerce/orders')
+  async commerceOrdersCompat(@CurrentTenant() tenantId: string, @Query() query: any) {
+    const rows: any[] = await this.svc.orders(tenantId, query.storeId);
+    const search = String(query.q || '').trim().toLowerCase();
+    const selected = rows.filter(row =>
+      (!query.status || String(row.status || '').toUpperCase() === String(query.status).toUpperCase()) &&
+      (!query.paymentStatus || String(row.paymentStatus || '').toUpperCase() === String(query.paymentStatus).toUpperCase()) &&
+      (!query.fulfillmentStatus || String(row.fulfillmentStatus || '').toUpperCase() === String(query.fulfillmentStatus).toUpperCase()) &&
+      (!search || String(row.number || '').toLowerCase().includes(search) ||
+        String(row.customer?.email || '').toLowerCase().includes(search))
+    );
+    return this.commercePage(selected, query, { total: rows.length });
+  }
+
+  @RequirePermission('customers.read')
+  @Get('commerce/customers')
+  async commerceCustomersCompat(@CurrentTenant() tenantId: string, @Query() query: any) {
+    const rows: any[] = await this.svc.customers(tenantId, query.storeId, query.q);
+    const selected = rows.filter(row =>
+      (!query.groupId || String(row.groupId || '') === String(query.groupId)) &&
+      (!query.status || String(row.status || '').toUpperCase() === String(query.status).toUpperCase())
+    );
+    return this.commercePage(selected, query, { total: rows.length });
+  }
+
   @RequirePermission('products.read')
   @Get('products') products(@CurrentTenant() t: string, @Query('storeId') s: string, @Query('q') q?: string) { return this.svc.products(t, s, q); }
   @RequirePermission('products.read')
