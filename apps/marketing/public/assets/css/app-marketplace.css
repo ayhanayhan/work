@@ -219,3 +219,10 @@
 .tc-app-surface .am-related-controls button:hover{background:#f0f97b;border-color:#f0f97b}
 @media(max-width:950px){.tc-app-surface .am-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.tc-app-surface .am-hero{padding:60px 0 55px}.tc-app-surface .am-hero-ornament{height:65px;margin-bottom:20px}.tc-app-surface .am-hero-ornament-line{top:32px}.tc-app-surface .am-hero-icon-rail{height:65px;gap:6px}.tc-app-surface .am-hero-icon{width:39px;height:39px;padding:6px;border-radius:8px}.tc-app-surface .am-hero p{font-size:15px}.tc-app-surface .am-grid{grid-template-columns:1fr}.tc-app-surface .am-related-track .am-card{flex-basis:min(88vw,335px)}.tc-app-surface .am-card{min-height:195px}}
+
+/* Reference article layout: compact sticky information rail on the left, editorial content on the right. */
+@media(min-width:768px){
+ .tc-app-surface .am-detail-columns{grid-template-columns:300px minmax(0,1fr);gap:65px}
+ .tc-app-surface .am-detail-aside{order:-1;position:sticky;top:125px}
+ .tc-app-surface .am-detail-main{min-width:0}
+}
