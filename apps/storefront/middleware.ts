@@ -61,6 +61,17 @@ function internal(req:NextRequest,prefix:string,surface?:string){
   headers.set('x-ticarti-surface',surface);
   return NextResponse.rewrite(url,{request:{headers}});
 }
+function proxyAppMarket(req:NextRequest){
+  const url=req.nextUrl.clone();
+  const pathname=req.nextUrl.pathname;
+  // All App pages use the exact same Marketing site shell and CMS navigation.
+  // Assets remain at /assets so shared site logos and CSS load normally.
+  url.pathname=pathname.startsWith('/assets/')?'/ticarti-marketing-proxy'+pathname:
+    '/ticarti-marketing-proxy/apps'+(pathname==='/'?'':pathname);
+  const headers=new Headers(req.headers);
+  headers.set('x-ticarti-surface','app-marketplace');
+  return NextResponse.rewrite(url,{request:{headers}});
+}
 function redirectLogin(req:NextRequest){
   const url=new URL('https://login.ticarti.com/');
   const requested=`${req.nextUrl.protocol}//${originalHost(req)}${req.nextUrl.pathname}${req.nextUrl.search}`;
@@ -114,8 +125,8 @@ export function middleware(req:NextRequest){
   if(host===`app.${PLATFORM_DOMAIN}`){
     if(assetOrApi(path))return NextResponse.next();
     if(path==='/admin'||path.startsWith('/admin/'))return redirectLogin(req);
-    if(path.startsWith('/ticarti-app'))return NextResponse.next();
-    return internal(req,'/ticarti-app','app-marketplace');
+    if(path.startsWith('/ticarti-marketing-proxy'))return NextResponse.next();
+    return proxyAppMarket(req);
   }
 
   if(host===PLATFORM_DOMAIN||host===`www.${PLATFORM_DOMAIN}`){
