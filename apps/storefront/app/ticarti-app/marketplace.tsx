@@ -42,7 +42,7 @@ export function useMarketplace(){
      if(!r.ok){setSession(null);return}
      const j=await r.json() as Session;
      setSession(j.authenticated?j:null);
-     if(j.authenticated&&Array.isArray(j.memberships))setTenant(old=>old&&j.memberships!.some(x=>x.tenantId===old)?old:j.memberships![0]?.tenantId||'');
+     if(j.authenticated&&Array.isArray(j.memberships))setTenant(old=>{const requested=new URLSearchParams(window.location.search).get('tenantId');return old&&j.memberships!.some(x=>x.tenantId===old)?old:requested&&j.memberships!.some(x=>x.tenantId===requested)?requested:j.memberships![0]?.tenantId||''});
    }catch{setSession(null)}
  },[]);
  useEffect(()=>{let alive=true;(async()=>{try{
