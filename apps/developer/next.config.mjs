@@ -3,6 +3,7 @@ const apiOrigin=(process.env.API_ORIGIN||'https://commerce-api-ynhobkprgq-ew.a.r
 /** @type {import('next').NextConfig} */
 const nextConfig={
  output:'standalone',
+ transpilePackages:['@commerce/shared'],
  outputFileTracingRoot:path.resolve(process.cwd(),'../..'),
  poweredByHeader:false,
  async rewrites(){
