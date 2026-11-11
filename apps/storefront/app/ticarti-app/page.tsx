@@ -1,32 +1,38 @@
 'use client';
+import {useMemo,useState} from 'react';
+import {useSearchParams} from 'next/navigation';
+import {AppCard,MarketplaceShell,useMarketplace} from './marketplace';
 
-import {useEffect,useMemo,useState} from 'react';
-import {TicartiAccountHeader} from '@commerce/shared/src/account-header';
-
-const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
-
-type AppItem={id:string;slug:string;name:string;category:string;summary?:string|null;developer?:string|null;basePrice?:string|number|null;currency?:string|null;billingType?:string|null;isFeatured?:boolean};
-
-function money(value:any,currency='TRY'){
-  const n=Number(value||0);
-  if(!n)return 'Ücretsiz / pakete göre';
-  return new Intl.NumberFormat('tr-TR',{style:'currency',currency,maximumFractionDigits:0}).format(n);
-}
-
-export default function TicartiAppMarketplace(){
-  const[items,setItems]=useState<AppItem[]>([]);const[loading,setLoading]=useState(true);const[error,setError]=useState('');const[category,setCategory]=useState('Tümü');
-  useEffect(()=>{void(async()=>{try{const r=await fetch(API+'/platform/apps',{cache:'no-store'});const j=await r.json().catch(()=>[]);if(!r.ok)throw new Error(j?.message||'Uygulamalar yüklenemedi.');setItems(Array.isArray(j)?j:[])}catch(e:any){setError(e?.message||'Uygulamalar yüklenemedi.')}finally{setLoading(false)}})()},[]);
-  const categories=useMemo(()=>['Tümü',...Array.from(new Set(items.map(x=>x.category).filter(Boolean)))],[items]);
-  const visible=category==='Tümü'?items:items.filter(x=>x.category===category);
-  return <div className="ticarti-app-site">
-    <header className="ticarti-nav"><a className="ticarti-logo" href="https://ticarti.com">ticarti<span>.</span></a><nav><a href="https://ticarti.com">Ana Sayfa</a><a href="https://ticarti.com/paketler">Paketler</a><b>Uygulamalar</b></nav><div className="ticarti-nav-actions"><TicartiAccountHeader variant="app" loginLabel="Mağaza Girişi" registerLabel="Siteni oluştur"/></div></header>
-    <main>
-      <section className="ticarti-app-hero"><div><span>APP.TICARTI.COM</span><h1>Ticarti Uygulama Mağazası</h1><p>Pazaryeri, kargo, ödeme, muhasebe, pazarlama ve AI uygulamalarıyla mağazanızın yeteneklerini genişletin.</p></div><a className="ticarti-btn primary large" href="https://login.ticarti.com/">Mağazanıza giriş yapın</a></section>
-      <section className="ticarti-app-market">
-        <div className="ticarti-app-categories">{categories.map(x=><button key={x} className={category===x?'active':''} onClick={()=>setCategory(x)}>{x}</button>)}</div>
-        {loading?<div className="ticarti-app-state">Uygulamalar yükleniyor…</div>:error?<div className="ticarti-app-state error">{error}</div>:<div className="ticarti-app-grid">{visible.map(app=><article key={app.id} className={app.isFeatured?'featured':''}><div className="ticarti-app-icon">{app.name.slice(0,1).toUpperCase()}</div><div className="ticarti-app-card-head"><span>{app.category}</span>{app.isFeatured&&<em>Öne çıkan</em>}</div><h2>{app.name}</h2><p>{app.summary||'Ticarti mağazanız için uygulama ve entegrasyon.'}</p><div className="ticarti-app-card-foot"><small>{app.developer||'Ticarti'}</small><b>{money(app.basePrice,app.currency||'TRY')}</b></div></article>)}</div>}
-      </section>
-    </main>
-    <footer className="ticarti-footer"><a className="ticarti-logo" href="https://ticarti.com">ticarti<span>.</span></a><p>Mağazanız için uygulamalar ve entegrasyonlar.</p><div><a href="https://ticarti.com">ticarti.com</a><a href="https://login.ticarti.com/">Giriş</a></div><small>© {new Date().getFullYear()} Ticarti. Tüm hakları saklıdır.</small></footer>
-  </div>
+export default function AppMarketplace(){
+ const market=useMarketplace();
+ const params=useSearchParams();
+ const[search,setSearch]=useState('');
+ const[category,setCategory]=useState('Tümü');
+ const[installedOnly,setInstalledOnly]=useState(false);
+ const[sort,setSort]=useState(params.get('sort')==='popular'?'popular':params.get('sort')==='newest'?'newest':'featured');
+ const categories=useMemo(()=>['Tümü',...Array.from(new Set(market.apps.map(a=>a.category).filter(Boolean)))],[market.apps]);
+ const filtered=useMemo(()=>{
+  const q=search.trim().toLocaleLowerCase('tr-TR');
+  const rows=market.apps.filter(a=>(category==='Tümü'||a.category===category)&&(!installedOnly||market.installations[a.slug]?.installed)&&
+   (!q||[a.name,a.developer,a.category,a.summary,a.description].join(' ').toLocaleLowerCase('tr-TR').includes(q)));
+  return rows.sort((a,b)=>sort==='popular'?(Number(b.downloadCount||0)-Number(a.downloadCount||0)):
+    sort==='newest'?(new Date(b.createdAt||0).getTime()-new Date(a.createdAt||0).getTime()):
+    Number(!!b.isFeatured)-Number(!!a.isFeatured)||Number(b.downloadCount||0)-Number(a.downloadCount||0));
+ },[market.apps,market.installations,search,category,installedOnly,sort]);
+ const newest=useMemo(()=>[...market.apps].sort((a,b)=>new Date(b.createdAt||0).getTime()-new Date(a.createdAt||0).getTime()).slice(0,4),[market.apps]);
+ const popular=useMemo(()=>[...market.apps].sort((a,b)=>Number(b.downloadCount||0)-Number(a.downloadCount||0)).slice(0,4),[market.apps]);
+ return <MarketplaceShell market={market}>
+  <section className="am-hero"><div className="am-hero-copy"><h1>Mağazanız için doğru uygulamaları keşfedin.</h1><p>Ödeme, kargo, muhasebe, pazarlama ve daha fazlası. Ticarti mağazanızı ihtiyaçlarınıza göre genişletin.</p>
+   <label className="am-search"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Uygulama, kategori veya geliştirici ara…" aria-label="Uygulama ara"/></label>
+   <div className="am-hero-links"><span>{market.apps.length} uygulama</span><span>·</span><span>Mağazanız için tek yerden yönetim</span></div>
+  </div><div className="am-hero-visual" aria-hidden="true"><div className="am-visual-title">Ticarti App Store</div><div className="am-visual-tiles"><span>↗</span><span>◎</span><span>◈</span><span>✳</span></div><p>Mağazanız, sizin kurallarınız.</p></div></section>
+  <section className="am-section am-catalog" id="uygulamalar">
+   <div className="am-section-title"><div><h2>Tüm uygulamalar</h2><p>Mağazanızın ihtiyaçlarına uygun çözümleri bulun.</p></div><div className="am-catalog-controls"><label className="am-sort-label">Sıralama <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Öne çıkanlar</option><option value="newest">Son eklenenler</option><option value="popular">En çok indirilenler</option></select></label></div></div>
+   <div className="am-categories" role="group" aria-label="Kategoriler">{categories.map(c=><button type="button" key={c} aria-pressed={category===c} className={category===c?'selected':''} onClick={()=>setCategory(c)}>{c}</button>)}</div>
+   {market.session?.authenticated?<label className="am-installed-toggle"><input type="checkbox" checked={installedOnly} onChange={e=>setInstalledOnly(e.target.checked)}/> Yalnızca mağazama yüklediklerim</label>:null}
+   {market.loading?<div className="am-empty">Uygulamalar yükleniyor…</div>:market.error?<div role="alert" className="am-empty am-error">{market.error}</div>:filtered.length?<div className="am-grid">{filtered.map(app=><AppCard key={app.id} app={app} market={market}/>)}</div>:<div className="am-empty">Aramanızla eşleşen uygulama bulunamadı. <button type="button" onClick={()=>{setSearch('');setCategory('Tümü');setInstalledOnly(false)}}>Filtreleri temizle</button></div>}
+  </section>
+  {!search&&!installedOnly&&market.apps.length>4?<><section className="am-section"><div className="am-section-title"><div><h2>En çok indirilenler</h2><p>Mağazaların en çok tercih ettiği uygulamalar.</p></div><button className="am-text-link" onClick={()=>{setSort('popular');document.getElementById('uygulamalar')?.scrollIntoView({behavior:'smooth'})}}>Tümünü gör →</button></div><div className="am-grid">{popular.map(a=><AppCard key={a.id} app={a} market={market}/>)}</div></section>
+   <section className="am-section"><div className="am-section-title"><div><h2>Son eklenenler</h2><p>Ticarti uygulama mağazasına yeni katılanlar.</p></div><button className="am-text-link" onClick={()=>{setSort('newest');document.getElementById('uygulamalar')?.scrollIntoView({behavior:'smooth'})}}>Tümünü gör →</button></div><div className="am-grid">{newest.map(a=><AppCard key={a.id} app={a} market={market}/>)}</div></section></>:null}
+ </MarketplaceShell>;
 }
