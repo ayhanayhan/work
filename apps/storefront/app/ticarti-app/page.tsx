@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect,useMemo,useState} from 'react';
-import PlatformAccount from '../components/PlatformAccount';
+import {TicartiAccountHeader} from '@commerce/shared';
 
 const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
 
@@ -19,7 +19,7 @@ export default function TicartiAppMarketplace(){
   const categories=useMemo(()=>['Tümü',...Array.from(new Set(items.map(x=>x.category).filter(Boolean)))],[items]);
   const visible=category==='Tümü'?items:items.filter(x=>x.category===category);
   return <div className="ticarti-app-site">
-    <header className="ticarti-nav"><a className="ticarti-logo" href="https://ticarti.com">ticarti<span>.</span></a><nav><a href="https://ticarti.com">Ana Sayfa</a><a href="https://ticarti.com/paketler">Paketler</a><b>Uygulamalar</b></nav><div className="ticarti-nav-actions"><PlatformAccount label="Mağaza Girişi"/><a className="ticarti-btn primary" href="https://ticarti.com/ucretsiz-dene">Ücretsiz Dene</a></div></header>
+    <header className="ticarti-nav"><a className="ticarti-logo" href="https://ticarti.com">ticarti<span>.</span></a><nav><a href="https://ticarti.com">Ana Sayfa</a><a href="https://ticarti.com/paketler">Paketler</a><b>Uygulamalar</b></nav><div className="ticarti-nav-actions"><TicartiAccountHeader variant="app" loginLabel="Mağaza Girişi" registerLabel="Siteni oluştur"/></div></header>
     <main>
       <section className="ticarti-app-hero"><div><span>APP.TICARTI.COM</span><h1>Ticarti Uygulama Mağazası</h1><p>Pazaryeri, kargo, ödeme, muhasebe, pazarlama ve AI uygulamalarıyla mağazanızın yeteneklerini genişletin.</p></div><a className="ticarti-btn primary large" href="https://login.ticarti.com/">Mağazanıza giriş yapın</a></section>
       <section className="ticarti-app-market">
