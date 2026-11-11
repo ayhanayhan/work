@@ -617,6 +617,23 @@ export class MerchantAuthService {
     return base;
   }
 
+  // A global header sign-out must invalidate the store-side sessions too.
+  // This intentionally signs the merchant out on all devices, not only the
+  // login.ticarti.com SSO cookie.
+  async logoutEverywhere(refreshToken: string) {
+    const hash = this.tokenHash(refreshToken);
+    const session = await this.prisma.merchantSession.findFirst({
+      where: { revokedAt: null, OR: [{ refreshTokenHash: hash }, { previousRefreshTokenHash: hash }] },
+      select: { userId: true },
+    });
+    if (!session) return { loggedOut: true };
+    await this.prisma.merchantSession.updateMany({
+      where: { userId: session.userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+    return { loggedOut: true };
+  }
+
   async logout(refreshToken: string) {
     const hash = this.tokenHash(refreshToken);
     await this.prisma.merchantSession.updateMany({
