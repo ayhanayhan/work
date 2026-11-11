@@ -1,5 +1,5 @@
 'use client';
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useEffect,useState,type ReactNode} from 'react';
 import {TicartiAccountHeader} from '@commerce/shared/src/account-header';
 import './marketplace.css';
 
@@ -93,7 +93,7 @@ export function Action({app,market,full=false}:{app:AppItem;market:Market;full?:
  if(!market.session?.authenticated)return <a className={'am-button am-button-primary'+(full?' am-button-wide':'')} href={'https://login.ticarti.com/?returnTo='+encodeURIComponent('https://app.ticarti.com/'+app.slug)}>Giriş yap</a>;
  return <button className={'am-button am-button-primary'+(full?' am-button-wide':'')} disabled={market.busy===app.slug} onClick={()=>void market.install(app)}>{market.busy===app.slug?'Yükleniyor…':'Yükle'}</button>;
 }
-export function MarketplaceShell({children,market}:{children:React.ReactNode;market:Market}){
+export function MarketplaceShell({children,market}:{children:ReactNode;market:Market}){
  return <div className="ticarti-app-site am-shell">
   <header className="ticarti-nav am-header">
    <a className="am-brand" href="https://ticarti.com/"><span className="am-brand-word">ticarti<span>.</span></span></a>
