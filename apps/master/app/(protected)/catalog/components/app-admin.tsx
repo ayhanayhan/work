@@ -88,7 +88,7 @@ function AppEditor({initial,workspace,request,onClose,onSaved}:{initial:Partial<
   const [form,setForm]=useState<any>({
     slug:initial.slug||'',name:initial.name||'',summary:initial.summary||'',description:initial.description||'',categoryId:meta.categoryId||initial.category||'',developer:initial.developer||'Ticarti',provider:initial.provider||'',kind:initial.kind||'INTEGRATION',integrationType:initial.integrationType||'',icon:initial.icon||'',
     isActive:initial.isActive!==false,isFeatured:!!initial.isFeatured,sortOrder:Number(initial.sortOrder||0),basePrice:Number(initial.basePrice||0),currency:initial.currency||'TRY',billingType:initial.billingType||'FREE',
-    logoUrl:meta.logoUrl||'',screenshots:Array.isArray(meta.screenshots)?meta.screenshots:[],usageGuide:meta.usageGuide||'',translations:meta.translations||{[defLocale]:{name:initial.name||'',summary:initial.summary||'',description:initial.description||''}},
+    logoUrl:meta.logoUrl||'',screenshots:Array.isArray(meta.screenshots)?meta.screenshots:[],usageGuide:meta.usageGuide||'',languages:Array.isArray(meta.languages)?meta.languages:[],version:meta.version||'',publishedAt:meta.publishedAt||'',translations:meta.translations||{[defLocale]:{name:initial.name||'',summary:initial.summary||'',description:initial.description||''}},
   });
   const [schema,setSchema]=useState(JSON.stringify(initial.settingsSchema||{},null,2));
   const [pricing,setPricing]=useState<PriceRow[]>((initial.planPrices||[]).map(x=>({planId:x.planId,enabled:x.isActive!==false,included:!!x.included,price:x.price===null?null:Number(x.price),currency:x.currency||initial.currency||'TRY',billingType:x.billingType||null,trialDays:Number(meta.planTrials?.[x.planId]||0)})));
@@ -128,6 +128,9 @@ function AppEditor({initial,workspace,request,onClose,onSaved}:{initial:Partial<
         <Field label="Ödeme periyodu"><Select value={form.billingType} onValueChange={v=>patch('billingType',v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{BILLING.map(x=><SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent></Select></Field>
         <Field label="Para birimi"><Select value={form.currency} onValueChange={v=>patch('currency',v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{workspace.currencies.map(c=><SelectItem key={c.code} value={c.code}>{c.code}</SelectItem>)}</SelectContent></Select></Field>
         <Field label="Uygulama ikonu"><Input value={form.icon} placeholder="iconoir:puzzle veya görsel URL" onChange={e=>patch('icon',e.target.value)}/></Field>
+        <Field label="Sürüm"><Input value={form.version} placeholder="1.0.0" onChange={e=>patch('version',e.target.value)}/></Field>
+        <Field label="Yayın tarihi"><Input type="date" value={String(form.publishedAt||'').slice(0,10)} onChange={e=>patch('publishedAt',e.target.value)}/></Field>
+        <Field label="Desteklenen diller (virgülle ayır)"><Input value={(form.languages||[]).join(', ')} placeholder="tr, en, ru" onChange={e=>patch('languages',e.target.value.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean))}/></Field>
         <label className="flex items-center gap-2 text-sm"><Switch checked={form.isActive} onCheckedChange={v=>patch('isActive',v)}/>Aktif / uygulama marketinde yayınla</label>
         <label className="flex items-center gap-2 text-sm"><Switch checked={form.isFeatured} onCheckedChange={v=>patch('isFeatured',v)}/>Öne çıkan uygulama</label>
       </div>:null}
