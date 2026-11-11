@@ -1,15 +1,14 @@
 'use client';
-import {useMemo,useState} from 'react';
-import {useSearchParams} from 'next/navigation';
+import {useEffect,useMemo,useState} from 'react';
 import {AppCard,MarketplaceShell,useMarketplace} from './marketplace';
 
 export default function AppMarketplace(){
  const market=useMarketplace();
- const params=useSearchParams();
  const[search,setSearch]=useState('');
  const[category,setCategory]=useState('Tümü');
  const[installedOnly,setInstalledOnly]=useState(false);
- const[sort,setSort]=useState(params.get('sort')==='popular'?'popular':params.get('sort')==='newest'?'newest':'featured');
+ const[sort,setSort]=useState('featured');
+ useEffect(()=>{const next=new URLSearchParams(window.location.search).get('sort');if(next==='newest'||next==='popular')setSort(next)},[]);
  const categories=useMemo(()=>['Tümü',...Array.from(new Set(market.apps.map(a=>a.category).filter(Boolean)))],[market.apps]);
  const filtered=useMemo(()=>{
   const q=search.trim().toLocaleLowerCase('tr-TR');
