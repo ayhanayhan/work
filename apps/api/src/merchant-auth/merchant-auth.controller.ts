@@ -249,9 +249,12 @@ export class MerchantAuthController {
 
   @Post('logout') @HttpCode(200)
   async logout(@Body() dto: MerchantRefreshDto, @Req() req: any, @Res({ passthrough: true }) res: any) {
-    this.assertClient(req, true); this.noStore(res);
+    const client = this.assertClient(req, true); this.noStore(res);
     const token = dto.refreshToken || this.readCookie(req, this.cookieName());
-    if (token) await this.auth.logout(token);
+    if (token) {
+      if (client === 'merchant-landing') await this.auth.logoutEverywhere(token);
+      else await this.auth.logout(token);
+    }
     this.clearRefresh(res);
     return { loggedOut: true };
   }
