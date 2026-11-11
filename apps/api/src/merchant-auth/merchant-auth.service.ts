@@ -214,7 +214,11 @@ export class MerchantAuthService {
 
   async loginHandoff(dto: MerchantLoginDto, req: any) {
     const profile = await this.passwordProfile(dto, req);
-    return this.createHandoff(profile.user.id, profile.memberships);
+    const handoff = await this.createHandoff(profile.user.id, profile.memberships);
+    // Keep a host-only SSO cookie on login.ticarti.com. Never expose the
+    // refresh token to the browser; the controller sets it as HttpOnly.
+    const session = await this.issueSession(profile.user.id, profile.user.email, req, profile.memberships);
+    return { ...handoff, refreshToken: session.refreshToken };
   }
 
 
@@ -377,7 +381,7 @@ export class MerchantAuthService {
     }]);
   }
 
-  async consumeSocialHandoff(code:string){
+  async consumeSocialHandoff(code:string,req?:any){
     const row=await this.prisma.merchantAuthHandoff.findFirst({
       where:{tokenHash:this.tokenHash(code),usedAt:null,expiresAt:{gt:new Date()}},
       select:{id:true,userId:true}
@@ -386,7 +390,10 @@ export class MerchantAuthService {
     const updated=await this.prisma.merchantAuthHandoff.updateMany({where:{id:row.id,usedAt:null},data:{usedAt:new Date()}});
     if(updated.count!==1)throw new UnauthorizedException('Expired social sign-in');
     const profile=await this.memberships(row.userId);
-    return this.createHandoff(row.userId,profile.memberships);
+    const handoff=await this.createHandoff(row.userId,profile.memberships);
+    if(!req)return handoff;
+    const session=await this.issueSession(profile.user.id,profile.user.email,req,profile.memberships);
+    return {...handoff,refreshToken:session.refreshToken};
   }
 
   async googleLogin(dto: MerchantGoogleDto, req: any, handoffOnly = false) {
