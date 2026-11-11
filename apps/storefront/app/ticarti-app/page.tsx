@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect,useMemo,useState} from 'react';
-import {TicartiAccountHeader} from '@commerce/shared';
+import {TicartiAccountHeader} from '@commerce/shared/src/account-header';
 
 const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
 
