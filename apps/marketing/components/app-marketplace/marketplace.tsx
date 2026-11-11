@@ -1,5 +1,5 @@
 'use client';
-import {createContext,useCallback,useContext,useEffect,useRef,useState,type ReactNode} from 'react';
+import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from 'react';
 
 export const API='https://commerce-api-ynhobkprgq-ew.a.run.app/v1';
 const SSO='https://login.ticarti.com/api/v1/merchant-auth';
