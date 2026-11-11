@@ -1,7 +1,7 @@
 'use client';
 import {useCallback,useEffect,useState,type ReactNode} from 'react';
 
-export const API=process.env.NEXT_PUBLIC_API_URL||'/api/v1';
+export const API='https://commerce-api-ynhobkprgq-ew.a.run.app/v1';
 const SSO='https://login.ticarti.com/api/v1/merchant-auth';
 export type AppItem={
  id:string;slug:string;name:string;category:string;categoryId?:string;summary?:string|null;description?:string|null;
