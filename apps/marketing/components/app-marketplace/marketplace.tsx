@@ -113,9 +113,19 @@ export function MarketplaceShell({children,market}:{children:ReactNode;market:Ma
 export function AppCard({app,market}:{app:AppItem;market:Market}){
  const installed=market.installations[app.slug]?.installed;
  return <article className="am-card">
-  <a className="am-card-top" href={'/'+encodeURIComponent(app.slug)}><AppBadge app={app}/><span className="am-card-badges">{installed?<em className="am-tag">Yüklü</em>:app.isFeatured?<em className="am-tag">Öne çıkan</em>:null}</span></a>
-  <div className="am-card-content"><a href={'/'+encodeURIComponent(app.slug)}><h3>{app.name}</h3></a><p className="am-card-by">{app.developer||'Ticarti'} · {app.category}</p><p className="am-card-desc">{app.summary||'Bu uygulamanın açıklaması henüz eklenmedi.'}</p></div>
-  <div className="am-card-metrics"><span>↓ {Number(app.downloadCount||0).toLocaleString('tr-TR')} kurulum</span><b>{price(app,market.installations[app.slug])}</b></div>
-  <div className="am-card-actions"><a className="am-button am-button-outline" href={'/'+encodeURIComponent(app.slug)}>İncele</a><Action app={app} market={market}/></div>
+  <div className="am-card-heading">
+   <a className="am-card-logo-link" href={'/'+encodeURIComponent(app.slug)} aria-label={app.name+' detayları'}><AppBadge app={app}/></a>
+   <div className="am-card-heading-text">
+    <a href={'/'+encodeURIComponent(app.slug)}><h3>{app.name}</h3></a>
+    <span className="am-card-by">{app.developer||'Ticarti'}</span>
+   </div>
+   {installed?<span className="am-tag">Yüklü</span>:null}
+  </div>
+  <p className="am-card-desc">{app.summary||'Uygulama açıklaması henüz eklenmedi.'}</p>
+  <div className="am-card-bottom">
+   <span className="am-card-stat" title="Toplam kurulum">{Number(app.downloadCount||0).toLocaleString('tr-TR')} kurulum</span>
+   <span className="am-card-price">{price(app,market.installations[app.slug])}</span>
+  </div>
+  <div className="am-card-link-row"><a href={'/'+encodeURIComponent(app.slug)} className="am-card-more">İncele <span aria-hidden="true">→</span></a><Action app={app} market={market}/></div>
  </article>;
 }
