@@ -89,7 +89,7 @@ export function AppBadge({app}:{app:AppItem}){
 }
 export function Action({app,market,full=false}:{app:AppItem;market:Market;full?:boolean}){
  const info=market.installations[app.slug];
- const url=storeUrl(market.selectedStore,'/admin/plugins/my-apps/'+encodeURIComponent(app.slug));
+ const url=storeUrl(market.selectedStore,'/admin/extensions/my-apps?app='+encodeURIComponent(app.slug));
  if(info?.installed)return <a className={'am-button am-button-outline'+(full?' am-button-wide':'')} href={url}>Yönet</a>;
  if(!market.session?.authenticated)return <a className={'am-button am-button-primary'+(full?' am-button-wide':'')} href={'https://login.ticarti.com/?returnTo='+encodeURIComponent('https://app.ticarti.com/'+app.slug)}>Giriş yap</a>;
  if(!market.installationsReady)return <button className={'am-button am-button-primary'+(full?' am-button-wide':'')} disabled>Kurulum durumu kontrol edilemedi</button>;
