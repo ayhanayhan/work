@@ -21,3 +21,25 @@ html.tc-page-auth #tc-support-submit{border:0;border-radius:9px;padding:11px 14p
 html.tc-page-auth #tc-support-submit:disabled{opacity:.6;cursor:wait}
 html.tc-page-auth #tc-support-result{font-size:12px;color:#056647;line-height:1.5}
 html.tc-page-auth .tc-support-error{font-size:12px;color:#a43d35;line-height:1.5}
+
+
+/* Login/register shell: native layout independent of the HTML template's
+   Tailwind utility classes or the Marketing asset's load timing. */
+html.tc-page-auth,html.tc-page-auth body{margin:0;min-height:100%;overflow-x:hidden}
+html.tc-page-auth .tc-auth-source{min-height:100dvh;width:100%;position:relative}
+html.tc-page-auth .tc-auth-shell-shell-viewport{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;overflow:hidden!important}
+html.tc-page-auth .tc-auth-shell-shell-root{display:flex!important;width:100%!important;height:100%!important;min-height:0!important;overflow-x:hidden!important}
+html.tc-page-auth .tc-auth-shell-shell-content-col{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;height:100%!important}
+html.tc-page-auth .tc-auth-shell-progress-header{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;flex:0 0 auto!important;min-height:88px!important;padding:22px clamp(20px,3vw,44px)!important;margin:0!important;box-sizing:border-box!important}
+html.tc-page-auth .tc-auth-shell-progress-header .tc-logo-original{display:block!important;width:auto!important;max-width:160px!important;height:38px!important;object-fit:contain}
+html.tc-page-auth .tc-auth-scroll-spacer{display:flex!important;flex:1 1 auto!important;min-width:0!important;min-height:0!important;width:100%!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-gutter:stable}
+html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;flex:1 0 auto!important;width:min(100%,980px)!important;min-height:100%!important;margin:0 auto!important;padding:36px 24px 72px!important;box-sizing:border-box!important}
+html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth>.tc-view{width:100%!important;max-width:540px!important;margin-inline:auto!important}
+html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth>.tc-view--plans{max-width:940px!important}
+html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth .tc-form,
+html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth .tc-actions{max-width:100%}
+@media(max-width:700px){
+ html.tc-page-auth .tc-auth-shell-progress-header{min-height:72px!important;padding:14px 20px!important}
+ html.tc-page-auth .tc-auth-shell-progress-header .tc-logo-original{height:32px!important;max-width:135px!important}
+ html.tc-page-auth .tc-auth-scroll-spacer>.tc-auth{padding:30px 18px 110px!important}
+}
