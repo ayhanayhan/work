@@ -15,6 +15,7 @@
     "test:website-blog": "tsx scripts/check-website-blog.ts",
     "test:media": "tsx scripts/check-platform-media.ts",
     "test:callback": "tsx scripts/check-callback-forms.ts",
+    "test:commerce": "tsx scripts/check-commerce-contract.ts",
     "test:website-tools": "tsx scripts/check-website-tools.ts",
     "test:website-navigation": "tsx scripts/check-website-navigation.ts",
     "prebuild": "prisma generate"
