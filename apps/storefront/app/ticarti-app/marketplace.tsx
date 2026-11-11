@@ -31,6 +31,7 @@ export function useMarketplace(){
  const[session,setSession]=useState<Session|null>(null);
  const[tenant,setTenant]=useState('');
  const[installations,setInstallations]=useState<Record<string,InstallInfo>>({});
+ const[installationsReady,setInstallationsReady]=useState(false);
  const[loading,setLoading]=useState(true);
  const[error,setError]=useState('');
  const[busy,setBusy]=useState('');
@@ -51,12 +52,14 @@ export function useMarketplace(){
  }catch(e:any){if(alive)setError(e.message||'Uygulamalar yüklenemedi')}finally{if(alive)setLoading(false)}})();
  void fetchSession();return()=>{alive=false}},[fetchSession]);
  const refresh=useCallback(async()=>{
-  if(!session?.authenticated||!tenant){setInstallations({});return}
+  if(!session?.authenticated||!tenant){setInstallations({});setInstallationsReady(false);return}
+  setInstallationsReady(false);
   try{
    const r=await fetch(SSO+'/marketplace/store?tenantId='+encodeURIComponent(tenant),{credentials:'include',cache:'no-store',headers:{'x-auth-client':'merchant-landing'}});
    if(!r.ok){setInstallations({});return}
    const data=await r.json();
    setInstallations(Object.fromEntries((Array.isArray(data.items)?data.items:[]).map((a:InstallInfo)=>[a.slug,a])));
+   setInstallationsReady(true);
   }catch{setInstallations({})}
  },[session?.authenticated,tenant]);
  useEffect(()=>{void refresh()},[refresh]);
@@ -79,7 +82,7 @@ export function useMarketplace(){
    await refresh();setNotice(app.name+' uygulaması mağazana eklendi.');
   }catch(e:any){setActionError(e.message||'Uygulama yüklenemedi')}finally{setBusy('')}
  },[session?.authenticated,tenant,refresh]);
- return {apps,session,tenant,setTenant,selectedStore,installations,loading,error,busy,actionError,notice,install,refresh};
+ return {apps,session,tenant,setTenant,selectedStore,installations,installationsReady,loading,error,busy,actionError,notice,install,refresh};
 }
 export type Market=ReturnType<typeof useMarketplace>;
 export function AppBadge({app}:{app:AppItem}){
@@ -91,6 +94,7 @@ export function Action({app,market,full=false}:{app:AppItem;market:Market;full?:
  const url=storeUrl(market.selectedStore,'/admin/plugins/my-apps/'+encodeURIComponent(app.slug));
  if(info?.installed)return <a className={'am-button am-button-outline'+(full?' am-button-wide':'')} href={url}>Yönet</a>;
  if(!market.session?.authenticated)return <a className={'am-button am-button-primary'+(full?' am-button-wide':'')} href={'https://login.ticarti.com/?returnTo='+encodeURIComponent('https://app.ticarti.com/'+app.slug)}>Giriş yap</a>;
+ if(!market.installationsReady)return <button className={'am-button am-button-primary'+(full?' am-button-wide':'')} disabled>Kurulum durumu kontrol edilemedi</button>;
  return <button className={'am-button am-button-primary'+(full?' am-button-wide':'')} disabled={market.busy===app.slug} onClick={()=>void market.install(app)}>{market.busy===app.slug?'Yükleniyor…':'Yükle'}</button>;
 }
 export function MarketplaceShell({children,market}:{children:ReactNode;market:Market}){
