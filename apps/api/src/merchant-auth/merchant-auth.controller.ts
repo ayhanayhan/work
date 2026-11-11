@@ -176,7 +176,7 @@ export class MerchantAuthController {
   @Post('social/complete') @HttpCode(200)
   async completeSocial(@Body() dto:MerchantHandoffDto,@Req() req:any,@Res({passthrough:true}) res:any) {
     this.assertClient(req,true);this.noStore(res);
-    return this.auth.consumeSocialHandoff(dto.code);
+    return this.browserResponse(await this.auth.consumeSocialHandoff(dto.code, req), res);
   }
 
   @Get('subdomain-availability')
@@ -193,7 +193,7 @@ export class MerchantAuthController {
   @Post('login') @HttpCode(200)
   async login(@Body() dto: MerchantLoginDto, @Req() req: any, @Res({ passthrough: true }) res: any) {
     const client = this.assertClient(req, true);
-    if (client === 'merchant-landing') { this.noStore(res); return this.auth.loginHandoff(dto, req); }
+    if (client === 'merchant-landing') return this.browserResponse(await this.auth.loginHandoff(dto, req), res);
     return this.browserResponse(await this.auth.login(dto, req), res);
   }
 
@@ -249,7 +249,7 @@ export class MerchantAuthController {
 
   @Post('logout') @HttpCode(200)
   async logout(@Body() dto: MerchantRefreshDto, @Req() req: any, @Res({ passthrough: true }) res: any) {
-    this.assertClient(req); this.noStore(res);
+    this.assertClient(req, true); this.noStore(res);
     const token = dto.refreshToken || this.readCookie(req, this.cookieName());
     if (token) await this.auth.logout(token);
     this.clearRefresh(res);
