@@ -2,7 +2,7 @@ import {HeaderPrimaryTree,HeaderMegaTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
-import {TicartiAccountHeader} from '@commerce/shared';
+import {TicartiAccountHeader} from '@commerce/shared/src/account-header';
 
 export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,logoSrc='/assets/images/ticarti-logo.svg'}:{navigation:Navigation|null;locale?:string;helpHost?:boolean;logoSrc?:string}){
  return (
