@@ -22,8 +22,9 @@ export class MarketplaceSessionController {
   }
   private noCache(res:any){res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Origin');}
   @Get('store')
-  async store(@Req() req:any,@Res({passthrough:true}) res:any,@Query('tenantId') tenantId?:string){
+  async store(@Req() req:any,@Res({passthrough:true}) res:any,@Query('tenantId') tenantId?:string,@Headers('origin') origin?:string){
     this.noCache(res);
+    if(origin!=='https://app.ticarti.com')throw new ForbiddenException('Invalid marketplace origin');
     const session=await this.session(req);
     const membership=(session.memberships||[]).find((m:any)=>m.tenantId===(tenantId||session.memberships[0]?.tenantId));
     if(!membership)throw new ForbiddenException('Store not available');
