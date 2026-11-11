@@ -2,6 +2,7 @@ import {HeaderPrimaryTree,HeaderMegaTree} from '@/components/navigation-tree';
 import type {Navigation} from '@/lib/navigation';
 /* Original Ticarti header markup converted to native JSX. */
 import MobileMegaMenu from './mobile-mega';
+import {TicartiAccountHeader} from '@commerce/shared';
 
 export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,logoSrc='/assets/images/ticarti-logo.svg'}:{navigation:Navigation|null;locale?:string;helpHost?:boolean;logoSrc?:string}){
  const main=(url:string)=>helpHost?'https://ticarti.com'+url:url;
@@ -101,26 +102,7 @@ export default function HeaderSnapshot({navigation,locale='tr',helpHost=false,lo
               {"\n"}
             </div>
             {"\n"}
-            <div className={"tc-navigation-actions"}>
-              {"\n"}
-              <div className={"button btn2 login-btn"}>
-                {"\n"}
-                <a href={"https://login.ticarti.com/"} data-tc-content-key={"a-006"}>
-                  {"Giriş yap"}
-                </a>
-                {"\n"}
-              </div>
-              {"\n"}
-              <div className={"button btn1 account-btn"}>
-                {"\n"}
-                <a href={"https://login.ticarti.com/register"} data-tc-content-key={"a-007"}>
-                  {"Siteni oluştur"}
-                </a>
-                {"\n"}
-              </div>
-              {"\n"}
-            </div>
-            {"\n"}
+            <div className={"tc-navigation-actions"}><TicartiAccountHeader locale={locale} /></div>
             <div className={"tc-ui-submenu-view"}>
               {"\n"}
               <button className={"tc-ui-back"} type={"button"}>
