@@ -155,6 +155,14 @@ export function middleware(req:NextRequest){
   }
 
   if(path==='/admin'||path==='/admin/') return redirectToAdminRoot(req);
+  const legacyApp=path.match(/^\/admin\/plugins\/my-apps\/([^/]+)\/?$/);
+  if(legacyApp){
+    const target=req.nextUrl.clone();
+    target.pathname='/admin/extensions/my-apps';
+    target.search='';
+    target.searchParams.set('app',legacyApp[1]);
+    return NextResponse.redirect(target,307);
+  }
   if(path.startsWith('/admin/')) return proxyTenantAdmin(req,host);
   if(req.nextUrl.searchParams.get('ticarti_design')==='1'){
     const headers=new Headers(req.headers);
