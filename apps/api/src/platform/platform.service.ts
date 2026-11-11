@@ -83,7 +83,7 @@ export class PlatformService {
         provider:app.provider,integrationType:app.integrationType,
         basePrice:Number(app.basePrice),currency:app.currency,billingType:app.billingType,
         isFeatured:app.isFeatured,sortOrder:app.sortOrder,downloadCount:app._count.installs,
-        createdAt:app.createdAt,updatedAt:app.updatedAt,
+        createdAt:market.publishedAt||app.createdAt,updatedAt:app.updatedAt,
         screenshots:Array.isArray(market.screenshots)?market.screenshots.filter((x:any)=>typeof x==='string'&&/^https:\/\//.test(x)):[],
         languages:Array.isArray(market.languages)?market.languages.filter((x:any)=>typeof x==='string'):[],
         usageGuide:String(market.usageGuide||''),version:String(market.version||''),
