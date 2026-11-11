@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { MerchantCommerceService } from '../src/merchant/merchant-commerce.service';
 import { MerchantController } from '../src/merchant/merchant.controller';
