@@ -31,7 +31,8 @@ export default async function RootLayout({children}:{children:ReactNode}) {
   const pricingPage=contentParts[0]==='paketler';
   const helpHost=(await headers()).get('x-ticarti-help-host')==='1';
   const devHost=(await headers()).get('x-ticarti-dev-host')==='1';
-  const cls=devHost?'tc-page-home tc-page-developer':helpHost?'tc-page-home tc-page-help':pricingPage?
+  const appHost=(await headers()).get('x-ticarti-app-host')==='1';
+  const cls=appHost?'tc-page-home tc-page-app':devHost?'tc-page-home tc-page-developer':helpHost?'tc-page-home tc-page-help':pricingPage?
    'tc-page-pricing tc-vendor-aos tc-vendor-theme tc-vendor-casos-hero tc-vendor-casos-highlight':toolsPage?
    (contentParts.length>1?
     'tc-page-crowdy tc-vendor-aos tc-vendor-theme tc-page-stories tc-marketing-blog':
@@ -48,6 +49,7 @@ export default async function RootLayout({children}:{children:ReactNode}) {
     <link rel="stylesheet" href="/assets/css/marketing-help.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/marketing-developer.css?v=2"/>
     <link rel="stylesheet" href="/assets/css/navigation-tree.css?v=1"/>
+    {appHost?<link rel="stylesheet" href="/assets/css/app-marketplace.css?v=1"/>:null}
     {pricingPage?<link rel="stylesheet" href="/assets/css/pricing-master.css?v=2"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-behavior.css?v=3"/>:null}
     {snapshotHome||homeAlias?<link rel="stylesheet" href="/assets/css/home-react-effects.css?v=1"/>:null}
