@@ -12,8 +12,9 @@ export default async function SiteShell({children}:{children:ReactNode}){
  const locale=menuLocaleFromPath(requestHeaders.get('x-marketing-page')||'/');
  const helpHost=requestHeaders.get('x-ticarti-help-host')==='1';
  const devHost=requestHeaders.get('x-ticarti-dev-host')==='1';
- const subdomain=helpHost||devHost;
- const brandHost=devHost?'dev.ticarti.com':helpHost?'help.ticarti.com':requestHeaders.get('x-ticarti-site-proxy')==='1'?'ticarti.com':(requestHeaders.get('host')||'ticarti.com');
+ const appHost=requestHeaders.get('x-ticarti-app-host')==='1';
+ const subdomain=helpHost||devHost||appHost;
+ const brandHost=appHost?'app.ticarti.com':devHost?'dev.ticarti.com':helpHost?'help.ticarti.com':requestHeaders.get('x-ticarti-site-proxy')==='1'?'ticarti.com':(requestHeaders.get('host')||'ticarti.com');
  const logoSrc=await getPlatformLogoForHost(brandHost);
  const nav=await getNavigation(locale);
  const relocate=(url:string)=>{
@@ -28,7 +29,7 @@ export default async function SiteShell({children}:{children:ReactNode}){
   menus:nav.menus?{header:nav.menus.header.map(node),footer:nav.menus.footer.map(node)}:undefined,
   groups:nav.groups?.map(group=>({...group,links:group.links.map(link=>({...link,url:relocate(link.url)}))}))
  }:nav;
- return <HomeInteractions className="tc-page-home tc-shared-shell">
+ return <HomeInteractions className={"tc-page-home tc-shared-shell"+(appHost?" tc-app-surface":"")}>
    <HeaderSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>
    {children}
    <FooterSnapshot navigation={scopedNav} locale={locale} helpHost={subdomain} logoSrc={logoSrc}/>
