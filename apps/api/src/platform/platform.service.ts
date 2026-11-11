@@ -61,14 +61,34 @@ export class PlatformService {
     const {catalog,defaultLocale}=await this.packageFeatureCatalog();const lang=String(locale||defaultLocale);const rows=Array.isArray(catalog.features)?catalog.features:[];const row=rows.find((x:any)=>x.isActive!==false&&x.isPageEnabled!==false&&String(x.translations?.[lang]?.slug||x.translations?.[defaultLocale]?.slug||x.id)===String(slug));if(!row)return null;const t=row.translations?.[lang]||row.translations?.[defaultLocale]||{};const category=(Array.isArray(catalog.categories)?catalog.categories:[]).find((x:any)=>x.id===row.categoryId);const ct=category?.translations?.[lang]||category?.translations?.[defaultLocale]||{};return{locale:lang,id:row.id,code:row.code,category:{id:category?.id||'',title:ct.title||category?.code||''},valueType:row.valueType,imageUrl:row.imageUrl||'',title:t.title||row.code,subtitle:t.subtitle||'',slug:t.slug||row.id,description:t.description||'',body:t.body||'',seoTitle:t.seoTitle||'',seoDescription:t.seoDescription||''};
   }
 
-  apps(){
-    return this.prisma.appDefinition.findMany({
+  async apps(){
+    const rows=await this.prisma.appDefinition.findMany({
       where:{isActive:true},
+      include:{_count:{select:{installs:true}}},
       orderBy:[{isFeatured:'desc'},{sortOrder:'asc'},{name:'asc'}],
-      select:{
-        id:true,slug:true,name:true,category:true,summary:true,description:true,icon:true,developer:true,
-        kind:true,provider:true,integrationType:true,basePrice:true,currency:true,billingType:true,isFeatured:true,sortOrder:true,
-      },
+    });
+    const categorySetting=await this.prisma.platformSetting.findUnique({where:{key:'app_categories'}});
+    const categories=Array.isArray((categorySetting?.value as any)?.categories)?(categorySetting?.value as any).categories:[];
+    return rows.map(app=>{
+      const schema:any=app.settingsSchema&&typeof app.settingsSchema==='object'?app.settingsSchema:{};
+      const market:any=schema.marketplace&&typeof schema.marketplace==='object'?schema.marketplace:{};
+      const translations=market.translations?.['tr-TR']||market.translations?.tr||{};
+      const cat=categories.find((item:any)=>String(item.id)===String(market.categoryId));
+      const catName=cat?.translations?.['tr-TR']?.name||cat?.translations?.tr?.name||cat?.name||app.category;
+      return {
+        id:app.id,slug:app.slug,name:String(translations.name||app.name),category:String(catName),
+        categoryId:String(market.categoryId||app.category),summary:String(translations.summary||app.summary),
+        description:String(translations.description||app.description||''),
+        icon:app.icon,logoUrl:String(market.logoUrl||''),developer:app.developer,kind:app.kind,
+        provider:app.provider,integrationType:app.integrationType,
+        basePrice:Number(app.basePrice),currency:app.currency,billingType:app.billingType,
+        isFeatured:app.isFeatured,sortOrder:app.sortOrder,downloadCount:app._count.installs,
+        createdAt:app.createdAt,updatedAt:app.updatedAt,
+        screenshots:Array.isArray(market.screenshots)?market.screenshots.filter((x:any)=>typeof x==='string'&&/^https:\/\//.test(x)):[],
+        languages:Array.isArray(market.languages)?market.languages.filter((x:any)=>typeof x==='string'):[],
+        usageGuide:String(market.usageGuide||''),version:String(market.version||''),
+        websiteUrl:String(market.websiteUrl||''),
+      };
     });
   }
 
