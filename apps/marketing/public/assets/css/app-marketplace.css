@@ -226,3 +226,5 @@
  .tc-app-surface .am-detail-aside{order:-1;position:sticky;top:125px}
  .tc-app-surface .am-detail-main{min-width:0}
 }
+
+.tc-app-surface .am-hero-icon-fallback{display:grid;place-items:center;width:100%;height:100%;border-radius:6px;background:#f7f9ee;color:#53672d;font-size:19px;font-weight:600}
