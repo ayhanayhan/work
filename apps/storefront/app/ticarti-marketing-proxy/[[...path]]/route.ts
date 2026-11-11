@@ -37,8 +37,9 @@ async function proxy(req: NextRequest, context: Context): Promise<NextResponse> 
     const value = req.headers.get(name);
     if (value) headers.set(name, value);
   }
+  const appMarket=req.headers.get('x-ticarti-surface')==='app-marketplace';
   headers.set('x-ticarti-site-proxy', '1');
-  headers.set('x-forwarded-host', 'ticarti.com');
+  headers.set('x-forwarded-host', appMarket?'app.ticarti.com':'ticarti.com');
 
   try {
     const hasBody = !['GET', 'HEAD'].includes(req.method);
@@ -72,7 +73,7 @@ async function proxy(req: NextRequest, context: Context): Promise<NextResponse> 
     if (location) {
       const redirect = new URL(location, MARKETING_ORIGIN);
       if (redirect.origin === MARKETING_ORIGIN) {
-        responseHeaders.set('location', PUBLIC_ORIGIN + redirect.pathname + redirect.search + redirect.hash);
+        responseHeaders.set('location', (appMarket?'https://app.ticarti.com':PUBLIC_ORIGIN) + redirect.pathname.replace(/^\/apps(?=\/|$)/,'') + redirect.search + redirect.hash);
       }
     }
 
