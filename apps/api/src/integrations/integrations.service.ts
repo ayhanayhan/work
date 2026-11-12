@@ -86,7 +86,12 @@ export class IntegrationsService {
     const row=await this.prisma.integrationConnection.findFirst({where:{tenantId,provider:body.provider}});
     if(row){
       const data:any={name:body.name,enabled:body.enabled!==false,config:(body.config||{}) as any};
-      if(body.credentials&&Object.keys(body.credentials).some(k=>String((body.credentials as any)[k]||'').trim())) data.credentials=this.encrypt(body.credentials) as any;
+      if(body.credentials&&Object.keys(body.credentials).some(k=>String((body.credentials as any)[k]||'').trim())) {
+        // Updating one field must not erase other encrypted provider credentials.
+        const existing=this.decrypt(row.credentials);
+        const changes=Object.fromEntries(Object.entries(body.credentials).filter(([,v])=>String(v??'').trim().length>0));
+        data.credentials=this.encrypt({...existing,...changes}) as any;
+      }
       return this.prisma.integrationConnection.update({where:{id:row.id},data,select:{id:true,type:true,provider:true,name:true,enabled:true,config:true,createdAt:true,updatedAt:true}});
     }
     return this.prisma.integrationConnection.create({data:{tenantId,type:body.type,provider:body.provider,name:body.name,credentials:this.encrypt(body.credentials||{}) as any,config:(body.config||{}) as any,enabled:body.enabled!==false},select:{id:true,type:true,provider:true,name:true,enabled:true,config:true,createdAt:true,updatedAt:true}});
