@@ -32,7 +32,7 @@ function money(price:number,currency:string,billingType:string,included:boolean)
 }
 
 export default function PluginView({page,data,slug,sid,req,reload,refreshInstalledApps}:Props){
-  if(page==='store')return <PluginStore data={data} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
+  if(page==='store')return <PluginStore data={data}/>;
   if(page==='installed')return <InstalledApps data={data} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
   if(page==='preview')return <PluginPreview app={data?.app} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
   return <PluginDetail data={data} slug={slug||''} sid={sid} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
