@@ -207,12 +207,12 @@ export class SuperAdminService {
   async setSubscription(tenantId: string, body: any) {
     const plan = await this.prisma.plan.findUnique({ where: { id: body.planId } });
     if (!plan) throw new NotFoundException('Plan not found');
-    await this.prisma.subscription.updateMany({ where: { tenantId, status: { in: ['TRIAL','ACTIVE','PAST_DUE'] } }, data: { status: 'CANCELLED' } });
     const startsAt = new Date();
     const trialEndsAt = body.status === 'TRIAL' ? new Date(Date.now() + plan.trialDays * 86400000) : null;
     const currentPeriodEnd = new Date(Date.now() + 30 * 86400000);
     const newStatus=body.status==='TRIAL'?'TRIAL':'ACTIVE';
     return this.prisma.$transaction(async tx=>{
+      await tx.subscription.updateMany({where:{tenantId,status:{in:['TRIAL','ACTIVE','PAST_DUE']}},data:{status:'CANCELLED'}});
       const subscription=await tx.subscription.create({data:{tenantId,planId:plan.id,status:newStatus,startsAt,trialEndsAt,currentPeriodStart:startsAt,currentPeriodEnd}});
       await tx.tenant.update({where:{id:tenantId},data:{status:newStatus,trialEndsAt:newStatus==='TRIAL'?trialEndsAt:null}});
       return subscription;
