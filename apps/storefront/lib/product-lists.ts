@@ -1,0 +1,8 @@
+function scope(){if(typeof window==='undefined')return'global';return (window.location.hostname||'global').toLowerCase()}
+// TICARTI_WISHLIST_SESSION_SCOPE: guests do not persist favourites beyond their browser session.
+function listStorage(key:string){return key==='wishlist'?sessionStorage:localStorage}
+function storageKey(key:string){return `ticarti:${scope()}:${key}`}
+export function readProductList(key:string):string[]{if(typeof window==='undefined')return[];try{const scoped=JSON.parse(listStorage(key).getItem(storageKey(key))||'[]');if(Array.isArray(scoped)&&scoped.length)return scoped.map(String);if(key==='wishlist')return[];const legacyKey=key==='compare'?'commerce-compare':key;const legacy=JSON.parse(localStorage.getItem(legacyKey)||'[]');if(Array.isArray(legacy)&&legacy.length){writeProductList(key,legacy);localStorage.removeItem(legacyKey);localStorage.removeItem(`ticarti-${key}`);return legacy.map(String)}const older=JSON.parse(localStorage.getItem(`ticarti-${key}`)||'[]');if(Array.isArray(older)&&older.length){writeProductList(key,older);localStorage.removeItem(`ticarti-${key}`);return older.map(String)}return[]}catch{return[]}}
+export function writeProductList(key:string,ids:string[]){if(typeof window==='undefined')return;listStorage(key).setItem(storageKey(key),JSON.stringify([...new Set(ids.map(String))]))}
+export function readSavedIds(key:'wishlist'|'compare'|string):string[]{return readProductList(key)}
+export function writeSavedIds(key:'wishlist'|'compare'|string,ids:string[]){writeProductList(key,ids);if(typeof window!=='undefined')window.dispatchEvent(new Event('ticarti-saved-list-change'))}

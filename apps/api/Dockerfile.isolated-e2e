@@ -1,0 +1,20 @@
+FROM node:22-bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates openssl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY package*.json ./
+COPY apps/api/package.json apps/api/package.json
+COPY apps/admin/package.json apps/admin/package.json
+COPY apps/developer/package.json apps/developer/package.json
+COPY apps/storefront/package.json apps/storefront/package.json
+COPY apps/superadmin/package.json apps/superadmin/package.json
+COPY apps/help/package.json apps/help/package.json
+COPY packages/shared/package.json packages/shared/package.json
+RUN npm ci --no-audit --no-fund
+COPY apps/api/prisma apps/api/prisma
+RUN npm --workspace @commerce/api run prisma:generate
+COPY apps/api/tsconfig.json apps/api/tsconfig.json
+COPY apps/api/src apps/api/src
+COPY scripts/isolated-e2e-job-entry.sh scripts/isolated-e2e-job-entry.sh
+RUN chmod +x scripts/isolated-e2e-job-entry.sh
+ENV NODE_ENV=test
+ENTRYPOINT ["/app/scripts/isolated-e2e-job-entry.sh"]

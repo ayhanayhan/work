@@ -1,0 +1,2 @@
+export const dynamic='force-static';
+export async function GET(){return new Response('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" role="img" aria-label="Ticarti"><rect width="180" height="44" fill="white"/><text x="8" y="30" font-family="Arial,Helvetica,sans-serif" font-size="28" font-weight="700" fill="#17191c">ticarti</text><circle cx="103" cy="28" r="3" fill="#22c55e"/></svg>',{headers:{'content-type':'image/svg+xml; charset=utf-8','cache-control':'public, max-age=3600'}})}

@@ -1,0 +1,156 @@
+{
+  "base": "ticarti-admin-superadmin-source-20261022-0311.zip",
+  "applied_order": [
+    "ticarti-kismi-kaynak-yamasi-20261022.zip",
+    "ticarti-devam-yamasi-20261022.zip",
+    "ticarti-silme-durum-devam-yamasi-20261022.zip",
+    "ticarti-birlesik-gelistirme-v4-20261022.zip",
+    "ticarti-kapatma-guvenlik-v5-20261022.zip",
+    "ticarti-superadmin-silme-talepleri-v6-20261022.zip",
+    "ticarti-superadmin-silme-talepleri-v7-20261022.zip",
+    "ticarti-storefront-rezervasyon-v8-20261022.zip",
+    "ticarti-checkout-tenant-koruma-v9-20261022.zip",
+    "ticarti-tenant-durum-testleri-v10-20261022.zip",
+    "ticarti-merchant-session-isolation-v11-20261022.zip",
+    "ticarti-silme-onay-guvenligi-v12-20261022.zip",
+    "ticarti-silme-onay-yenileme-v13-20261022.zip",
+    "ticarti-finansal-engeller-v14-20261022.zip",
+    "ticarti-superadmin-finansal-inceleme-v15-20261022.zip"
+  ],
+  "missing": [],
+  "changed_files": {
+    "apps/api/src/superadmin/superadmin.service.ts": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip",
+      "ticarti-superadmin-silme-talepleri-v6-20261022.zip",
+      "ticarti-superadmin-finansal-inceleme-v15-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/orders/drafts/page.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/settings/components/general-settings-page.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip",
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/components/layouts/demo1/components/header.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip"
+    ],
+    "apps/admin/app/components/layouts/demo1/components/ticarti-mega-menu.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip"
+    ],
+    "apps/admin/config/menu.config.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/pos/page.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/pos/variant-selector.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/settings/delete-store/page.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-silme-durum-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip",
+      "ticarti-kapatma-guvenlik-v5-20261022.zip"
+    ],
+    "apps/api/src/system/store-lifecycle.service.ts": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/api/src/merchant/merchant.service.ts": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-silme-durum-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip",
+      "ticarti-kapatma-guvenlik-v5-20261022.zip",
+      "ticarti-storefront-rezervasyon-v8-20261022.zip",
+      "ticarti-silme-onay-guvenligi-v12-20261022.zip",
+      "ticarti-silme-onay-yenileme-v13-20261022.zip",
+      "ticarti-finansal-engeller-v14-20261022.zip"
+    ],
+    "apps/api/src/common/tenant.guard.ts": [
+      "ticarti-kapatma-guvenlik-v5-20261022.zip",
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ],
+    "apps/api/src/superadmin/superadmin.controller.ts": [
+      "ticarti-superadmin-silme-talepleri-v6-20261022.zip"
+    ],
+    "apps/superadmin/app/components/SuperAdminApp.tsx": [
+      "ticarti-superadmin-silme-talepleri-v7-20261022.zip",
+      "ticarti-superadmin-finansal-inceleme-v15-20261022.zip"
+    ],
+    "apps/superadmin/app/store-deletion-requests/page.tsx": [
+      "ticarti-superadmin-silme-talepleri-v7-20261022.zip"
+    ],
+    "apps/api/src/storefront/storefront.service.ts": [
+      "ticarti-storefront-rezervasyon-v8-20261022.zip",
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ],
+    "apps/api/src/merchant-auth/merchant-auth.guard.ts": [
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ],
+    "apps/api/src/checkout-session/checkout-session.service.ts": [
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ],
+    "apps/api/src/common/tenant.guard.status.spec.ts": [
+      "ticarti-tenant-durum-testleri-v10-20261022.zip"
+    ],
+    "apps/api/src/merchant-auth/merchant-auth.service.ts": [
+      "ticarti-merchant-session-isolation-v11-20261022.zip"
+    ]
+  },
+  "overwritten_files": {
+    "apps/api/src/superadmin/superadmin.service.ts": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip",
+      "ticarti-superadmin-silme-talepleri-v6-20261022.zip",
+      "ticarti-superadmin-finansal-inceleme-v15-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/settings/components/general-settings-page.tsx": [
+      "ticarti-kismi-kaynak-yamasi-20261022.zip",
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/pos/page.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/pos/variant-selector.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/admin/app/(protected)/settings/delete-store/page.tsx": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-silme-durum-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip",
+      "ticarti-kapatma-guvenlik-v5-20261022.zip"
+    ],
+    "apps/api/src/system/store-lifecycle.service.ts": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip"
+    ],
+    "apps/api/src/merchant/merchant.service.ts": [
+      "ticarti-devam-yamasi-20261022.zip",
+      "ticarti-silme-durum-devam-yamasi-20261022.zip",
+      "ticarti-birlesik-gelistirme-v4-20261022.zip",
+      "ticarti-kapatma-guvenlik-v5-20261022.zip",
+      "ticarti-storefront-rezervasyon-v8-20261022.zip",
+      "ticarti-silme-onay-guvenligi-v12-20261022.zip",
+      "ticarti-silme-onay-yenileme-v13-20261022.zip",
+      "ticarti-finansal-engeller-v14-20261022.zip"
+    ],
+    "apps/api/src/common/tenant.guard.ts": [
+      "ticarti-kapatma-guvenlik-v5-20261022.zip",
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ],
+    "apps/superadmin/app/components/SuperAdminApp.tsx": [
+      "ticarti-superadmin-silme-talepleri-v7-20261022.zip",
+      "ticarti-superadmin-finansal-inceleme-v15-20261022.zip"
+    ],
+    "apps/api/src/storefront/storefront.service.ts": [
+      "ticarti-storefront-rezervasyon-v8-20261022.zip",
+      "ticarti-checkout-tenant-koruma-v9-20261022.zip"
+    ]
+  },
+  "caution": "Chronological overwrite only; semantic conflicts may remain. Do not deploy without compile and integration checks."
+}

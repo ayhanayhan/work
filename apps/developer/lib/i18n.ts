@@ -1,0 +1,4 @@
+'use client';
+import {useEffect,useMemo,useState} from 'react';import tr from '../locales/tr.json';import en from '../locales/en.json';import de from '../locales/de.json';import ru from '../locales/ru.json';
+type L='tr'|'en'|'de'|'ru';const D:Record<L,Record<string,string>>={tr,en,de,ru};function norm(v?:string|null):L{const x=String(v||'tr').toLowerCase().replace('_','-').split('-')[0];return x==='en'||x==='de'||x==='ru'||x==='tr'?x:'tr'}
+export function useI18n(){const[l,setL]=useState<L>('tr');useEffect(()=>{const f=()=>setL(norm(document.documentElement.lang||localStorage.getItem('ticarti_locale')||localStorage.getItem('locale')||navigator.language));f();const o=new MutationObserver(f);o.observe(document.documentElement,{attributes:true,attributeFilter:['lang']});window.addEventListener('storage',f);return()=>{o.disconnect();window.removeEventListener('storage',f)}},[]);return useMemo(()=>({locale:l,t:(k:string)=>D[l]?.[k]||D.en?.[k]||D.tr?.[k]||k}),[l])}

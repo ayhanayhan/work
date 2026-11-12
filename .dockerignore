@@ -1,0 +1,61 @@
+# Ticarti API Docker build context hardening.
+# Cloud Build runs npm ci before docker build; without this node_modules makes
+# the Docker context ~1GB+. Never send generated/local trees to the daemon.
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/.cache
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+
+.git
+.git/**
+.github
+.github/**
+.-backups
+.-backups/**
+.ticarti-patch-backup
+.ticarti-patch-backup/**
+
+.env
+.env.*
+**/.env
+**/.env.*
+*.log
+npm-debug.log*
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Not required by the API image. Workspace manifests remain available.
+theme-packages
+theme-packages/**
+apps/admin/**
+!apps/admin/package.json
+apps/developer/**
+!apps/developer/package.json
+apps/storefront/**
+!apps/storefront/package.json
+apps/superadmin/**
+!apps/superadmin/package.json
+apps/help/**
+!apps/help/package.json
+packages/shared/**
+!packages/shared/package.json
+
+# Dockerfile only copies the runtime dependency verifier from scripts.
+scripts/**
+!scripts/api-runtime-deps-v30_9_5-check.cjs
+!scripts/isolated-e2e-job-entry.sh
+
+# API generated/runtime-only content.
+apps/api/uploads
+apps/api/uploads/**
+apps/api/.dockerignore
+apps/api/Dockerfile
+!modules/
+!modules/payment-stripe/
+!modules/payment-stripe/transport.cjs

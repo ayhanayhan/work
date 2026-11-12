@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read = (p) => fs.readFileSync(p, 'utf8');
+assert.match(read('apps/api/db-init.sh'), /TEST_DB_SEED:-false/);
+assert.doesNotMatch(read('apps/admin/css/components/scrollable.css'), /max-width:\s*var\(/);
+const fast = read('scripts/deploy-fast.sh');
+for (const token of ['TICARTI_DEPLOY_EXECUTE', 'TICARTI_PROMOTE_APPROVED', '--no-traffic','/v1/health/live','/v1/health/ready','TICARTI_MIGRATION_APPROVED']) assert.ok(fast.includes(token), token);
+assert.ok(!read('scripts/deploy-production-safe.sh').includes('gcloud builds submit'));
+const cfg=read('cloudbuild-api-fast.yaml');
+assert.ok(cfg.includes('--cache-from'));
+console.log('Fast deploy safety verification: OK');

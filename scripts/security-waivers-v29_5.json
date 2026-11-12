@@ -1,0 +1,25 @@
+{
+  "reviewBy": "2026-11-30",
+  "waivers": {
+    "postcss": {
+      "severity": "high",
+      "scope": "next-build-toolchain",
+      "reason": "Next.js 15.5.27 Maintenance LTS still carries the flagged PostCSS build-time dependency. PostCSS is not used on request data by Ticarti runtime. Remove this waiver as soon as the Next 15.5.x line ships a patched bundled dependency or Ticarti moves to a validated newer Next line."
+    },
+    "prisma": {
+      "severity": "high",
+      "scope": "cli-toolchain",
+      "reason": "Prisma CLI is a dev/build/migration dependency only; it is not part of Ticarti API runtime. Advisory is inherited through Prisma config tooling."
+    },
+    "@prisma/config": {
+      "severity": "high",
+      "scope": "cli-toolchain",
+      "reason": "Used by Prisma CLI config loading during generate/migrate, not by the running API process."
+    },
+    "deepmerge-ts": {
+      "severity": "high",
+      "scope": "cli-toolchain",
+      "reason": "Affected deepmerge-ts is pinned by @prisma/config and reached only through Prisma CLI config loading in this project."
+    }
+  }
+}

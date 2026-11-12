@@ -1,0 +1,8 @@
+PASS	release-gates	verified
+PASS	plugin-boundaries	verified
+PASS	plugin-installed-absent-build	verified
+PASS	stripe-plugin-unit	verified
+PASS	api-unit	verified
+PASS	api-build	verified
+PASS	phase11-security-evidence	verified
+DEFER	staging-and-real-E2E	run final mode when a staging environment and E2E suite are ready

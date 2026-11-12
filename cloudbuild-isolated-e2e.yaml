@@ -1,0 +1,11 @@
+steps:
+  - id: build-isolated-test-image
+    name: gcr.io/cloud-builders/docker
+    args: ['build','-f','apps/api/Dockerfile.isolated-e2e','-t','${_IMAGE}','.']
+  - id: push-isolated-test-image
+    name: gcr.io/cloud-builders/docker
+    args: ['push','${_IMAGE}']
+substitutions:
+  _IMAGE: europe-west1-docker.pkg.dev/wedidit-64fae/cloud-run-source-deploy/commerce-api-e2e:v33-1-4a
+options:
+  logging: CLOUD_LOGGING_ONLY

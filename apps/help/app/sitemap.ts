@@ -1,0 +1,3 @@
+import type {MetadataRoute} from 'next';
+const API=(process.env.API_ORIGIN||'http://localhost:4000').replace(/\/$/,'')+'/v1';
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{const locales=['tr','en','de','ru'];let articles:any[]=[];try{const r=await fetch(`${API}/help/articles?locale=tr`,{cache:'no-store'});if(r.ok)articles=await r.json()}catch{}const now=new Date();return [...locales.map(locale=>({url:`https://help.ticarti.com/${locale}`,lastModified:now,changeFrequency:'daily' as const,priority:1})),...articles.flatMap((a:any)=>locales.map(locale=>({url:`https://help.ticarti.com/${locale}/articles/${a.slug}`,lastModified:a.updatedAt?new Date(a.updatedAt):now,changeFrequency:'weekly' as const,priority:.7})))]}

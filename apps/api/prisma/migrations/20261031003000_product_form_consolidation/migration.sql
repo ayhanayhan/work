@@ -1,0 +1,2 @@
+ALTER TABLE "Variant"
+ADD COLUMN IF NOT EXISTS "model" TEXT;

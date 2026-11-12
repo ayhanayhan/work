@@ -1,0 +1,26 @@
+steps:
+  - name: node:22
+    entrypoint: npm
+    args: [ci, --ignore-scripts, --no-audit, --no-fund]
+  - name: node:22
+    entrypoint: npm
+    args: [run, verify:p0]
+  - name: node:22
+    entrypoint: node
+    args: [scripts/p1-platform-hardening-check.mjs]
+  - name: node:22
+    entrypoint: node
+    args: [scripts/core-v33-priorities-check.mjs]
+  - name: node:22
+    entrypoint: npm
+    args: [run, verify:production-migrations]
+  - name: node:22
+    entrypoint: npm
+    args: [--workspace, '@commerce/api', run, prisma:generate]
+  - name: node:22
+    entrypoint: npm
+    args: [--workspace, '@commerce/api', run, build]
+  - name: gcr.io/cloud-builders/docker
+    args: [build, --file, apps/api/Dockerfile.cloudbuild, --tag, '${_IMAGE}', .]
+images:
+  - ${_IMAGE}

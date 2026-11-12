@@ -1,0 +1,14 @@
+'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const core=path.join(root,'apps/api/src/payment-providers');
+const installed=path.join(root,'apps/api/src/installed-modules/payment-stripe');
+const moduleFile=path.join(core,'payment-providers.module.ts');
+const src=fs.readFileSync(moduleFile,'utf8');
+const must=(condition,message)=>{if(!condition)throw Error('FAIL '+message);console.log('PASS '+message)};
+must(!fs.existsSync(path.join(core,'payment-providers.controller.ts')),'core does not carry Stripe controller');
+must(!fs.existsSync(path.join(core,'payment-providers.service.ts')),'core does not carry Stripe service');
+must(src.includes('optionalInstalledStripeModule') && src.includes('existsSync(moduleFile)'),'optional plugin registration exists');
+must(['stripe-payment.controller.ts','stripe-payment.service.ts','stripe-payment.module.ts'].every(x=>fs.existsSync(path.join(installed,x))),'Stripe plugin sources installed');
+console.log('NOTE: Static source verification. Boot integration needs explicit build tests.');

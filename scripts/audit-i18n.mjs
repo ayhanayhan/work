@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const frontendRoots=['apps/admin/app','apps/storefront/app','apps/storefront/components','apps/storefront/themes','apps/superadmin/app','apps/developer/app'];
+const backendRoots=['apps/api/src'];
+const excludes=new Set(['node_modules','.next','.patch-backups','public','theme-sources','locales','dist','build']);
+const turkish=/[çğıöşüÇĞİÖŞÜ]/;
+const quoted=/["'`][^\n"'`]{2,180}["'`]/g;
+const frontendAllow=['sfText(','uiText(','t(','apiText(','_i18n','i18n','locale','className','href=','import ','from ','adminText(','saText('];
+const internalFrontendFiles=new Set(['apps/admin/app/components/adminRoutes.ts','apps/admin/app/components/AdminIcons.tsx','apps/admin/app/components/slug.ts']);
+const inlineLocaleLine=/^(?:tr|en|de|ru):\s*\{/;
+function isInternalFrontend(p,line){
+  const n=p.replace(/\\/g,'/');
+  if(internalFrontendFiles.has(n))return true;
+  const t=line.trim();
+  if(inlineLocaleLine.test(t))return true;
+  if(n.endsWith('/SuperAdminApp.tsx')&&(t.startsWith('const tabs=')||t.startsWith('const tabRoutes:')||t.startsWith('const TAB_KEY:')||t.includes("initialTab='Genel Bakış'")||t.startsWith("{key:'")||t.includes("if(tab==='")||t.includes('includes(initialTab)')||t.includes("section==='Sözleşmeler'")||t.includes("['Sözleşmeler','Blog','Sayfalar'].includes(tab)")))return true;
+  if(n.endsWith('/AdminApp.tsx')&&(t.includes("if(tab==='")||t.startsWith('const nativeTabs=')))return true;
+  if(n.endsWith('/AdminShell.tsx')&&(t.startsWith('const customerChildren=')||t.startsWith('const catalogChildren=')||t.startsWith('const blogChildren=')||t.startsWith('const pluginChildren=')||t.startsWith('const teamChildren=')||t.startsWith('const designChildren=')||t.startsWith('const marketingChildren=')||t.startsWith('const pageTitles:')||t.includes('titleRaw=')||t.includes("pathname.startsWith('/design-content')")||t.includes("pathname.startsWith('/orders')")))return true;
+  if(n.endsWith('/IntegrationViews.tsx')&&/name:'(?:Yurtiçi Kargo|Sürat Kargo|Paraşüt|Çiçeksepeti)'/.test(t))return true;
+  if(n.endsWith('/LiveTrackingView.tsx')&&(t.includes("TURKIYE:'TR'")||t.includes("toLocaleLowerCase('tr-TR')")))return true;
+  if(n.endsWith('/AdminShell.tsx')&&(t.startsWith("{title:")||t.startsWith("{href:'/settings?tab=")))return true;
+  if(n.endsWith('/AiViews.tsx')&&t.startsWith("{key:'translation',label:"))return true;
+  if(n.endsWith('/CatalogViews.tsx')&&t.startsWith('const DEF_TABS='))return true;
+  if(n.endsWith('/DesignViews.tsx')&&(t.startsWith("{type:")||t.startsWith("{title:")))return true;
+  if(n.endsWith('/MarketingSuite.tsx')&&(t.startsWith('const TABS=')||t.startsWith('const CONDITION_TYPES=')||t.startsWith('const ACTION_TYPES=')))return true;
+  if(n.endsWith('/PageViews.tsx')&&t.startsWith("['{{firma_adi}}'"))return true;
+  if(n.endsWith('/PlansView.tsx')&&t.startsWith('const labels:Record'))return true;
+  if(n.endsWith('/PosView.tsx')&&(t.startsWith("['SHIPPING'")||t.startsWith("['PICKUP'")||t.startsWith("['COURIER'")||t.startsWith('const stepMeta=')))return true;
+  if(n.endsWith('/SeoStudioAdvanced.tsx')&&(t.startsWith('const TABS=')||t.startsWith('const SCHEMAS=')))return true;
+  if(n.endsWith('/TeamViews.tsx')&&(t.startsWith('const permissionNames:')||t.startsWith('const groupNames:')))return true;
+  if(n.includes('apps/admin/app/')&&n.endsWith('/page.tsx')&&t.includes('<AdminApp tab='))return true;
+  if(n.endsWith('/integrations/edocument/page.tsx')&&t.startsWith('const PROVIDERS='))return true;
+  if(n.endsWith('/QuickStoreForm.tsx')&&t.startsWith('function slugify('))return true;
+  if(n.endsWith('/native-shell.ts')&&t.includes('aria-label="Hesabım"'))return true;
+  if(n.includes('apps/superadmin/app/')&&n.endsWith('/page.tsx')&&t.includes('<SuperAdminApp initialTab='))return true;
+  return false;
+}
+const backendSignal=/(BadRequestException|NotFoundException|ForbiddenException|UnauthorizedException|ConflictException|message\s*:)/;
+let front=[],back=[];
+function walk(root,kind){if(!fs.existsSync(root))return;for(const entry of fs.readdirSync(root,{withFileTypes:true})){const p=path.join(root,entry.name);if(entry.isDirectory()){if(!excludes.has(entry.name))walk(p,kind);continue;}if(!/\.(tsx?|jsx?)$/.test(entry.name))continue;const lines=fs.readFileSync(p,'utf8').split(/\r?\n/);lines.forEach((line,i)=>{if(!turkish.test(line))return;if(kind==='frontend'){if(isInternalFrontend(p,line))return;if(frontendAllow.some(x=>line.includes(x)))return;const m=line.match(quoted);if(m)front.push(`${p}:${i+1}:${line.trim()}`)}else if(backendSignal.test(line)&&!line.includes('apiText(')){back.push(`${p}:${i+1}:${line.trim()}`)}})}}
+frontendRoots.forEach(r=>walk(r,'frontend'));backendRoots.forEach(r=>walk(r,'backend'));
+console.log(`Frontend hard-coded Turkish candidates: ${front.length}`);front.slice(0,300).forEach(x=>console.log(x));if(front.length>300)console.log(`... ${front.length-300} more frontend candidates`);
+console.log(`Backend hard-coded user-facing candidates: ${back.length}`);back.slice(0,300).forEach(x=>console.log(x));if(back.length>300)console.log(`... ${back.length-300} more backend candidates`);
+const report={generatedAt:new Date().toISOString(),frontend:front,backend:back};fs.mkdirSync('reports',{recursive:true});fs.writeFileSync('reports/i18n-audit.json',JSON.stringify(report,null,2));
+if(process.env.I18N_STRICT==='1'&&(front.length||back.length))process.exit(2);

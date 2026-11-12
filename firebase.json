@@ -1,0 +1,74 @@
+{
+  "apphosting": [
+    {
+      "backendId": "commerce-storefront",
+      "rootDir": "./apps/storefront",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-admin",
+      "rootDir": "./apps/admin",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-superadmin",
+      "rootDir": "./apps/superadmin",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-developer",
+      "rootDir": "./apps/developer",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-help",
+      "rootDir": "./apps/help",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-storefront-v16-test",
+      "rootDir": "./.ticarti-v16-test",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "backendId": "commerce-master",
+      "rootDir": "./apps/master",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const root=new URL('../',import.meta.url);
+const read=p=>readFileSync(new URL(p,root),'utf8');
+const schema=read('apps/api/prisma/schema.prisma');
+const pkg=JSON.parse(read('package.json'));
+for(const s of ['verify:production-concurrency','verify:tenant-isolation','verify:payment-webhooks','verify:p0','verify:production-migrations']) assert.equal(typeof pkg.scripts[s],'string',`Missing gate ${s}`);
+for(const s of ['AppAuthorizationCode','AppAccessToken','AppInstallation']) assert.ok(schema.includes('model '+s),`Missing model ${s}`);
+const deploy=read('scripts/deploy-fast.sh');
+assert.match(deploy,/\/v1\/health\/live \/v1\/health\/ready/);
+assert.match(deploy,/TICARTI_PROMOTE_APPROVED/);
+assert.match(deploy,/TICARTI_MIGRATION_APPROVED/);
+console.log('OK commerce release gates and candidate health static check; NOT a live checkout/payment test');

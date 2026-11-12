@@ -1,0 +1,47 @@
+'use client';
+import {Suspense,useEffect,useMemo,useState} from 'react';
+import {usePathname,useRouter,useSearchParams} from 'next/navigation';
+import ProductCard from '../components/ProductCard';
+import {api,STORE,getCurrency,getLocale,sfText} from '../../sdk/storefront';
+import {useStorefrontTheme} from '../../../components/StorefrontThemeContext';
+import {boolSetting,colorSetting,numSetting,pageSettings,stringSetting,textAlignClass} from '../config/theme-settings';
+
+function ProductList(){
+  const sp=useSearchParams();const router=useRouter();const pathname=usePathname();const themeState=useStorefrontTheme();const design=themeState.design||{};
+  const banner=pageSettings(design,'collectionBanner');const desc=pageSettings(design,'collectionDescription');const grid=pageSettings(design,'collectionGrid');
+  const[d,setD]=useState<any>(null);const[view,setView]=useState<'grid'|'list'>('grid');const[filtersOpen,setFiltersOpen]=useState(false);const[busy,setBusy]=useState(false);
+  const q=sp.get('q')||'';const pathParts=pathname.split('/').filter(Boolean);const pathCategory=pathParts[0]==='categories'?decodeURIComponent(pathParts[1]||''):'';const pathCollection=pathParts[0]==='collections'?decodeURIComponent(pathParts[1]||''):'';const category=pathCategory||sp.get('category')||'';const page=Math.max(1,Number(sp.get('page')||1));const sort=sp.get('sort')||'newest';
+  const productsPerPage=numSetting(grid.products_per_page,16,1,60);
+
+  function queryString(){
+    const params=new URLSearchParams(sp.toString());params.set('currency',getCurrency());params.set('locale',getLocale());params.set('limit',String(productsPerPage));params.set('page',String(page));params.set('sort',sort);
+    return params.toString();
+  }
+  async function load(){setBusy(true);try{const endpoint=pathCollection?`/storefront/${STORE}/collections/${encodeURIComponent(pathCollection)}?${queryString()}`:pathCategory?`/storefront/${STORE}/categories/${encodeURIComponent(pathCategory)}?${queryString()}`:`/storefront/${STORE}/products?${queryString()}`;const result=await api(endpoint);const ids=(result?.items||[]).map((x:any)=>x.id).filter(Boolean);if(ids.length){try{const pricing=await api(`/storefront/${STORE}/pricing-preview?ids=${encodeURIComponent(ids.join(','))}&currency=${encodeURIComponent(result.currency||getCurrency())}&locale=${encodeURIComponent(getLocale())}`);const map=new Map((pricing?.items||[]).map((x:any)=>[String(x.id),x]));result.items=(result.items||[]).map((x:any)=>({...x,pricingPreview:map.get(String(x.id))||null}))}catch{}}setD(result)}finally{setBusy(false)}}
+  useEffect(()=>{void load();const h=()=>void load();window.addEventListener('currency-change',h);window.addEventListener('locale-change',h);return()=>{window.removeEventListener('currency-change',h);window.removeEventListener('locale-change',h)}},[sp.toString(),productsPerPage]);
+
+  function updateParam(key:string,value:string,checked?:boolean){
+    const next=new URLSearchParams(sp.toString());next.delete('page');
+    if(key.startsWith('filter.')||key==='brand'||key==='tag'||key==='availability'){
+      const current=(next.get(key)||'').split(',').filter(Boolean);const set=new Set(current);
+      if(checked===false)set.delete(value);else set.add(value);
+      if(set.size)next.set(key,[...set].join(','));else next.delete(key);
+    }else if(value)next.set(key,value);else next.delete(key);
+    router.push(`${pathname}${next.toString()?`?${next.toString()}`:''}`);
+  }
+  const enableFiltering=String(grid.enable_filtering||'enable')!=='disable';const showCount=boolSetting(grid.enable_products_count,true);const showSorting=boolSetting(grid.enable_sorting,true);const dynamicGrid=boolSetting(grid.enable_dynamic_grid,true);
+  const gridClass=view==='list'?'page-grid-1':`${stringSetting(grid.grid,'page-grid-4')} ${stringSetting(grid.grid_tablet,'page-grid-st-3')} ${String(grid.mobile_grid||'page-grid-sp-2').startsWith('page-grid')?grid.mobile_grid:`page-grid-sp-${grid.mobile_grid||2}`}`;
+  const title=d?.collection?.title||d?.category?.name||category||(q?sfText('collection.search',getLocale(),{query:q}):sfText('collection.all',getLocale()));const bannerAlign=textAlignClass(banner.text_align);const descAlign=textAlignClass(desc.text_align);
+  const bannerStyle={background:banner.background==='color'?colorSetting(banner.color_background,'transparent'):undefined,minHeight:banner.image_size==='fixed'?`${numSetting(banner.desktop_image_height,0,0,1000)}px`:undefined,display:'flex',alignItems:'center'} as any;
+  const items=d?.items||[];const facets=d?.facets||[];const pages=Math.max(1,Number(d?.pagination?.pages||1));
+
+  return <main data-section-name="main-collection-product-grid">
+    <section data-section-name="main-collection-banner" className={`collection-banner ${bannerAlign} top-spacing-${banner.top_spacing||'normal'}`} style={bannerStyle}><div className={banner.width==='fullwidth'?'page-fullwidth':'page-width'} style={{width:'100%'}}><div className="breadcrumbs body3 mt20"><a href="/">Anasayfa</a><span> / </span><span>{title}</span></div><div className="collection-title"><span className="body3 text-uppercase">{pathCollection?'Koleksiyon':category?'Kategori':'Katalog'}</span><h1 className="h1 mt8">{title}</h1></div></div></section>
+    {boolSetting(banner.show_text_description,false)&&<section data-section-name="main-collection-description" className={`top-spacing-${desc.top_spacing||'small'} ${descAlign}`}><div className={desc.width==='fullwidth'?'page-fullwidth':'page-width'}><div className="rte body2" style={{maxWidth:`${numSetting(desc.description_width,60,20,100)}%`,margin:descAlign==='text-center'?'0 auto':undefined}}>{d?.collection?.description||d?.category?.description||''}</div></div></section>}
+    <div className={grid.width==='fullwidth'?'page-fullwidth':'page-width'}><div className="facets-toolbar mb40 toolbar__design_1">{enableFiltering&&<button className="mobile-facets__button body2 strong" onClick={()=>setFiltersOpen(true)}>Filtre</button>}{showCount&&<div className="products_count body3">{d?.pagination?.total??0} ürün</div>}{dynamicGrid&&<div className="grid-selector"><button className={`collection-grid__item ${view==='grid'?'active-d':''}`} onClick={()=>setView('grid')} aria-label="Grid view">▦</button><button className={`collection-grid__item ${view==='list'?'active-d':''}`} onClick={()=>setView('list')} aria-label="List view">☷</button></div>}{showSorting&&<div className="sorting"><select className="select__select field__input" aria-label="Sıralama" value={sort} onChange={e=>updateParam('sort',e.target.value)}><option value="newest">En yeni</option><option value="oldest">En eski</option><option value="name-asc">A-Z</option><option value="name-desc">Z-A</option><option value="price-asc">Fiyat artan</option><option value="price-desc">Fiyat azalan</option></select></div>}</div>
+      <div className={enableFiltering?'page-grid__collection-sidebar':'product-grid__container'}>{enableFiltering&&<aside className={`facets facets__vertical ${filtersOpen?'is-open':''}`}><button className="hide-desktop facets__close" onClick={()=>setFiltersOpen(false)}>×</button>{facets.map((facet:any)=><div className="facets__disclosure" key={facet.key}><div className="facets__summary h5">{facet.label}</div><div className="facets__display">{facet.type==='RANGE'?<div className="display-flex gap10"><input type="number" min={0} placeholder={String(Math.round(facet.min||0))} defaultValue={sp.get('price.min')||''} onBlur={e=>updateParam('price.min',e.target.value)}/><input type="number" min={0} placeholder={String(Math.round(facet.max||0))} defaultValue={sp.get('price.max')||''} onBlur={e=>updateParam('price.max',e.target.value)}/></div>:(facet.values||[]).map((v:any)=>{const key=facet.key==='brand'?'brand':facet.key==='tag'?'tag':facet.key==='availability'?'availability':facet.key==='productType'?'filter.productType':facet.key==='category'?'filter.category':`filter.${facet.key}`;const selected=(sp.get(key)||'').split(',').includes(String(v.value));return <label className="facet-checkbox" key={String(v.value)}><input type="checkbox" checked={selected} onChange={e=>updateParam(key,String(v.value),e.target.checked)}/><span>{v.label} <small>({v.count})</small></span></label>})}</div></div>)}</aside>}
+        <div id="ProductGridContainer" className="product-grid__container">{busy&&!d?<div>Yükleniyor…</div>:<><div className={`collection__container ${gridClass}`}>{items.map((product:any)=><ProductCard key={product.id} p={product} currency={d?.currency}/>)}</div>{!items.length&&<div className="collection collection--empty text-center top-spacing-small"><h2 className="h3">Ürün bulunamadı</h2></div>}{pages>1&&<nav className="pagination-wrapper mt40" aria-label="Sayfalama"><div className="display-flex gap10 justify-content-center"><button className="btn btn--border" disabled={page<=1} onClick={()=>updateParam('page',String(page-1))}>Önceki</button><span className="body2">{page} / {pages}</span><button className="btn btn--border" disabled={page>=pages} onClick={()=>updateParam('page',String(page+1))}>Sonraki</button></div></nav>}</>}</div></div>
+    </div>{filtersOpen&&enableFiltering&&<button className="popup-modal__overlay hide-desktop" onClick={()=>setFiltersOpen(false)} aria-label="Filtreleri kapat"/>}
+  </main>
+}
+export default function Products(){return <Suspense fallback={<main className="page-width top-spacing-small">Yükleniyor…</main>}><ProductList/></Suspense>}

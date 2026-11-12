@@ -1,0 +1,25 @@
+{
+  "version": "v33.0.16",
+  "date": "2026-10-08",
+  "scenario": "single-sku-checkout",
+  "total": 5000,
+  "clientConcurrency": 200,
+  "cloudRunInstances": 5,
+  "cloudRunConcurrency": 120,
+  "stockBatchWindowMs": 35,
+  "stockBatchMax": 128,
+  "stockAdmissionMode": "redis-atomic",
+  "stockTxRetryAttempts": 3,
+  "stockTxRetryBaseMs": 35,
+  "result": {
+    "succeeded": 5000,
+    "failed": 0,
+    "seconds": 72.25,
+    "rps": 69.2,
+    "p50Ms": 2512.8,
+    "p95Ms": 5593.0,
+    "p99Ms": 7744.6,
+    "maxMs": 14753.1
+  },
+  "passed": true
+}

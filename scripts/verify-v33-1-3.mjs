@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const source = fs.readFileSync('apps/api/src/app-auth/app-auth.integration.spec.ts','utf8');
+for (const phrase of ['code cannot be reused','wrong and missing verifier','expired authorization code','tenant A cannot authorize tenant B','Scope removed after issuance','API guard uses installation tenant']) assert.ok(source.includes(phrase), `Missing test scenario: ${phrase}`);
+const strict = fs.readFileSync('apps/api/prisma/production-migration-baseline.ts','utf8');
+assert.match(strict, /STRICT|strict/i);
+const check = fs.readFileSync('scripts/production-migration-v30-check.mjs','utf8');
+assert.ok(check.includes("indexOf('if (isContiguousPendingTail(all, applied, missing))', pushIdx)"), 'Migration verification compatibility fix missing');
+console.log('OK v33.1.3 test scenarios and migration checker compatibility');
+console.log('NOTE: source presence check only; run API unit test for behavioral verification');

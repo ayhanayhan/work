@@ -1,0 +1,3 @@
+ 'use client';import {useState} from 'react';
+const copy:any={tr:['Bu içerik yardımcı oldu mu?','Evet','Hayır','Teşekkürler.'],en:['Was this helpful?','Yes','No','Thanks.'],de:['War dieser Inhalt hilfreich?','Ja','Nein','Danke.'],ru:['Материал был полезен?','Да','Нет','Спасибо.']};
+export default function Feedback({id,locale}:{id:string;locale:string}){const[done,setDone]=useState(false);const t=copy[locale]||copy.en;async function send(helpful:boolean){await fetch(`/api/v1/help/articles/${id}/feedback`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({helpful})});setDone(true)}return <div className="feedback">{done?t[3]:<>{t[0]} <button onClick={()=>send(true)}>{t[1]}</button><button onClick={()=>send(false)}>{t[2]}</button></>}</div>}

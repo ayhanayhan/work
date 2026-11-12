@@ -1,0 +1,941 @@
+/* Source-faithful, brand-neutral storefront skin for the default Ticarti theme. */
+.ticarti-theme-runtime[data-theme="nova-commerce"] {
+  --core-duration: .3s;
+  --core-ease: cubic-bezier(.2,.75,.35,1);
+  --core-line: #d9d9d9;
+  --core-muted: #777;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .storefront-theme {
+  --store-container: 1600px !important;
+  --store-section-gap: 100px !important;
+  --store-radius: 20px !important;
+  --store-button-radius: 8px !important;
+  color: #000;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .container {
+  width: min(1600px, calc(100% - 40px));
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .btn {
+  min-height: 48px;
+  padding: 0 28px;
+  border: 1px solid #304ffe;
+  border-radius: 8px;
+  background: #304ffe;
+  color: #fff;
+  font-weight: 700;
+  transition: color var(--core-duration) var(--core-ease), background var(--core-duration) var(--core-ease), border-color var(--core-duration) var(--core-ease), transform var(--core-duration) var(--core-ease);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .btn:hover {
+  border-color: #000;
+  background: #000;
+  transform: translateY(-2px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .btn.alt {
+  border-color: #d9d9d9;
+  background: #fff;
+  color: #000;
+}
+
+/* Header, opened search and mega menu */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .header {
+  min-height: 84px;
+  border: 0;
+  border-bottom: 1px solid var(--core-line);
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.04);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-inner {
+  min-height: 84px;
+  grid-template-columns: auto minmax(280px,1fr) auto;
+  gap: clamp(22px,3vw,52px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .logo {
+  min-width: 130px;
+  font-size: 25px;
+  font-weight: 850;
+  letter-spacing: -.04em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .logo img {
+  max-width: 130px;
+  max-height: 44px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .nav {
+  justify-content: flex-start;
+  gap: clamp(18px,2vw,34px);
+  color: #000;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .nav-item {
+  height: 84px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .nav-item > a {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .nav-item > a::after {
+  bottom: 20px;
+  height: 2px;
+  background: #304ffe;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-actions {
+  gap: 10px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-icon-btn {
+  width: 36px;
+  height: 44px;
+  border-radius: 0;
+  transition: color var(--core-duration) var(--core-ease), transform var(--core-duration) var(--core-ease);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-icon-btn:hover {
+  background: transparent;
+  color: #304ffe;
+  transform: translateY(-5px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-icon-btn::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  z-index: 70;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: #000;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%,4px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .head-icon-btn:hover::after {
+  opacity: 1;
+  transform: translate(-50%,0);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-icon b {
+  top: -2px;
+  right: -3px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: #000;
+  transition: width .2s ease,height .2s ease,background .2s ease;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-icon:hover b {
+  width: 28px;
+  height: 28px;
+  background: #304ffe;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search {
+  width: clamp(150px,14vw,230px);
+  height: 42px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--core-line);
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search:focus-within {
+  border-color: #304ffe;
+  box-shadow: 0 0 0 3px rgba(48,79,254,.1);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 6px 0 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 13px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search button {
+  width: 42px;
+  height: 40px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search svg {
+  width: 19px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .header-search-trigger {
+  display: none;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .mega-menu {
+  border-top: 0;
+  box-shadow: 0 18px 35px rgba(0,0,0,.12);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .mega-menu-grid {
+  grid-template-columns: 230px minmax(0,1fr) 300px;
+  gap: 54px;
+  padding-top: 46px;
+  padding-bottom: 50px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .mega-menu-links {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 36px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .mega-menu-links a:not(:first-child) {
+  color: #666;
+  line-height: 1.5;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .mega-menu-promo {
+  min-height: 220px;
+  border-radius: 20px;
+  background: linear-gradient(145deg,#304ffe,#141414);
+}
+
+/* Full-width slider */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider {
+  border-radius: 0;
+  background: #f4f4f4;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-viewport,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-track {
+  min-height: 680px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide {
+  min-height: 680px;
+  background-color: #e9e9e9;
+  background-position: center;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy {
+  max-width: 660px;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.82);
+  color: #000;
+  text-shadow: none;
+  backdrop-filter: blur(8px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy > span {
+  color: #304ffe;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy h1 {
+  max-width: 620px;
+  margin: 12px 0 18px;
+  font-size: clamp(48px,5.2vw,80px);
+  font-weight: 750;
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy p {
+  max-width: 540px;
+  color: #444;
+  font-size: 17px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .theme-slider-arrow {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background: #fff;
+  color: #000;
+  opacity: 1;
+  box-shadow: 0 8px 22px rgba(0,0,0,.1);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .theme-slider-arrow:hover {
+  background: #304ffe;
+  color: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-dots button {
+  width: 8px;
+  height: 8px;
+  border: 1px solid #000;
+  background: transparent;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-dots button.active {
+  background: #000;
+}
+
+/* Section rhythm and headings */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-module {
+  padding: 50px 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-ticker {
+  padding: 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-module-head {
+  margin-bottom: 34px;
+  align-items: flex-end;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-module-head span {
+  color: #304ffe;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .16em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-module-head h2 {
+  margin-top: 8px;
+  font-size: clamp(34px,3.1vw,48px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-module-head > a {
+  padding-bottom: 3px;
+  border-bottom: 1px solid #000;
+  font-size: 13px;
+}
+
+/* Collages and collections */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-collage-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  grid-auto-rows: 300px;
+  gap: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile {
+  grid-column: span 1 !important;
+  min-height: 300px;
+  border-radius: 20px;
+  padding: 34px;
+  transition: transform .5s var(--core-ease), filter .5s var(--core-ease);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile:first-child {
+  grid-row: span 2;
+  min-height: 620px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile:hover {
+  filter: brightness(.94);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile b {
+  max-width: 85%;
+  font-size: clamp(28px,3vw,48px);
+  line-height: 1;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-category-feature-grid {
+  gap: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-category-feature-card > div,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-category-card img {
+  border-radius: 20px;
+}
+
+/* Product cards: second image, badges, circular actions and lifted buy interface. */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-products,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .grid {
+  gap: 40px 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card {
+  height: max-content;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-media {
+  border-radius: 20px;
+  background: #f2f2f2;
+  clip-path: inset(0 round 20px);
+  transition: clip-path var(--core-duration) var(--core-ease);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-image img {
+  aspect-ratio: 4/5;
+  transition: opacity .45s var(--core-ease), transform .65s var(--core-ease);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-media:hover .product-card-image.primary img {
+  transform: scale(1.035);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-badges span {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 4px 9px;
+  background: #304ffe;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-badges .sale {
+  background: #e53935;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-badges .sold-out {
+  background: #777;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-actions {
+  top: 12px;
+  right: 12px;
+  gap: 8px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-actions button {
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  transition: color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-actions button:hover,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-actions button.active {
+  background: #000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-quickadd {
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  min-height: 48px;
+  border-radius: 8px;
+  background: #304ffe;
+  color: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-quickadd:hover {
+  background: #000;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-copy {
+  padding-top: 14px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-copy small {
+  color: #777;
+  font-size: 11px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card h3 {
+  margin: 7px 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card h3:hover {
+  color: #304ffe;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card .price {
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-card .old {
+  color: #888;
+  font-size: 13px;
+}
+
+/* Moving announcements, feeds and story modules */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-ticker {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-ticker-track {
+  gap: 80px;
+  padding: 21px 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-ticker-track span,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-ticker-track a {
+  font-size: 13px;
+  letter-spacing: .15em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-product-banner-media,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-featured-product img,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-shoppable-item,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-blog-card img,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-blog-card > i,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-lookbook-stage {
+  border-radius: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-product-banner-layout {
+  grid-template-columns: minmax(300px,.8fr) 2fr;
+  gap: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-product-banner-media {
+  min-height: 100%;
+  padding: 40px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-shoppable-grid {
+  gap: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-shoppable-item span {
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  backdrop-filter: blur(8px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-review-grid article {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-color: var(--core-line);
+  border-radius: 20px;
+  padding: 28px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .home-blog-card b {
+  margin-top: 18px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+/* Search panel and cart drawer */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .store-search-overlay {
+  padding: clamp(50px,8vw,110px) max(20px,calc((100vw - 1200px)/2));
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .store-search-overlay > form label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .store-search-overlay > form input {
+  font-size: clamp(30px,5vw,64px);
+  font-weight: 600;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer {
+  width: min(500px,96vw);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer-head,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer-progress,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer-items,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer-foot {
+  padding-left: 34px;
+  padding-right: 34px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .cart-drawer-qty {
+  height: 36px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Product, collection, cart and checkout pages */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .page-title {
+  padding: 68px 0 34px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .page-title h1,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-info h1 {
+  font-weight: 700;
+  letter-spacing: -.045em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-layout {
+  grid-template-columns: minmax(0,1.15fr) minmax(380px,.85fr);
+  gap: clamp(50px,6vw,100px);
+  padding: 60px 0 100px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-gallery {
+  gap: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-gallery img {
+  border-radius: 20px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .product-info {
+  align-self: start;
+  position: sticky;
+  top: 115px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .field input,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .field select,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .field textarea,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .choice,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .summary {
+  border-radius: 8px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .checkout-grid {
+  gap: clamp(40px,6vw,90px);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .summary {
+  border: 1px solid var(--core-line);
+  background: #f7f7f7;
+}
+
+/* Source-style services, dark newsletter, then link footer. */
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip {
+  padding: 70px 0;
+  border-top: 1px solid var(--core-line);
+  border-bottom: 1px solid var(--core-line);
+  background: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip > .container {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 44px;
+  border-right: 1px solid var(--core-line);
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div:first-child {
+  padding-left: 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip span {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: #f2f2f2;
+  font-size: 25px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip p,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip b,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip small {
+  display: block;
+  margin: 0;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip b {
+  font-size: 17px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip small {
+  margin-top: 6px;
+  color: #777;
+  line-height: 1.5;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band {
+  padding: 68px 0;
+  background: #000;
+  color: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band > .container {
+  display: grid;
+  grid-template-columns: 1fr minmax(360px,.75fr);
+  gap: 70px;
+  align-items: center;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band small {
+  letter-spacing: .16em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band h2 {
+  max-width: 720px;
+  margin: 8px 0 0;
+  color: #fff;
+  font-size: clamp(30px,3vw,46px);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band form {
+  height: 54px;
+  display: flex;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #242424;
+  overflow: hidden;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 18px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band button {
+  min-width: 120px;
+  border: 0;
+  background: #304ffe;
+  color: #fff;
+  font-weight: 700;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer {
+  background: #fff;
+  color: #555;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-main {
+  padding-top: 70px;
+  padding-bottom: 60px;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-logo,
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-column > b {
+  color: #000;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-column a {
+  color: #666;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-column a:hover {
+  color: #304ffe;
+  text-decoration: none;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-newsletter {
+  display: none;
+}
+
+.ticarti-theme-runtime[data-theme="nova-commerce"] .footer-bottom {
+  border-color: var(--core-line);
+  color: #777;
+}
+
+@media (max-width: 1280px) {
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-header-search {
+    display: none;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .header-search-trigger {
+    display: grid;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .nav {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 980px) {
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .storefront-theme {
+    --store-section-gap: 80px !important;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-inner {
+    grid-template-columns: auto 1fr;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-actions {
+    grid-column: 2;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-viewport,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-track,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide {
+    min-height: 580px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-product-banner-layout {
+    grid-template-columns: 1fr;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div {
+    padding: 0 22px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band > .container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .product-info {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .storefront-theme {
+    --store-section-gap: 80px !important;
+    --store-radius: 20px !important;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .container {
+    width: calc(100% - 20px);
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-inner,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .header,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .nav-item {
+    min-height: 70px;
+    height: 70px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-actions {
+    gap: 1px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-optional-action {
+    display: none;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .head-icon-btn::after {
+    display: none;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-viewport,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slider-track,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide {
+    min-height: 600px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy {
+    max-width: calc(100% - 20px);
+    margin: 10px;
+    padding: 28px 24px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-theme-slide-copy h1 {
+    font-size: 40px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-collage-grid {
+    display: flex;
+    gap: 10px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .variant-source-collage .home-banner-tile:first-child {
+    min-width: 86%;
+    min-height: 430px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-module {
+    padding: 40px 0;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-module-head h2 {
+    font-size: 32px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-products,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .grid {
+    gap: 30px 10px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-media,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .home-category-feature-card > div {
+    border-radius: 14px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-actions {
+    display: none;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .product-card-quickadd {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    min-height: 40px;
+    opacity: 1;
+    transform: none;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip {
+    padding: 40px 0;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip > .container {
+    grid-template-columns: 1fr;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div:first-child,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div:last-child {
+    min-height: 92px;
+    padding: 18px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--core-line);
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-service-strip .container > div:last-child {
+    border-bottom: 0;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band {
+    padding: 50px 0;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band form {
+    height: auto;
+    flex-direction: column;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band input,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band button {
+    min-height: 52px;
+    border-radius: 8px;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band input {
+    border: 1px solid #444;
+    background: #242424;
+  }
+  .ticarti-theme-runtime[data-theme="nova-commerce"] .core-newsletter-band button {
+    margin-top: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticarti-theme-runtime[data-theme="nova-commerce"] *,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] *::before,
+  .ticarti-theme-runtime[data-theme="nova-commerce"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

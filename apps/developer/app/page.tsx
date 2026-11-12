@@ -1,0 +1,4 @@
+'use client';
+import Link from 'next/link';
+import {useI18n} from '../lib/i18n';
+export default function Home(){const{t}=useI18n();return <main className="dev-landing"><section className="dev-landing-hero"><span className="dev-auth-mark">t.</span><h1>{t('home.title')}</h1><p>{t('home.desc')}</p><div className="guide-actions"><Link href="/guide">{t('home.createAccount')} →</Link><Link href="/login">{t('home.login')}</Link></div></section><section className="guide-features"><div><b>⌘</b><h3>{t('developer.credentials')}</h3><p>{t('developer.credentialsHelp')}</p></div><div><b>◈</b><h3>{t('developer.webhooks')}</h3><p>{t('developer.dashboardDesc')}</p></div><div><b>▦</b><h3>{t('developer.apps')}</h3><p>{t('home.desc')}</p></div></section><a className="card" href="/themes"><div className="icon">TH</div><h3>Temalar</h3><p>Tema paket standardını, kısıtlamaları ve mağaza kurulum modelini incele.</p></a></main>}

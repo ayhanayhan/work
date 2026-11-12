@@ -1,0 +1,28 @@
+alternativeLocationId: europe-west1-d
+authEnabled: true
+authorizedNetwork: projects/wedidit-64fae/global/networks/default
+connectMode: PRIVATE_SERVICE_ACCESS
+createTime: '2026-10-07T16:24:51.319700084Z'
+currentLocationId: europe-west1-b
+host: 10.86.52.228
+locationId: europe-west1-b
+maintenanceVersion: '20260727_01_00'
+memorySizeGb: 1
+name: projects/wedidit-64fae/locations/europe-west1/instances/commerce-redis-loadtest
+nodes:
+- id: node-0
+  zone: europe-west1-b
+- id: node-1
+  zone: europe-west1-d
+persistenceConfig:
+  persistenceMode: DISABLED
+persistenceIamIdentity: serviceAccount:service-612520357246@cloud-redis.iam.gserviceaccount.com
+port: 6379
+readReplicasMode: READ_REPLICAS_DISABLED
+redisVersion: REDIS_7_0
+replicaCount: 1
+reservedIpRange: 10.86.52.224/29
+satisfiesPzi: true
+state: READY
+tier: STANDARD_HA
+transitEncryptionMode: DISABLED

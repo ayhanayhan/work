@@ -1,0 +1,63 @@
+# Ticarti API Cloud Build source allowlist.
+# Keep the upload small and deterministic: only files used by API quality gates/build.
+**
+
+!.gcloudignore
+!.dockerignore
+!cloudbuild-api.yaml
+!cloudbuild-isolated-e2e.yaml
+!package.json
+!package-lock.json
+
+!apps/
+!apps/api/
+!apps/api/package.json
+!apps/api/Dockerfile.cloudbuild
+!apps/api/Dockerfile.isolated-e2e
+!apps/api/nest-cli.json
+!apps/api/tsconfig.json
+!apps/api/docker-entrypoint.sh
+!apps/api/db-init.sh
+!apps/api/src/
+!apps/api/src/**
+!apps/api/prisma/
+!apps/api/prisma/**
+
+# npm workspaces needs every workspace manifest during npm ci.
+!apps/admin/
+!apps/admin/package.json
+!apps/developer/
+!apps/developer/package.json
+!apps/storefront/
+!apps/storefront/package.json
+!apps/superadmin/
+!apps/superadmin/package.json
+!apps/help/
+!apps/help/package.json
+!packages/
+!packages/shared/
+!packages/shared/package.json
+
+# Cloud Build quality gates live here.
+!scripts/
+!scripts/**
+
+# v33 core quality-gate frontend source dependencies.
+# Keep this exact allowlist small; API Docker build still excludes these via .dockerignore.
+!apps/admin/app/
+!apps/admin/app/(protected)/
+!apps/admin/app/(protected)/operations/
+!apps/admin/app/(protected)/operations/page.tsx
+!apps/admin/app/components/
+!apps/admin/app/components/layouts/
+!apps/admin/app/components/layouts/demo1/
+!apps/admin/app/components/layouts/demo1/components/
+!apps/admin/app/components/layouts/demo1/components/ticarti-search-dialog.tsx
+!apps/admin/components/
+!apps/admin/components/common/
+!apps/admin/components/common/saved-views-bar.tsx
+!apps/storefront/scripts/
+!apps/storefront/scripts/performance-budget.mjs
+!modules/
+!modules/payment-stripe/
+!modules/payment-stripe/transport.cjs

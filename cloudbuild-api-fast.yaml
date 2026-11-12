@@ -1,0 +1,36 @@
+steps:
+  - id: restore-cache
+    name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        docker pull "${_CACHE_IMAGE}" || true
+  - id: build-api
+    name: gcr.io/cloud-builders/docker
+    env:
+      - DOCKER_BUILDKIT=1
+    args:
+      - build
+      - --file
+      - apps/api/Dockerfile.cloudbuild
+      - --build-arg
+      - BUILDKIT_INLINE_CACHE=1
+      - --cache-from
+      - ${_CACHE_IMAGE}
+      - --tag
+      - ${_IMAGE}
+      - --tag
+      - ${_CACHE_IMAGE}
+      - .
+  - id: push-revision
+    name: gcr.io/cloud-builders/docker
+    args: [push, '${_IMAGE}']
+  - id: push-cache
+    name: gcr.io/cloud-builders/docker
+    args: [push, '${_CACHE_IMAGE}']
+substitutions:
+  _IMAGE: 'europe-west1-docker.pkg.dev/wedidit-64fae/cloud-run-source-deploy/commerce-api:manual'
+  _CACHE_IMAGE: 'europe-west1-docker.pkg.dev/wedidit-64fae/cloud-run-source-deploy/commerce-api:fast-build-cache'
+options:
+  logging: CLOUD_LOGGING_ONLY

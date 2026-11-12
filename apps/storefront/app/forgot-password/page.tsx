@@ -1,0 +1,1 @@
+import {Suspense} from 'react';import {CustomerForgotPasswordPage} from '../../components/CustomerRecoveryPages';export default function Page(){return <Suspense><CustomerForgotPasswordPage/></Suspense>}

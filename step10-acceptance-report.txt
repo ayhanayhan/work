@@ -1,0 +1,136 @@
+TICARTI STEP 10 — ONE-SHOT ACCEPTANCE
+Repository: /Users/ayhanuruk/Downloads/commerce-saas-wedidit-test-runtimefix
+
+[1/6] Source/release gates
+PASS paid order lock before inventory commitment
+PASS refund reservation serialized and held
+PASS refund reconciliation method exists
+PASS Stripe routes removed from core
+PASS Stripe orchestration removed from core
+PASS Core supports optional Stripe module
+PASS deployment supports external provider modules
+PASS core does not carry Stripe controller
+PASS core does not carry Stripe service
+PASS optional plugin registration exists
+PASS Stripe plugin sources installed
+NOTE: Static source verification. Boot integration needs explicit build tests.
+
+[2/6] Plugin transport and reconciliation tests
+✔ refund reconciliation is read-only and finds transaction by metadata (1.641875ms)
+✔ refund reconciliation fails closed for missing match and invalid identifiers (0.362084ms)
+PASS Stripe transport signature and request-boundary tests
+✔ modules/payment-stripe/transport.spec.cjs (76.978667ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90.563583
+
+[3/6] API unit tests (including concurrent checkout service)
+
+> @commerce/api@0.1.0 test:unit
+> tsx --test "src/**/*.spec.ts"
+
+✔ PKCE: valid verifier succeeds and code cannot be reused (2.165208ms)
+✔ PKCE: wrong and missing verifier rejected without consuming code (0.408084ms)
+✔ PKCE: challenge mandatory and tenant A cannot authorize tenant B installation (0.167291ms)
+✔ PKCE: expired authorization code rejected (0.163958ms)
+✔ Installation disabled rejects issuance and existing access token (0.383167ms)
+✔ Scope removed after issuance is no longer included in token auth (0.539583ms)
+✔ API guard uses installation tenant, rejects conflicting x-tenant-id and x-store-id (0.497708ms)
+✔ accepts a fully matching successful payment (0.49125ms)
+✔ rejects amount, currency, basket and conversation tampering (0.084625ms)
+✔ rejects incomplete or unsuccessful provider results (0.069625ms)
+✔ CheckoutSessionService.create reuses one OPEN session across 12 concurrent requests (1.166375ms)
+✔ CheckoutSessionService.create rejects empty token and does not create a session (0.275167ms)
+✔ commerce state machine allows valid forward transitions and blocks terminal reversal (0.535958ms)
+✔ derived order status remains terminal and follows payment/fulfillment facts (0.108917ms)
+✔ payment attempt state machine never revives terminal attempts (0.075625ms)
+✔ routing keeps an order in one warehouse whenever one location can fulfill it (0.953125ms)
+✔ routing splits only when configured and no location can fulfill the full quantity (0.106ms)
+✔ nearest and cost optimized routing respect their explicit signals (2.599625ms)
+✔ availability excludes reservations, commitments, damage and safety stock (0.565375ms)
+✔ expired HELD reservation releases reserved stock exactly once on repeated calls (4.237709ms)
+✔ concurrent claim loser does not release reserved stock twice (0.245834ms)
+✔ releasing an expired reservation commits the claim and decrement once (2.641042ms)
+✔ stock CAS failure aborts the transaction so a claimed reservation remains retryable (0.446292ms)
+✔ market resolution prioritizes country over currency and locale (0.533166ms)
+✔ company price list has deterministic highest precedence (0.132792ms)
+✔ safe JSON accepts ordinary request bodies (0.872042ms)
+✔ safe JSON rejects prototype keys and excessive nesting (0.227542ms)
+✔ requestIp uses framework-resolved req.ip and ignores spoofable forwarding headers (0.642375ms)
+✔ requestIp falls back to socket address only when req.ip is unavailable (0.110167ms)
+✔ securityHash is deterministic and does not return plaintext (0.269084ms)
+✔ TCMB parser accepts a complete feed and calculates cross rates (0.892667ms)
+✔ TCMB parser rejects partial and unsafe XML instead of accepting bad rates (0.296083ms)
+✔ ordinary theme stays inside performance budget (0.672708ms)
+✔ pathologically large theme is rejected (1.238375ms)
+✔ platform sender uses the tenant slug and never reserved or malformed local parts (0.509083ms)
+✔ marketing identity rejects platform domain, public suffixes, IPs and free mail (5.285667ms)
+✔ email headers reject CRLF and control characters (0.092209ms)
+✔ SNS feedback rejects another topic and attacker-controlled certificate URLs before fetching (0.624708ms)
+✔ marketing eligibility rechecks revoked consent, suppression and current IYS status (0.357083ms)
+✔ Nest provider runtime: tenant-scoped Prisma connection authorizes installed module (0.750834ms)
+✔ Nest provider runtime: missing tenant connection and unsupported capabilities fail closed (0.113125ms)
+✔ DB-backed provider: resolves installed adapter for matching enabled tenant payment connection (1.21125ms)
+✔ DB-backed provider: tenant crossover, disabled, wrong type and missing connections fail closed (0.338333ms)
+✔ DB-backed provider: absent module and unsupported capability cannot execute (0.12775ms)
+✔ provider module: explicit tenant activation and capability check (0.71175ms)
+✔ provider module: invalid/duplicate registrations rejected (0.151666ms)
+ℹ tests 46
+ℹ suites 0
+ℹ pass 46
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 532.51975
+
+[4/6] Plugin installed and removed builds
+Checking plugin-installed API build
+
+> @commerce/api@0.1.0 prebuild
+> prisma generate
+
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./../../node_modules/@prisma/client in 920ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+> @commerce/api@0.1.0 build
+> nest build
+
+Checking plugin-absent API build (core must compile without Stripe)
+
+> @commerce/api@0.1.0 prebuild
+> prisma generate
+
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./../../node_modules/@prisma/client in 681ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+> @commerce/api@0.1.0 build
+> nest build
+
+PASS plugin installed and absent builds
+
+[5/6] Cloud SQL primitive concurrency (optional, isolated test instance only)
+NOT RUN: Cloud SQL SQL-primitives test (set TICARTI_RUN_ISOLATED_SQL=YES to run)
+
+[6/6] Real application E2E gate
+BLOCK: Actual NestJS HTTP bootstrap with/without plugin and real PostgreSQL application-service concurrency not yet covered by these tests.
+RESULT: LOCAL QUALITY GATES PASSED, STEP 10 RELEASE ACCEPTANCE NOT YET COMPLETE
+
+REPORT: /Users/ayhanuruk/Downloads/commerce-saas-wedidit-test-runtimefix/step10-acceptance-report.txt

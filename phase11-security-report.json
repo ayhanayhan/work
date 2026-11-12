@@ -1,0 +1,23 @@
+{
+  "step": "11",
+  "static_checks": {
+    "tenant fail-closed identity": true,
+    "tenant header input bounded": true,
+    "tenant membership database scoped": true,
+    "tenant suspension blocking": true,
+    "production JWT distinct secrets": true,
+    "production CORS fail-closed": true,
+    "security response headers": true,
+    "request parser size limits": true,
+    "prototype pollution defense": true,
+    "Stripe controller outside core": true,
+    "Stripe plugin source present": true
+  },
+  "deferred": [
+    "real HTTP tenant cross-access",
+    "real app-level concurrent checkout inventory refund",
+    "p95/p99 load 5k/50k",
+    "database query plans",
+    "staging SLO checks"
+  ]
+}

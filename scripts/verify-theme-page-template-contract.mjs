@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const picker=readFileSync('apps/admin/app/(protected)/content/components/page-template-picker.tsx','utf8');
+const runtime=readFileSync('apps/api/src/storefront/theme-liquid-runtime.service.ts','utf8');
+const merchant=readFileSync('apps/api/src/merchant/merchant.service.ts','utf8');
+const schema=readFileSync('apps/api/prisma/schema.prisma','utf8');
+for(const token of ['page[.-]','found.has(suffix)','typeof value!==\'object\''])assert.ok(picker.includes(token),`Picker missing ${token}`);
+for(const token of ['page.${suffix}.json','page.${suffix}.liquid','page-${suffix}.json','page-${suffix}.liquid','theme/templates/page.json','theme/templates/page.liquid'])assert.ok(runtime.includes(token),`Runtime missing ${token}`);
+assert.ok(runtime.includes('^[a-z0-9][a-z0-9_-]{0,63}$'),'Archive path sanitization missing');
+assert.ok(merchant.includes('templateSuffix:this.pageTemplateSuffix(b.templateSuffix)'));
+assert.ok(merchant.includes('templateSuffix:b.templateSuffix===undefined?row.templateSuffix:this.pageTemplateSuffix(b.templateSuffix)'));
+assert.ok(schema.includes('templateSuffix'));
+console.log('Theme page template contract static regression: OK (picker/runtime/API/schema)');

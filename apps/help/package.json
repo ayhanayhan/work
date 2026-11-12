@@ -1,0 +1,21 @@
+{
+  "name": "@commerce/help",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3005",
+    "prebuild": "node scripts/clean-next-trace-stubs.mjs",
+    "build": "next build",
+    "start": "next start -p 3005",
+    "postbuild": "node scripts/normalize-apphosting-standalone.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.27",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

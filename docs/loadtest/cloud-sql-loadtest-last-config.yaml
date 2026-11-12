@@ -1,0 +1,109 @@
+backendType: SECOND_GEN
+connectionName: wedidit-64fae:europe-west1:commerce-db-loadtest
+createTime: '2026-10-07T16:21:54.450Z'
+databaseInstalledVersion: POSTGRES_15_19
+databaseVersion: POSTGRES_15
+etag: 104fba6b10625cccf304dd92a4004dc0fc5c26479489e86c94403686085b08eb
+gceZone: europe-west1-b
+geminiConfig:
+  activeQueryEnabled: false
+  entitled: false
+  googleVacuumMgmtEnabled: false
+  indexAdvisorEnabled: false
+  oomSessionCancelEnabled: true
+includeReplicasForMajorVersionUpgrade: false
+instanceType: CLOUD_SQL_INSTANCE
+ipAddresses:
+- ipAddress: 34.22.152.207
+  type: PRIMARY
+- ipAddress: 34.52.248.201
+  type: OUTGOING
+kind: sql#instance
+maintenanceVersion: POSTGRES_15_19.R20260712.01_33
+name: commerce-db-loadtest
+project: wedidit-64fae
+region: europe-west1
+satisfiesPzi: true
+selfLink: https://sqladmin.googleapis.com/sql/v1beta4/projects/wedidit-64fae/instances/commerce-db-loadtest
+serverCaCert:
+  cert: |-
+    -----BEGIN CERTIFICATE-----
+    MIIDcTCCAlmgAwIBAgIBADANBgkqhkiG9w0BAQsFADBwMS0wKwYDVQQuEyRlMDli
+    OWI4Yy01OGI4LTRhYzctYTA5Yy1kOThjMTM4YmI0ZDcxHDAaBgNVBAMTE0Nsb3Vk
+    IFNRTCBTZXJ2ZXIgQ0ExFDASBgNVBAoTC0dvb2dsZSwgSW5jMQswCQYDVQQGEwJV
+    UzAeFw0yNjEwMDcxNjIxNDVaFw0zNjEwMDQxNjIyNDVaMHAxLTArBgNVBC4TJGUw
+    OWI5YjhjLTU4YjgtNGFjNy1hMDljLWQ5OGMxMzhiYjRkNzEcMBoGA1UEAxMTQ2xv
+    dWQgU1FMIFNlcnZlciBDQTEUMBIGA1UEChMLR29vZ2xlLCBJbmMxCzAJBgNVBAYT
+    AlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvSCkKT23ZOZBqkIu
+    QGwGfBqfHYimtxRbtp1/AfzoSVTqVjNqDlEi6OpsfFgY9xcZLXR0NRlUQ2VEskKt
+    kOXx+lF24NysM4b3ZBPWaRHo2VFS1QpGp90ZTEnxTWNaYOQcboKdHACogo94tFxk
+    tPl36ZW9ga+NP7DsOS7t4iIDFJwO1dFdXvw70ajFZ1DG/yHIwKJxjrhkmyIeE8B/
+    XuIgKMY6A4zQN/zmxYm1qxI2AMl9OeDFjOcIpCprbWwBb07omZ7bkM82Zo6mNxgJ
+    vZY0D7mYs7O6Q1X9arZRwoGrPD09EAJoMX9qne8DieApAZP+64XLu8b+dfOZ2+nv
+    kh5LQQIDAQABoxYwFDASBgNVHRMBAf8ECDAGAQH/AgEAMA0GCSqGSIb3DQEBCwUA
+    A4IBAQBxlsbq5/0Se9wcIdql/b01jATKW6owYwKhap2z7OGJDRGrbZoyhjkZ5gkn
+    slk7URVzjTKE98SZDoXHvwWRxfu9F+yIAtYiBMspGlpRgCrkKqFwAo/2o/L8hNfr
+    u3xCuKrphIrbLr5hco7E+8XZG8GXaLhE8WyIyulUfLmqis0Nn0PXS3WQES5Xy2v6
+    ciobB+15khU+SasNG8iZFk2h5vCTwRt/SF9TKRys71LyG/rcyscT9QwttOt8E9iM
+    31Qf+A7kOJ/XQqJBAXBx3AsHEEVavZDv7/g+ATCcX/7FT8dT/TA/u3GWDWQv0nac
+    Ghn8zJL0cv60rvSu8ajfqSxZ8hmi
+    -----END CERTIFICATE-----
+  certSerialNumber: '0'
+  commonName: C=US,O=Google\, Inc,CN=Cloud SQL Server CA,dnQualifier=e09b9b8c-58b8-4ac7-a09c-d98c138bb4d7
+  createTime: '2026-10-07T16:21:45.090Z'
+  expirationTime: '2036-10-04T16:22:45.090Z'
+  instance: commerce-db-loadtest
+  kind: sql#sslCert
+  sha1Fingerprint: 6326d077d182ff5517de48a88d8f97c26c63bdcd
+serviceAccountEmailAddress: p612520357246-ox5tq8@gcp-sa-cloud-sql.iam.gserviceaccount.com
+settings:
+  activationPolicy: NEVER
+  availabilityType: ZONAL
+  backupConfiguration:
+    backupRetentionSettings:
+      retainedBackups: 7
+      retentionUnit: COUNT
+    backupTier: STANDARD
+    enabled: false
+    kind: sql#backupConfiguration
+    startTime: 21:00
+    transactionLogRetentionDays: 7
+    transactionalLogStorageState: TRANSACTIONAL_LOG_STORAGE_STATE_UNSPECIFIED
+  connectorEnforcement: NOT_REQUIRED
+  dataDiskSizeGb: '20'
+  dataDiskType: PD_SSD
+  deletionProtectionEnabled: false
+  edition: ENTERPRISE
+  enableDataplexIntegration: true
+  ipConfiguration:
+    ipv4Enabled: true
+    message: Configuring authorized network or using CloudSQL auth proxy or language
+      connectors is a prerequisite for connecting to Public IP. Please refer to the
+      documentation for more details https://cloud.google.com/sql/docs/mysql/authorize-networks.
+    requireSsl: false
+    serverCaMode: GOOGLE_MANAGED_INTERNAL_CA
+    serverCertificateRotationMode: SERVER_CERTIFICATE_ROTATION_MODE_UNSPECIFIED
+    sslMode: ALLOW_UNENCRYPTED_AND_ENCRYPTED
+  kind: sql#settings
+  locationPreference:
+    kind: sql#locationPreference
+    zone: europe-west1-b
+  pricingPlan: PER_USE
+  replicationLagMaxSeconds: 31536000
+  replicationType: SYNCHRONOUS
+  settingsVersion: '6'
+  storageAutoResize: true
+  storageAutoResizeLimit: '0'
+  tier: db-custom-4-15360
+sqlNetworkArchitecture: NEW_NETWORK_ARCHITECTURE
+state: STOPPED
+upgradableDatabaseVersions:
+- displayName: PostgreSQL 16
+  majorVersion: POSTGRES_16
+  name: POSTGRES_16
+- displayName: PostgreSQL 17
+  majorVersion: POSTGRES_17
+  name: POSTGRES_17
+- displayName: PostgreSQL 18
+  majorVersion: POSTGRES_18
+  name: POSTGRES_18

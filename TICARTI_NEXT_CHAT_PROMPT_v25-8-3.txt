@@ -1,0 +1,224 @@
+TICARTI — NEXT CHAT HANDOFF — v25.8.3
+Date: 2026-09-25
+
+Bu ZIP bu konuşmadaki en güncel FULL SOURCE snapshot'tır:
+ticarti-full-final-v25-8-3.zip
+
+KANONİK LOCAL YOL
+~/Downloads/ticarti-full-final-v21-0-0
+
+Bu handoff ZIP'i yeni klasöre açarsan adı farklı olabilir; mevcut çalışan local klasör yukarıdaki yoldur.
+
+ÇALIŞMA KURALI
+- Türkçe cevap ver.
+- Kullanıcı açıkça istemedikçe TASARIMA MÜDAHALE ETME.
+- Admin / Super Admin / Storefront görünümünü kendi yorumunla yeniden tasarlama.
+- Kullanıcının verdiği tema/source dosyaları tasarım için kaynak gerçektir.
+- CSS override yığını eklemek yerine gerçek component/SCSS/CSS kaynağını düzelt.
+- Mevcut mimariyi koru.
+- Stabil alanları gereksiz refactor etme.
+- Destructive DB reset/seed yapma.
+- Production'da `prisma migrate dev` kullanma.
+- "Tamamlandı" demeden build/deploy sonucunu doğrula.
+- Shell komutlarını copy-paste edilebilir ver; shell bloklarında açıklama satırı/comment koyma.
+- Mac terminal komutlarında `head` yerine gerekirse `sed -n` kullan.
+
+INFRA
+GCP/Firebase project:
+wedidit-64fae
+
+Project number:
+612520357246
+
+Cloud Run API:
+- service: commerce-api
+- region: europe-west1
+- canonical URL: https://commerce-api-ynhobkprgq-ew.a.run.app
+
+Firebase App Hosting:
+- commerce-admin
+- commerce-storefront
+- commerce-superadmin
+- commerce-checkout
+Region: europe-west4
+
+Public hosts:
+- https://main.ticarti.com
+- https://superadmin.ticarti.com
+- https://checkout.ticarti.com
+
+CURRENT THEME ARCHITECTURE — DO NOT BREAK
+- Technical theme id: ticarti
+- Storefront active presentation: apps/storefront/themes/ticarti
+- Header/Footer/Head/pages/theme modules theme-owned.
+- Sabit global Header/Footer'ı storefront core'a geri koyma.
+- Active theme/skin dynamic.
+- Harici tema kaynakları yalnız referans/import girdisidir; Liquid runtime yok.
+- Merchant theme persistence intentionally ONE JSON:
+  Tenant.settings.themeState
+- Schema marker:
+  THEME_STATE_JSON_V1
+- Save endpoint:
+  PUT /v1/admin/design/theme-state
+- Backend:
+  apps/api/src/merchant/merchant.controller.ts
+  apps/api/src/merchant/merchant.service.ts -> saveThemeState()
+- Admin:
+  apps/admin/app/components/DesignViews.tsx -> saveAll()
+- Eski `/admin/design/publish` akışını geri getirme.
+- Section-by-section DELETE/POST persistence akışını geri getirme.
+- Live storefront kaydedilmiş merchant themeState kullanmalı.
+- Demo/source theme ile merchant saved state ayrı kavramlar.
+
+LATEST THEME BUG / v25.8.2 + v25.8.3
+Problem:
+- Admin farklı tema/skin seçmesine rağmen save response eski `lingerie-store` themeState ile dönebiliyordu.
+- Eski saved state yeni seçili theme/skin'e taşınıyordu.
+- v25.8.2 DesignViews tarafında seçili themeId + skinSlug ile saved state eşleşmesini guard etti.
+- Save sonrası beklenen themeId + skinSlug doğrulaması eklendi.
+- v25.8.3 aynı düzeltmeyi koruyup yanlış JSON importlarını gerçek mevcut dosyalara çevirdi:
+  ./theme-section-schemas.json
+  ./theme-settings-schema.json
+- v25.8.3 Admin local production build BAŞARILI:
+  Compiled successfully
+  type check başarılı
+  static pages 77/77
+  standalone App Hosting postbuild hazır.
+
+ÖNEMLİ:
+v25.8.3 Admin henüz deploy edilmediyse önce:
+cd ~/Downloads/ticarti-full-final-v21-0-0
+firebase deploy \
+  --only apphosting:commerce-admin \
+  --project wedidit-64fae
+
+Deploy sonrası test:
+1. Farklı bir tema/skin seç.
+2. Canlı düzenle.
+3. Kaydet.
+4. Save response içindeki themeState.themeId ve themeState.skinSlug seçilen değerlerle aynı mı kontrol et.
+5. Mağazayı yeni sekmede aç.
+6. Eski skin tekrar gelirse Admin save'i tekrar değiştirmeden Storefront runtime resolver'ı incele:
+   kaydedilmiş themeState.themeId / skinSlug yerine active/default/source skin resolve ediyor olabilir.
+
+v25.8.0 PLATFORM OPS KAPSAMI
+- Admin + Super Admin yeni sipariş ses bildirimi.
+- Ses aç/kapat ve tarayıcı tercihi.
+- Super Admin ekip düzenleme:
+  fotoğraf, telefon, giriş e-postası, iletişim e-postası, aktif/pasif, yetki, temsilci flag.
+- Temsilci mağazaya atanabilme ve merchant dashboard'da temsilci iletişim bilgileri.
+- Super Admin sektörler; TR/EN/DE/RU.
+- Merkezi döviz havuzu + altın.
+- Merchant Admin dashboard döviz/altın alanı.
+- Super Admin media route ve güvenli SVG.
+- Super Admin header beyaz/full width, eksik bootstrap card vars, dotted loader, İçerik > Sözleşmeler/Blog/Sayfalar.
+- Sayfalar modüler altyapı; kullanıcı daha sonra modülleri paylaşacak.
+
+v25.8.1 API BUILD FIX
+İki API compile problemi düzeltildi:
+1. StorefrontService.productSelection eksikti.
+2. currency `code` unknown type hatası vardı.
+Sonrasında API local build BAŞARILI:
+`nest build` tamamlandı ve extension manifests dist/extensions'a kopyalandı.
+
+BUILD STATUS
+Şu buildler son konuşmada temiz doğrulandı:
+- API: başarılı (v25.8.1 sonrası)
+- Admin: başarılı (v25.8.3 sonrası)
+- Storefront: başarılı (v25.8.0 sonrası)
+- Super Admin: başarılı (v25.8.0 sonrası)
+
+Sass/autoprefixer deprecation warningleri vardı ama build blocker değildi.
+
+DEPLOY DURUMU / SIRA
+Yeni konuşmada önce kullanıcıdan son deploy durumunu sor veya paylaştığı logu incele.
+Kaynakta değişiklik yapmadan önce hangi target'ın gerçekten production'a çıktığını doğrula.
+
+API deploy gerekiyorsa:
+cd ~/Downloads/ticarti-full-final-v21-0-0
+./scripts/deploy-commerce-api-theme-state.sh
+
+API sonrasında mutlaka:
+gcloud run services describe commerce-api \
+  --region=europe-west1 \
+  --project=wedidit-64fae \
+  --format="yaml(status.latestCreatedRevisionName,status.latestReadyRevisionName,status.traffic)"
+
+Beklenti:
+- latestCreatedRevisionName == latestReadyRevisionName
+- %100 traffic yeni revision'da
+
+App Hosting v25.8.0 full target deploy gerekiyorsa:
+cd ~/Downloads/ticarti-full-final-v21-0-0
+
+firebase deploy \
+  --only apphosting:commerce-admin,apphosting:commerce-storefront,apphosting:commerce-superadmin \
+  --project wedidit-64fae
+
+Checkout değişmedi; kullanıcı ayrıca istemedikçe deploy etme.
+
+Eğer sadece v25.8.3 Admin düzeltmesi eksikse yalnızca:
+cd ~/Downloads/ticarti-full-final-v21-0-0
+
+firebase deploy \
+  --only apphosting:commerce-admin \
+  --project wedidit-64fae
+
+APP HOSTING UYARISI
+Geçmişte root package-lock ile phantom workspace:
+@ticarti/admin-theme@1.0.0
+uyumsuzluğu yüzünden cloud `npm ci` fail olmuştu.
+Bu kayıt sonradan kaldırıldı.
+Yeni workspace/package eklenirse root package-lock ile sync olduğunu doğrula.
+Gereksiz package-lock değiştirme.
+
+DB
+Production Cloud SQL:
+- commerce-db
+- database commerce
+- schema public
+
+Bilinen migration baseline:
+- 20260924_baseline
+- 20260924_module_suite_v24_6_3
+
+Bunları tekrar çalıştırma.
+Destructive reset/seed yapma.
+
+MULTILINGUAL STANDARD
+Yeni UI/content varsayılan:
+- TR
+- EN
+- DE
+- RU
+User-entered localized fields locale bazlı.
+Default/TR fallback olabilir.
+Otomatik çeviri yapma.
+
+SUPER ADMIN TASARIMI
+Kullanıcı açıkça şunu söyledi:
+“TASARIMA BEN SÖYLEMEDİĞİM SÜRECE MÜDAHALE ETME.”
+Super Admin gerçek supplied source theme'e dayanır.
+Kendi yorumunla yeni kart, spacing, renk, layout ekleme.
+
+NEXT TASK
+En kritik açık kontrol:
+v25.8.3 Admin production'a çıktıktan sonra tema seçimi/save testi.
+Eğer selected theme/skin save response doğru olduğu halde live storefront eski tema gösterirse:
+- Storefront resolver/boot path
+- activeTheme
+- Tenant.settings.themeState
+- themeState.themeId
+- themeState.skinSlug
+- source/default skin fallback
+- cache invalidation
+birbirine karşı kontrol edilmeli.
+Save katmanını tekrar rastgele değiştirme.
+
+FULL APP SNAPSHOT
+Bu prompt ile birlikte verilen `ticarti-full-final-v25-8-3.zip`:
+- v25.8.0 platform ops
+- v25.8.1 API compile fix
+- v25.8.2 selected theme/skin save guard
+- v25.8.3 corrected Admin schema imports
+birleştirilmiş source snapshot'tır.
