@@ -48,11 +48,11 @@ export default function PluginSettingsPage({data,slug,req,reload,refreshInstalle
     e.preventDefault();if(busy)return;
     const form=new FormData(e.currentTarget);
     const credentials:Record<string,string>={};
-    for(const f of fields){
+    for(const f of (tab==='connection'?fields:[])){
       const value=String(form.get(f.key)||'').trim();
       if(value)credentials[f.key]=value;
     }
-    const note=String(form.get('note')||'');
+    const note=tab==='general'?String(form.get('note')||''):String(config.note||'');
     setBusy(true);setMessage('');setError('');
     try{
       await req('/admin/apps/installed/'+encodeURIComponent(slug)+'/settings',{
