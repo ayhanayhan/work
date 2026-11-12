@@ -217,6 +217,24 @@ export class BillingService{
     }
   }
 
+  async merchantPlans(tenantId:string){
+    const [plans,current]=await Promise.all([
+      this.prisma.plan.findMany({where:{isActive:true},orderBy:[{sortOrder:'asc'},{name:'asc'}]}),
+      this.prisma.subscription.findFirst({where:{tenantId},include:{plan:true},orderBy:{createdAt:'desc'}})
+    ]);
+    return {plans:plans.map(p=>({
+      id:p.id,name:p.name,code:p.code,description:p.description,
+      monthlyPrice:Number(p.monthlyPrice),
+      yearlyPrice:p.yearlyPrice==null?null:Number(p.yearlyPrice),
+      currency:p.currency,maxStaff:p.maxStaff,maxProducts:p.maxProducts,
+      maxOrdersPerMonth:p.maxOrdersPerMonth,features:p.features
+    })),current:current?{
+      id:current.id,status:current.status,trialEndsAt:current.trialEndsAt,
+      currentPeriodEnd:current.currentPeriodEnd,
+      plan:{id:current.plan.id,name:current.plan.name}
+    }:null};
+  }
+
   async accountSummary(tenantId:string){
     const now=new Date();const monthStart=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1));
     const [tenant,subscription,payments,invoices,productCount,orderCount,staffCount]=await Promise.all([
