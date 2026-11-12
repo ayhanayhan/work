@@ -5,6 +5,7 @@ import { FormEvent, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { AiAppView } from './AiViews';
+import PluginSettingsPage from './PluginSettingsPage';
 
 export type PluginPage='store'|'installed'|'detail'|'preview';
 
@@ -119,12 +120,11 @@ function FixedCurrencyApp({plugin,slug,req,reload,refreshInstalledApps}:any){
 }
 
 function PluginDetail({data,slug,sid,req,reload,refreshInstalledApps}:Omit<Props,'page'>){
-  const plugin=data?.plugin;const app=plugin?.app;
-  if(!plugin||!app)return <div className="card"><div className="card-body">Uygulama bulunamadı.</div></div>;
-  if(slug==='we-ai-assistant')return <AiAppView data={data?.ai||{}} sid={sid} req={req} reload={reload}/>;
-  if(slug==='fixed-currency-prices')return <FixedCurrencyApp plugin={plugin} slug={slug} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
-  const fields=Array.isArray(app.settingsSchema?.fields)?app.settingsSchema.fields:[];
-  const[busy,setBusy]=useState(false);const[msg,setMsg]=useState('');const[err,setErr]=useState('');
-  async function save(e:FormEvent<HTMLFormElement>){e.preventDefault();const fd=new FormData(e.currentTarget);const credentials:any={};for(const f of fields)credentials[f.key]=String(fd.get(f.key)||'');setBusy(true);setMsg('');setErr('');try{await req(`/admin/apps/installed/${encodeURIComponent(slug)}/settings`,{method:'PATCH',body:JSON.stringify({credentials,config:{note:String(fd.get('note')||'')}})});setMsg('Entegrasyon ayarları kaydedildi.');await reload()}catch(e:any){setErr(e.message||'Kaydedilemedi')}finally{setBusy(false)}}
-  return <><div className="card mb-3"><div className="card-body"><div className="d-flex align-items-center gap-3"><AppIcon app={app}/><div className="flex-grow-1"><div className="d-flex flex-wrap align-items-center gap-2"><h3 className="mb-0">{app.name}</h3><span className="badge bg-light text-secondary">{app.category}</span></div><p className="text-muted mb-0 mt-1">{app.description||app.summary}</p></div><Link href="/plugins/my-apps" className="btn btn-outline-secondary btn-sm">Uygulamalarıma dön</Link></div></div></div>{msg&&<div className="alert alert-success">{msg}</div>}{err&&<div className="alert alert-danger">{err}</div>}<div className="card"><div className="card-header"><h4 className="card-title mb-1">Entegrasyon Ayarları</h4><p className="text-muted mb-0">Bağlantı bilgileri şifreli saklanır. Mevcut gizli anahtarlar güvenlik nedeniyle tekrar gösterilmez.</p></div><form className="card-body pt-0" onSubmit={save}><div className="row g-3">{fields.map((f:any)=><div className="col-md-6" key={f.key}><label className="form-label">{f.label}</label><input className="form-control" name={f.key} type={f.type==='password'?'password':'text'} autoComplete={f.type==='password'?'new-password':'off'} placeholder={plugin.connection&&f.type==='password'?'Bağlantı mevcut — değiştirmek için yeni değer girin':''}/></div>)}<div className="col-12"><label className="form-label">Not</label><textarea name="note" className="form-control" rows={3} defaultValue={plugin.connection?.config?.note||plugin.install?.config?.note||''}/></div><div className="col-12 text-end"><button className="btn btn-primary" disabled={busy}>{busy?'Kaydediliyor…':'Ayarları Kaydet'}</button></div></div></form></div></>;
+ if(slug==='we-ai-assistant'&&data?.plugin?.app){
+  return <div>
+   <div className="mb-4"><Link className="btn btn-sm btn-outline-secondary" href="/extensions/installed">← Eklentilerime dön</Link></div>
+   <AiAppView data={data?.ai||{}} sid={sid} req={req} reload={reload}/>
+  </div>;
+ }
+ return <PluginSettingsPage key={slug} data={data} slug={slug} req={req} reload={reload} refreshInstalledApps={refreshInstalledApps}/>;
 }
