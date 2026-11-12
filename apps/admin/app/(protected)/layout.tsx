@@ -7,6 +7,7 @@ import { useAdminSession } from '@/app/components/AdminSession';
 import { Demo1Layout } from '../components/layouts/demo1/layout';
 import { SalesChannelProvider } from './components/sales-channel-context';
 import { OnboardingGate } from './components/onboarding-gate';
+import { SubscriptionGate } from './components/subscription-gate';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { session, restoring } = useAdminSession();
@@ -15,5 +16,5 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     if (!restoring && !session) router.replace('/login');
   }, [restoring, session, router]);
   if (restoring) return <ScreenLoader />;
-  return session ? <SalesChannelProvider><Demo1Layout><OnboardingGate>{children}</OnboardingGate></Demo1Layout></SalesChannelProvider> : null;
+  return session ? <SalesChannelProvider><Demo1Layout><OnboardingGate><SubscriptionGate>{children}</SubscriptionGate></OnboardingGate></Demo1Layout></SalesChannelProvider> : null;
 }
