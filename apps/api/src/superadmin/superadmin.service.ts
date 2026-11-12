@@ -211,13 +211,19 @@ export class SuperAdminService {
     const startsAt = new Date();
     const trialEndsAt = body.status === 'TRIAL' ? new Date(Date.now() + plan.trialDays * 86400000) : null;
     const currentPeriodEnd = new Date(Date.now() + 30 * 86400000);
-    return this.prisma.subscription.create({ data: { tenantId, planId: plan.id, status: body.status || 'ACTIVE', startsAt, trialEndsAt, currentPeriodStart: startsAt, currentPeriodEnd } });
+    const newStatus=body.status==='TRIAL'?'TRIAL':'ACTIVE';
+    return this.prisma.$transaction(async tx=>{
+      const subscription=await tx.subscription.create({data:{tenantId,planId:plan.id,status:newStatus,startsAt,trialEndsAt,currentPeriodStart:startsAt,currentPeriodEnd}});
+      await tx.tenant.update({where:{id:tenantId},data:{status:newStatus,trialEndsAt:newStatus==='TRIAL'?trialEndsAt:null}});
+      return subscription;
+    });
   }
 
   async updateSubscription(id: string, body: any) {
     const data: any = {};
     for (const k of ['status','cancelAtPeriodEnd']) if (body[k] !== undefined) data[k] = body[k];
-    if (body.currentPeriodEnd) data.currentPeriodEnd = new Date(body.currentPeriodEnd);
+    if (body.currentPeriodEnd !== undefined) data.currentPeriodEnd = body.currentPeriodEnd ? new Date(body.currentPeriodEnd) : null;
+    if (body.trialEndsAt !== undefined) data.trialEndsAt = body.trialEndsAt ? new Date(body.trialEndsAt) : null;
     return this.prisma.subscription.update({ where: { id }, data });
   }
 
