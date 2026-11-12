@@ -34,6 +34,11 @@ export class BillingController{
 
   @UseGuards(MerchantAuthGuard,TenantGuard,PermissionGuard)
   @RequirePermission('settings.read')
+  @Get('admin/billing/plans')
+  plans(@CurrentTenant() tenantId:string){return this.svc.merchantPlans(tenantId)}
+
+  @UseGuards(MerchantAuthGuard,TenantGuard,PermissionGuard)
+  @RequirePermission('settings.read')
   @Get('admin/billing/account')
   account(@CurrentTenant() tenantId:string){return this.svc.accountSummary(tenantId)}
 
