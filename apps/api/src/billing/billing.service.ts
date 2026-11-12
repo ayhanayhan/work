@@ -221,7 +221,7 @@ export class BillingService{
     const now=new Date();const monthStart=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1));
     const [tenant,subscription,payments,invoices,productCount,orderCount,staffCount]=await Promise.all([
       this.prisma.tenant.findUnique({where:{id:tenantId},select:{id:true,name:true,companyName:true,email:true,phone:true,taxNumber:true,taxOffice:true,addressText:true,status:true,trialEndsAt:true,createdAt:true}}),
-      this.prisma.subscription.findFirst({where:{tenantId,status:{in:['ACTIVE','TRIAL']}},include:{plan:true},orderBy:{createdAt:'desc'}}),
+      this.prisma.subscription.findFirst({where:{tenantId},include:{plan:true},orderBy:{createdAt:'desc'}}),
       this.prisma.planPayment.findMany({where:{tenantId},include:{plan:{select:{name:true,code:true}}},orderBy:{createdAt:'desc'},take:50}),
       this.prisma.billingInvoice.findMany({where:{tenantId},orderBy:{issuedAt:'desc'},take:50}),
       this.prisma.product.count({where:{storeId:tenantId}}),
