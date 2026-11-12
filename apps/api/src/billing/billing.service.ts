@@ -333,10 +333,20 @@ export class BillingService{
   }
 
   private async activatePlan(tx:Prisma.TransactionClient,input:{paymentId:string;tenantId:string;planId:string;billing:string;tenantStatus:string}){
-    const now=new Date();const end=new Date(now);
+    const now=new Date();
+    // Preserve unused paid time when the merchant renews the same plan.
+    // A plan change or trial conversion starts a fresh billing period.
+    const existing=await tx.subscription.findFirst({
+      where:{tenantId:input.tenantId,status:{in:['ACTIVE','TRIAL']}},
+      orderBy:{createdAt:'desc'}
+    });
+    const renewing=existing?.status==='ACTIVE'&&existing.planId===input.planId;
+    const start=renewing&&existing.currentPeriodEnd&&existing.currentPeriodEnd>now
+      ? existing.currentPeriodEnd : now;
+    const end=new Date(start);
     if(input.billing==='YEARLY')end.setFullYear(end.getFullYear()+1);else end.setMonth(end.getMonth()+1);
     await tx.subscription.updateMany({where:{tenantId:input.tenantId,status:{in:['ACTIVE','TRIAL']}},data:{status:'CANCELLED'}});
-    await tx.subscription.create({data:{tenantId:input.tenantId,planId:input.planId,status:'ACTIVE',startsAt:now,currentPeriodStart:now,currentPeriodEnd:end}});
+    await tx.subscription.create({data:{tenantId:input.tenantId,planId:input.planId,status:'ACTIVE',startsAt:now,currentPeriodStart:now,currentPeriodEnd:end,billingCycle:input.billing}});
     if(input.tenantStatus!=='SUSPENDED')await tx.tenant.update({where:{id:input.tenantId},data:{status:'ACTIVE'}});
   }
 
@@ -356,7 +366,7 @@ export class BillingService{
         await this.activatePlan(tx,{paymentId:attempt.id,tenantId,planId,billing,tenantStatus:tenant.status});
         await this.consumeCoupon(tx,tenantId,promo.code,'PLAN',attempt.id);
       });
-      return{paid:true,attemptId:attempt.id,redirect:`${this.merchantAdminUrl()}/plans?payment=success`};
+      return{paid:true,attemptId:attempt.id,redirect:`https://main.ticarti.com/admin/account/billing/plans?payment=success`};
     }
     const callbackBase=this.callbackBase();
     const request={locale:Iyzipay.LOCALE.TR,conversationId,price:promo.total.toFixed(2),paidPrice:promo.total.toFixed(2),currency:this.currency(currency),basketId:`PLAN-${attempt.id}`,
@@ -380,7 +390,7 @@ export class BillingService{
   async callback(attemptId:string,token:string){
     const row=await this.prisma.planPayment.findUnique({where:{id:attemptId},include:{tenant:true}});if(!row)throw new NotFoundException();
     if(!token)throw new BadRequestException('iyzico token eksik');
-    const redirect=`${this.merchantAdminUrl()}/plans`;
+    const redirect='https://main.ticarti.com/admin/account/billing/plans';
     if(row.status==='PAID')return{success:true,redirect:`${redirect}?payment=success`};
     if(row.status!=='PENDING')throw new BadRequestException('Payment attempt is no longer pending');
     if(!row.token||row.token!==token)throw new UnauthorizedException('Payment token does not match this attempt');
