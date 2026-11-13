@@ -1,3 +1,4 @@
+import {StorefrontRestrictionGuard} from './storefront-restriction.guard';
 import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, Headers, Param, Patch, Post, Query, Req, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CustomerGuard } from '../common/customer.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -6,6 +7,7 @@ import { StorefrontService } from './storefront.service';
 import { ThemeLiquidRuntimeService } from './theme-liquid-runtime.service';
 import { verifyThemePreviewToken } from '../common/theme-preview-token';
 @Controller('storefront')
+@UseGuards(StorefrontRestrictionGuard)
 export class StorefrontController {
   constructor(private svc: StorefrontService, private liquidTheme: ThemeLiquidRuntimeService, private media: MediaService) {}
   private readCookie(req:any,name:string){const raw=String(req.headers?.cookie||'');for(const part of raw.split(';')){const [k,...v]=part.trim().split('=');if(k===name)return decodeURIComponent(v.join('='));}return '';}
