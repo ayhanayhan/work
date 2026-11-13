@@ -76,7 +76,7 @@ export class StorefrontService {
     const cacheKey=`public:site:${slug}`;
     const cached=await this.cache.getJson<any>(cacheKey);
     if(cached){ if(this.maintenanceActive(cached) && !allowMaintenance) throw new BadRequestException('Store is in maintenance mode'); return cached; }
-    const store = await this.prisma.tenant.findFirst({ where: { status: { in: ['TRIAL','ACTIVE'] }, OR: [{ publicSlug: slug }, { domain: slug }, { slug }] } });
+    const store = await this.prisma.tenant.findFirst({ where: { ...(allowMaintenance?{}:{status:{in:['TRIAL','ACTIVE']}}), OR: [{ publicSlug: slug }, { domain: slug }, { slug }] } });
     if (!store) throw new NotFoundException('Store not found');
     if (this.maintenanceActive(store) && !allowMaintenance) throw new BadRequestException('Store is in maintenance mode');
     await this.cache.setJson(cacheKey,store,120);
