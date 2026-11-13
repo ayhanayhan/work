@@ -98,6 +98,7 @@ export const MENU_SIDEBAR: MenuConfig = [
       { title: 'Mağaza Kurulumları', path: '/extensions/installed' },
     ],
   },
+  { title: 'Kısıtlama Ayarları', icon: Settings, path: '/settings/restrictions' },
   { title: 'Ayarlar', i18nKey: 'navigation.settings', icon: Settings, path: '/settings' }];
 
 // Eski Ticarti demo menüleri final pakette devre dışı bırakıldı.
