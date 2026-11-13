@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {tenantRestriction} from './subscription-restriction';
 import {TenantPlacementService} from '../tenant-placement/tenant-placement.service';
 
 @Injectable()
@@ -17,7 +18,12 @@ export class TenantGuard implements CanActivate {
       include: { customRole: true, tenant: { select: { status: true } } },
     });
     if (!membership) throw new ForbiddenException('No access to tenant');
-    if (!['ACTIVE','TRIAL'].includes(membership.tenant.status)) throw new ForbiddenException('Tenant is not active');
+    const route=String(req.originalUrl||req.url||'').split('?')[0];
+    const billingAllowed=/\/(?:admin\/billing|billing\/iyzico)(?:\/|$)/.test(route);
+    const recoveryAllowed=/\/(?:admin\/support|admin\/account|merchant-auth)(?:\/|$)/.test(route);
+    const restriction=await tenantRestriction(this.prisma,tenantId);
+    if(restriction.restricted&&!billingAllowed&&!recoveryAllowed)throw new ForbiddenException('SUBSCRIPTION_RESTRICTED');
+    if(!['ACTIVE','TRIAL'].includes(membership.tenant.status)&&!billingAllowed&&!recoveryAllowed)throw new ForbiddenException('Tenant is not active');
     const policy=req.tenantRuntime||await this.placements.resolve(tenantId);
     const local=String(process.env.TICARTI_CELL_CODE||'primary').trim();
     const mode=String(process.env.CELL_ROUTING_MODE||'direct').trim().toLowerCase();
