@@ -1,3 +1,4 @@
+import {readRestrictionSettings,validateRestrictionSettings} from '../common/subscription-restriction';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { mkdir, writeFile } from 'fs/promises';
@@ -301,6 +302,12 @@ export class SuperAdminService {
     };
   }
 
+  async getRestrictionSettings(){return readRestrictionSettings(this.prisma)}
+  async saveRestrictionSettings(body:any){
+    let value;try{value=validateRestrictionSettings(body)}catch(error:any){throw new BadRequestException(error.message)}
+    await this.prisma.control().platformSetting.upsert({where:{key:'subscription_restrictions'},create:{key:'subscription_restrictions',value},update:{value}});
+    return value;
+  }
   async platformSettings(){
     const row=await (this.prisma as any).platformSetting.findUnique({where:{key:'general'}});
     const base=this.defaultPlatformSettings();const value:any=row?.value&&typeof row.value==='object'&&!Array.isArray(row.value)?row.value:{};
