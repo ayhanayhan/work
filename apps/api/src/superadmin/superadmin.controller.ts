@@ -16,6 +16,8 @@ import {ProvisionCellDto} from '../tenant-placement/cell-provisioning.dto';
 @UseGuards(SuperAdminAuthGuard)
 export class SuperAdminController {
   constructor(private svc: SuperAdminService,private placements:TenantPlacementService,private cellMigrations:TenantCellMigrationService,private capacity:CapacityPlannerService,private provisioning:CellProvisioningService) {}
+  @Get('subscription-restrictions') restrictionSettings(){return this.svc.getRestrictionSettings()}
+  @Patch('subscription-restrictions') restrictionSave(@Body() body:any){return this.svc.saveRestrictionSettings(body)}
   @Get('dashboard') dashboard() { return this.svc.dashboard(); }
   @Get('infrastructure') infrastructureOverview(){return this.placements.overview();}
   @Get('infrastructure/cells') infrastructureCells(){return this.placements.listCells();}
