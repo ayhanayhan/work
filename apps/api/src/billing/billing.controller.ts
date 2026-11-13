@@ -5,6 +5,8 @@ import {PermissionGuard} from '../common/permission.guard';
 import {RequirePermission} from '../common/permissions';
 import {CurrentTenant} from '../common/request.decorator';
 import {BillingService} from './billing.service';
+import {tenantRestriction} from '../common/subscription-restriction';
+import {PrismaService} from '../prisma/prisma.service';
 import {IyzicoCallbackDto,IyzicoWebhookDto,PlatformCheckoutDto,PlanCheckoutDto,ThemeCheckoutDto} from './billing.dto';
 
 type MerchantRequest={user:{sub:string};ip?:string};
@@ -12,7 +14,7 @@ type HttpResponse={setHeader:(name:string,value:string)=>void;type:(value:string
 
 @Controller()
 export class BillingController{
-  constructor(private svc:BillingService){}
+  constructor(private svc:BillingService,private prisma:PrismaService){}
 
   private sendPaymentPage(res:HttpResponse,title:string,content:string){
     // Iyzico CheckoutForm currently requires inline/eval-capable provider content. Keep that
@@ -40,7 +42,7 @@ export class BillingController{
   @UseGuards(MerchantAuthGuard,TenantGuard,PermissionGuard)
   @RequirePermission('settings.read')
   @Get('admin/billing/account')
-  account(@CurrentTenant() tenantId:string){return this.svc.accountSummary(tenantId)}
+  async account(@CurrentTenant() tenantId:string){return {...await this.svc.accountSummary(tenantId),restriction:await tenantRestriction(this.prisma,tenantId)}}
 
   @UseGuards(MerchantAuthGuard,TenantGuard,PermissionGuard)
   @RequirePermission('settings.manage')
