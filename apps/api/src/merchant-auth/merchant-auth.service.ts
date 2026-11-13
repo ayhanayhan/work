@@ -1,3 +1,4 @@
+import {readRestrictionSettings} from '../common/subscription-restriction';
 import {apiError} from '../i18n/api-error';
 import {
   BadRequestException,
@@ -135,7 +136,7 @@ export class MerchantAuthService {
     const publicSlug = options.subdomain ? slugBase : `${slugBase}-${randomBytes(3).toString('hex')}`;
     const slug = publicSlug;
     const plan = await tx.plan.findFirst({ where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { monthlyPrice: 'asc' }] });
-    const trialDays = Math.max(1, Number(plan?.trialDays || 14));
+    const {trialDays}=await readRestrictionSettings(this.prisma);
     const trialEndsAt = new Date(Date.now() + trialDays * 86400000);
     const tenant = await tx.tenant.create({
       data: {
