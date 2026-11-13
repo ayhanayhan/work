@@ -1,3 +1,4 @@
+import {StorefrontRestrictionGuard} from './storefront-restriction.guard';
 import { Module } from '@nestjs/common';
 import { CustomerGuard } from '../common/customer.guard';
 import { EmailModule } from '../email/email.module';
@@ -10,6 +11,6 @@ import { ThemeLiquidRuntimeService } from './theme-liquid-runtime.service';
 @Module({
   imports: [EmailModule, EDocumentModule, MediaModule],
   controllers: [StorefrontController],
-  providers: [StorefrontService, ThemeLiquidRuntimeService, CustomerGuard],
+  providers: [StorefrontService, ThemeLiquidRuntimeService, CustomerGuard, StorefrontRestrictionGuard],
 })
 export class StorefrontModule {}
