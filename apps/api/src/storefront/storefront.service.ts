@@ -1,3 +1,4 @@
+import {tenantRestriction} from '../common/subscription-restriction';
 import {configuredPublicPath,configuredArticleUrl,configuredBlogCategoryUrl} from '../common/seo-url-configuration';
 import { BadRequestException, ForbiddenException, GoneException, Injectable, NotFoundException, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -594,7 +595,7 @@ export class StorefrontService {
     const store = await this.store(slug, true);
     const v16StoreMs=Date.now()-v16BootStart;
     const storeSettings:any = store.settings || {};
-    if (this.maintenanceActive(store)) {
+    if (this.maintenanceActive(store) || (await tenantRestriction(this.prisma,store.id)).restricted) {
       return {
         store: {
           id: store.id, name: store.name, slug: store.slug, publicSlug: store.publicSlug,
@@ -1342,6 +1343,7 @@ export class StorefrontService {
     if(!idempotencyKey||idempotencyKey.length<12||idempotencyKey.length>160)throw new BadRequestException('A valid checkout idempotency key is required');
     const cartIdentity=await this.prisma.cart.findUnique({where:{token},select:{id:true,storeId:true,status:true}});
     if(!cartIdentity)throw new NotFoundException('Cart not found');
+    if((await tenantRestriction(this.prisma,cartIdentity.storeId)).restricted)throw new ForbiddenException('STORE_MAINTENANCE');
     const existing=await this.prisma.order.findUnique({where:{storeId_idempotencyKey:{storeId:cartIdentity.storeId,idempotencyKey}},include:{items:true,customer:true}});
     if(existing){
       if(String((existing.metadata as any)?.checkoutCartId||'')!==cartIdentity.id)throw new BadRequestException('Idempotency key belongs to another checkout');
@@ -1353,8 +1355,7 @@ export class StorefrontService {
     const prepared:any=await this.prepareCheckout(token,body,customerId);const cart:any=prepared;const payment=prepared.paymentMethod;
     const activeSub=await this.prisma.subscription.findFirst({where:{tenantId:cart.storeId,status:{in:['TRIAL','ACTIVE']}},include:{plan:true},orderBy:{createdAt:'desc'}});
     if(!activeSub)throw new BadRequestException('Store subscription is not active');
-    if(activeSub.currentPeriodEnd&&activeSub.currentPeriodEnd.getTime()<Date.now())throw new BadRequestException('Store subscription has expired');
-    if(activeSub.trialEndsAt&&activeSub.status==='TRIAL'&&activeSub.trialEndsAt.getTime()<Date.now())throw new BadRequestException('Store trial has expired');
+    // Subscription period end is centrally checked above, including configurable grace.
     if(process.env.LOADTEST_ENV!=='true'&&activeSub?.plan.maxOrdersPerMonth){const now=new Date();const monthStart=new Date(now.getFullYear(),now.getMonth(),1);const count=await this.prisma.order.count({where:{storeId:activeSub.tenantId,createdAt:{gte:monthStart}}});if(count>=activeSub.plan.maxOrdersPerMonth)throw new BadRequestException('Monthly order limit reached for current plan');}
 
     // Allocate the human-facing order number outside the Serializable transaction.
