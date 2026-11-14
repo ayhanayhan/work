@@ -147,6 +147,10 @@ export function MarketplaceShell({children,market}:{children:ReactNode;market:Ma
  </div>
  </AppDetailContext.Provider>;
 }
+function PriceLabel({app,market}:{app:AppItem;market:Market}){
+ const label=price(app,market.installations[app.slug]);
+ return <span className={'am-price-label'+(label==='Ücretsiz'?' am-price-free':'')}>{label}</span>;
+}
 export function AppCard({app,market}:{app:AppItem;market:Market}){
  const installed=market.installations[app.slug]?.installed;
  const openDetail=useContext(AppDetailContext);
@@ -155,15 +159,22 @@ export function AppCard({app,market}:{app:AppItem;market:Market}){
    <button type="button" className="am-card-logo-link" onClick={()=>openDetail?.(app)} aria-label={app.name+' detayları'}><AppBadge app={app}/></button>
    <div className="am-card-heading-text">
     <button type="button" className="am-card-title-button" onClick={()=>openDetail?.(app)}><h3>{app.name}</h3></button>
-    <span className="am-card-by">{app.developer||'Ticarti'}</span>
+    <span className="am-card-by">{app.developer||'Ticarti'} · {app.category}</span>
    </div>
-   {installed?<span className="am-tag">Yüklü</span>:null}
   </div>
   <p className="am-card-desc">{app.summary||'Uygulama açıklaması henüz eklenmedi.'}</p>
   <div className="am-card-bottom">
-   <span className="am-card-stat" title="Toplam kurulum">{Number(app.downloadCount||0).toLocaleString('tr-TR')} kurulum</span>
-   <span className="am-card-price">{price(app,market.installations[app.slug])}</span>
+   <div className="am-card-badges"><PriceLabel app={app} market={market}/>{installed?<span className="am-tag">Yüklü</span>:null}</div>
+   <button type="button" className="am-card-inspect" onClick={()=>openDetail?.(app)} aria-label={app.name+' incele'}>İncele <span aria-hidden="true">→</span></button>
   </div>
-  <div className="am-card-link-row"><button type="button" className="am-card-inspect" onClick={()=>openDetail?.(app)}>İncele <span aria-hidden="true">→</span></button></div>
  </article>;
+}
+export function CompactAppRow({app,market}:{app:AppItem;market:Market}){
+ const openDetail=useContext(AppDetailContext);
+ return <button type="button" className="am-compact-row" onClick={()=>openDetail?.(app)} aria-label={app.name+' detayları'}>
+  <AppBadge app={app}/>
+  <span className="am-compact-info"><strong>{app.name}</strong><small>{app.category}</small></span>
+  <PriceLabel app={app} market={market}/>
+  <span className="am-compact-arrow" aria-hidden="true">→</span>
+ </button>;
 }
