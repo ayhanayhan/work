@@ -1,7 +1,7 @@
 'use client';
 import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from 'react';
 
-export const API='https://commerce-api-ynhobkprgq-ew.a.run.app/v1';
+export const API='/api';
 const SSO='https://login.ticarti.com/api/v1/merchant-auth';
 const AppDetailContext=createContext<((app:AppItem)=>void)|null>(null);
 export type AppItem={
@@ -46,9 +46,9 @@ export function useMarketplace(){
    }catch{setSession(null)}
  },[]);
  useEffect(()=>{let alive=true;(async()=>{try{
-  const r=await fetch(API+'/platform/apps',{cache:'no-store'});if(!r.ok)throw new Error('Uygulamalar yüklenemedi');
+  const r=await fetch(API+'/platform/apps',{cache:'no-store'});if(!r.ok){const error=await r.json().catch(()=>null);throw new Error(error?.message||'Uygulamalar yüklenemedi');}
   const data=await r.json();if(alive)setApps(Array.isArray(data)?data:[]);
- }catch(e:any){if(alive)setError(e.message||'Uygulamalar yüklenemedi')}finally{if(alive)setLoading(false)}})();
+ }catch(e:any){if(alive)setError(e instanceof TypeError?'Uygulama servisine şu anda ulaşılamıyor.':e.message||'Uygulamalar yüklenemedi')}finally{if(alive)setLoading(false)}})();
  void fetchSession();return()=>{alive=false}},[fetchSession]);
  const refresh=useCallback(async()=>{
   if(!session?.authenticated||!tenant){setInstallations({});setInstallationsReady(false);return}
