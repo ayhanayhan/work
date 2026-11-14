@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import type {ReactNode} from 'react';
-import {getNavigation,type MenuNode} from '../lib/navigation';
+import {getNavigation,menuTree,type MenuNode} from '../lib/navigation';
 import HeaderSnapshot from '../components/home-snapshot/header';
 import FooterSnapshot from '../components/home-snapshot/footer';
 import HomeInteractions from '../components/home-snapshot/interactions';
@@ -27,9 +27,17 @@ function relocate(node:MenuNode):MenuNode{
 
 export default async function RootLayout({children}:{children:ReactNode}){
  const nav=await getNavigation('tr');
- const navigation={...nav,
-   menus:nav.menus?{header:nav.menus.header.map(relocate),footer:nav.menus.footer.map(relocate)}:undefined,
-   groups:nav.groups?.map(group=>({...group,links:group.links.map(link=>({...link,url:link.url.startsWith('/')?'https://ticarti.com'+link.url:link.url}))}))};
+ const menu=menuTree(nav);
+ const item=(id:string,label:string,url:string):MenuNode=>({id,label:{tr:label},url,enabled:true,children:[]});
+ const navigation={...nav,menus:{
+   header:[
+     item('marketplace-home','Uygulamalar','/'),
+     item('marketplace-categories','Kategoriler','/kategoriler'),
+     item('marketplace-popular','En çok indirilenler','/kategoriler?sort=popular'),
+     item('marketplace-newest','Son eklenenler','/kategoriler?sort=newest'),
+   ],
+   footer:menu.footer.map(relocate),
+ }};
  const logoSrc='/assets/images/ticarti-logo.svg';
  return <html lang="tr" className="tc-page-home tc-page-app"><head>
    <link rel="stylesheet" href="/assets/css/style.css"/>
