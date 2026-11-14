@@ -1,9 +1,8 @@
 'use client';
-import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from 'react';
+import {useCallback,useEffect,useState,type ReactNode} from 'react';
 
 export const API='/api';
 const SSO='https://login.ticarti.com/api/v1/merchant-auth';
-const AppDetailContext=createContext<((app:AppItem)=>void)|null>(null);
 export type AppItem={
  id:string;slug:string;name:string;category:string;categoryId?:string;summary?:string|null;description?:string|null;
  developer?:string|null;logoUrl?:string|null;icon?:string|null;basePrice?:number|string|null;
@@ -97,55 +96,11 @@ export function Action({app,market,full=false}:{app:AppItem;market:Market;full?:
  return <button className={'am-button am-button-primary'+(full?' am-button-wide':'')} disabled={market.busy===app.slug} onClick={()=>void market.install(app)}>{market.busy===app.slug?'Yükleniyor…':'Yükle'}</button>;
 }
 export function MarketplaceShell({children,market}:{children:ReactNode;market:Market}){
- const [detail,setDetail]=useState<AppItem|null>(null);
- const [shot,setShot]=useState('');
- const close=useCallback(()=>{setDetail(null);setShot('')},[]);
- useEffect(()=>{
-  if(!detail)return;
-  const key=(e:KeyboardEvent)=>{if(e.key==='Escape')close()};
-  document.addEventListener('keydown',key);
-  return()=>document.removeEventListener('keydown',key);
- },[detail,close]);
- const related=detail?market.apps.filter(app=>app.slug!==detail.slug&&(app.categoryId&&app.categoryId===detail.categoryId||app.category===detail.category)).slice(0,4):[];
- const shots=detail?(Array.isArray(detail.screenshots)?detail.screenshots.filter(src=>typeof src==='string'&&/^(https:\/\/|\/)/.test(src)):[]):[];
- return <AppDetailContext.Provider value={setDetail}>
- <div className="ticarti-app-site am-shell">
-  <main className="am-main">
+ return <div className="ticarti-app-site am-shell"><main className="am-main">
    {market.actionError?<p className="am-alert am-alert-error" role="alert">{market.actionError}</p>:null}
    {market.notice?<p className="am-alert" role="status">{market.notice}</p>:null}
    {children}
-  </main>
-  {detail?<div className="am-app-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
-    <section role="dialog" aria-modal="true" aria-label={detail.name+' uygulama detayları'} className="am-app-modal">
-     <header className="am-app-modal-head">
-      <div className="am-card-heading"><AppBadge app={detail}/><div className="am-card-heading-text"><h2>{detail.name}</h2><span>{detail.developer||'Ticarti'} · {detail.category}</span></div></div>
-      <button type="button" className="am-app-modal-close" aria-label="Kapat" onClick={close}>×</button>
-     </header>
-     <div className="am-app-modal-body">
-      <div className="am-app-modal-main">
-       {shots.length?<section className="am-app-modal-section"><h3>Ekran görüntüleri</h3><div className="am-screenshots">{shots.map((src,i)=><button type="button" key={src+i} onClick={()=>setShot(src)}><img src={src} alt={detail.name+' ekran görüntüsü '+(i+1)} loading="lazy"/></button>)}</div></section>:null}
-       <section className="am-app-modal-section"><h3>Uygulama hakkında</h3><div className="am-description">{String(detail.description||detail.summary||'Açıklama henüz eklenmedi.').split(/\n+/).filter(Boolean).map((p,i)=><p key={i}>{p}</p>)}</div></section>
-       {detail.usageGuide?<section className="am-app-modal-section"><h3>Nasıl kullanılır?</h3><div className="am-description">{detail.usageGuide.split(/\n+/).filter(Boolean).map((p,i)=><p key={i}>{p}</p>)}</div></section>:null}
-       {related.length?<section className="am-app-modal-section"><h3>Benzer uygulamalar</h3><div className="am-app-modal-related">{related.map(a=><button key={a.id} type="button" onClick={()=>{setDetail(a);setShot('')}}><AppBadge app={a}/><span>{a.name}</span><span aria-hidden="true">→</span></button>)}</div></section>:null}
-      </div>
-      <aside className="am-app-modal-aside">
-       <div className="am-app-modal-price"><small>Uygulama fiyatı</small><strong>{price(detail,market.installations[detail.slug])}</strong><Action app={detail} market={market} full/></div>
-       <dl>
-        <dt>Geliştirici</dt><dd>{detail.developer||'Ticarti'}</dd>
-        <dt>Kategori</dt><dd>{detail.category}</dd>
-        <dt>Kurulum</dt><dd>{Number(detail.downloadCount||0).toLocaleString('tr-TR')}</dd>
-        <dt>Yayın tarihi</dt><dd>{date(detail.createdAt)}</dd>
-        <dt>Son güncelleme</dt><dd>{date(detail.updatedAt)}</dd>
-        <dt>Sürüm</dt><dd>{detail.version||'—'}</dd>
-        <dt>Desteklenen diller</dt><dd>{detail.languages?.length?detail.languages.join(', '):'Belirtilmemiş'}</dd>
-       </dl>
-      </aside>
-     </div>
-    </section>
-   </div>:null}
-   {shot?<div className="am-lightbox" role="dialog" aria-modal="true" aria-label="Ekran görüntüsü" onClick={()=>setShot('')}><button type="button" aria-label="Görseli kapat" onClick={()=>setShot('')}>×</button><img src={shot} alt="Uygulama ekran görüntüsü" onClick={e=>e.stopPropagation()}/></div>:null}
- </div>
- </AppDetailContext.Provider>;
+ </main></div>;
 }
 function PriceLabel({app,market}:{app:AppItem;market:Market}){
  const label=price(app,market.installations[app.slug]);
@@ -153,28 +108,28 @@ function PriceLabel({app,market}:{app:AppItem;market:Market}){
 }
 export function AppCard({app,market}:{app:AppItem;market:Market}){
  const installed=market.installations[app.slug]?.installed;
- const openDetail=useContext(AppDetailContext);
+ const href='/'+encodeURIComponent(app.slug);
  return <article className="am-card">
   <div className="am-card-heading">
-   <button type="button" className="am-card-logo-link" onClick={()=>openDetail?.(app)} aria-label={app.name+' detayları'}><AppBadge app={app}/></button>
+   <a className="am-card-logo-link" href={href} aria-label={app.name+' detayları'}><AppBadge app={app}/></a>
    <div className="am-card-heading-text">
-    <button type="button" className="am-card-title-button" onClick={()=>openDetail?.(app)}><h3>{app.name}</h3></button>
+    <a className="am-card-title-button" href={href}><h3>{app.name}</h3></a>
     <span className="am-card-by">{app.developer||'Ticarti'} · {app.category}</span>
    </div>
   </div>
   <p className="am-card-desc">{app.summary||'Uygulama açıklaması henüz eklenmedi.'}</p>
   <div className="am-card-bottom">
    <div className="am-card-badges"><PriceLabel app={app} market={market}/>{installed?<span className="am-tag">Yüklü</span>:null}</div>
-   <button type="button" className="am-card-inspect" onClick={()=>openDetail?.(app)} aria-label={app.name+' incele'}>İncele <span aria-hidden="true">→</span></button>
+   <a className="am-card-inspect" href={href} aria-label={app.name+' incele'}>İncele <span aria-hidden="true">→</span></a>
   </div>
  </article>;
 }
 export function CompactAppRow({app,market}:{app:AppItem;market:Market}){
- const openDetail=useContext(AppDetailContext);
- return <button type="button" className="am-compact-row" onClick={()=>openDetail?.(app)} aria-label={app.name+' detayları'}>
+ const href='/'+encodeURIComponent(app.slug);
+ return <a className="am-compact-row" href={href} aria-label={app.name+' detayları'}>
   <AppBadge app={app}/>
   <span className="am-compact-info"><strong>{app.name}</strong><small>{app.category}</small></span>
   <PriceLabel app={app} market={market}/>
   <span className="am-compact-arrow" aria-hidden="true">→</span>
- </button>;
+ </a>;
 }
