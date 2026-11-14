@@ -1,0 +1,47 @@
+/* Pure typed homepage props and safe helpers. CMS modules never fall back to demo content. */
+export type Localized=Record<string,string>;
+export type HomeItem={id:string;enabled?:boolean;fields?:Record<string,Localized>;assets?:{image?:string;logo?:string};links?:{href?:string};storeId?:string};
+export type HomeLogo={id:string;enabled?:boolean;fields?:{title?:Localized};assets?:{image?:string};storeId?:string};
+export type HomeModule={
+ id:string;enabled?:boolean;fields?:Record<string,Localized>;items?:HomeItem[];
+ logos?:HomeLogo[];ctaEnabled?:boolean;categoryIds?:string[];configured?:boolean;
+};
+export type HomeContent={locale:string;version:number;modules:HomeModule[];disabledModuleIds?:string[];consentContract?:{key:string;contentKey:string;href:string}};
+export const moduleById=(home:HomeContent|null|undefined,id:string)=>home?.modules?.find(m=>m.id===id&&m.enabled!==false);
+export const textFor=(values:Localized|undefined,locale:string)=>values?.[locale]?.trim()||'';
+export const fieldFor=(module:HomeModule|undefined,key:string,locale:string)=>textFor(module?.fields?.[key],locale);
+export function safePageUrl(input:string|undefined,fallback:string){
+ const value=(input||'').trim();
+ if(!value)return fallback;
+ if(value.startsWith('/')&&!value.startsWith('//')&&!value.includes('\\')&&!/[\u0000-\u001f]/.test(value))return value;
+ if(/^https:\/\/[^\s"'<>]+$/i.test(value))return value;
+ return fallback;
+}
+export function safeAssetUrl(input:string|undefined,fallback:string){
+ const value=(input||'').trim();
+ if(value.startsWith('/assets/')||/^https:\/\/[^\s"'<>]+$/i.test(value))return value;
+ if(/^(?:\.\.\/)+assets\/[a-zA-Z0-9_./-]+$/.test(value))return '/'+value.replace(/^(?:\.\.\/)+/,'');
+ return fallback;
+}
+
+/** A connected homepage section must never fall back to old template/demo copy.
+ * Only explicitly saved text in the selected locale may make a content section visible.
+ */
+export function hasLocalizedContent(module:HomeModule|undefined,locale:string):boolean{
+ if(!module?.configured||module.enabled===false)return false;
+ const contentKeys=new Set(['heading','description','offer','button','formButton','question','answer','role','title']);
+ if(Object.entries(module.fields||{}).some(([key,value])=>contentKeys.has(key)&&Boolean(textFor(value,locale))))return true;
+ if((module.items||[]).some(item=>item.enabled!==false&&Object.entries(item.fields||{}).some(([key,value])=>
+   contentKeys.has(key)&&Boolean(textFor(value,locale)))))return true;
+ if((module.logos||[]).some(item=>item.enabled!==false&&Boolean(textFor(item.fields?.title,locale))))return true;
+ return false;
+}
+
+/** Preserve original static design on sections not yet migrated; Master-controlled
+ * sections show only the selected language and never use fallback copy. */
+export function shouldRenderHomeModule(home:HomeContent|null|undefined,id:string,locale:string):boolean{
+ const module=home?.modules?.find(m=>m.id===id);
+ if(module?.enabled===false||home?.disabledModuleIds?.includes(id))return false;
+ if(id==='faq')return hasLocalizedContent(module,locale);
+ return !module?.configured||hasLocalizedContent(module,locale);
+}
