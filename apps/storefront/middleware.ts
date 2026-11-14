@@ -86,9 +86,28 @@ export async function middleware(req:NextRequest){
   }
 
   if(host===PLATFORM_DOMAIN||host===`www.${PLATFORM_DOMAIN}`){
-    if(assetOrApi(path))return NextResponse.next();
-    if(path.startsWith('/ticarti-platform'))return NextResponse.next();
-    return internal(req,'/ticarti-platform','platform');
+    if(path.startsWith('/api/')||
+       path.startsWith('/__proxy-api/')||
+       path.startsWith('/ticarti-platform')||
+       path.startsWith('/ticarti-marketing-proxy')){
+      return NextResponse.next();
+    }
+
+    if(path==='/ucretsiz-dene'||
+       path.startsWith('/ucretsiz-dene/')||
+       path==='/magaza-ac'||
+       path.startsWith('/magaza-ac/')||
+       path==='/admin'||path.startsWith('/admin/')||
+       path==='/account'||path.startsWith('/account/')||
+       path==='/checkout'||path.startsWith('/checkout/')){
+      return internal(req,'/ticarti-platform','platform');
+    }
+
+    const url=req.nextUrl.clone();
+    url.pathname='/ticarti-marketing-proxy'+
+      (path==='/'?'':path);
+
+    return NextResponse.rewrite(url);
   }
 
   if(path==='/admin'||path==='/admin/') return redirectToAdminRoot(req);
