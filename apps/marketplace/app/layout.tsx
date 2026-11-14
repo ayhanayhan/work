@@ -16,14 +16,24 @@ function SiteHeader(){
   return <header className="tc-native-header">
     <div className="tc-native-header-inner">
       <a className="tc-native-brand" href="https://ticarti.com" aria-label="Ticarti ana sayfa">ticarti<span>.</span></a>
-      <nav aria-label="Ana menü">
-        <a href="https://ticarti.com">Ana Sayfa</a>
-        <a href="https://ticarti.com/paketler">Paketler</a>
-        <a href="/" aria-current="page">Uygulamalar</a>
-        <a href="https://help.ticarti.com">Yardım</a>
-      </nav>
+      <form className="tc-native-search" action="/" method="get" role="search">
+        <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+        <input type="search" name="q" placeholder="Uygulama, kategori veya geliştirici ara..." aria-label="Uygulama ara"/>
+        <button type="submit" aria-label="Uygulamaları ara"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button>
+      </form>
       <a className="tc-native-login" href="https://login.ticarti.com/">Giriş Yap</a>
     </div>
+    <nav className="tc-native-category-nav" aria-label="Uygulama mağazası menüsü">
+      <div className="tc-native-category-inner">
+        <a href="/">Tüm uygulamalar</a>
+        <a href="/kategoriler">Kategoriler</a>
+        <a href="/kategoriler?sort=popular">Popüler uygulamalar</a>
+        <a href="/kategoriler?sort=newest">Yeni uygulamalar</a>
+        <span className="tc-native-nav-spacer"/>
+        <a href="https://ticarti.com">Ticarti</a>
+        <a href="https://help.ticarti.com">Yardım Merkezi</a>
+      </div>
+    </nav>
   </header>;
 }
 
