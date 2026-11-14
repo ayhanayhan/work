@@ -42,7 +42,7 @@ export default function AppMarketplace(){
    </div>
    <label className="am-search am-hero-search"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Uygulama veya kategori ara" aria-label="Uygulama ara"/></label>
    <div className="am-hero-category-row" aria-label="Popüler kategoriler">
-    {categories.map(c=><button key={c} type="button" className={category===c?'selected':''} aria-pressed={category===c} onClick={()=>{setCategory(c);document.getElementById('uygulamalar')?.scrollIntoView({behavior:'smooth',block:'start'})}}>{c}</button>)}
+    {categories.map(c=><a key={c} className={category===c?'selected':''} aria-current={category===c?'page':undefined} href={c==='Tümü'?'/kategoriler':'/kategoriler/'+encodeURIComponent(c)}>{c}</a>)}
     <a href="/kategoriler">Tüm kategoriler →</a>
    </div>
   </section>
