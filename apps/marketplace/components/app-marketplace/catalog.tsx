@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
-import {AppCard,MarketplaceShell,useMarketplace} from './marketplace';
+import {AppCard,CompactAppRow,MarketplaceShell,useMarketplace} from './marketplace';
 
 export default function AppMarketplace(){
  const market=useMarketplace();
@@ -19,8 +19,15 @@ export default function AppMarketplace(){
     sort==='newest'?(new Date(b.createdAt||0).getTime()-new Date(a.createdAt||0).getTime()):
     Number(!!b.isFeatured)-Number(!!a.isFeatured)||Number(b.downloadCount||0)-Number(a.downloadCount||0));
  },[market.apps,market.installations,search,category,installedOnly,sort]);
- const newest=useMemo(()=>[...market.apps].sort((a,b)=>new Date(b.createdAt||0).getTime()-new Date(a.createdAt||0).getTime()).slice(0,4),[market.apps]);
- const popular=useMemo(()=>[...market.apps].sort((a,b)=>Number(b.downloadCount||0)-Number(a.downloadCount||0)).slice(0,4),[market.apps]);
+ const newest=useMemo(()=>market.apps.filter(a=>a.createdAt&&Number.isFinite(Date.parse(a.createdAt))).sort((a,b)=>Date.parse(b.createdAt!)-Date.parse(a.createdAt!)).slice(0,4),[market.apps]);
+ const popular=useMemo(()=>market.apps.filter(a=>typeof a.downloadCount==='number'&&a.downloadCount>0).sort((a,b)=>b.downloadCount!-a.downloadCount!).slice(0,4),[market.apps]);
+ const featured=useMemo(()=>market.apps.filter(a=>a.isFeatured).slice(0,4),[market.apps]);
+ const free=useMemo(()=>market.apps.filter(a=>a.billingType==='FREE'||(a.basePrice!=null&&Number(a.basePrice)===0)).slice(0,4),[market.apps]);
+ const sections=[
+  {title:'Popüler uygulamalar',href:'/kategoriler?sort=popular',items:popular.length?popular:featured,empty:'Henüz popüler uygulama bulunmuyor.',description:popular.length?'En çok indirilen uygulamalar':'Öne çıkan uygulama önerileri'},
+  {title:'Son eklenenler',href:'/kategoriler?sort=newest',items:newest,empty:'Yayın tarihleri eklendiğinde burada listelenecek.',description:'Yeni uygulamaları keşfedin'},
+  {title:'Ücretsiz uygulamalar',href:'/kategoriler?free=1',items:free,empty:'Henüz ücretsiz uygulama bulunmuyor.',description:'Ek ücret ödemeden kullanın'}
+ ];
  return <MarketplaceShell market={market}>
   <section className="am-hero">
    <div className="am-hero-ornament" aria-hidden="true">
@@ -42,9 +49,14 @@ export default function AppMarketplace(){
   <section className="am-section am-catalog" id="uygulamalar">
    <div className="am-section-title"><div><h2>Öne çıkan uygulamalar</h2><p>Mağazanızın ihtiyaçlarına uygun çözümleri bulun.</p><a className="am-text-link" href="/kategoriler">Tüm kategorileri ve uygulamaları gör →</a></div><div className="am-catalog-controls"><label className="am-sort-label">Sıralama <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Öne çıkanlar</option><option value="newest">Son eklenenler</option><option value="popular">En çok indirilenler</option></select></label></div></div>
    {market.session?.authenticated?<label className="am-installed-toggle"><input type="checkbox" checked={installedOnly} onChange={e=>setInstalledOnly(e.target.checked)}/> Yalnızca mağazama yüklediklerim</label>:null}
-   {market.loading?<div className="am-empty">Uygulamalar yükleniyor…</div>:market.error?<div role="alert" className="am-empty am-error">{market.error}</div>:filtered.length?<div className="am-grid">{(search.trim()||category!=='Tümü'||installedOnly?filtered:filtered.slice(0,6)).map(app=><AppCard key={app.id} app={app} market={market}/>)}</div>:<div className="am-empty">Aramanızla eşleşen uygulama bulunamadı. <button type="button" onClick={()=>{setSearch('');setCategory('Tümü');setInstalledOnly(false)}}>Filtreleri temizle</button></div>}
+   {market.loading?<div className="am-empty">Uygulamalar yükleniyor…</div>:market.error?<div role="alert" className="am-empty am-error">{market.error}</div>:filtered.length?<div className="am-grid">{(search.trim()||category!=='Tümü'||installedOnly?filtered:filtered.slice(0,3)).map(app=><AppCard key={app.id} app={app} market={market}/>)}</div>:<div className="am-empty">Aramanızla eşleşen uygulama bulunamadı. <button type="button" onClick={()=>{setSearch('');setCategory('Tümü');setInstalledOnly(false)}}>Filtreleri temizle</button></div>}
   </section>
-  {!search.trim()&&category==='Tümü'&&!installedOnly&&!market.loading&&!market.error&&market.apps.length>0?<><section className="am-section"><div className="am-section-title"><div><h2>En çok indirilenler</h2><p>Mağazaların en çok tercih ettiği uygulamalar.</p></div><a className="am-text-link" href="/kategoriler?sort=popular">Tümünü gör →</a></div><div className="am-grid">{popular.map(a=><AppCard key={a.id} app={a} market={market}/>)}</div></section>
-   <section className="am-section"><div className="am-section-title"><div><h2>Son eklenenler</h2><p>Ticarti uygulama mağazasına yeni katılanlar.</p></div><a className="am-text-link" href="/kategoriler?sort=newest">Tümünü gör →</a></div><div className="am-grid">{newest.map(a=><AppCard key={a.id} app={a} market={market}/>)}</div></section></>:null}
+  {!search.trim()&&category==='Tümü'&&!installedOnly&&!market.loading&&!market.error&&market.apps.length>0?<section className="am-section am-discovery" aria-label="Uygulamaları keşfet">
+   {sections.map(section=><div className="am-discovery-column" key={section.title}>
+    <div className="am-discovery-heading"><h2>{section.title}</h2><a className="am-text-link" href={section.href}>Tümünü gör →</a></div>
+    <p>{section.description}</p>
+    <div className="am-compact-list">{section.items.length?section.items.map(app=><CompactAppRow key={app.id} app={app} market={market}/>):<div className="am-discovery-empty">{section.empty}</div>}</div>
+   </div>)}
+  </section>:null}
  </MarketplaceShell>;
 }
