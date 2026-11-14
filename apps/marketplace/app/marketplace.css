@@ -261,3 +261,35 @@
 .tc-app-surface .am-app-modal-related .am-app-icon{width:37px;height:37px;font-size:15px}
 .tc-app-surface .am-app-modal-related button>span:nth-child(2){flex:1}
 @media(max-width:750px){.tc-app-surface .am-app-modal-backdrop{padding:8px}.tc-app-surface .am-app-modal{max-height:96vh}.tc-app-surface .am-app-modal-head{padding:18px}.tc-app-surface .am-app-modal-body{grid-template-columns:1fr;padding:20px}.tc-app-surface .am-app-modal-aside{order:-1;position:static}.tc-app-surface .am-app-modal-related{grid-template-columns:1fr}}
+
+
+/* Compact catalog and discovery lists; keep existing shell and hero unchanged. */
+.tc-app-surface .am-card{min-height:0;padding:20px 21px;border-radius:8px;transition:border-color .18s,background .18s}
+.tc-app-surface .am-card:hover{background:#fafbf8;border-color:#bcc8a9}
+.tc-app-surface .am-card-heading .am-app-icon{width:48px;height:48px}
+.tc-app-surface .am-card-desc{min-height:40px;margin:12px 0 16px}
+.tc-app-surface .am-card-bottom{padding-top:12px;border-top:1px solid #edf0eb}
+.tc-app-surface .am-card-bottom .am-card-badges{justify-content:flex-start;align-items:center}
+.tc-app-surface .am-card-bottom .am-card-inspect{width:auto;gap:10px;font-size:13px}
+.tc-app-surface .am-price-label{display:inline-flex;align-items:center;border-radius:4px;padding:4px 8px;background:#f4f5f2;font-size:11px;line-height:1.4;font-weight:500;white-space:nowrap}
+.tc-app-surface .am-price-free{background:#eef4df;color:#51672a}
+.tc-app-surface .am-discovery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;align-items:start}
+.tc-app-surface .am-discovery-column{min-width:0}
+.tc-app-surface .am-discovery-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.tc-app-surface .am-discovery-heading h2{font-size:22px!important;line-height:1.3;margin:0}
+.tc-app-surface .am-discovery-heading .am-text-link{font-size:11px;flex-shrink:0;margin:0}
+.tc-app-surface .am-discovery-column>p{font-size:13px;color:var(--tc-app-muted);margin:6px 0 16px}
+.tc-app-surface .am-compact-list{border-top:1px solid #e5e8e3}
+.tc-app-surface .am-compact-row{display:flex;align-items:center;gap:10px;min-width:0;padding:16px 0;border-bottom:1px solid #e5e8e3}
+.tc-app-surface .am-compact-row:hover .am-compact-info strong{color:#637c27}
+.tc-app-surface .am-compact-row .am-app-icon{width:40px;height:40px;font-size:17px;border-radius:7px;flex:none}
+.tc-app-surface .am-compact-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.tc-app-surface .am-compact-info strong{font-weight:500;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-app-surface .am-compact-info small{font-size:11px;color:var(--tc-app-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-app-surface .am-compact-arrow{color:#727b70;font-size:14px}
+.tc-app-surface .am-discovery-empty{font-size:13px;color:var(--tc-app-muted);padding:22px 0;border-bottom:1px solid #e5e8e3}
+.tc-app-surface .am-categories a{display:inline-flex;align-items:center;gap:6px;border:1px solid #e1e5df;border-radius:4px;padding:9px 15px;font-size:13px;line-height:1.3}
+.tc-app-surface .am-categories a.selected{background:#181b1a;color:#fff;border-color:#181b1a}
+.tc-app-surface .am-hero-category-row a.selected{background:#f0f97b;border-color:#f0f97b}
+@media(max-width:950px){.tc-app-surface .am-discovery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.tc-app-surface .am-discovery{grid-template-columns:1fr;gap:32px}}
